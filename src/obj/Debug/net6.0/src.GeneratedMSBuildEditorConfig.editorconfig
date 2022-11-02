@@ -1,0 +1,40 @@
+is_global = true
+build_property.TargetFramework = net6.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = src
+build_property.RootNamespace = src
+build_property.ProjectDir = /Users/thorbjornmoller/OneDrive - Aalborg Universitet/Software/3. semester/Projekt/P3-Clinical-Immunology/src/
+build_property.RazorLangVersion = 6.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = /Users/thorbjornmoller/OneDrive - Aalborg Universitet/Software/3. semester/Projekt/P3-Clinical-Immunology/src
+build_property._RazorSourceGeneratorDebug = 
+
+[/Users/thorbjornmoller/OneDrive - Aalborg Universitet/Software/3. semester/Projekt/P3-Clinical-Immunology/src/App.razor]
+build_metadata.AdditionalFiles.TargetPath = QXBwLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/thorbjornmoller/OneDrive - Aalborg Universitet/Software/3. semester/Projekt/P3-Clinical-Immunology/src/Pages/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvSW5kZXgucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/thorbjornmoller/OneDrive - Aalborg Universitet/Software/3. semester/Projekt/P3-Clinical-Immunology/src/_Imports.razor]
+build_metadata.AdditionalFiles.TargetPath = X0ltcG9ydHMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/thorbjornmoller/OneDrive - Aalborg Universitet/Software/3. semester/Projekt/P3-Clinical-Immunology/src/Shared/MainLayout.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkL01haW5MYXlvdXQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = b-7qw4gf6oqm
+
+[/Users/thorbjornmoller/OneDrive - Aalborg Universitet/Software/3. semester/Projekt/P3-Clinical-Immunology/src/Pages/_Host.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvX0hvc3QuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/thorbjornmoller/OneDrive - Aalborg Universitet/Software/3. semester/Projekt/P3-Clinical-Immunology/src/Pages/_Layout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXMvX0xheW91dC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
