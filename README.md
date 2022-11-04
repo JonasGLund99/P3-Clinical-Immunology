@@ -6,4 +6,4 @@ CD: into the directory 'src'
 
 Open the terminal with ctrl-æ.
 
-To run the project type <dotnet watch> and press enter
+To run the project type ```dotnet watch``` and press enter
