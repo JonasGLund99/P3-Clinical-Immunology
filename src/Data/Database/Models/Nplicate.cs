@@ -58,21 +58,22 @@ class Nplicate
 
     public void SetHeatMapColour(double max, double min)
     {
-        Color Orange = Color.Orange;
+        //Start with DarkBlue. Inject Yellow until both Yellow and Blue is max. Then remove Blue. 
+        Color Yellow = Color.Yellow;
         Color Blue = Color.DarkBlue;
 
-        int ROffset = Math.Max(Orange.R, Blue.R);
-        int GOffset = Math.Max(Orange.G, Blue.G);
-        int BOffset = Math.Max(Orange.B, Blue.B);
+        //int ROffset = Math.Max(Orange.R, Blue.R);
+        //int GOffset = Math.Max(Orange.G, Blue.G);
+        //int BOffset = Math.Max(Orange.B, Blue.B);
 
-        int DeltaR = Math.Abs(Orange.R - Blue.R);
-        int DeltaG = Math.Abs(Orange.G - Blue.G);
-        int DeltaB = Math.Abs(Orange.B - Blue.B);
+        //int DeltaR = Math.Abs(Orange.R - Blue.R);
+        //int DeltaG = Math.Abs(Orange.G - Blue.G);
+        //int DeltaB = Math.Abs(Orange.B - Blue.B);
 
-        double val = (RI - min) / (max - min);
-        int R = ROffset - Convert.ToByte(DeltaR * (1 - val));
-        int G = GOffset - Convert.ToByte(DeltaG * (1 - val));
-        int B = BOffset - Convert.ToByte(DeltaB * (1 - val));
-        HeatmapColour = Color.FromArgb(255, R, G, B);
+        //double val = (RI - min) / (max - min);
+        //int R = ROffset - Convert.ToByte(DeltaR * (1 - val));
+        //int G = GOffset - Convert.ToByte(DeltaG * (1 - val));
+        //int B = BOffset - Convert.ToByte(DeltaB * (1 - val));
+        //HeatmapColour = Color.FromArgb(255, R, G, B);
     }
 }
