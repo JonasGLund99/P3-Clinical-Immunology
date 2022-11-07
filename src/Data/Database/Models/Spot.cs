@@ -5,7 +5,7 @@ class Spot
     public Spot(double intensity, bool flagged)
     {
         Intensity = intensity;
-        Flagged = flagged;
+        IsFlagged = flagged;
     }
 
     private double _intensity;
