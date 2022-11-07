@@ -2,17 +2,17 @@ namespace src.Data;
 
 class Spot
 {
-    public Spot(decimal intensity, bool flagged)
+    public Spot(double intensity, bool flagged)
     {
         Intensity = intensity;
         Flagged = flagged;
     }
 
-    private decimal _intesity;
-    public decimal Intensity { 
+    private double _intensity;
+    public double Intensity { 
         get
         {
-            return _intesity; 
+            return _intensity; 
         }
         set
         {
@@ -20,7 +20,7 @@ class Spot
             {
                 throw new ArgumentException("Intensity must be non-negative");
             }
-            _intesity = value;
+            _intensity = value;
         }
     }
 

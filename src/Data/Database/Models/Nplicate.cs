@@ -1,3 +1,5 @@
+using System.Drawing;
+
 namespace src.Data;
 
 class Nplicate
@@ -8,13 +10,23 @@ class Nplicate
     }
 
     private List<Spot> Spots = new List<Spot>();
-    
-    public decimal RI;
-    public decimal XYZ;
-    public decimal Mean;
-    public string AnalyteType;
-    public bool IsFlagged { get; set; }
-    public double HeatmapColour { get; set; }
+
+    public double RI { get; private set; }
+    public double XYZ { get; private set; }
+    public double Mean { get; private set; }
+    public string AnalyteType { get; }
+    public bool IsFlagged { get; private set; }
+    public Color HeatmapColour { get; private set; }
+
+    public void AddSpot(Spot spot)
+    {
+        Spots.Add(spot);
+        if (Spots.Count == NplicateSize)
+        {
+            IsFlagged = SetFlag();
+            Mean = CalculateMean();
+        }
+    }
 
     private bool SetFlag()
     {
@@ -28,23 +40,39 @@ class Nplicate
         return false;
     }
 
-    private decimal CalculateMean()
+    private double CalculateMean()
     {
-        decimal mean = 0;
+        double mean = 0;
         foreach (Spot spot in Spots)
         {
             mean += spot.Intensity;
         }
         return mean / Spots.Count;
     }
-    
-    public void AddSpot(Spot spot)
+
+    public void CalculateRI(Nplicate blank, Nplicate neg)
     {
-        Spots.Add(spot);
-        if (Spots.Count == NplicateSize)
-        {
-            IsFlagged = SetFlag();
-            Mean = CalculateMean();
-        }
+        XYZ = (Mean - blank.Mean) / neg.Mean;
+        RI = Math.Log2(XYZ);
+    }
+
+    public void SetHeatMapColour(double max, double min)
+    {
+        Color Orange = Color.Orange;
+        Color Blue = Color.DarkBlue;
+
+        int ROffset = Math.Max(Orange.R, Blue.R);
+        int GOffset = Math.Max(Orange.G, Blue.G);
+        int BOffset = Math.Max(Orange.B, Blue.B);
+
+        int DeltaR = Math.Abs(Orange.R - Blue.R);
+        int DeltaG = Math.Abs(Orange.G - Blue.G);
+        int DeltaB = Math.Abs(Orange.B - Blue.B);
+
+        double val = (RI - min) / (max - min);
+        int R = ROffset - Convert.ToByte(DeltaR * (1 - val));
+        int G = GOffset - Convert.ToByte(DeltaG * (1 - val));
+        int B = BOffset - Convert.ToByte(DeltaB * (1 - val));
+        HeatmapColour = Color.FromArgb(255, R, G, B);
     }
 }
