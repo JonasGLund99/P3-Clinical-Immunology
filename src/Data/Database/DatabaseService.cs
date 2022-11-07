@@ -10,7 +10,7 @@ public class DatabaseService
     public Database? Database;
     private DatabaseService()
     {
-        client = new CosmosClient("https://p3-database.documents.azure.com:443/", "hB3Q6QxvgjERggOZC3vjRuRjzYjbpBJMXM6vKK2bboF3D4fBhDMmfsI0sHpk5qFIdzNSozPuGSoyF3cOzoeIjg==");
+        client = new CosmosClient(Environment.GetEnvironmentVariable("COSMOS_API_ENDPOINT"), Environment.GetEnvironmentVariable("COSMOS_API_KEY"));
         SetupDatabase();
     }
     public static DatabaseService Instance
