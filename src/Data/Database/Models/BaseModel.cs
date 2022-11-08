@@ -5,9 +5,6 @@ namespace src.Data;
 
 public abstract class BaseModel
 {
-    /* This must correspond to the partitionKeyPath when creating containers in DatabaseService */
-    private string partitionValue = "id";
-
 	public BaseModel(string id)
 	{
 		this.id = id;
