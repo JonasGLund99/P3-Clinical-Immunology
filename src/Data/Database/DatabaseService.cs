@@ -10,8 +10,7 @@ public class DatabaseService
     public Database? Database;
     private DatabaseService()
     {
-        client = new CosmosClient(Environment.GetEnvironmentVariable("COSMOS_API_ENDPOINT"), Environment.GetEnvironmentVariable("COSMOS_API_KEY"));
-        SetupDatabase();
+        client = new CosmosClient("https://asbjoernjc.documents.azure.com:443/", "Ny5RJxrhuBR5gH4C3BFIGOBdq8BPpkNnHdqWqBZuU5pMcmkVWUzYA8lJxOpat73WRQU5IfKOq4qxACDbf06Gng==");
     }
     public static DatabaseService Instance
     {
@@ -21,7 +20,7 @@ public class DatabaseService
         }
     }
     
-    public async void SetupDatabase()
+    public async Task SetupDatabase()
     {
         Database = await client.CreateDatabaseIfNotExistsAsync("ClinicalImmunology",1000);
         await Database.CreateContainerIfNotExistsAsync("Experiment", "/id");

@@ -1,62 +1,42 @@
 ﻿using Microsoft.Azure.Cosmos;
 using System;
-using System.ComponentModel;
-using System.Security.Policy;
-using System.Threading.Tasks;
 
 namespace src.Data;
 
 public abstract class BaseModel
 {
-
-	/*Creates a new instance of the CosmosClient class with the database URI and key*/
-	public string id;
-	private string partitionValue = "id";
+    /* This must correspond to the partitionKeyPath when creating containers in DatabaseService */
+    private string partitionValue = "id";
 
 	public BaseModel(string id)
 	{
 		this.id = id;
 	}
 
-	/* Removes a given item from the correct container in the database /
-    /public async Task removeDataBaseItem()
-    {
-        const item = container.item('28a31558-ff8c-40c3-a7e8-1e8904c5ff72', '<partition-key-value')
-    }/
+    public string id;
 
-    / Adds a given item to the correct container in the database */
-	public async Task addDataBaseItem<T>(T modelObject) where T : BaseModel
+    public async Task GenericSaveToDatabase<T>() where T: BaseModel
 	{
-		CosmosClient client = new(
-			accountEndpoint: "https://asbjoernjc.documents.azure.com:443/",
-			authKeyOrResourceToken: "Ny5RJxrhuBR5gH4C3BFIGOBdq8BPpkNnHdqWqBZuU5pMcmkVWUzYA8lJxOpat73WRQU5IfKOq4qxACDbf06Gng=="
-		);
+		await DatabaseService.Instance.SetupDatabase(); /* Waits for setupdatabase to finish so the database is running reference*/
+		Database? db = DatabaseService.Instance.Database;
 
-		Database database = await client.CreateDatabaseIfNotExistsAsync(
-			id: "P3Test"
-		);
+		if (db == null) throw new NullReferenceException("There was no reference to the database"); /* If the database somehow failed, we throw an error */
 
-		//Create new object and upsert (create or replace) to container
-		Container container = await database.CreateContainerIfNotExistsAsync(
-			id: "nplicate",
-			partitionKeyPath: $"/{partitionValue}",
-			throughput: 400
-		);
+		await db.GetContainer(typeof(T).Name).UpsertItemAsync<T>(
+			item: (T) this
+        );
+    }
 
-		T createdItem = await container.UpsertItemAsync<T>(
-			item: modelObject,
-			partitionKey: new PartitionKey(modelObject.partitionValue)
-		);
+	public async Task GenericRemoveFromDatabase<T>() where T: BaseModel
+	{
+        await DatabaseService.Instance.SetupDatabase();
+        Database? db = DatabaseService.Instance.Database;
 
-		Console.WriteLine($"Created item:\t{createdItem.id}");
-	}
+        if (db == null) throw new NullReferenceException("There was no reference to the database");
 
-
+        await db.GetContainer(typeof(T).Name).DeleteItemAsync<T>(
+            id: this.id, 
+			partitionKey: new PartitionKey(this.id)
+        );
+    }
 }
-
-public class Nplicate : BaseModel
-{
-	public Nplicate(string id) : base(id)
-	{
-	}
-};

@@ -2,15 +2,15 @@
 
 class ClinicalTest : BaseModel
 {
-    public ClinicalTest(string title, int nplicateSize, string description, Experiment experiment)
+    public ClinicalTest(string title, int nplicateSize, string description, Experiment experiment, string id) : base(id)
     {
         Title = title;
         NplicateSize = nplicateSize;
-        Desciption = description;
+        Description = description;
         PatientKeys = new Dictionary<string, string>();
         Slides = new List<Slide>();
         SlideDataFiles = new List<SlideDataFile>();
-        CreatedAt = DateTime.Now();
+        CreatedAt = DateTime.Now;
         EditedAt = CreatedAt;
         Experiments = new List<Experiment>();
         Experiments.Add(experiment);
@@ -34,7 +34,15 @@ class ClinicalTest : BaseModel
     //{
 
     //}
+    public async Task SaveToDatabase()
+    {
+        await GenericSaveToDatabase<ClinicalTest>();
+    }
 
+    public async Task RemoveFromDatabase()
+    {
+        await GenericRemoveFromDatabase<ClinicalTest>();
+    }
     public void AddSlide(Slide slide)
     {
         
@@ -61,7 +69,7 @@ class ClinicalTest : BaseModel
         
     }
 
-    private void UpdateMaxMinRI(decimal min, decimal max)
+    private void UpdateMaxMinRI(double min, double max)
     {
         MaxRI = max;
         MinRI = min;    
@@ -70,6 +78,11 @@ class ClinicalTest : BaseModel
 
 class SlideDataFile : BaseModel
 {
+    public SlideDataFile(string path, string barcode, string id) : base(id)
+    {
+        Path = path;
+        Barcode = barcode;
+    }
     string Path;
     string Barcode;
 }

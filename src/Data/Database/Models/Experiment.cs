@@ -2,15 +2,24 @@
 
 class Experiment : BaseModel
 {
-    public Experiment(string experimentNumber, string title, string author, string description)
+    public Experiment(string experimentNumber, string title, string author, string description, string id) : base(id)
     {
         ExperimentNumber = experimentNumber;
         Title = title;
         Author = author;
         Description = description;
         ClinicalTests = new List<ClinicalTest>();
-        CreatedAt = DateTime.Now();
+        CreatedAt = DateTime.Now;
         EditedAt = CreatedAt;
+    }
+
+    public async Task SaveToDatabase() {
+        await GenericSaveToDatabase<Experiment>();
+    }
+
+    public async Task RemoveFromDatabase()
+    {
+        await GenericRemoveFromDatabase<Experiment>();
     }
 
     public string ExperimentNumber { get; set; }
