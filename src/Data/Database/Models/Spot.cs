@@ -1,14 +1,13 @@
 namespace src.Data;
 
-class Spot
+public class Spot
 {
+    private double _intensity;
     public Spot(double intensity, bool flagged)
     {
         Intensity = intensity;
         IsFlagged = flagged;
     }
-
-    private double _intensity;
     public double Intensity { 
         get
         {

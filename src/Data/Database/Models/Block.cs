@@ -1,25 +1,37 @@
-﻿namespace src.Data;
+﻿using System.Drawing;
+
+namespace src.Data;
 
 class Block : BaseModel
 {
-    public Block(List<string> patientData, )
+    private List<Nplicate> nplicates = new List<Nplicate>();
+    public Block(Dictionary<string, string> patientData, string id) : base(id)
     {
         PatientData = patientData;
     }
 
 
-    List<string> PatientData;
+    Dictionary<string, string> PatientData;
     Color TextColour = new Color();
-    double QualityControl;
+    public double QC { get; private set; }
 
 
     public void AddNplicate(Nplicate nplicate)
     {
-        
+        nplicates.Add(nplicate);
     }
 
-    public void CalculateQC()
+    public void CalculateQC(Nplicate pos, Nplicate neg)
     {
-        
+        QC = (pos.Mean - neg.Mean) / pos.Mean;
+    }
+    public void SetTextColour()
+    {
+        throw new NotImplementedException();
+    }
+    //Consider whether to place this function on Slide or maybe Clinical Test
+    public void ReadLine()
+    {
+        throw new NotImplementedException();
     }
 }

@@ -2,12 +2,15 @@
 
 class Slide : BaseModel
 {
-    public Slide(string barcode)
+    private List<Block> Blocks = new List<Block>();
+    public Slide(string barcode, string id) : base(id)
     {
         Barcode = barcode;
-        Blocks = new List<Block>();
     }
+    public string Barcode { get; private set; }
 
-    public string Barcode { get; set; };
-    public List<Block> Blocks;
+    public void AddBlock (Block block)
+    {
+        Blocks.Add(block);
+    }
 }

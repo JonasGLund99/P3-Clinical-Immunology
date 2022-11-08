@@ -1,16 +1,15 @@
 using System.Drawing;
+using System.Security.Cryptography.X509Certificates;
 
 namespace src.Data;
 
 class Nplicate
 {
+    private List<Spot> spots = new List<Spot>();
     public Nplicate(string analyteType)
     {
         AnalyteType = analyteType;
     }
-
-    private List<Spot> Spots = new List<Spot>();
-
     public double RI { get; private set; }
     public double XYZ { get; private set; }
     public double Mean { get; private set; }
@@ -20,60 +19,97 @@ class Nplicate
 
     public void AddSpot(Spot spot)
     {
-        Spots.Add(spot);
-        if (Spots.Count == NplicateSize)
-        {
-            IsFlagged = SetFlag();
-            Mean = CalculateMean();
-        }
+        spots.Add(spot);
     }
 
-    private bool SetFlag()
+    public void SetFlag()
     {
-        foreach (Spot spot in Spots)
+        foreach (Spot spot in spots)
         {
             if (spot.IsFlagged)
             {
-                return true;
+                IsFlagged = true;
             }
         }
-        return false;
     }
 
-    private double CalculateMean()
+    public void CalculateMean()
     {
-        double mean = 0;
-        foreach (Spot spot in Spots)
+        double summedIntensity = 0;
+        int notFlagged = 0;
+
+        foreach (Spot spot in spots)
         {
-            mean += spot.Intensity;
+            if (!spot.IsFlagged)
+            {
+                summedIntensity += spot.Intensity;
+                notFlagged++;
+            }
         }
-        return mean / Spots.Count;
+        if(notFlagged == 0)
+        {
+            throw new DivideByZeroException("All spots in n-plicate are flagged");
+        }
+        Mean = summedIntensity / notFlagged;
     }
 
     public void CalculateRI(Nplicate blank, Nplicate neg)
     {
+        if(neg.Mean == 0)
+        {
+            throw new DivideByZeroException("The mean of the negative control is 0");
+        }
         XYZ = (Mean - blank.Mean) / neg.Mean;
         RI = Math.Log2(XYZ);
     }
 
     public void SetHeatMapColour(double max, double min)
     {
-        //Start with DarkBlue. Inject Yellow until both Yellow and Blue is max. Then remove Blue. 
-        Color Yellow = Color.Yellow;
-        Color Blue = Color.DarkBlue;
+        if((max - min) == 0)
+        {
+            throw new DivideByZeroException();
+        }
+        HeatmapColour = fixer((RI - min) / (max - min));
+    }
 
-        //int ROffset = Math.Max(Orange.R, Blue.R);
-        //int GOffset = Math.Max(Orange.G, Blue.G);
-        //int BOffset = Math.Max(Orange.B, Blue.B);
+    private Color lerp(Color colour1, Color colour2, double weight)
+    {
+        double flippedWeight = (1 - weight);
+        double a = colour1.A * flippedWeight + colour2.A * weight;
+        double r = colour1.R * flippedWeight + colour2.R * weight;
+        double g = colour1.G * flippedWeight + colour2.G * weight;
+        double b = colour1.B * flippedWeight + colour2.B * weight;
+        return Color.FromArgb((int)a, (int)r, (int)g, (int)b);
+    }
 
-        //int DeltaR = Math.Abs(Orange.R - Blue.R);
-        //int DeltaG = Math.Abs(Orange.G - Blue.G);
-        //int DeltaB = Math.Abs(Orange.B - Blue.B);
+    private Color fixer(double weight)
+    {
+        //Colours from the heatmap scale provided by CIAUH
+        Color max = Color.FromArgb(255, 249, 235, 46);
+        Color high = Color.FromArgb(255, 76, 194, 108);
+        Color medium = Color.FromArgb(255, 32, 140, 141);
+        Color low = Color.FromArgb(255, 62, 78, 138);
+        Color min = Color.FromArgb(255, 68, 1, 88);
 
-        //double val = (RI - min) / (max - min);
-        //int R = ROffset - Convert.ToByte(DeltaR * (1 - val));
-        //int G = GOffset - Convert.ToByte(DeltaG * (1 - val));
-        //int B = BOffset - Convert.ToByte(DeltaB * (1 - val));
-        //HeatmapColour = Color.FromArgb(255, R, G, B);
+        if (weight >= 0 && weight < 0.25)
+        {
+            return lerp(min, low, weight * 4);
+        }
+        else if (weight >= 0.25 && weight < 0.5)
+        {
+            return lerp(low, medium, (weight - 0.25) * 4);
+        }
+        else if (weight >= 0.5 && weight < 0.75)
+        {
+            return lerp(medium, high, (weight - 0.5) * 4);
+        }
+        else if (weight >= 0.75 && weight <= 1)
+        {
+            return lerp(high, max, (weight - 0.75) * 4);
+        }
+        else
+        {
+            throw new ArgumentException("Weight must be between 0 and 1");
+        }
     }
 }
