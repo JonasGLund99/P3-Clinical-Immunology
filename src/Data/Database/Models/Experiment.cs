@@ -1,6 +1,6 @@
 ﻿namespace src.Data;
 
-class Experiment : BaseModel
+class Experiment : BaseModel<Experiment>
 {
     public Experiment(string experimentNumber, string title, string author, string description, string id) : base(id)
     {
@@ -11,15 +11,6 @@ class Experiment : BaseModel
         ClinicalTests = new List<ClinicalTest>();
         CreatedAt = DateTime.Now;
         EditedAt = CreatedAt;
-    }
-
-    public async Task SaveToDatabase() {
-        await GenericSaveToDatabase<Experiment>();
-    }
-
-    public async Task RemoveFromDatabase()
-    {
-        await GenericRemoveFromDatabase<Experiment>();
     }
 
     public string ExperimentNumber { get; set; }

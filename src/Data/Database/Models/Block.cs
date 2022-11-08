@@ -2,7 +2,7 @@
 
 namespace src.Data;
 
-class Block : BaseModel
+class Block : BaseModel<Block>
 {
     public Block(List<string> patientData, string id) : base(id)
     {
@@ -13,16 +13,6 @@ class Block : BaseModel
     List<string> PatientData;
     Color TextColour = new Color();
     double QualityControl;
-
-    public async Task SaveToDatabase()
-    {
-        await GenericSaveToDatabase<Block>();
-    }
-
-    public async Task RemoveFromDatabase()
-    {
-        await GenericRemoveFromDatabase<Block>();
-    }
 
     public void AddNplicate(Nplicate nplicate)
     {

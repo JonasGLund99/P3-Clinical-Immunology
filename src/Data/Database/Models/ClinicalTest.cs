@@ -1,6 +1,6 @@
 ﻿namespace src.Data;
 
-class ClinicalTest : BaseModel
+class ClinicalTest : BaseModel<ClinicalTest>
 {
     public ClinicalTest(string title, int nplicateSize, string description, Experiment experiment, string id) : base(id)
     {
@@ -34,15 +34,6 @@ class ClinicalTest : BaseModel
     //{
 
     //}
-    public async Task SaveToDatabase()
-    {
-        await GenericSaveToDatabase<ClinicalTest>();
-    }
-
-    public async Task RemoveFromDatabase()
-    {
-        await GenericRemoveFromDatabase<ClinicalTest>();
-    }
     public void AddSlide(Slide slide)
     {
         
@@ -76,7 +67,7 @@ class ClinicalTest : BaseModel
     }
 }
 
-class SlideDataFile : BaseModel
+class SlideDataFile : BaseModel<SlideDataFile>
 {
     public SlideDataFile(string path, string barcode, string id) : base(id)
     {

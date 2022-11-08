@@ -3,7 +3,7 @@ using System;
 
 namespace src.Data;
 
-public abstract class BaseModel
+public abstract class BaseModel<T> where T : BaseModel<T>
 {
 	public BaseModel(string id)
 	{
@@ -12,7 +12,7 @@ public abstract class BaseModel
 
     public string id;
 
-    public async Task GenericSaveToDatabase<T>() where T: BaseModel
+    public async Task SaveToDatabase()
 	{
 		await DatabaseService.Instance.SetupDatabase(); /* Waits for setupdatabase to finish so the database is running reference*/
 		Database? db = DatabaseService.Instance.Database;
@@ -24,7 +24,7 @@ public abstract class BaseModel
         );
     }
 
-	public async Task GenericRemoveFromDatabase<T>() where T: BaseModel
+	public async Task RemoveFromDatabase()
 	{
         await DatabaseService.Instance.SetupDatabase();
         Database? db = DatabaseService.Instance.Database;
