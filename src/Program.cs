@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using src.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,5 +23,8 @@ app.UseRouting();
 
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
+
+// Setup database
+await DatabaseService.Instance.SetupDatabase();
 
 app.Run();

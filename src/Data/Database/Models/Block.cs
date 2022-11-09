@@ -1,8 +1,10 @@
-﻿namespace src.Data;
+﻿using System.Drawing;
 
-class Block : BaseModel
+namespace src.Data;
+
+class Block : BaseModel<Block>
 {
-    public Block(List<string> patientData, )
+    public Block(List<string> patientData, string id) : base(id)
     {
         PatientData = patientData;
     }
@@ -11,7 +13,6 @@ class Block : BaseModel
     List<string> PatientData;
     Color TextColour = new Color();
     double QualityControl;
-
 
     public void AddNplicate(Nplicate nplicate)
     {

@@ -1,16 +1,16 @@
 ﻿namespace src.Data;
 
-class ClinicalTest : BaseModel
+class ClinicalTest : BaseModel<ClinicalTest>
 {
-    public ClinicalTest(string title, int nplicateSize, string description, Experiment experiment)
+    public ClinicalTest(string title, int nplicateSize, string description, Experiment experiment, string id) : base(id)
     {
         Title = title;
         NplicateSize = nplicateSize;
-        Desciption = description;
+        Description = description;
         PatientKeys = new Dictionary<string, string>();
         Slides = new List<Slide>();
         SlideDataFiles = new List<SlideDataFile>();
-        CreatedAt = DateTime.Now();
+        CreatedAt = DateTime.Now;
         EditedAt = CreatedAt;
         Experiments = new List<Experiment>();
         Experiments.Add(experiment);
@@ -34,7 +34,6 @@ class ClinicalTest : BaseModel
     //{
 
     //}
-
     public void AddSlide(Slide slide)
     {
         
@@ -61,15 +60,20 @@ class ClinicalTest : BaseModel
         
     }
 
-    private void UpdateMaxMinRI(decimal min, decimal max)
+    private void UpdateMaxMinRI(double min, double max)
     {
         MaxRI = max;
         MinRI = min;    
     }
 }
 
-class SlideDataFile : BaseModel
+class SlideDataFile : BaseModel<SlideDataFile>
 {
+    public SlideDataFile(string path, string barcode, string id) : base(id)
+    {
+        Path = path;
+        Barcode = barcode;
+    }
     string Path;
     string Barcode;
 }
