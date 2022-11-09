@@ -20,12 +20,13 @@ class Nplicate
 
     public void AddSpot(Spot spot)
     {
-        Spots.Add(spot);
-        if (Spots.Count == NplicateSize)
-        {
-            IsFlagged = SetFlag();
-            Mean = CalculateMean();
-        }
+        //Spots.Add(spot);
+        //if (Spots.Count == NplicateSize)
+        //{
+        //    IsFlagged = SetFlag();
+        //    Mean = CalculateMean();
+        //}
+        throw new NotImplementedException("NPLICATESIZE DOES NOT EXIST. Therefore AddSpot is not implemented");
     }
 
     private bool SetFlag()
