@@ -4,21 +4,19 @@ namespace src.Data;
 
 class Block : BaseModel
 {
-    private List<Nplicate> nplicates = new List<Nplicate>();
-    public Block(Dictionary<string, string> patientData, string id) : base(id)
+    public Block(string id, Dictionary<string, string> patientData, bool isBlank) : base(id)
     {
         PatientData = patientData;
     }
 
-
+    public List<Nplicate> Nplicates = new List<Nplicate>();
     Dictionary<string, string> PatientData;
     Color TextColour = new Color();
     public double QC { get; private set; }
 
-
     public void AddNplicate(Nplicate nplicate)
     {
-        nplicates.Add(nplicate);
+        Nplicates.Add(nplicate);
     }
 
     public void CalculateQC(Nplicate pos, Nplicate neg)

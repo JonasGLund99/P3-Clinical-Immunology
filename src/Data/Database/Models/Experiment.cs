@@ -2,14 +2,14 @@
 
 class Experiment : BaseModel
 {
-    public Experiment(string experimentNumber, string title, string author, string description)
+    public Experiment(string id, string experimentNumber, string title, string author, string description) : base(id)
     {
         ExperimentNumber = experimentNumber;
         Title = title;
         Author = author;
         Description = description;
         ClinicalTests = new List<ClinicalTest>();
-        CreatedAt = DateTime.Now();
+        CreatedAt = DateTime.Now;
         EditedAt = CreatedAt;
     }
 

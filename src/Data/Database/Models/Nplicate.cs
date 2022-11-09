@@ -1,5 +1,4 @@
 using System.Drawing;
-using System.Security.Cryptography.X509Certificates;
 
 namespace src.Data;
 
@@ -29,6 +28,7 @@ class Nplicate
             if (spot.IsFlagged)
             {
                 IsFlagged = true;
+                break;
             }
         }
     }
@@ -36,38 +36,31 @@ class Nplicate
     public void CalculateMean()
     {
         double summedIntensity = 0;
-        int notFlagged = 0;
+        int numValidSpots = 0;
 
         foreach (Spot spot in spots)
         {
             if (!spot.IsFlagged)
             {
                 summedIntensity += spot.Intensity;
-                notFlagged++;
+                numValidSpots++;
             }
         }
-        if(notFlagged == 0)
-        {
-            throw new DivideByZeroException("All spots in n-plicate are flagged");
-        }
-        Mean = summedIntensity / notFlagged;
+
+        Mean = numValidSpots == 0 ? 0 : summedIntensity / numValidSpots;
     }
 
-    public void CalculateRI(Nplicate blank, Nplicate neg)
+    public void CalculateRI(Nplicate correspondingBlank, Nplicate neg)
     {
-        if(neg.Mean == 0)
-        {
-            throw new DivideByZeroException("The mean of the negative control is 0");
-        }
-        XYZ = (Mean - blank.Mean) / neg.Mean;
-        RI = Math.Log2(XYZ);
+        XYZ = neg.Mean == 0 ? double.NaN : (Mean - correspondingBlank.Mean) / neg.Mean;
+        RI = XYZ < 1 ? 0 : Math.Log2(XYZ);
     }
 
     public void SetHeatMapColour(double max, double min)
     {
         if((max - min) == 0)
         {
-            throw new DivideByZeroException();
+            throw new DivideByZeroException("The Min and Max are the same");
         }
         HeatmapColour = fixer((RI - min) / (max - min));
     }
