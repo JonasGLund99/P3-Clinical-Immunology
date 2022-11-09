@@ -7,7 +7,6 @@ public class DatabaseService
     private static readonly DatabaseService instance = new DatabaseService();
 
     private CosmosClient client;
-    public Database? Database;
     private DatabaseService()
     {
         client = new CosmosClient(Environment.GetEnvironmentVariable("COSMOS_API_ENDPOINT"), Environment.GetEnvironmentVariable("COSMOS_API_KEY"));
@@ -19,6 +18,8 @@ public class DatabaseService
             return instance;
         }
     }
+    public Database? Database;
+
     
     public async Task SetupDatabase()
     {
