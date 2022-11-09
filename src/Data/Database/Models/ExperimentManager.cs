@@ -4,7 +4,7 @@ class ExperimentManager
 {
     static public List<Experiment> QueryExperiments(string searchParameter)
     {
-
+        throw new NotImplementedException("QueryExperiments is not implemented");
     }
 
     static public void DisassociateExperiment(Experiment experiment, ClinicalTest clinicalTest)

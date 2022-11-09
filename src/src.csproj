@@ -10,4 +10,8 @@
     <None Remove="Data\Database\Models\NewFile.txt" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.31.2" />
+  </ItemGroup>
+
 </Project>
