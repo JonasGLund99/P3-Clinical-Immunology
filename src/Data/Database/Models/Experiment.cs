@@ -10,7 +10,6 @@ class Experiment : BaseModel
         Description = description;
         CreatedAt = DateTime.Now;
         EditedAt = CreatedAt;
-        ExperimentManager.Experiments.Add(this);
     }
 
     public string ExperimentNumber { get; set; }

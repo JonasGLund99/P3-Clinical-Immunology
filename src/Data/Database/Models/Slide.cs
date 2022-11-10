@@ -2,10 +2,16 @@
 
 class Slide : BaseModel
 {
+    public Slide(string id, string barcode, List<string> blockIds) : base(id)
+    {
+        Barcode = barcode;
+        BlockIds = blockIds;
+    }
     public Slide(string id, string barcode) : base(id)
     {
         Barcode = barcode;
     }
+    public List<string> BlockIds = new List<string>();
     public List<Block> Blocks = new List<Block>();
     public string Barcode { get; private set; }
 
@@ -16,7 +22,7 @@ class Slide : BaseModel
 
     public void Delete()
     {
-        this.RemoveFromDatabase();
+        RemoveFromDatabase();
 
         foreach (Block block in Blocks)
         {

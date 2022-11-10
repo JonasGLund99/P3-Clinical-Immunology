@@ -1,16 +1,11 @@
-﻿using Microsoft.AspNetCore.Authentication.OAuth.Claims;
-using System.IO;
+﻿using System.IO;
 using System.Text.RegularExpressions;
 
 namespace src.Data;
 
 class ClinicalTest : BaseModel
 {
-    private List<SlideDataFile> slideDataFiles = new List<SlideDataFile>();
     private List<Slide> slides = new List<Slide>();
-    private Dictionary<string, bool> patientKeys = new Dictionary<string, bool>();
-    private List<string> activeKeys = new List<string>();
-    private int nplicatesInBlock { get; set; }
 
     public ClinicalTest(string id, string title, int nplicateSize, string description, Experiment experiment) : base(id)
     {
@@ -22,6 +17,10 @@ class ClinicalTest : BaseModel
         Experiments.Add(experiment);
     }
 
+    public List<SlideDataFile> SlideDataFiles = new List<SlideDataFile>();
+    public Dictionary<string, bool> PatientKeys = new Dictionary<string, bool>();
+    public List<string> ActiveKeys = new List<string>();
+    public int NplicatesInBlock { get; private set; }
     public List<Experiment> Experiments = new List<Experiment>();
     public List<string> AnalyteNames = new List<string>();
     public string Title { get; set; }
@@ -32,51 +31,51 @@ class ClinicalTest : BaseModel
     public DateTime CreatedAt { get; }
     public DateTime EditedAt { get; private set; }
 
-    public void AddSlide(Slide slide, Dictionary<string, string> patientData)
+    public void AddSlide(Slide slide, List<Dictionary<string, string>> patientData)
     {
         int numOfBlocks = 21;
         slides.Add(slide);
         for (int i = 0; i < numOfBlocks; i++)
         {
-            slide.AddBlock(new Block(Guid.NewGuid().ToString(), patientData));
+            slide.AddBlock(new Block(Guid.NewGuid().ToString(), patientData[i]));
         }
     }
 
     public void CreatePatientKeys(List<string> allKeys, params string[] shownKeys)
     {
-        patientKeys.Clear();
-        activeKeys.Clear();
+        PatientKeys.Clear();
+        ActiveKeys.Clear();
 
         foreach (string key in allKeys)
         {
-            patientKeys.Add(key, false);
+            PatientKeys.Add(key, false);
         }
 
         foreach (string key in shownKeys)
         {
-            patientKeys[key] = true;
-            activeKeys.Add(key);
+            PatientKeys[key] = true;
+            ActiveKeys.Add(key);
         }
     }
 
     private void UpdatePatientKeys(params string[] newKeys)
     {
-        foreach (string key in activeKeys)
+        foreach (string key in ActiveKeys)
         {
-            patientKeys[key] = false;
+            PatientKeys[key] = false;
         }
-        activeKeys.Clear();
+        ActiveKeys.Clear();
 
         foreach (string key in newKeys)
         {
-            patientKeys[key] = true;
-            activeKeys.Add(key);
+            PatientKeys[key] = true;
+            ActiveKeys.Add(key);
         }        
     }
 
     public void AddSlideDataFiles(params SlideDataFile[] slideDataFile)
     {        
-        slideDataFiles.AddRange(slideDataFile);
+        SlideDataFiles.AddRange(slideDataFile);
     }
 
     public void ExportClinicalTest(string exportType)
@@ -88,31 +87,31 @@ class ClinicalTest : BaseModel
     {
         int beginningIndex = 0;
         Regex start = new Regex(@"^Block\s*Row\s*Column\s*Name\s*ID", RegexOptions.IgnoreCase);
-        for (int i = 0; i < slideDataFiles.Count; i++) 
+        for (int i = 0; i < SlideDataFiles.Count; i++) 
         {
             //Read all lines in a file and add each line as an element in a string array
-            string[] allLines = File.ReadAllLines(slideDataFiles[i].Path);
+            string[] allLines = File.ReadAllLines(SlideDataFiles[i].Path);
 
             //Find the line in which the information about spots begin
             beginningIndex = Array.FindIndex(allLines, line => start.Match(line).Success);
 
             //Create string array with only spot information
-            string[] spotLines = new string[allLines.Length - beginningIndex];
+            string[] spotLines = new string[allLines.Length - 1 - beginningIndex];
             allLines.CopyTo(spotLines, beginningIndex + 1);
-
+            
             //Create array where each entry is a title for spot information
             string[] titles = allLines[beginningIndex].Split("\t");
 
             List<string> spotInfo = new List<string>();
-            nplicatesInBlock = spotLines.Length / NplicateSize;
+            NplicatesInBlock = spotLines.Length / NplicateSize;
 
            
             for (int j = 0; j < slides[i].Blocks.Count; j++)
             {
-                for (int k = 0; k < nplicatesInBlock; k++)
+                for (int k = 0; k < NplicatesInBlock; k++)
                 {
                     //Split the line with spotinformation, add the information elements to spotinfo.
-                    spotInfo.AddRange(spotLines[k * NplicateSize + (j * nplicatesInBlock * NplicateSize)].Split("\t"));
+                    spotInfo.AddRange(spotLines[k * NplicateSize + (j * NplicatesInBlock * NplicateSize)].Split("\t"));
 
                     //Find the index in spotInfo that contains the analyteType (ID) and create an Nplicate with it.
                     Nplicate nplicate = new Nplicate(spotInfo[Array.IndexOf(titles, "Id")]);
@@ -121,7 +120,7 @@ class ClinicalTest : BaseModel
                     {                        
                         if (l != 0)
                         {
-                            spotInfo.AddRange(spotLines[l + (k * NplicateSize) + (j * nplicatesInBlock * NplicateSize)].Split("\t"));
+                            spotInfo.AddRange(spotLines[l + (k * NplicateSize) + (j * NplicatesInBlock * NplicateSize)].Split("\t"));
                         }
 
                         nplicate.AddSpot(new Spot(findIntensity(spotInfo, titles), determineIfFlagged(spotInfo, titles)));
@@ -202,14 +201,13 @@ class ClinicalTest : BaseModel
 
     public void Delete()
     {
-        this.RemoveFromDatabase();
+        RemoveFromDatabase();
 
         foreach (Slide slide in slides)
         {
             slide.Delete();
         }
     }
-
 }
 
 class SlideDataFile : BaseModel

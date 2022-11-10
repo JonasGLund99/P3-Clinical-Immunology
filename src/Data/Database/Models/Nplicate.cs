@@ -57,13 +57,13 @@ class Nplicate
         return RI;
     }
 
-    public void SetHeatMapColour(double max, double min)
+    public void SetHeatMapColour(double maxRI, double minRI)
     {
-        if((max - min) == 0)
+        if((maxRI - minRI) == 0)
         {
             throw new DivideByZeroException("The Min and Max are the same");
         }
-        HeatmapColour = fixer((RI - min) / (max - min));
+        HeatmapColour = RI == double.NaN ? Color.Red : fixer((RI - minRI) / (maxRI - minRI));
     }
 
     private Color lerp(Color colour1, Color colour2, double weight)
@@ -89,15 +89,15 @@ class Nplicate
         {
             return lerp(min, low, weight * 4);
         }
-        else if (weight >= 0.25 && weight < 0.5)
+        else if (weight < 0.5)
         {
             return lerp(low, medium, (weight - 0.25) * 4);
         }
-        else if (weight >= 0.5 && weight < 0.75)
+        else if (weight < 0.75)
         {
             return lerp(medium, high, (weight - 0.5) * 4);
         }
-        else if (weight >= 0.75 && weight <= 1)
+        else if (weight <= 1)
         {
             return lerp(high, max, (weight - 0.75) * 4);
         }

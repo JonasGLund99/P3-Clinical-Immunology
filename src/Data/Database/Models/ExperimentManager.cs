@@ -1,24 +1,35 @@
-﻿namespace src.Data;
+﻿using Microsoft.Azure.Cosmos;
 
-class ExperimentManager
+namespace src.Data;
+
+static class ExperimentManager
 {
-    public static List<Experiment> Experiments = new List<Experiment>();
-
-    static public List<Experiment> QueryExperiments(string searchParameter)
+    public static async Task<List<Experiment>> QueryExperiments(string searchParameter)
     {
-        return Experiments.FindAll(exp =>
+        List<Experiment> experiments = new List<Experiment>();
+        if(DatabaseService.Instance.Database == null)
         {
-            if (exp.ExperimentNumber.Contains(searchParameter) ||
-                exp.Title.Contains(searchParameter) ||
-                exp.Author.Contains(searchParameter))
-            {
-                return true;
-            }
-            return false;
-        });
+            throw new NullReferenceException("No database");
+        }
+        string queryString = @"SELECT * FROM Experiment 
+                            WHERE ExperimentNumber LIKE '%@searchParameter%'
+                            OR Title LIKE '%@searchParameter%'
+                            OR Author LIKE '%@searchParameter%'";
+        FeedIterator<Experiment> feed = DatabaseService.Instance.Database.GetContainer("Experiment")
+                                        .GetItemQueryIterator<Experiment>(
+                                            queryDefinition: new QueryDefinition(queryString)
+                                            .WithParameter("@searchParameter", searchParameter)
+                                        );
+        while (feed.HasMoreResults)
+        {
+            FeedResponse<Experiment> response = await feed.ReadNextAsync();
+            experiments.AddRange(response);
+
+        }
+        return experiments;
     }
 
-    static public void Disassociate(Experiment experiment, ClinicalTest clinicalTest)
+    public static void Disassociate(Experiment experiment, ClinicalTest clinicalTest)
     {
         experiment.ClinicalTests.Remove(clinicalTest);
         clinicalTest.Experiments.Remove(experiment);
@@ -28,15 +39,14 @@ class ExperimentManager
         }
     }
     
-    static public void Associate(Experiment experiment, ClinicalTest clinicalTest)
+    public static void Associate(Experiment experiment, ClinicalTest clinicalTest)
     {
         experiment.ClinicalTests.Add(clinicalTest);
         clinicalTest.Experiments.Add(experiment);
     }
 
-    static public void DeleteExperiment(Experiment experiment)
+    public static void DeleteExperiment(Experiment experiment)
     {
-        Experiments.Remove(experiment);
         foreach (ClinicalTest clinicalTest in experiment.ClinicalTests)
         {
             Disassociate(experiment, clinicalTest);

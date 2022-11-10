@@ -53,10 +53,3 @@ public abstract class BaseModel
 
 
 }
-
-public class Nplicate : BaseModel
-{
-	public Nplicate(string id) : base(id)
-	{
-	}
-};
