@@ -1,0 +1,83 @@
+﻿#navButtonContainer {
+    margin-top: 0.7em;
+    display: flex;
+    flex-direction: row;
+    width: auto;
+    justify-content: space-between;
+}
+
+#navButtonContainer button {
+    padding: 0.5em 4em;
+    font-weight: 600;
+    font-size: 1.2em;
+    margin-left: 0.6em;
+    margin-right: 0.6em;
+    border-radius: 20px 20px 0px 0px;
+    border: 0;
+    background-color: #808080;
+    width: 15em;
+}
+
+#topPart {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    justify-content: space-between;
+}
+
+i {
+    margin-left: 1vw;
+    font-size: 30px;
+}
+
+#leftPart {
+    flex: 1;
+}
+
+#middlePart {
+    flex: 1;
+}
+
+#rightPart {
+    flex: 1;
+}
+
+h1 {
+    font-size: 2vw;
+    color: #E2E2E2;
+    line-height: 1;
+    margin: 0px 0px 0px 0px;
+    text-align: center;
+}
+
+span {
+    align-self: center;
+    justify-self: center;
+}
+
+#navButtonContainer button:hover {
+    background-color: #D9D9D9
+}
+
+#navButtonContainer button.active {
+    background-color: #D9D9D9
+}
+
+
+#topnavContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    background-color: #383838;
+    padding-top: 0.6em;
+}
+
+
+
+.ct-title {
+    font-weight: 600;
+}
+
+
