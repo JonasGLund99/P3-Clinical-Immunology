@@ -2,13 +2,12 @@
 
 class Experiment : BaseModel<Experiment>
 {
-    public Experiment(string experimentNumber, string title, string author, string description, string id) : base(id)
+    public Experiment(string id, string experimentNumber, string title, string author, string description) : base(id)
     {
         ExperimentNumber = experimentNumber;
         Title = title;
         Author = author;
         Description = description;
-        ClinicalTests = new List<ClinicalTest>();
         CreatedAt = DateTime.Now;
         EditedAt = CreatedAt;
     }
@@ -17,8 +16,13 @@ class Experiment : BaseModel<Experiment>
     public string Title { get; set; }
     public string Author { get; set; }
     public string Description { get; set; }
-    public List<ClinicalTest> ClinicalTests { get; private set; }
+    public List<ClinicalTest> ClinicalTests = new List<ClinicalTest>();
     public DateTime CreatedAt { get; private set; }
     public DateTime EditedAt { get; private set; }
+
+    public void UpdateEditedAt(DateTime editedAt)
+    {
+        EditedAt = editedAt;
+    }
 
 }

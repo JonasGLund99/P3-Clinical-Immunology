@@ -4,13 +4,11 @@ namespace src.Data;
 
 class Nplicate
 {
+    private List<Spot> spots = new List<Spot>();
     public Nplicate(string analyteType)
     {
         AnalyteType = analyteType;
     }
-
-    private List<Spot> Spots = new List<Spot>();
-
     public double RI { get; private set; }
     public double XYZ { get; private set; }
     public double Mean { get; private set; }
@@ -20,61 +18,92 @@ class Nplicate
 
     public void AddSpot(Spot spot)
     {
-        //Spots.Add(spot);
-        //if (Spots.Count == NplicateSize)
-        //{
-        //    IsFlagged = SetFlag();
-        //    Mean = CalculateMean();
-        //}
-        throw new NotImplementedException("NPLICATESIZE DOES NOT EXIST. Therefore AddSpot is not implemented");
+        spots.Add(spot);
     }
 
-    private bool SetFlag()
+    public void SetFlag()
     {
-        foreach (Spot spot in Spots)
+        foreach (Spot spot in spots)
         {
             if (spot.IsFlagged)
             {
-                return true;
+                IsFlagged = true;
+                break;
             }
         }
-        return false;
     }
 
-    private double CalculateMean()
+    public void CalculateMean()
     {
-        double mean = 0;
-        foreach (Spot spot in Spots)
+        double summedIntensity = 0;
+        int numValidSpots = 0;
+
+        foreach (Spot spot in spots)
         {
-            mean += spot.Intensity;
+            if (!spot.IsFlagged)
+            {
+                summedIntensity += spot.Intensity;
+                numValidSpots++;
+            }
         }
-        return mean / Spots.Count;
+
+        Mean = numValidSpots == 0 ? 0 : summedIntensity / numValidSpots;
     }
 
-    public void CalculateRI(Nplicate blank, Nplicate neg)
+    public double CalculateRI(Nplicate correspondingBlank, Nplicate neg)
     {
-        XYZ = (Mean - blank.Mean) / neg.Mean;
-        RI = Math.Log2(XYZ);
+        XYZ = neg.Mean == 0 ? double.NaN : (Mean - correspondingBlank.Mean) / neg.Mean;
+        RI = XYZ < 1 ? 0 : Math.Log2(XYZ);
+        return RI;
     }
 
-    public void SetHeatMapColour(double max, double min)
+    public void SetHeatMapColour(double maxRI, double minRI)
     {
-        //Start with DarkBlue. Inject Yellow until both Yellow and Blue is max. Then remove Blue. 
-        Color Yellow = Color.Yellow;
-        Color Blue = Color.DarkBlue;
+        if((maxRI - minRI) == 0)
+        {
+            throw new DivideByZeroException("The Min and Max are the same");
+        }
+        HeatmapColour = RI == double.NaN ? Color.Red : fixer((RI - minRI) / (maxRI - minRI));
+    }
 
-        //int ROffset = Math.Max(Orange.R, Blue.R);
-        //int GOffset = Math.Max(Orange.G, Blue.G);
-        //int BOffset = Math.Max(Orange.B, Blue.B);
+    private Color lerp(Color colour1, Color colour2, double weight)
+    {
+        double flippedWeight = (1 - weight);
+        double a = colour1.A * flippedWeight + colour2.A * weight;
+        double r = colour1.R * flippedWeight + colour2.R * weight;
+        double g = colour1.G * flippedWeight + colour2.G * weight;
+        double b = colour1.B * flippedWeight + colour2.B * weight;
+        return Color.FromArgb((int)a, (int)r, (int)g, (int)b);
+    }
 
-        //int DeltaR = Math.Abs(Orange.R - Blue.R);
-        //int DeltaG = Math.Abs(Orange.G - Blue.G);
-        //int DeltaB = Math.Abs(Orange.B - Blue.B);
+    private Color fixer(double weight)
+    {
+        //Colours from the heatmap scale provided by CIAUH
+        Color max = Color.FromArgb(255, 249, 235, 46);
+        Color high = Color.FromArgb(255, 76, 194, 108);
+        Color medium = Color.FromArgb(255, 32, 140, 141);
+        Color low = Color.FromArgb(255, 62, 78, 138);
+        Color min = Color.FromArgb(255, 68, 1, 88);
 
-        //double val = (RI - min) / (max - min);
-        //int R = ROffset - Convert.ToByte(DeltaR * (1 - val));
-        //int G = GOffset - Convert.ToByte(DeltaG * (1 - val));
-        //int B = BOffset - Convert.ToByte(DeltaB * (1 - val));
-        //HeatmapColour = Color.FromArgb(255, R, G, B);
+        if (weight >= 0 && weight < 0.25)
+        {
+            return lerp(min, low, weight * 4);
+        }
+        else if (weight < 0.5)
+        {
+            return lerp(low, medium, (weight - 0.25) * 4);
+        }
+        else if (weight < 0.75)
+        {
+            return lerp(medium, high, (weight - 0.5) * 4);
+        }
+        else if (weight <= 1)
+        {
+            return lerp(high, max, (weight - 0.75) * 4);
+        }
+        else
+        {
+            throw new ArgumentException("Weight must be between 0 and 1");
+        }
     }
 }
