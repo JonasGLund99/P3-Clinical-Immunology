@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace src.Data;
 
-class ClinicalTest : BaseModel
+class ClinicalTest : BaseModel<ClinicalTest>
 {
     private List<Slide> slides = new List<Slide>();
 
@@ -210,8 +210,13 @@ class ClinicalTest : BaseModel
     }
 }
 
-class SlideDataFile : BaseModel
+class SlideDataFile : BaseModel<SlideDataFile>
 {
+    public SlideDataFile(string id, string path, string barcode) : base(id)
+    {
+        Path = path;
+        Barcode = barcode;
+    }
     public string Path;
     public string Barcode;
 }

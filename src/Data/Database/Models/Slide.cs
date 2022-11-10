@@ -1,6 +1,6 @@
 ﻿namespace src.Data;
 
-class Slide : BaseModel
+class Slide : BaseModel<Slide>
 {
     public Slide(string id, string barcode, List<string> blockIds) : base(id)
     {
