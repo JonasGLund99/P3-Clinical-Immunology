@@ -50,10 +50,11 @@ class Nplicate
         Mean = numValidSpots == 0 ? 0 : summedIntensity / numValidSpots;
     }
 
-    public void CalculateRI(Nplicate correspondingBlank, Nplicate neg)
+    public double CalculateRI(Nplicate correspondingBlank, Nplicate neg)
     {
         XYZ = neg.Mean == 0 ? double.NaN : (Mean - correspondingBlank.Mean) / neg.Mean;
         RI = XYZ < 1 ? 0 : Math.Log2(XYZ);
+        return RI;
     }
 
     public void SetHeatMapColour(double max, double min)

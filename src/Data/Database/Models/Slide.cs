@@ -13,4 +13,14 @@ class Slide : BaseModel
     {
         Blocks.Add(block);
     }
+
+    public void Delete()
+    {
+        this.RemoveFromDatabase();
+
+        foreach (Block block in Blocks)
+        {
+            block.RemoveFromDatabase();
+        }
+    }
 }

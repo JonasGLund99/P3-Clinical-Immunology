@@ -8,17 +8,22 @@ class Experiment : BaseModel
         Title = title;
         Author = author;
         Description = description;
-        ClinicalTests = new List<ClinicalTest>();
         CreatedAt = DateTime.Now;
         EditedAt = CreatedAt;
+        ExperimentManager.Experiments.Add(this);
     }
 
     public string ExperimentNumber { get; set; }
     public string Title { get; set; }
     public string Author { get; set; }
     public string Description { get; set; }
-    public List<ClinicalTest> ClinicalTests { get; private set; }
+    public List<ClinicalTest> ClinicalTests = new List<ClinicalTest>();
     public DateTime CreatedAt { get; private set; }
     public DateTime EditedAt { get; private set; }
+
+    public void UpdateEditedAt(DateTime editedAt)
+    {
+        EditedAt = editedAt;
+    }
 
 }

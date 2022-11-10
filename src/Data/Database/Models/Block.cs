@@ -4,7 +4,7 @@ namespace src.Data;
 
 class Block : BaseModel
 {
-    public Block(string id, Dictionary<string, string> patientData, bool isBlank) : base(id)
+    public Block(string id, Dictionary<string, string> patientData) : base(id)
     {
         PatientData = patientData;
     }
@@ -23,13 +23,8 @@ class Block : BaseModel
     {
         QC = (pos.Mean - neg.Mean) / pos.Mean;
     }
-    public void SetTextColour()
+    public void SetTextColour(Color textColour)
     {
-        throw new NotImplementedException();
-    }
-    //Consider whether to place this function on Slide or maybe Clinical Test
-    public void ReadLine()
-    {
-        throw new NotImplementedException();
+        TextColour = textColour;
     }
 }
