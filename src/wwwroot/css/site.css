@@ -1,6 +1,11 @@
 @import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 :root {
-    --main-background-color: #1b6ec2;
+    --main-background-color: #d9d9d9;
+    --navbar-button-color: #808080;
+    --menu-button-color: #ebebeb;
+    --primary-dark-color: #383838;
+    --secondary-dark-color: #474747;
+    --main-text-color: #e2e2e2;
 }
 
 html, body {

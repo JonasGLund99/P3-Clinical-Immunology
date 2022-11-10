@@ -3,31 +3,31 @@
 <header id="topnavContainer">
     <div id="topPart">
         <div id="leftPart">
-            <i class="fa-solid fa-house" style="color:#D9D9D9"></i>
+            <button id="homeButton">
+                <i @onclick="NavigateToHomepage" class="fa-solid fa-house" style="color:#D9D9D9"></i>
+            </button>
         </div>
-        <div id="middlePart">
-            <h1>
+            <h1 id="middlePart">
                 <span class="ct-title">@ClinicalTestTitle</span> in @ExperimentTitle
             </h1>
-        </div>
         <div id="rightPart">
         </div>
     </div>
 
     <div id="navButtonContainer">    
-        <button @onclick="() => NavigateToPage(0)" id="details" class="@((ActiveButton == 0? "active" : ""))">
+        <button id="details" @onclick="() => NavigateToPage(0)" class="@((ActiveButton == 0? "active" : ""))">
             Details
         </button>
-        <button @onclick="() => NavigateToPage(1)" class="@((ActiveButton == 1? "active" : ""))">
+        <button id="overview" @onclick="() => NavigateToPage(1)" class="@((ActiveButton == 1? "active" : ""))">
             Overview
         </button>
-        <button @onclick="() => NavigateToPage(2)" class="@((ActiveButton == 2? "active" : ""))">
+        <button id="fileUpload" @onclick="() => NavigateToPage(2)" class="@((ActiveButton == 2? "active" : ""))">
             File Upload
         </button>
-        <button @onclick="() => NavigateToPage(3)" class="@((ActiveButton == 3? "active" : ""))">
+        <button id="resultTable" @onclick="() => NavigateToPage(3)" class="@((ActiveButton == 3? "active" : ""))">
             Result Table
         </button>
-        <button @onclick="() => NavigateToPage(4)" class="@((ActiveButton == 4? "active" : ""))">
+        <button id="heatmap" @onclick="() => NavigateToPage(4)" class="@((ActiveButton == 4? "active" : ""))">
             Heatmap
         </button>
 
@@ -79,6 +79,10 @@
         }
 
         Console.WriteLine(buttonId);
+    }
+
+    public void NavigateToHomepage() {
+        NavManager.NavigateTo("/");
     }
 
 }
