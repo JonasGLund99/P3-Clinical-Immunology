@@ -5,24 +5,30 @@ namespace src.Data;
 
 class ClinicalTest : BaseModel<ClinicalTest>
 {
-    private List<Slide> slides = new List<Slide>();
 
-    public ClinicalTest(string id, string title, int nplicateSize, string description, Experiment experiment) : base(id)
+    public ClinicalTest(string id, string title, int nplicateSize, string description, DateTime createdAt, DateTime editedAt, List<SlideDataFile> slideDataFiles, Dictionary<string, bool> patientKeys, List<string> activeKeys, int nplicatesInBlock, List<Experiment> experiments, List<Slide> slides, List<string> analyteNames) : base(id)
     {
         Title = title;
         NplicateSize = nplicateSize;
         Description = description;
-        CreatedAt = DateTime.Now;
-        EditedAt = CreatedAt;
-        Experiments.Add(experiment);
+        CreatedAt = createdAt;
+        EditedAt = editedAt;
+        SlideDataFiles = slideDataFiles;
+        PatientKeys = patientKeys;
+        ActiveKeys = activeKeys;
+        NplicatesInBlock = nplicatesInBlock;
+        Experiments = experiments;
+        Slides = slides;
+        AnalyteNames = analyteNames;
     }
 
-    public List<SlideDataFile> SlideDataFiles = new List<SlideDataFile>();
-    public Dictionary<string, bool> PatientKeys = new Dictionary<string, bool>();
-    public List<string> ActiveKeys = new List<string>();
+    public List<SlideDataFile> SlideDataFiles { get; set; } = new List<SlideDataFile>();
+    public Dictionary<string, bool> PatientKeys { get; set; } = new Dictionary<string, bool>();
+    public List<string> ActiveKeys { get; set; } = new List<string>();
     public int NplicatesInBlock { get; private set; }
-    public List<Experiment> Experiments = new List<Experiment>();
-    public List<string> AnalyteNames = new List<string>();
+    public List<Experiment> Experiments { get; set; } = new List<Experiment>();
+    public List<Slide> Slides = new List<Slide>();
+    public List<string> AnalyteNames { get; set; } = new List<string>();
     public string Title { get; set; }
     public int NplicateSize { get; set; }
     public string Description { get; set; }
@@ -34,10 +40,10 @@ class ClinicalTest : BaseModel<ClinicalTest>
     public void AddSlide(Slide slide, List<Dictionary<string, string>> patientData)
     {
         int numOfBlocks = 21;
-        slides.Add(slide);
+        Slides.Add(slide);
         for (int i = 0; i < numOfBlocks; i++)
         {
-            slide.AddBlock(new Block(Guid.NewGuid().ToString(), patientData[i]));
+            slide.Blocks.Add(new Block(patientData[i]));
         }
     }
 
@@ -90,7 +96,7 @@ class ClinicalTest : BaseModel<ClinicalTest>
         for (int i = 0; i < SlideDataFiles.Count; i++) 
         {
             //Read all lines in a file and add each line as an element in a string array
-            string[] allLines = File.ReadAllLines(SlideDataFiles[i].Path);
+            string[] allLines = SlideDataFiles[i].Content.Split("\n");
 
             //Find the line in which the information about spots begin
             beginningIndex = Array.FindIndex(allLines, line => start.Match(line).Success);
@@ -106,7 +112,7 @@ class ClinicalTest : BaseModel<ClinicalTest>
             NplicatesInBlock = spotLines.Length / NplicateSize;
 
            
-            for (int j = 0; j < slides[i].Blocks.Count; j++)
+            for (int j = 0; j < Slides[i].Blocks.Count; j++)
             {
                 for (int k = 0; k < NplicatesInBlock; k++)
                 {
@@ -123,28 +129,28 @@ class ClinicalTest : BaseModel<ClinicalTest>
                             spotInfo.AddRange(spotLines[l + (k * NplicateSize) + (j * NplicatesInBlock * NplicateSize)].Split("\t"));
                         }
 
-                        nplicate.AddSpot(new Spot(findIntensity(spotInfo, titles), determineIfFlagged(spotInfo, titles)));
+                        nplicate.Spots.Add(new Spot(findIntensity(spotInfo, titles), determineIfFlagged(spotInfo, titles)));
                         spotInfo.Clear();
                     }
                         //Calculate the mean and set if the Nplicate are flagged.
                         nplicate.CalculateMean();
                         nplicate.SetFlag();
 
-                        slides[i].Blocks[j].AddNplicate(nplicate);
+                        Slides[i].Blocks[j].Nplicates.Add(nplicate);
                 }
-                Nplicate? pos = slides[i].Blocks[j].Nplicates.Find(nplicate => nplicate.AnalyteType == "pos");
-                Nplicate? neg = slides[i].Blocks[j].Nplicates.Find(element => element.AnalyteType == "neg");
+                Nplicate? pos = Slides[i].Blocks[j].Nplicates.Find(nplicate => nplicate.AnalyteType == "pos");
+                Nplicate? neg = Slides[i].Blocks[j].Nplicates.Find(element => element.AnalyteType == "neg");
 
                 //Calculate the Quality control if the positive and negative control exist
                 if (pos == null || neg == null)
                 {
                     throw new NullReferenceException("Either the positive or negative control is missing");
                 }
-                slides[i].Blocks[j].CalculateQC(pos, neg);
+                Slides[i].Blocks[j].CalculateQC(pos, neg);
             }
 
             //Calculate the RI for each Nplicate in each block and update max / min RI
-            foreach (Block block in slides[i].Blocks)
+            foreach (Block block in Slides[i].Blocks)
             {
                 Nplicate? neg = block.Nplicates.Find(element => element.AnalyteType == "neg");
                 
@@ -155,13 +161,13 @@ class ClinicalTest : BaseModel<ClinicalTest>
 
                 for (int j = 0; j < block.Nplicates.Count; j++)
                 {
-                    updateMaxMinRI(block.Nplicates[j].CalculateRI(slides[i].Blocks[slides[i].Blocks.Count - 1].Nplicates[j], neg));
+                    updateMaxMinRI(block.Nplicates[j].CalculateRI(Slides[i].Blocks[Slides[i].Blocks.Count - 1].Nplicates[j], neg));
                 }
             }
         }
 
         //Set the heatmapcolour of all Nplicates (The RI of all Nplicates in all slides must be calculated before)
-        foreach (Slide slide in slides)
+        foreach (Slide slide in Slides)
         {
             foreach (Block block in slide.Blocks)
             {
@@ -170,7 +176,6 @@ class ClinicalTest : BaseModel<ClinicalTest>
                     nplicate.SetHeatMapColour(MaxRI, MinRI);
                 }
             }
-
         }
     }
     private double findIntensity(List<string> spotInfo, params string[] titles)
@@ -193,30 +198,11 @@ class ClinicalTest : BaseModel<ClinicalTest>
             MinRI = RI;
         }
     }
-    
-    public void UpdateEditedAt(DateTime editedAt)
-    {
-        EditedAt = editedAt;
-    }
 
-    public void Delete()
+    public async Task Delete()
     {
-        RemoveFromDatabase();
-
-        foreach (Slide slide in slides)
-        {
-            slide.Delete();
-        }
+        await RemoveFromDatabase();
     }
 }
 
-class SlideDataFile : BaseModel<SlideDataFile>
-{
-    public SlideDataFile(string id, string path, string barcode) : base(id)
-    {
-        Path = path;
-        Barcode = barcode;
-    }
-    public string Path;
-    public string Barcode;
-}
+
