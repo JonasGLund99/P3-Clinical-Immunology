@@ -1,6 +1,6 @@
 namespace src.Data;
 
-class Spot
+public class Spot
 {
     public Spot(double intensity, bool flagged)
     {

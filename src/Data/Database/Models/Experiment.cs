@@ -1,6 +1,6 @@
 ﻿namespace src.Data;
 
-class Experiment : BaseModel<Experiment>
+public class Experiment : BaseModel<Experiment>
 {
     public Experiment(string experimentNumber, string title, string author, string description, string id) : base(id)
     {

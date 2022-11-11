@@ -1,6 +1,6 @@
 ﻿namespace src.Data;
 
-class ClinicalTest : BaseModel<ClinicalTest>
+public class ClinicalTest : BaseModel<ClinicalTest>
 {
     public ClinicalTest(string title, int nplicateSize, string description, Experiment experiment, string id) : base(id)
     {
@@ -67,7 +67,7 @@ class ClinicalTest : BaseModel<ClinicalTest>
     }
 }
 
-class SlideDataFile : BaseModel<SlideDataFile>
+public class SlideDataFile : BaseModel<SlideDataFile>
 {
     public SlideDataFile(string path, string barcode, string id) : base(id)
     {

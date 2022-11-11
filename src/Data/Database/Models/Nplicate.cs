@@ -2,7 +2,7 @@ using System.Drawing;
 
 namespace src.Data;
 
-class Nplicate
+public class Nplicate
 {
     public Nplicate(string analyteType)
     {

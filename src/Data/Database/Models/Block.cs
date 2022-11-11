@@ -2,7 +2,7 @@
 
 namespace src.Data;
 
-class Block : BaseModel<Block>
+public class Block : BaseModel<Block>
 {
     public Block(List<string> patientData, string id) : base(id)
     {

@@ -1,6 +1,6 @@
 ﻿namespace src.Data;
 
-class ExperimentManager
+public class ExperimentManager
 {
     static public List<Experiment> QueryExperiments(string searchParameter)
     {
