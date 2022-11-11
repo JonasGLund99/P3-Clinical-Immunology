@@ -9,7 +9,7 @@
         <div id="experiment-header" class="menu-header">Experiments</div>
         <div class="toolbar">
             <button>+ Add</button>
-            <input type="text" placeholder="Search...">
+            <input type="text" placeholder="Search..." @oninput="@searchExperiments">
         </div>
         <div id="experiment-grid">
             <div class="grid-header">
@@ -23,7 +23,7 @@
                 <span>Loading...</span>
             } 
             else {
-                foreach (Exp e in experiments) {
+                @foreach (Experiment e in experiments) {
                     <div class="grid-content" @onclick="() => showClinicalTests(e)">
                         <span>@e.ExperimentNumber</span>
                         <span>@e.Author</span>
@@ -49,7 +49,7 @@
                 <span>Select an experiment</span>
             }
             else {
-                foreach (CT ct in currentClinicalTests) {
+                foreach (ClinicalTest ct in currentClinicalTests) {
                     <div class="grid-content">
                         <span>@ct.Title</span>
                     </div>
@@ -61,40 +61,35 @@
 
 
 @code {
+    private List<Experiment>? experiments;
+    private List<ClinicalTest>? currentClinicalTests;
 
-    private List<Exp>? experiments;
-    private List<CT>? currentClinicalTests;
+    private string? experimentSearchValue { get; set; }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender) {
-            experiments = new List<Exp>();
-            if (DatabaseService.Instance.Database == null) throw new NullReferenceException("Database is null");
-            FeedIterator<Exp> feed = DatabaseService.Instance.Database.GetContainer("Exp").GetItemQueryIterator<Exp>(
-                queryDefinition: new QueryDefinition("SELECT * FROM Exp")
-            );
-
-            while(feed.HasMoreResults) {
-                FeedResponse<Exp> response = await feed.ReadNextAsync();
-
-                foreach(Exp item in response) {
-                    experiments.Add(item);
-                }
-            }
+            experiments = await ExperimentManager.QueryExperiments("");
             StateHasChanged();
         }
     }
-    private async void showClinicalTests(Exp exp) {
-        currentClinicalTests = new List<CT>();
+    private async void searchExperiments(ChangeEventArgs args) {
+        string? experimentSearchValue = args.Value?.ToString();
+        if (experimentSearchValue == null) return;
+        experiments = await ExperimentManager.QueryExperiments(experimentSearchValue);
+        StateHasChanged();
+    }
+    private async void showClinicalTests(Experiment exp) {
+        currentClinicalTests = new List<ClinicalTest>();
         if (DatabaseService.Instance.Database == null) throw new NullReferenceException("Database is null");
-        FeedIterator<CT> feed = DatabaseService.Instance.Database.GetContainer("CT").GetItemQueryIterator<CT>(
+        FeedIterator<ClinicalTest> feed = DatabaseService.Instance.Database.GetContainer("ClinicalTest").GetItemQueryIterator<ClinicalTest>(
             queryDefinition: new QueryDefinition("SELECT * FROM ClinicalTest WHERE ARRAY_CONTAINS(ClinicalTest.ExperimentIds, @id)").WithParameter("@id", exp.id)
         );
 
         while(feed.HasMoreResults) {
-            FeedResponse<CT> response = await feed.ReadNextAsync();
+            FeedResponse<ClinicalTest> response = await feed.ReadNextAsync();
 
-            foreach(CT item in response) {
+            foreach(ClinicalTest item in response) {
                 currentClinicalTests.Add(item);
             }
         }

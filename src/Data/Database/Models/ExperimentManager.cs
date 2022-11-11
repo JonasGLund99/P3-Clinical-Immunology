@@ -11,10 +11,12 @@ static class ExperimentManager
         {
             throw new NullReferenceException("No database");
         }
+        
         string queryString = @"SELECT * FROM Experiment 
-                            WHERE ExperimentNumber LIKE '%@searchParameter%'
-                            OR Title LIKE '%@searchParameter%'
-                            OR Author LIKE '%@searchParameter%'";
+                            WHERE CONTAINS(Experiment.ExperimentNumber, @searchParameter, true)
+                            OR CONTAINS(Experiment.Title, @searchParameter, true)
+                            OR CONTAINS(Experiment.Author, @searchParameter, true)";
+
         FeedIterator<Experiment> feed = DatabaseService.Instance.Database.GetContainer("Experiment")
                                         .GetItemQueryIterator<Experiment>(
                                             queryDefinition: new QueryDefinition(queryString)
@@ -31,26 +33,26 @@ static class ExperimentManager
 
     public static void Disassociate(Experiment experiment, ClinicalTest clinicalTest)
     {
-        experiment.ClinicalTests.Remove(clinicalTest);
-        clinicalTest.Experiments.Remove(experiment);
-        if (clinicalTest.Experiments.Count == 0)
-        {
-            clinicalTest.Delete();
-        }
+        // experiment.ClinicalTests.Remove(clinicalTest);
+        // clinicalTest.Experiments.Remove(experiment);
+        // if (clinicalTest.Experiments.Count == 0)
+        // {
+        //     clinicalTest.Delete();
+        // }
     }
     
     public static void Associate(Experiment experiment, ClinicalTest clinicalTest)
     {
-        experiment.ClinicalTests.Add(clinicalTest);
-        clinicalTest.Experiments.Add(experiment);
+        // experiment.ClinicalTests.Add(clinicalTest);
+        // clinicalTest.Experiments.Add(experiment);
     }
 
     public static void DeleteExperiment(Experiment experiment)
     {
-        foreach (ClinicalTest clinicalTest in experiment.ClinicalTests)
-        {
-            Disassociate(experiment, clinicalTest);
-        }
-        experiment.RemoveFromDatabase();
+        // foreach (ClinicalTest clinicalTest in experiment.ClinicalTests)
+        // {
+        //     Disassociate(experiment, clinicalTest);
+        // }
+        // experiment.RemoveFromDatabase();
     }
 }

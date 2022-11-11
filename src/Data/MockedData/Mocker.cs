@@ -15,21 +15,34 @@ static class Mocker
 
     public static async Task Mock(Database database) {
         for (int i = 0; i < numExperiments; i++) {
-            Exp e = new Exp(
+            Experiment e = new Experiment(
                 id: Guid.NewGuid().ToString(),
                 experimentNumber: $"EXP-{i + 1}",
                 title: $"Experiment {i + 1}",
                 author: authors[r.Next(0, 5)],
-                description: "Some description"
+                description: "Some description",
+                clinicalTestIds: new List<string>(),
+                createdAt: DateTime.Now,
+                editedAt: DateTime.Now
             );
             await e.SaveToDatabase();
 
             int numCT = r.Next(1, 6);
             for (int j = 0; j < numCT; j++) {
-                CT ct = new CT(
+                ClinicalTest ct = new ClinicalTest(
                     id: Guid.NewGuid().ToString(),
                     title: $"Test {j + 1} in {e.ExperimentNumber}",
-                    experimentIds: new List<string>() { e.id }
+                    nplicateSize: 3,
+                    description: "Some description",
+                    createdAt: DateTime.Now,
+                    editedAt: DateTime.Now,
+                    slideDataFiles: new List<SlideDataFile>(),
+                    patientKeys: new Dictionary<string, bool>(),
+                    activeKeys: new List<string>(),
+                    nplicatesInBlock: 72,
+                    experimentIds: new List<string>() { e.id },
+                    slides: new List<Slide>(),
+                    analyteNames: new List<string>()
                 );
                 await ct.SaveToDatabase();
             }

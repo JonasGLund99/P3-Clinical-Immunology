@@ -6,7 +6,7 @@ namespace src.Data;
 class ClinicalTest : BaseModel<ClinicalTest>
 {
 
-    public ClinicalTest(string id, string title, int nplicateSize, string description, DateTime createdAt, DateTime editedAt, List<SlideDataFile> slideDataFiles, Dictionary<string, bool> patientKeys, List<string> activeKeys, int nplicatesInBlock, List<Experiment> experiments, List<Slide> slides, List<string> analyteNames) : base(id)
+    public ClinicalTest(string id, string title, int nplicateSize, string description, DateTime createdAt, DateTime editedAt, List<SlideDataFile> slideDataFiles, Dictionary<string, bool> patientKeys, List<string> activeKeys, int nplicatesInBlock, List<string> experimentIds, List<Slide> slides, List<string> analyteNames) : base(id)
     {
         Title = title;
         NplicateSize = nplicateSize;
@@ -17,7 +17,7 @@ class ClinicalTest : BaseModel<ClinicalTest>
         PatientKeys = patientKeys;
         ActiveKeys = activeKeys;
         NplicatesInBlock = nplicatesInBlock;
-        Experiments = experiments;
+        ExperimentIds = experimentIds;
         Slides = slides;
         AnalyteNames = analyteNames;
     }
@@ -26,7 +26,7 @@ class ClinicalTest : BaseModel<ClinicalTest>
     public Dictionary<string, bool> PatientKeys { get; set; } = new Dictionary<string, bool>();
     public List<string> ActiveKeys { get; set; } = new List<string>();
     public int NplicatesInBlock { get; private set; }
-    public List<Experiment> Experiments { get; set; } = new List<Experiment>();
+    public List<string> ExperimentIds { get; set; } = new List<string>();
     public List<Slide> Slides = new List<Slide>();
     public List<string> AnalyteNames { get; set; } = new List<string>();
     public string Title { get; set; }
