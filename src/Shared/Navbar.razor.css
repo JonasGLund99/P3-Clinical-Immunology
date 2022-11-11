@@ -33,6 +33,7 @@ i {
 
 #leftPart {
     flex: 1;
+    text-align: left;
 }
 
 #middlePart {
@@ -68,7 +69,9 @@ span {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: space-evenly;
     width: 100%;
+    height: fit-content;
     background-color: var(--primary-dark-color);
     padding-top: 0.6em;
 }
@@ -82,3 +85,4 @@ span {
     background-color: var(--primary-dark-color);
     border: none;
 }
+

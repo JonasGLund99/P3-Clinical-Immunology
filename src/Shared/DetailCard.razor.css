@@ -1,0 +1,32 @@
+﻿.navbar {
+    grid-area: header;
+    height: fit-content;
+}
+
+.leftCard {
+    grid-area: leftcard;
+    background-color: var(--leftcard-color);
+    margin: 3vw 1.5vw 3vw 3vw;
+}
+
+.rightCard {
+    grid-area: rightcard;
+    background-color: var(--rightcard-color);
+    margin: 3vw 3vw 3vw 1.5vw;
+}
+
+.gridContainer {
+    display: grid;
+    grid-template-rows: fit-content(100%);
+    grid-template-areas:
+        'header header'
+        'leftcard rightcard';
+    width: 100vw;
+    height: 100vh;
+}
+
+.gridContainer > div {
+    text-align: center;
+    padding: 0px 0px 0px 0px;
+    font-size: 30px;
+}
