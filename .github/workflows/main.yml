@@ -13,7 +13,5 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 6.0.x
-    - name: Enter test directory
-      run: cd Tests && ls
     - name: Restore dependencies
-      run: ls && dotnet test
+      run: cd Tests && dotnet test
