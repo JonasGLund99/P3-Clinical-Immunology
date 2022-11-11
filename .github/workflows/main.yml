@@ -14,4 +14,4 @@ jobs:
       with:
         dotnet-version: 6.0.x
     - name: Run tests
-      run: cd Tests && dotnet test
+      run: cd src.Tests && dotnet test
