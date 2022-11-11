@@ -1,0 +1,52 @@
+﻿@inject NavigationManager NavManager
+
+<header id="topnavContainer">
+    <div id="topPart">
+        <div id="leftPart">
+            <button id="homeButton">
+                <i @onclick="NavigateToHomepage" class="fa-solid fa-house" style="color:#D9D9D9"></i>
+            </button>
+        </div>
+            <h1 id="middlePart">
+                <span class="ct-title">@ClinicalTestTitle</span> in @ExperimentTitle
+            </h1>
+        <div id="rightPart">
+        </div>
+    </div>
+
+    <div id="navButtonContainer">    
+        <button id="details" @onclick="() => SetActiveButton(0)" class="@((ActiveButton == 0 ? "active" : ""))">
+            Details
+        </button>
+        <button id="overview" @onclick="() => SetActiveButton(1)" class="@((ActiveButton == 1 ? "active" : ""))">
+            Overview
+        </button>
+        <button id="fileUpload" @onclick="() => SetActiveButton(2)" class="@((ActiveButton == 2 ? "active" : ""))">
+            File Upload
+        </button>
+        <button id="resultTable" @onclick="() => SetActiveButton(3)" class="@((ActiveButton == 3 ? "active" : ""))">
+            Result Table
+        </button>
+        <button id="heatmap" @onclick="() => SetActiveButton(4)" class="@((ActiveButton == 4 ? "active" : ""))">
+            Heatmap
+        </button>
+
+    </div>
+</header>
+
+@code {
+    public int ActiveButton { get; set; } = 0;
+    [Parameter]
+    public string ClinicalTestTitle { get; set; } = "";
+    [Parameter]
+    public string ExperimentTitle { get; set; } = "";
+
+
+    public void SetActiveButton(int buttonId) {
+        ActiveButton = buttonId;
+    }
+
+    public void NavigateToHomepage() {
+        NavManager.NavigateTo("/");
+    }
+}

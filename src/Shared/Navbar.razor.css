@@ -1,0 +1,84 @@
+﻿#navButtonContainer {
+    margin-top: 0.7em;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+#navButtonContainer button {
+    padding: 0.5vw 4vw;
+    font-weight: 600;
+    font-size: 1.2vw;
+    margin-left: 0.6vw;
+    margin-right: 0.6vw;
+    border-radius: 20px 20px 0px 0px;
+    border: 0;
+    background-color: var(--navbar-button-color);
+    width: 15vw;
+    white-space: nowrap;
+    align-items: center;
+}
+
+#topPart {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    justify-content: space-between;
+}
+
+i {
+    font-size: 1.5vw;
+}
+
+#leftPart {
+    flex: 1;
+}
+
+#middlePart {
+    flex: 1;
+}
+
+#rightPart {
+    flex: 1;
+}
+
+h1 {
+    font-size: 2vw;
+    color: var(--main-text-color);
+    line-height: 1;
+    margin: 0px 0px 0px 0px;
+    text-align: center;
+}
+
+span {
+    align-self: center;
+    justify-self: center;
+}
+
+#navButtonContainer button:hover {
+    background-color: var(--main-background-color)
+}
+
+#navButtonContainer button.active {
+    background-color: var(--main-background-color)
+}
+
+#topnavContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    background-color: var(--primary-dark-color);
+    padding-top: 0.6em;
+}
+
+.ct-title {
+    font-weight: 600;
+}
+
+#homeButton {
+    margin-left: 1vw;
+    background-color: var(--primary-dark-color);
+    border: none;
+}

@@ -2,7 +2,7 @@
 
 namespace src.Data;
 
-static class ExperimentManager
+public static class ExperimentManager
 {
     public static async Task<List<Experiment>> QueryExperiments(string searchParameter)
     {
