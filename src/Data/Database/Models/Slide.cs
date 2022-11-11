@@ -1,6 +1,6 @@
 ﻿namespace src.Data;
 
-class Slide
+public class Slide
 {
     public Slide(string barcode, List<Block> blocks)
     {

@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace src.Data;
 
-class ClinicalTest : BaseModel<ClinicalTest>
+public class ClinicalTest : BaseModel<ClinicalTest>
 {
 
     public ClinicalTest(string id, string title, int nplicateSize, string description, DateTime createdAt, DateTime editedAt, List<SlideDataFile> slideDataFiles, Dictionary<string, bool> patientKeys, List<string> activeKeys, int nplicatesInBlock, List<string> experimentIds, List<Slide> slides, List<string> analyteNames) : base(id)

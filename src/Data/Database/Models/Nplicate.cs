@@ -2,7 +2,7 @@ using System.Drawing;
 
 namespace src.Data;
 
-class Nplicate
+public class Nplicate
 {
     public Nplicate(double ri, double xyz, double mean, string analyteType, bool isFlagged, Color heatmapColour, List<Spot> spots)
     {

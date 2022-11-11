@@ -2,7 +2,7 @@
 
 namespace src.Data;
 
-class Block
+public class Block
 {
     public Block(Dictionary<string, string> patientData, List<Nplicate> nplicates, Color textColour, double qc)
     {

@@ -3,7 +3,7 @@
 namespace src.Data;
 
 
-class Experiment : BaseModel<Experiment>
+public class Experiment : BaseModel<Experiment>
 {
     public Experiment(string id, string experimentNumber, string title, string author, string description, List<string> clinicalTestIds, DateTime createdAt, DateTime editedAt) : base(id)
     {

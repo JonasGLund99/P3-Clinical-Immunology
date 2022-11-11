@@ -1,6 +1,6 @@
 namespace src.Data;
 
-class SlideDataFile
+public class SlideDataFile
 {
     public SlideDataFile(string filename, string content)
     {
