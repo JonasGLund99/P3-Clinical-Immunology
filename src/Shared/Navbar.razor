@@ -15,19 +15,19 @@
     </div>
 
     <div id="navButtonContainer">    
-        <button id="details" @onclick="() => NavigateToPage(0)" class="@((ActiveButton == 0? "active" : ""))">
+        <button id="details" @onclick="() => SetActiveButton(0)" class="@((ActiveButton == 0 ? "active" : ""))">
             Details
         </button>
-        <button id="overview" @onclick="() => NavigateToPage(1)" class="@((ActiveButton == 1? "active" : ""))">
+        <button id="overview" @onclick="() => SetActiveButton(1)" class="@((ActiveButton == 1 ? "active" : ""))">
             Overview
         </button>
-        <button id="fileUpload" @onclick="() => NavigateToPage(2)" class="@((ActiveButton == 2? "active" : ""))">
+        <button id="fileUpload" @onclick="() => SetActiveButton(2)" class="@((ActiveButton == 2 ? "active" : ""))">
             File Upload
         </button>
-        <button id="resultTable" @onclick="() => NavigateToPage(3)" class="@((ActiveButton == 3? "active" : ""))">
+        <button id="resultTable" @onclick="() => SetActiveButton(3)" class="@((ActiveButton == 3 ? "active" : ""))">
             Result Table
         </button>
-        <button id="heatmap" @onclick="() => NavigateToPage(4)" class="@((ActiveButton == 4? "active" : ""))">
+        <button id="heatmap" @onclick="() => SetActiveButton(4)" class="@((ActiveButton == 4 ? "active" : ""))">
             Heatmap
         </button>
 
@@ -35,54 +35,18 @@
 </header>
 
 @code {
-    private int? _activeButton;
-
+    public int ActiveButton { get; set; } = 0;
     [Parameter]
-    public string? ClinicalTestTitle { get; set; }
-
+    public string ClinicalTestTitle { get; set; } = "";
     [Parameter]
-    public int? ActiveButton { 
-        get
-        {
-            return _activeButton;
-        }
-        set
-        {
-            if (value < 0 || value > 4)
-            {
-                throw new ArgumentException("ActiveButton must have a value between 0 and 4");
-            }
-            _activeButton = value;
-        }
-    }
+    public string ExperimentTitle { get; set; } = "";
 
-    [Parameter]
-    public string? ExperimentTitle { get; set; }
 
-    public void NavigateToPage(int buttonId) {
-        switch(buttonId) {
-            case 0:
-                ActiveButton = 0;
-                break;
-            case 1: 
-                ActiveButton = 1;
-                break;
-            case 2: 
-                ActiveButton = 2;
-                break;
-            case 3: 
-                ActiveButton = 3;
-                break;
-            case 4: 
-                ActiveButton = 4;
-                break;
-        }
-
-        Console.WriteLine(buttonId);
+    public void SetActiveButton(int buttonId) {
+        ActiveButton = buttonId;
     }
 
     public void NavigateToHomepage() {
         NavManager.NavigateTo("/");
     }
-
 }
