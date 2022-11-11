@@ -3,7 +3,7 @@ using src.Data;
 
 static class Mocker
 {
-    static int numExperiments = 5;
+    static int numExperiments = 20;
     static List<string> authors = new List<string>() {
         "Rikke Bæk",
         "Malene Hansen",
@@ -39,7 +39,6 @@ static class Mocker
                     slideDataFiles: new List<SlideDataFile>(),
                     patientKeys: new Dictionary<string, bool>(),
                     activeKeys: new List<string>(),
-                    nplicatesInBlock: 72,
                     experimentIds: new List<string>() { e.id },
                     slides: new List<Slide>(),
                     analyteNames: new List<string>()

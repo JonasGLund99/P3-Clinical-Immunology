@@ -7,7 +7,7 @@ public static class ExperimentManager
     public static async Task<List<Experiment>> QueryExperiments(string searchParameter)
     {
         List<Experiment> experiments = new List<Experiment>();
-        if(DatabaseService.Instance.Database == null)
+        if (DatabaseService.Instance.Database == null)
         {
             throw new NullReferenceException("No database");
         }
@@ -22,29 +22,41 @@ public static class ExperimentManager
                                             queryDefinition: new QueryDefinition(queryString)
                                             .WithParameter("@searchParameter", searchParameter)
                                         );
+
         while (feed.HasMoreResults)
         {
             FeedResponse<Experiment> response = await feed.ReadNextAsync();
             experiments.AddRange(response);
-
         }
         return experiments;
     }
 
-    public static void Disassociate(Experiment experiment, ClinicalTest clinicalTest)
+    // Deletes the relation between an experiment and clinical test, 
+    // and deletes the clinical test if it is not related to any other experiments
+    public static async Task Disassociate(Experiment experiment, ClinicalTest clinicalTest)
     {
-        // experiment.ClinicalTests.Remove(clinicalTest);
-        // clinicalTest.Experiments.Remove(experiment);
-        // if (clinicalTest.Experiments.Count == 0)
-        // {
-        //     clinicalTest.Delete();
-        // }
+        experiment.ClinicalTestIds.Remove(clinicalTest.id);
+        await experiment.SaveToDatabase();
+
+        clinicalTest.ExperimentIds.Remove(experiment.id);
+        
+        if (clinicalTest.ExperimentIds.Count == 0)
+        {
+            await clinicalTest.RemoveFromDatabase();
+        } 
+        else 
+        {
+            await clinicalTest.SaveToDatabase();
+        }
     }
     
-    public static void Associate(Experiment experiment, ClinicalTest clinicalTest)
+    public static async Task Associate(Experiment experiment, ClinicalTest clinicalTest)
     {
-        // experiment.ClinicalTests.Add(clinicalTest);
-        // clinicalTest.Experiments.Add(experiment);
+        experiment.ClinicalTestIds.Add(clinicalTest.id);
+        await experiment.SaveToDatabase();
+
+        clinicalTest.ExperimentIds.Add(experiment.id);
+        await clinicalTest.SaveToDatabase();
     }
 
     public static void DeleteExperiment(Experiment experiment)

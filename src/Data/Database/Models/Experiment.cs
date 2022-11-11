@@ -14,15 +14,16 @@ public class Experiment : BaseModel<Experiment>
         CreatedAt = createdAt;
         EditedAt = editedAt;
     }
+    public Experiment(string id) : base(id) { }
 
-    public string ExperimentNumber { get; set; }
-    public string Title { get; set; }
-    public string Author { get; set; }
-    public string Description { get; set; }
-    public List<string> ClinicalTestIds { get; set; }
+    public string ExperimentNumber { get; set; } = "";
+    public string Title { get; set; } = "";
+    public string Author { get; set; } = "";
+    public string Description { get; set; } = "";
+    public List<string> ClinicalTestIds { get; set; } = new List<string>();
     public List<ClinicalTest> ClinicalTests = new List<ClinicalTest>();
-    public DateTime CreatedAt { get; private set; }
-    public DateTime EditedAt { get; private set; }
+    public DateTime CreatedAt { get; private set; } = DateTime.Now;
+    public DateTime EditedAt { get; private set; } = DateTime.Now;
 
     public async Task<List<ClinicalTest>> QueryClinicalTests(string searchParameter) {
         List<ClinicalTest> clinicalTests = new List<ClinicalTest>();

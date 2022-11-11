@@ -1,12 +1,12 @@
-﻿using System.IO;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 
 namespace src.Data;
 
 public class ClinicalTest : BaseModel<ClinicalTest>
 {
+    private int nplicatesInBlock { get; set; }
 
-    public ClinicalTest(string id, string title, int nplicateSize, string description, DateTime createdAt, DateTime editedAt, List<SlideDataFile> slideDataFiles, Dictionary<string, bool> patientKeys, List<string> activeKeys, int nplicatesInBlock, List<string> experimentIds, List<Slide> slides, List<string> analyteNames) : base(id)
+    public ClinicalTest(string id, string title, int nplicateSize, string description, DateTime createdAt, DateTime editedAt, List<SlideDataFile> slideDataFiles, Dictionary<string, bool> patientKeys, List<string> activeKeys, List<string> experimentIds, List<Slide> slides, List<string> analyteNames) : base(id)
     {
         Title = title;
         NplicateSize = nplicateSize;
@@ -16,26 +16,25 @@ public class ClinicalTest : BaseModel<ClinicalTest>
         SlideDataFiles = slideDataFiles;
         PatientKeys = patientKeys;
         ActiveKeys = activeKeys;
-        NplicatesInBlock = nplicatesInBlock;
         ExperimentIds = experimentIds;
         Slides = slides;
         AnalyteNames = analyteNames;
     }
+    public ClinicalTest(string id) : base(id) { }
 
     public List<SlideDataFile> SlideDataFiles { get; set; } = new List<SlideDataFile>();
     public Dictionary<string, bool> PatientKeys { get; set; } = new Dictionary<string, bool>();
     public List<string> ActiveKeys { get; set; } = new List<string>();
-    public int NplicatesInBlock { get; private set; }
     public List<string> ExperimentIds { get; set; } = new List<string>();
-    public List<Slide> Slides = new List<Slide>();
+    public List<Slide> Slides { get; set; } = new List<Slide>();
     public List<string> AnalyteNames { get; set; } = new List<string>();
-    public string Title { get; set; }
-    public int NplicateSize { get; set; }
-    public string Description { get; set; }
-    public double MaxRI { get; private set; }
-    public double MinRI { get; private set; }
-    public DateTime CreatedAt { get; }
-    public DateTime EditedAt { get; private set; }
+    public string Title { get; set; } = "";
+    public int NplicateSize { get; set; } = 3;
+    public string Description { get; set; } = "";
+    public double MaxRI { get; private set; } = 0;
+    public double MinRI { get; private set; } = 0;
+    public DateTime CreatedAt { get; } = DateTime.Now;
+    public DateTime EditedAt { get; private set; } = DateTime.Now;
 
     public void AddSlide(Slide slide, List<Dictionary<string, string>> patientData)
     {
@@ -79,11 +78,6 @@ public class ClinicalTest : BaseModel<ClinicalTest>
         }        
     }
 
-    public void AddSlideDataFiles(params SlideDataFile[] slideDataFile)
-    {        
-        SlideDataFiles.AddRange(slideDataFile);
-    }
-
     public void ExportClinicalTest(string exportType)
     {
         
@@ -109,37 +103,46 @@ public class ClinicalTest : BaseModel<ClinicalTest>
             string[] titles = allLines[beginningIndex].Split("\t");
 
             List<string> spotInfo = new List<string>();
-            NplicatesInBlock = spotLines.Length / NplicateSize;
+            nplicatesInBlock = spotLines.Length / NplicateSize;
 
-           
             for (int j = 0; j < Slides[i].Blocks.Count; j++)
             {
-                for (int k = 0; k < NplicatesInBlock; k++)
+                for (int k = 0; k < nplicatesInBlock; k++)
                 {
                     //Split the line with spotinformation, add the information elements to spotinfo.
-                    spotInfo.AddRange(spotLines[k * NplicateSize + (j * NplicatesInBlock * NplicateSize)].Split("\t"));
+                    spotInfo.AddRange(spotLines[k * NplicateSize + (j * nplicatesInBlock * NplicateSize)].Split("\t"));
 
                     //Find the index in spotInfo that contains the analyteType (ID) and create an Nplicate with it.
                     Nplicate nplicate = new Nplicate(spotInfo[Array.IndexOf(titles, "Id")]);
+
+                    // Add analyteNames when looping through the first block
+                    if (j == 0) {
+                        AnalyteNames.Add(findSingleSpotInfo(spotInfo, titles, "Name"));
+                    }
 
                     for (int l = 0; l < NplicateSize; l++)
                     {                        
                         if (l != 0)
                         {
-                            spotInfo.AddRange(spotLines[l + (k * NplicateSize) + (j * NplicatesInBlock * NplicateSize)].Split("\t"));
+                            spotInfo.AddRange(spotLines[l + (k * NplicateSize) + (j * nplicatesInBlock * NplicateSize)].Split("\t"));
                         }
 
-                        nplicate.Spots.Add(new Spot(findIntensity(spotInfo, titles), determineIfFlagged(spotInfo, titles)));
+                        nplicate.Spots.Add(
+                            new Spot(
+                                intensity: double.Parse(findSingleSpotInfo(spotInfo, titles, "Intensity")), 
+                                flagged: findSingleSpotInfo(spotInfo, titles, "Flags") != "0"
+                            )
+                        );
                         spotInfo.Clear();
                     }
-                        //Calculate the mean and set if the Nplicate are flagged.
-                        nplicate.CalculateMean();
-                        nplicate.SetFlag();
+                    //Calculate the mean and set if the Nplicate are flagged.
+                    nplicate.CalculateMean();
+                    nplicate.SetFlag();
 
-                        Slides[i].Blocks[j].Nplicates.Add(nplicate);
+                    Slides[i].Blocks[j].Nplicates.Add(nplicate);
                 }
                 Nplicate? pos = Slides[i].Blocks[j].Nplicates.Find(nplicate => nplicate.AnalyteType == "pos");
-                Nplicate? neg = Slides[i].Blocks[j].Nplicates.Find(element => element.AnalyteType == "neg");
+                Nplicate? neg = Slides[i].Blocks[j].Nplicates.Find(nplicate => nplicate.AnalyteType == "neg");
 
                 //Calculate the Quality control if the positive and negative control exist
                 if (pos == null || neg == null)
@@ -178,13 +181,10 @@ public class ClinicalTest : BaseModel<ClinicalTest>
             }
         }
     }
-    private double findIntensity(List<string> spotInfo, params string[] titles)
+
+    private string findSingleSpotInfo(List<string> spotInfo, string[] titles, string key) 
     {
-        return double.Parse(spotInfo[Array.IndexOf(titles, Array.Find(titles, element => element.Contains("Intensity")))]);
-    }
-    private bool determineIfFlagged(List<string> spotInfo, params string[] titles)
-    {
-        return spotInfo[Array.IndexOf(titles, Array.Find(titles, element => element.Contains("Flags")))] != "0";
+        return spotInfo[Array.IndexOf(titles, Array.Find(titles, element => element.Contains(key)))];
     }
 
     private void updateMaxMinRI(double RI)
@@ -197,11 +197,6 @@ public class ClinicalTest : BaseModel<ClinicalTest>
         {
             MinRI = RI;
         }
-    }
-
-    public async Task Delete()
-    {
-        await RemoveFromDatabase();
     }
 }
 

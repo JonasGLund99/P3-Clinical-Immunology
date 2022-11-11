@@ -28,10 +28,6 @@ public class DatabaseService
         await Database.CreateContainerIfNotExistsAsync("ClinicalTest", "/id");
         await Database.CreateContainerIfNotExistsAsync("Slide", "/id");
         await Database.CreateContainerIfNotExistsAsync("Block", "/id");
-
-        // For mocking
-        await Database.CreateContainerIfNotExistsAsync("Exp", "/id");
-        await Database.CreateContainerIfNotExistsAsync("CT", "/id");
     }
 
 }
