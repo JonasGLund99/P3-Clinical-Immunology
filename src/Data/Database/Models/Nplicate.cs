@@ -2,7 +2,7 @@ using System.Drawing;
 
 namespace src.Data;
 
-class Nplicate
+public class Nplicate
 {
     private List<Spot> spots = new List<Spot>();
     public Nplicate(string analyteType)
