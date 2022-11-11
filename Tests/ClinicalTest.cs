@@ -8,7 +8,7 @@ public class Test_ClinicalTest
     [Fact]
     public void Test_CreatePatientKeys()
     {
-        Assert.True(true);
+        Assert.True(false);
 
         // ClinicalTest ct = new ClinicalTest(
         //     id: "1",
