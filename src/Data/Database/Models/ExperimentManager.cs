@@ -59,12 +59,13 @@ public static class ExperimentManager
         await clinicalTest.SaveToDatabase();
     }
 
-    public static void DeleteExperiment(Experiment experiment)
+    public static async Task DeleteExperiment(Experiment experiment)
     {
-        // foreach (ClinicalTest clinicalTest in experiment.ClinicalTests)
-        // {
-        //     Disassociate(experiment, clinicalTest);
-        // }
-        // experiment.RemoveFromDatabase();
+        List<ClinicalTest> clinicalTests = await experiment.QueryClinicalTests(""); 
+        foreach (ClinicalTest clinicalTest in clinicalTests)
+        {
+            Disassociate(experiment, clinicalTest);
+        }
+        experiment.RemoveFromDatabase();
     }
 }
