@@ -26,8 +26,6 @@ public class DatabaseService
         Database = await client.CreateDatabaseIfNotExistsAsync("ClinicalImmunology",1000);
         await Database.CreateContainerIfNotExistsAsync("Experiment", "/id");
         await Database.CreateContainerIfNotExistsAsync("ClinicalTest", "/id");
-        await Database.CreateContainerIfNotExistsAsync("Slide", "/id");
-        await Database.CreateContainerIfNotExistsAsync("Block", "/id");
     }
 
 }
