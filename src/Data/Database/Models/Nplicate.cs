@@ -4,7 +4,16 @@ namespace src.Data;
 
 public class Nplicate
 {
-    private List<Spot> spots = new List<Spot>();
+    public Nplicate(double ri, double xyz, double mean, string analyteType, bool isFlagged, Color heatmapColour, List<Spot> spots)
+    {
+        RI = ri;
+        XYZ = xyz;
+        Mean = mean;
+        AnalyteType = analyteType;
+        IsFlagged = isFlagged;
+        HeatmapColour = heatmapColour;
+        Spots = spots;
+    }
     public Nplicate(string analyteType)
     {
         AnalyteType = analyteType;
@@ -15,15 +24,11 @@ public class Nplicate
     public string AnalyteType { get; }
     public bool IsFlagged { get; private set; }
     public Color HeatmapColour { get; private set; }
-
-    public void AddSpot(Spot spot)
-    {
-        spots.Add(spot);
-    }
+    public List<Spot> Spots = new List<Spot>();
 
     public void SetFlag()
     {
-        foreach (Spot spot in spots)
+        foreach (Spot spot in Spots)
         {
             if (spot.IsFlagged)
             {
@@ -38,7 +43,7 @@ public class Nplicate
         double summedIntensity = 0;
         int numValidSpots = 0;
 
-        foreach (Spot spot in spots)
+        foreach (Spot spot in Spots)
         {
             if (!spot.IsFlagged)
             {
