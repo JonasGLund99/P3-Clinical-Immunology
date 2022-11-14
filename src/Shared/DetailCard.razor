@@ -4,41 +4,80 @@
 @if (IsExperiment)
 {
     <div class="left-card">
-            <h1>
-                @Experiment.ExperimentNumber
-            </h1>
-            <hr id="hr-line">
-            <div class="left-border">
+        <div class="my-card-header">
+            <div class="pen-header">
+                <h2>
+                    @Experiment.ExperimentNumber
+                </h2>
+                <i class="fa-solid fa-pen"></i>
+            </div>
+            <h3 class="title">@Experiment.Title</h3>
+
+        </div>
+
+        <hr class="hr-line">
+
+        <div class="row">
+
+        </div>
+
+        <div class="info-cumtainer">
+            <div class="icons">
+                <i class="fa-sharp fa-solid fa-user"></i>
+                <i class="fa-solid fa-calendar-days"></i>
+                <i class="fa-solid fa-calendar-days"></i>
+                <i class="fa-solid fa-circle-info"></i>
+            </div>
+            <div class="text-titles">
                 <h3>Author</h3>
                 <h3>Created at</h3>
                 <h3>Edited at</h3>
                 <h3>Description</h3>
             </div>
-                <h3 class="title">@Experiment.Title</h3>
-                <h3 class="author">@Experiment.Author</h3>
-                <h3 class="created">@Experiment.CreatedAt</h3>
-                <h3 class="edited">@Experiment.EditedAt</h3>
-                <h3 class="description">@Experiment.Description</h3>
+            <div class="main-info">
+                <h3>@Experiment.Author</h3>
+                <h3>@Experiment.CreatedAt</h3>
+                <h3>@Experiment.EditedAt</h3>
+            </div>
+        </div>
+        <h3 class="description">@Experiment.Description</h3>
     </div>
 }
 else
 {
     <div class="right-card">
-        <h1>
-            @ClinicalTest.Title
-        </h1>
-        <h3>
-            n-plicate size
-        </h3>
-        <h3>
-            Created At
-        </h3>
-        <h3>
-            Edited At
-        </h3>
-        <h3>
-            Experiments
-        </h3>
+        <div class="my-card-header pen-header">
+            <h2>@ClinicalTest.Title</h2>
+            <i class="fa-solid fa-pen"></i>
+        </div>
+        <hr class="hr-line">
+
+        <div class="info-cumtainer">
+            <div class="icons">
+                <i></i>
+                <i class="fa-solid fa-calendar-days"></i>
+                <i class="fa-solid fa-calendar-days"></i>
+                <i></i>
+                <i class="fa-solid fa-circle-info"></i>
+            </div>
+            <div class="text-titles">
+                <h3>n-plicate size</h3>
+                <h3>Created At</h3>
+                <h3>Edited At</h3>
+                <h3>Experiments</h3>
+                <h3>Description</h3>
+            </div>
+            <div class="main-info">
+                <h3>@ClinicalTest.NplicateSize</h3>
+                <h3>@ClinicalTest.CreatedAt</h3>
+                <h3>@ClinicalTest.EditedAt</h3>
+                @foreach (Experiment experiment in ClinicalTest.Experiments)
+                {
+                    <h3>@experiment.ExperimentNumber</h3>
+                }
+            </div>
+        </div>
+        <h3 class="description">@ClinicalTest.Description</h3>
     </div>
 }
 

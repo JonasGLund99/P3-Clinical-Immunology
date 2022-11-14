@@ -6,6 +6,9 @@
     --primary-dark-color: #383838;
     --secondary-dark-color: #474747;
     --main-text-color: #e2e2e2;
+    --rightcard-color: #9e9e9e;
+    --leftcard-color: #7d7d7d;
+    --secondary-text-color: #ffffff;
 }
 
 html, body {

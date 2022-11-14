@@ -3,70 +3,98 @@
     background-color: var(--leftcard-color);
     margin: 3vh 4vw 3vh 8vw;
     border-radius: 20px;
-    display: grid;
-    grid-template-rows: 1.5vh fit-content(10%) fit-content(10%) fit-content(10%) fit-content(10%) fit-content(10%) fit-content(10%) fit-content(10%);
-    grid-column-gap: 2vw;
-    grid-template-areas:
-        '. . . .'
-        '. ExpNo ExpNo .'
-        '. Title Title .'
-        '. hrLine hrLine .'
-        '. leftBorder Author .'
-        '. leftBorder Created .'
-        '. leftBorder Edited .'
-        '. leftBorder Description .';
-    white-space: nowrap;
+    display: flex;
+    flex-direction: column;
 }
 
 .right-card {
     grid-area: rightcard;
     background-color: var(--rightcard-color);
-    margin: 3vw 8vw 3vw 4vw;
+    margin: 3vh 4vw 3vh 8vw;
     border-radius: 20px;
-    display: grid;
+    display: flex;
+    flex-direction: column;
 }
 
-.left-border {
-    grid-area: leftBorder;
+.my-card-header {
+    border: hidden;
+    margin: 20px 30px 0px 20px;
 }
 
-.title {
-    grid-area: Title;
-}
-
-.exp-no {
-    grid-area: ExpNo;
-}
-
-#hr-line {
-    grid-area: hrLine;
+.hr-line {
     align-self: center;
-    border: 5px solid white;
+    color: white;
+    width: 35vw;
 }
 
-.author {
-    grid-area: Author;
+.info-cumtainer {
+    display: flex;
+    flex-direction: row;
+    padding: 0px, 20px, 0px, 20px;
 }
 
-.created {
-    grid-area: Created;
+.icons {
+    margin-left: 20px;
+    font-size: 24px;
+    color: var(--main-text-color);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
 }
 
-.edited {
-    grid-area: Edited;
+.icons > i {
+    margin-bottom: 8px;
 }
 
 .description {
-    grid-area: Description;
-    white-space: normal;
+    overflow: hidden;
+    overflow-wrap: break-word;
+    text-overflow: ellipsis;
+    max-width: 30vw;
+    margin: 0 20px 0 54px;
 }
 
-h1 {
-    grid-area: ExpNo;
-    font-size: 2vw;
+h2 {
     color: var(--main-text-color);
     line-height: 1;
     margin: 0px 0px 0px 0px;
     text-align: left;
+    font-size: 1.6vw;
+    font-weight: 600;
 }
 
+h3 {
+    font-size: 1vw;
+}
+
+.title {
+    color: var(--main-text-color);
+}
+
+.text-titles > h3 {
+    font-weight: 600;
+    color: var(--main-text-color);
+}
+
+.text-titles {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    margin-left: 10px;
+}
+
+.main-info {
+    margin-left: 25px;
+}
+
+.pen-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.fa-pen {
+  font-size: 1.2vw;
+  color: white;
+}
