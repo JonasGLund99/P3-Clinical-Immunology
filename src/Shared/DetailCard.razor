@@ -1,14 +1,52 @@
 ﻿@using src.Shared
-<div class="gridContainer">
-    <div class="navbar">
-        <Navbar ClinicalTestTitle="AsD"
-                ExperimentTitle="DaS"></Navbar>
-    </div>
-    <div class="leftCard">LeftCard</div>
-    <div class="rightCard">RightCard</div>
-</div>
+@using src.Data
 
+@if (IsExperiment)
+{
+    <div class="left-card">
+            <h1>
+                @Experiment.ExperimentNumber
+            </h1>
+            <hr id="hr-line">
+            <div class="left-border">
+                <h3>Author</h3>
+                <h3>Created at</h3>
+                <h3>Edited at</h3>
+                <h3>Description</h3>
+            </div>
+                <h3 class="title">@Experiment.Title</h3>
+                <h3 class="author">@Experiment.Author</h3>
+                <h3 class="created">@Experiment.CreatedAt</h3>
+                <h3 class="edited">@Experiment.EditedAt</h3>
+                <h3 class="description">@Experiment.Description</h3>
+    </div>
+}
+else
+{
+    <div class="right-card">
+        <h1>
+            @ClinicalTest.Title
+        </h1>
+        <h3>
+            n-plicate size
+        </h3>
+        <h3>
+            Created At
+        </h3>
+        <h3>
+            Edited At
+        </h3>
+        <h3>
+            Experiments
+        </h3>
+    </div>
+}
 
 @code {
-    
+    [Parameter]
+    public bool IsExperiment { get;  set; } = false;
+    [Parameter]
+    public Experiment? Experiment { get; set; } = null;
+    [Parameter]
+    public ClinicalTest? ClinicalTest { get; set; } = null;
 }

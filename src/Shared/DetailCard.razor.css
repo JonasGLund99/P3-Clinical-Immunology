@@ -1,32 +1,72 @@
-﻿.navbar {
-    grid-area: header;
-    height: fit-content;
-}
-
-.leftCard {
+﻿.left-card {
     grid-area: leftcard;
     background-color: var(--leftcard-color);
-    margin: 3vw 1.5vw 3vw 3vw;
+    margin: 3vh 4vw 3vh 8vw;
+    border-radius: 20px;
+    display: grid;
+    grid-template-rows: 1.5vh fit-content(10%) fit-content(10%) fit-content(10%) fit-content(10%) fit-content(10%) fit-content(10%) fit-content(10%);
+    grid-column-gap: 2vw;
+    grid-template-areas:
+        '. . . .'
+        '. ExpNo ExpNo .'
+        '. Title Title .'
+        '. hrLine hrLine .'
+        '. leftBorder Author .'
+        '. leftBorder Created .'
+        '. leftBorder Edited .'
+        '. leftBorder Description .';
+    white-space: nowrap;
 }
 
-.rightCard {
+.right-card {
     grid-area: rightcard;
     background-color: var(--rightcard-color);
-    margin: 3vw 3vw 3vw 1.5vw;
-}
-
-.gridContainer {
+    margin: 3vw 8vw 3vw 4vw;
+    border-radius: 20px;
     display: grid;
-    grid-template-rows: fit-content(100%);
-    grid-template-areas:
-        'header header'
-        'leftcard rightcard';
-    width: 100vw;
-    height: 100vh;
 }
 
-.gridContainer > div {
-    text-align: center;
-    padding: 0px 0px 0px 0px;
-    font-size: 30px;
+.left-border {
+    grid-area: leftBorder;
 }
+
+.title {
+    grid-area: Title;
+}
+
+.exp-no {
+    grid-area: ExpNo;
+}
+
+#hr-line {
+    grid-area: hrLine;
+    align-self: center;
+    border: 5px solid white;
+}
+
+.author {
+    grid-area: Author;
+}
+
+.created {
+    grid-area: Created;
+}
+
+.edited {
+    grid-area: Edited;
+}
+
+.description {
+    grid-area: Description;
+    white-space: normal;
+}
+
+h1 {
+    grid-area: ExpNo;
+    font-size: 2vw;
+    color: var(--main-text-color);
+    line-height: 1;
+    margin: 0px 0px 0px 0px;
+    text-align: left;
+}
+

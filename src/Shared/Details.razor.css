@@ -1,0 +1,21 @@
+﻿.navbar {
+    grid-area: header;
+    height: fit-content;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-rows: fit-content(100%);
+    grid-template-areas:
+        'header header'
+        'leftcard rightcard';
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--main-background-color);
+}
+
+.grid-container > div {
+    text-align: center;
+    padding: 0px 0px 0px 0px;
+    font-size: 30px;
+}

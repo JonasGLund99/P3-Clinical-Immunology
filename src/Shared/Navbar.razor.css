@@ -1,11 +1,11 @@
-﻿#navButtonContainer {
+﻿#nav-button-container {
     margin-top: 0.7em;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
 }
 
-#navButtonContainer button {
+#nav-button-container button {
     padding: 0.5vw 4vw;
     font-weight: 600;
     font-size: 1.2vw;
@@ -19,7 +19,7 @@
     align-items: center;
 }
 
-#topPart {
+#top-part {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -31,16 +31,16 @@ i {
     font-size: 1.5vw;
 }
 
-#leftPart {
+#left-part {
     flex: 1;
     text-align: left;
 }
 
-#middlePart {
+#middle-part {
     flex: 1;
 }
 
-#rightPart {
+#right-part {
     flex: 1;
 }
 
@@ -57,15 +57,15 @@ span {
     justify-self: center;
 }
 
-#navButtonContainer button:hover {
+#nav-button-container button:hover {
     background-color: var(--main-background-color)
 }
 
-#navButtonContainer button.active {
+#nav-button-container button.active {
     background-color: var(--main-background-color)
 }
 
-#topnavContainer {
+#topnav-container {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -80,7 +80,7 @@ span {
     font-weight: 600;
 }
 
-#homeButton {
+#home-button {
     margin-left: 1vw;
     background-color: var(--primary-dark-color);
     border: none;
