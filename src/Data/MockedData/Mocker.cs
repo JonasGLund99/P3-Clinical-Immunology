@@ -21,9 +21,7 @@ static class Mocker
                 title: $"Experiment {i + 1}",
                 author: authors[r.Next(0, 5)],
                 description: "Some description",
-                clinicalTestIds: new List<string>(),
-                createdAt: DateTime.Now,
-                editedAt: DateTime.Now
+                createdAt: DateTime.Now
             );
             await e.SaveToDatabase();
 
@@ -34,16 +32,10 @@ static class Mocker
                     title: $"Test {j + 1} in {e.ExperimentNumber}",
                     nplicateSize: 3,
                     description: "Some description",
-                    createdAt: DateTime.Now,
-                    editedAt: DateTime.Now,
-                    slideDataFiles: new List<SlideDataFile>(),
-                    patientKeys: new Dictionary<string, bool>(),
-                    activeKeys: new List<string>(),
-                    experimentIds: new List<string>() { e.id },
-                    slides: new List<Slide>(),
-                    analyteNames: new List<string>()
+                    createdAt: DateTime.Now
                 );
                 await ct.SaveToDatabase();
+                await ExperimentManager.Associate(e, ct);
             }
         }
     }

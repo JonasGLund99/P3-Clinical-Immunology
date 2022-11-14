@@ -80,19 +80,7 @@
         StateHasChanged();
     }
     private async void showClinicalTests(Experiment exp) {
-        currentClinicalTests = new List<ClinicalTest>();
-        if (DatabaseService.Instance.Database == null) throw new NullReferenceException("Database is null");
-        FeedIterator<ClinicalTest> feed = DatabaseService.Instance.Database.GetContainer("ClinicalTest").GetItemQueryIterator<ClinicalTest>(
-            queryDefinition: new QueryDefinition("SELECT * FROM ClinicalTest WHERE ARRAY_CONTAINS(ClinicalTest.ExperimentIds, @id)").WithParameter("@id", exp.id)
-        );
-
-        while(feed.HasMoreResults) {
-            FeedResponse<ClinicalTest> response = await feed.ReadNextAsync();
-
-            foreach(ClinicalTest item in response) {
-                currentClinicalTests.Add(item);
-            }
-        }
+        currentClinicalTests = await exp.QueryClinicalTests("");
         StateHasChanged();
     }
 }
