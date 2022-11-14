@@ -1,21 +1,43 @@
 ﻿@using src.Data
 
 <h1>Overview</h1>
-<select name="Data1" id="Data1">
-	<option value="SOT">SOT</option>
-	<option value="Died">Died</option>
-	<option value="BaselineLDH">BaselineLDH</option>
-</select>
-<select name="Data1" id="Data1">
-	<option value="SOT">SOT</option>
-	<option value="Died">Died</option>
-	<option value="BaselineLDH">BaselineLDH</option>
-</select>
-<select name="Data1" id="Data1">
-	<option value="SOT">SOT</option>
-	<option value="Died">Died</option>
-	<option value="BaselineLDH">BaselineLDH</option>
-</select>
+
+<div class="selectors">
+		<select name="Data1" id="Data1">
+			<option value="SOT">SOT</option>
+			<option value="Died">Died</option>
+			<option value="BaselineLDH">BaselineLDH</option>
+		</select>
+		<select name="Data1" id="Data1">
+			<option value="SOT">SOT</option>
+			<option value="Died">Died</option>
+			<option value="BaselineLDH">BaselineLDH</option>
+		</select>
+		<select name="Data1" id="Data1">
+			<option value="SOT">SOT</option>
+			<option value="Died">Died</option>
+			<option value="BaselineLDH">BaselineLDH</option>
+		</select>
+	</div>	
+<div class="overview-component">
+
+	<div class="all-icons">
+		<div class="icons">
+			<img src="icons/Overview_icon.svg">
+			<img src="icons/Table_view_icon.svg">
+		</div>
+
+		<div class="icons" id="exportIcon">
+			<i class="fa-solid fa-file-export"></i>
+		</div>
+	</div>
+
+
+	<div class="overview-container">
+		<div class="overview">
+		</div>
+	</div>
+</div>
 
 @code {
 	[Parameter]

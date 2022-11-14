@@ -1,0 +1,55 @@
+﻿.icons {
+    display: flex;
+    background-color: #383838;
+    flex-direction: column;
+    width: 90px;
+    height: 174px;
+    padding: 0px 15px;
+    margin: 40px;
+    justify-content: space-evenly;
+    border-radius: 20px;
+}
+
+#exportIcon {
+    height: 100px;
+}
+
+img {
+    height: 50px
+}
+
+i {
+    color: #D9D9D9;
+    font-size: 55px;
+}
+
+.overview-container{
+    display: flex;
+    width: 100vw;
+    align-items: center;
+    justify-content: center;
+    height: 700px;
+   
+}
+
+.all-icons{
+    display: flex;
+    flex-direction: column;
+}
+
+
+.overview {
+    width: 90%;
+    height: 90%;
+    border: 5px solid black;
+    border-radius: 20px;
+}
+
+.overview-component{
+    display: flex;
+}
+
+.selectors {
+    display: flex;
+    height: 30px;
+}
