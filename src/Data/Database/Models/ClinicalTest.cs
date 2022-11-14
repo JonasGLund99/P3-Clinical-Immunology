@@ -113,7 +113,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
                     spotInfo.AddRange(spotLines[k * NplicateSize + (j * nplicatesInBlock * NplicateSize)].Split("\t"));
 
                     //Find the index in spotInfo that contains the analyteType (ID) and create an Nplicate with it.
-                    Nplicate nplicate = new Nplicate(spotInfo[Array.IndexOf(titles, "Id")]);
+                    Nplicate nplicate = new Nplicate(spotInfo[Array.IndexOf(titles, "Id")].ToLower());
 
                     // Add analyteNames when looping through the first block
                     if (j == 0) {
