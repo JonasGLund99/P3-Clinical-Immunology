@@ -42,9 +42,10 @@
     justify-content: space-around;
 }
 
-.icons > i {
+.icons > i, img {
     margin-bottom: 8px;
 }
+
 
 .description {
     overflow: hidden;
