@@ -21,7 +21,6 @@ public class Experiment : BaseModel<Experiment>
     public string Author { get; set; } = "";
     public string Description { get; set; } = "";
     public List<string> ClinicalTestIds { get; set; } = new List<string>();
-    public List<ClinicalTest> ClinicalTests = new List<ClinicalTest>();
     public DateTime CreatedAt { get; private set; } = DateTime.Now;
     public DateTime EditedAt { get; private set; } = DateTime.Now;
 
