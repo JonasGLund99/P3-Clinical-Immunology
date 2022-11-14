@@ -5,6 +5,7 @@ namespace src.Data;
 public class ClinicalTest : BaseModel<ClinicalTest>
 {
     private int nplicatesInBlock { get; set; }
+    private int numOfBlocks { get; } = 21;
 
     public ClinicalTest(string id, string title, int nplicateSize, string description, DateTime createdAt, DateTime editedAt, List<SlideDataFile> slideDataFiles, Dictionary<string, bool> patientKeys, List<string> activeKeys, List<string> experimentIds, List<Slide> slides, List<string> analyteNames) : base(id)
     {
@@ -38,7 +39,6 @@ public class ClinicalTest : BaseModel<ClinicalTest>
 
     public void AddSlide(Slide slide, List<Dictionary<string, string>> patientData)
     {
-        int numOfBlocks = 21;
         Slides.Add(slide);
         for (int i = 0; i < numOfBlocks; i++)
         {
