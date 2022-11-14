@@ -4,17 +4,22 @@ namespace src.Data;
 
 public class Experiment : BaseModel<Experiment>
 {
-    public Experiment(string id, string experimentNumber, string title, string author, string description, List<string> clinicalTestIds, DateTime createdAt, DateTime editedAt) : base(id)
+    public Experiment(string id, string experimentNumber, string title, string author, string description, DateTime createdAt) : base(id)
     {
         ExperimentNumber = experimentNumber;
         Title = title;
         Author = author;
         Description = description;
-        ClinicalTestIds = clinicalTestIds;
         CreatedAt = createdAt;
-        EditedAt = editedAt;
     }
-    public Experiment(string id) : base(id) { }
+    public Experiment(string id) : base(id) 
+    {
+
+    }
+    public Experiment() : base() 
+    {
+
+    }
 
     public string ExperimentNumber { get; set; } = "";
     public string Title { get; set; } = "";
@@ -31,12 +36,14 @@ public class Experiment : BaseModel<Experiment>
             throw new NullReferenceException("No database");
         }
         string queryString = @"SELECT * FROM ClinicalTest
-                            WHERE Title LIKE '%@searchParameter%'";
+                            WHERE CONTAINS(ClinicalTest.Title, @searchParameter, true) 
+                            AND ARRAY_CONTAINS(ClinicalTest.ExperimentIds, @expId)";
 
         FeedIterator<ClinicalTest> feed = DatabaseService.Instance.Database.GetContainer("ClinicalTest")
                                         .GetItemQueryIterator<ClinicalTest>(
                                             queryDefinition: new QueryDefinition(queryString)
                                             .WithParameter("@searchParameter", searchParameter)
+                                            .WithParameter("@expId", this.id)
                                         );
         while (feed.HasMoreResults)
         {

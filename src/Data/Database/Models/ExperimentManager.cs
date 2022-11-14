@@ -64,8 +64,8 @@ public static class ExperimentManager
         List<ClinicalTest> clinicalTests = await experiment.QueryClinicalTests(""); 
         foreach (ClinicalTest clinicalTest in clinicalTests)
         {
-            Disassociate(experiment, clinicalTest);
+            await Disassociate(experiment, clinicalTest);
         }
-        experiment.RemoveFromDatabase();
+        await experiment.RemoveFromDatabase();
     }
 }

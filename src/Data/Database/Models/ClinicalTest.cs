@@ -7,21 +7,15 @@ public class ClinicalTest : BaseModel<ClinicalTest>
     private int nplicatesInBlock { get; set; }
     private int numOfBlocks { get; } = 21;
 
-    public ClinicalTest(string id, string title, int nplicateSize, string description, DateTime createdAt, DateTime editedAt, List<SlideDataFile> slideDataFiles, Dictionary<string, bool> patientKeys, List<string> activeKeys, List<string> experimentIds, List<Slide> slides, List<string> analyteNames) : base(id)
+    public ClinicalTest(string id, string title, int nplicateSize, string description, DateTime createdAt) : base(id)
     {
         Title = title;
         NplicateSize = nplicateSize;
         Description = description;
         CreatedAt = createdAt;
-        EditedAt = editedAt;
-        SlideDataFiles = slideDataFiles;
-        PatientKeys = patientKeys;
-        ActiveKeys = activeKeys;
-        ExperimentIds = experimentIds;
-        Slides = slides;
-        AnalyteNames = analyteNames;
     }
     public ClinicalTest(string id) : base(id) { }
+    public ClinicalTest() : base() { }
 
     public List<SlideDataFile> SlideDataFiles { get; set; } = new List<SlideDataFile>();
     public Dictionary<string, bool> PatientKeys { get; set; } = new Dictionary<string, bool>();
