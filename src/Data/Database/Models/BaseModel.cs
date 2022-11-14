@@ -8,8 +8,9 @@ public abstract class BaseModel<T> where T : BaseModel<T>
 	{
 		this.id = id;
 	}
+    public BaseModel() { }
 
-    public string id;
+    public string id { get; set; } = "";
 
     public async Task SaveToDatabase()
 	{
