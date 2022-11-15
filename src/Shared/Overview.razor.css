@@ -35,6 +35,7 @@ i {
 .all-icons{
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
 }
 
 
@@ -52,4 +53,8 @@ i {
 .selectors {
     display: flex;
     height: 30px;
+}
+
+.overview-needs-info {
+
 }
