@@ -60,7 +60,6 @@ i {
     border: 0;
     background-color: var(--navbar-button-color);
     width: 15vw;
-    white-space: nowrap;
     align-items: center;
     margin-right: 15px;
 }
