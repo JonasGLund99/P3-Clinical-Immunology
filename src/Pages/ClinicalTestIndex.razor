@@ -12,24 +12,26 @@
 	ActiveButton="@activeButton">
 </Navbar>
 
-@switch (activeButton)
-{
-	case 0:
-		<h1>Details</h1>
-		break;
-	case 1:
-		<Overview></Overview>
-		break;
-	case 2:
-		<h1>File Upload</h1>
-		break;
-	case 3:
-		<h1>Result Table</h1>
-		break;
-	case 4:
-		<h1>Heatmap</h1>
-		break;
-}
+<div class="component-container">
+	@switch (activeButton)
+	{
+		case 0:
+			<h1>Details</h1>
+			break;
+		case 1:
+			<Overview></Overview>
+			break;
+		case 2:
+			<h1>File Upload</h1>
+			break;
+		case 3:
+			<h1>Result Table</h1>
+			break;
+		case 4:
+			<h1>Heatmap</h1>
+			break;
+	}
+</div>
 
 @code{
 	private int activeButton { get; set; } = 0;

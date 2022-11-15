@@ -1,7 +1,6 @@
 ﻿#navButtonContainer {
     margin-top: 0.7em;
     display: flex;
-    flex-direction: row;
     justify-content: space-between;
 }
 
@@ -9,9 +8,8 @@
     padding: 0.5vw 4vw;
     font-weight: 600;
     font-size: 1.2vw;
-    margin-left: 0.6vw;
-    margin-right: 0.6vw;
-    border-radius: 20px 20px 0px 0px;
+    margin: 0 0.6vw;
+    border-radius: 20px 20px 0 0;
     border: 0;
     background-color: var(--navbar-button-color);
     width: 15vw;
@@ -21,7 +19,6 @@
 
 #topPart {
     display: flex;
-    flex-direction: row;
     align-items: center;
     width: 100%;
     justify-content: space-between;
@@ -65,10 +62,15 @@ span {
 }
 
 #topnavContainer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100px;
+    width: 100vw;
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 100%;
+    justify-content: space-between;
     background-color: var(--primary-dark-color);
     padding-top: 0.6em;
 }
@@ -81,4 +83,5 @@ span {
     margin-left: 1vw;
     background-color: var(--primary-dark-color);
     border: none;
+    color: #D9D9D9;
 }
