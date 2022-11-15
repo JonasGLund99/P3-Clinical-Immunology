@@ -1,0 +1,76 @@
+﻿.all-icons {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 150px;
+    padding: 20px;
+}
+
+.icons {
+    background-color: #383838;
+    margin-top: 40px;
+    border-radius: 20px;
+    width: 70px;
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+}
+
+.big-icon {
+    height: 150px;
+}
+
+#exportIcon {
+    /*    height: 75px;
+    display: flex;
+    justify-content: center;
+    align-items: center;*/
+    padding: 15px;
+    width: 70px;
+}
+
+.icons img {
+    height: 35px;
+    margin-bottom: 15px;
+}
+
+.icons img:last-child {
+    margin-bottom: 0;
+}
+
+i {
+    color: #D9D9D9;
+    font-size: 40px;
+}
+
+.overview-container {
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    height: calc(100vh - 130px);
+    overflow-y: scroll;
+    padding-top: 20px;
+}
+
+.plate {
+    width: 90%;
+    height: 700px;
+    border: 5px solid black;
+    border-radius: 20px;
+    margin-bottom: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.overview-component{
+    display: flex;
+}
+
+.selectors {
+    display: flex;
+}
+
+.overview-needs-info {
+
+}

@@ -1,0 +1,67 @@
+﻿@using src.Data
+
+	
+
+<div class="overview-component">
+	
+	<div class="all-icons">
+		<div class="icons">
+			<img src="icons/Overview_icon.svg" @onclick='() => switchMode("Overview")' class="@((mode == "Overview" ? "activeMode" : "inactiveMode"))">
+			<img src="icons/Table_view_icon.svg" @onclick='() => switchMode("Table-view")' class="@((mode == "Overview" ? "activeMode" : "inactiveMode"))">
+		</div>
+
+		<div class="icons" id="exportIcon">
+			<i class="fa-solid fa-file-export"></i>
+		</div>
+	</div>
+	
+	@if (mode == "Overview")
+	{
+		<div class="overview-container">
+			<div class="selectors">
+				<select name="Data1" id="Data1">
+					<option value="SOT">SOT</option>
+					<option value="Died">Died</option>
+					<option value="BaselineLDH">BaselineLDH</option>
+				</select>
+				<select name="Data1" id="Data2">
+					<option value="SOT">SOT</option>
+					<option value="Died">Died</option>
+					<option value="BaselineLDH">BaselineLDH</option>
+				</select>
+				<select name="Data1" id="Data3">
+					<option value="SOT">SOT</option>
+					<option value="Died">Died</option>
+					<option value="BaselineLDH">BaselineLDH</option>
+				</select>
+			</div>
+			@for (int i = 0; i < 5; i++)
+			{
+				<div class="plate">
+					<div class="overview-needs-info">
+						<img src="icons/Table_view_icon.svg" @onclick='() => switchMode("Table-view")' class="@((mode == "Overview" ? "activeMode" : "inactiveMode")) big-icon">
+					</div>
+				</div>	
+			}
+		</div>
+	} else
+	{
+		<div class="table-view-container">
+			
+		</div>
+	}
+
+</div>
+
+	@code {
+	//[Parameter]
+	//public ClinicalTest clinicalTest { get; set; }
+
+	public string mode = "Overview";
+
+	public void switchMode(string newMode)
+	{
+		mode = newMode;
+	}
+}
+
