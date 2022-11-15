@@ -15,9 +15,10 @@ public class Block
     {
         PatientData = patientData;
     }
+    public Block() { }
 
     public List<Nplicate> Nplicates { get; set; } = new List<Nplicate>();
-    public Dictionary<string, string> PatientData { get; set; }
+    public Dictionary<string, string> PatientData { get; set; } = new Dictionary<string, string>();
     public Color TextColour { get; set; } = new Color();
     public double QC { get; private set; } = 0;
 

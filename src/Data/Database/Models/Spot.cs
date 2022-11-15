@@ -8,6 +8,7 @@ public class Spot
         Intensity = intensity;
         IsFlagged = flagged;
     }
+    public Spot() { }
     public double Intensity { 
         get
         {

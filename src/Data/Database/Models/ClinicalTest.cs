@@ -77,10 +77,11 @@ public class ClinicalTest : BaseModel<ClinicalTest>
         
     }
 
-    private void calculateClinicalTestResult()
+    public void CalculateClinicalTestResult()
     {
         int beginningIndex = 0;
         Regex start = new Regex(@"^Block\s*Row\s*Column\s*Name\s*ID", RegexOptions.IgnoreCase);
+        System.Console.WriteLine(SlideDataFiles.Count);
         for (int i = 0; i < SlideDataFiles.Count; i++) 
         {
             //Read all lines in a file and add each line as an element in a string array
@@ -90,14 +91,13 @@ public class ClinicalTest : BaseModel<ClinicalTest>
             beginningIndex = Array.FindIndex(allLines, line => start.Match(line).Success);
 
             //Create string array with only spot information
-            string[] spotLines = new string[allLines.Length - 1 - beginningIndex];
-            allLines.CopyTo(spotLines, beginningIndex + 1);
+            string[] spotLines = new ArraySegment<string>(allLines, beginningIndex + 1, allLines.Length - beginningIndex - 2).ToArray();
             
             //Create array where each entry is a title for spot information
             string[] titles = allLines[beginningIndex].Split("\t");
 
             List<string> spotInfo = new List<string>();
-            nplicatesInBlock = spotLines.Length / NplicateSize;
+            nplicatesInBlock = spotLines.Length / numOfBlocks / NplicateSize;
 
             for (int j = 0; j < Slides[i].Blocks.Count; j++)
             {
@@ -107,7 +107,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
                     spotInfo.AddRange(spotLines[k * NplicateSize + (j * nplicatesInBlock * NplicateSize)].Split("\t"));
 
                     //Find the index in spotInfo that contains the analyteType (ID) and create an Nplicate with it.
-                    Nplicate nplicate = new Nplicate(spotInfo[Array.IndexOf(titles, "Id")].ToLower());
+                    Nplicate nplicate = new Nplicate(spotInfo[Array.IndexOf(titles, "ID")].ToLower());
 
                     // Add analyteNames when looping through the first block
                     if (j == 0) {
@@ -115,7 +115,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
                     }
 
                     for (int l = 0; l < NplicateSize; l++)
-                    {                        
+                    {
                         if (l != 0)
                         {
                             spotInfo.AddRange(spotLines[l + (k * NplicateSize) + (j * nplicatesInBlock * NplicateSize)].Split("\t"));
@@ -178,7 +178,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
 
     private string findSingleSpotInfo(List<string> spotInfo, string[] titles, string key) 
     {
-        return spotInfo[Array.IndexOf(titles, Array.Find(titles, element => element.Contains(key)))];
+        return spotInfo[Array.IndexOf(titles, Array.Find(titles, element => element.Contains(key)))].Trim();
     }
 
     private void updateMaxMinRI(double RI)
