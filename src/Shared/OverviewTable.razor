@@ -1,0 +1,34 @@
+@using src.Data
+
+<table>
+    <tr>
+        @for (int j = 0; j < numCols; j++) {
+            <th></th>
+        }
+    </tr>
+
+    @for (int i = 0; i < numRows; i++) {
+        <tr class="table-row">
+            <td>@(i + 1)</td>
+            @for (int j = 0; j < numCols - 1; j++) {
+                <td @onkeypress=insertClipboard contenteditable></td>
+            }
+        </tr>
+    }
+</table>
+
+
+
+@code {
+    private int numRows { get; set; } = 350;
+    private int numCols { get; set; } = 50;
+
+    [Parameter]
+    public ClinicalTest? clinicalTest { get; set; }
+
+    private void insertClipboard(KeyboardEventArgs args) {
+        System.Console.WriteLine("ctrl: " + args.CtrlKey.ToString());
+        System.Console.WriteLine("meta: " + args.MetaKey.ToString());
+        System.Console.WriteLine("key: " + args.Key.ToString());
+    }
+}

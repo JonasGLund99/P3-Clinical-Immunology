@@ -1,0 +1,30 @@
+@page "/tablepage/{clinicalTestId}"
+
+@using src.Data
+@using Microsoft.Azure.Cosmos
+
+@if (clinicalTest == null) {
+    <p>Loading...</p>
+} 
+else 
+{
+    <OverviewTable 
+    clinicalTest="@clinicalTest" />
+}
+
+
+
+
+@code {
+    [Parameter]
+    public string clinicalTestId { get; set; } = "";
+
+    private ClinicalTest? clinicalTest { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        Container? container = DatabaseService.Instance.Database?.GetContainer("ClinicalTest");
+        clinicalTest = await container?.ReadItemAsync<ClinicalTest>(clinicalTestId, new PartitionKey(clinicalTestId));
+        StateHasChanged();
+    }
+}
