@@ -6,6 +6,8 @@
     --primary-dark-color: #383838;
     --secondary-dark-color: #474747;
     --main-text-color: #e2e2e2;
+    --main-button-dark-color: #b3b3b3;
+    --main-dark-text-color: #3d3d3d;
 }
 
 html, body {
@@ -70,3 +72,13 @@ a, .btn-link {
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
+
+.grey-button {
+    padding: 10px 20px;
+    display: flex;
+    background-color: var(--main-button-dark-color);
+    border: none;
+    border-radius: 10px;
+    align-items: center;
+    justify-content: space-evenly;
+}

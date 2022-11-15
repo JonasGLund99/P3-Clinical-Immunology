@@ -1,0 +1,61 @@
+﻿
+@using src.Data
+
+
+<div class="file-component">
+    <div class="square">
+        @if (@slideDataFiles.Count == 0)
+        {
+            <div class="row-container">
+                <div class="my-row">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                </div>
+                <div class="my-row">
+                    <h3>Drag & drop files here</h3>
+                </div>
+                <div class="my-row">
+                    <h3>or</h3>
+                </div>
+                <div class="my-row">
+                    <button class="grey-button file-upload-button">
+                        Browse files
+                        <i class="fa-solid fa-file-lines"></i>
+                    </button>
+                </div>
+            </div>
+        }
+        else {
+            <div class="all-files">
+                <div class="file-container">
+                    @{int i = 1;}
+                    @foreach(SlideDataFile slideDataFile in slideDataFiles)
+                    {
+                        <div class="file-row">
+                            <span class="file-indexer">File @i</span>
+                            <span class="file">10000467_0005_flag.txt</span>
+                        </div>
+                        i++;
+                    }
+                </div>
+                <div class="my-row">
+                    <button class="grey-button file-upload-button">
+                        Browse files
+                        <i class="fa-solid fa-file-lines"></i>
+                    </button>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+
+
+@code {
+    public List<SlideDataFile> slideDataFiles = new List<SlideDataFile>() { new SlideDataFile(), new SlideDataFile(), new SlideDataFile(), new SlideDataFile(), new SlideDataFile(), new SlideDataFile(), new SlideDataFile(), new SlideDataFile(), new SlideDataFile(), new SlideDataFile() };
+
+    public void BrowseFiles(InputFileChangeEventArgs e)
+    {
+
+    }
+
+}
