@@ -10,7 +10,7 @@
 .right-card {
     grid-area: rightcard;
     background-color: var(--rightcard-color);
-    margin: 3vh 4vw 3vh 8vw;
+    margin: 3vh 8vw 3vh 4vw;
     border-radius: 20px;
     display: flex;
     flex-direction: column;
@@ -42,10 +42,15 @@
     justify-content: space-around;
 }
 
-.icons > i, img {
+.icons > i {
     margin-bottom: 8px;
 }
 
+img {
+    margin-bottom: 8px;
+    width: 24px;
+    height: 24px;
+}
 
 .description {
     overflow: hidden;
