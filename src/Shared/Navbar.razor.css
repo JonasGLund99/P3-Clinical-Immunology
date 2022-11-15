@@ -1,20 +1,15 @@
-﻿#navButtonContainer {
-    margin-top: 0.7em;
+﻿#topnavContainer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100px;
+    width: 100vw;
     display: flex;
-    justify-content: space-between;
-}
-
-#navButtonContainer button {
-    padding: 0.5vw 4vw;
-    font-weight: 600;
-    font-size: 1.2vw;
-    margin: 0 0.6vw;
-    border-radius: 20px 20px 0 0;
-    border: 0;
-    background-color: var(--navbar-button-color);
-    width: 15vw;
-    white-space: nowrap;
+    flex-direction: column;
     align-items: center;
+    justify-content: space-between;
+    background-color: var(--primary-dark-color);
+    padding-top: 10px;
 }
 
 #topPart {
@@ -24,27 +19,61 @@
     justify-content: space-between;
 }
 
-i {
-    font-size: 1.5vw;
-}
-
 #leftPart {
     flex: 1;
 }
 
+i {
+    font-size: 20px;
+}
+
 #middlePart {
-    flex: 1;
+    flex: 10;
 }
 
 #rightPart {
     flex: 1;
 }
 
+
+.ct-title {
+    font-weight: 600;
+}
+
+#homeButton {
+    margin-left: 10px;
+    background-color: var(--primary-dark-color);
+    border: none;
+    color: #D9D9D9;
+}
+
+#navButtonContainer {
+    display: flex;
+    justify-content: space-between;
+}
+
+#navButtonContainer button {
+    padding: 5px;
+    font-weight: 600;
+    font-size: 16px;
+    border-radius: 20px 20px 0 0;
+    border: 0;
+    background-color: var(--navbar-button-color);
+    width: 15vw;
+    white-space: nowrap;
+    align-items: center;
+    margin-right: 15px;
+}
+
+#navButtonContainer button:last-child{
+    margin-right: 0;
+}
+
 h1 {
-    font-size: 2vw;
+    font-size: 30px;
     color: var(--main-text-color);
     line-height: 1;
-    margin: 0px 0px 0px 0px;
+    margin: 0;
     text-align: center;
 }
 
@@ -59,29 +88,4 @@ span {
 
 #navButtonContainer button.active {
     background-color: var(--main-background-color)
-}
-
-#topnavContainer {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100px;
-    width: 100vw;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    background-color: var(--primary-dark-color);
-    padding-top: 0.6em;
-}
-
-.ct-title {
-    font-weight: 600;
-}
-
-#homeButton {
-    margin-left: 1vw;
-    background-color: var(--primary-dark-color);
-    border: none;
-    color: #D9D9D9;
 }

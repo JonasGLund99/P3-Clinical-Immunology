@@ -21,10 +21,6 @@
 }
 
 #exportIcon {
-    /*    height: 75px;
-    display: flex;
-    justify-content: center;
-    align-items: center;*/
     padding: 15px;
     width: 70px;
 }
@@ -47,7 +43,7 @@ i {
     width: 100%;
     align-items: center;
     justify-content: center;
-    height: calc(100vh - 130px);
+    height: calc(100vh - 100px);
     overflow-y: scroll;
     padding-top: 20px;
 }
