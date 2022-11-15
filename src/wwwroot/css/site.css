@@ -79,3 +79,15 @@ a, .btn-link {
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
+
+/*custom*/
+.green-button {
+    padding: 10px 20px;
+    color: white;
+    display: flex;
+    background-color: #66985E;
+    border: none;
+    border-radius: 10px;
+    justify-content: center;
+    align-items: center;
+}
