@@ -19,6 +19,7 @@
 body {
     overflow: hidden;
     width: 100vw;
+    background-color: var(--main-background-color);
 }
 
 h1:focus {
