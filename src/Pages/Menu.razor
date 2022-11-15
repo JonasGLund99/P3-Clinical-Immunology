@@ -1,0 +1,86 @@
+﻿@page "/"
+@using src.Data
+@using Microsoft.Azure.Cosmos
+
+<PageTitle>Menu</PageTitle>
+
+<main>
+    <div id="experiments-container">
+        <div id="experiment-header" class="menu-header">Experiments</div>
+        <div class="toolbar">
+            <button>+ Add</button>
+            <input type="text" placeholder="Search..." @oninput="@searchExperiments">
+        </div>
+        <div id="experiment-grid">
+            <div class="grid-header">
+                <span>Experiment number</span>
+                <span>Author</span>
+                <span>Title</span>
+                <span>Created</span>
+                <span>Edited</span>
+            </div>
+            @if (experiments == null) {
+                <span>Loading...</span>
+            } 
+            else {
+                @foreach (Experiment e in experiments) {
+                    <div class="grid-content" @onclick="() => showClinicalTests(e)">
+                        <span>@e.ExperimentNumber</span>
+                        <span>@e.Author</span>
+                        <span>@e.Title</span>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+    <div id="clinical-test-container">
+        <div id="clinical-test-header" class="menu-header">Clinical Tests</div>
+        <div class="toolbar">
+            <button>+ Add</button>
+            <input type="text" placeholder="Search...">
+        </div>
+        <div id="clinical-test-grid">
+            <div class="grid-header">
+                <span>Title</span>
+                <span>Created</span>
+                <span>Edited</span>
+            </div>
+            @if (currentClinicalTests == null) {
+                <span>Select an experiment</span>
+            }
+            else {
+                foreach (ClinicalTest ct in currentClinicalTests) {
+                    <div class="grid-content">
+                        <span>@ct.Title</span>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</main>
+
+
+@code {
+    private List<Experiment>? experiments;
+    private List<ClinicalTest>? currentClinicalTests;
+
+    private string? experimentSearchValue { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender) {
+            experiments = await ExperimentManager.QueryExperiments("");
+            StateHasChanged();
+        }
+    }
+    private async void searchExperiments(ChangeEventArgs args) {
+        string? experimentSearchValue = args.Value?.ToString();
+        if (experimentSearchValue == null) return;
+        experiments = await ExperimentManager.QueryExperiments(experimentSearchValue);
+        StateHasChanged();
+    }
+    private async void showClinicalTests(Experiment exp) {
+        currentClinicalTests = await exp.QueryClinicalTests("");
+        StateHasChanged();
+    }
+}

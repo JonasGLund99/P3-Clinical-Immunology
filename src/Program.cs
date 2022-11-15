@@ -26,5 +26,6 @@ app.MapFallbackToPage("/_Host");
 
 // Setup database
 await DatabaseService.Instance.SetupDatabase();
+// await Mocker.Mock(DatabaseService.Instance.Database);
 
 app.Run();
