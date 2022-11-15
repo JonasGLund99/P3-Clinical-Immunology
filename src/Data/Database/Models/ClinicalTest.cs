@@ -1,5 +1,5 @@
 ﻿using System.Text.RegularExpressions;
-
+using OfficeOpenXml;
 namespace src.Data;
 
 public class ClinicalTest : BaseModel<ClinicalTest>
@@ -72,16 +72,46 @@ public class ClinicalTest : BaseModel<ClinicalTest>
         }        
     }
 
-    public void ExportClinicalTest(string exportType)
+    public void ExportResultTable() 
     {
-        
+        FileInfo fileInfo = new FileInfo(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "exports", $"{this.id}.xlsx"));
+
+        if (fileInfo.Exists) fileInfo.Delete();
+
+        ExcelPackage package = new ExcelPackage(fileInfo);
+        ExcelWorksheet wsXYZ = package.Workbook.Worksheets.Add("XYZ");
+        ExcelWorksheet wsLog2 = package.Workbook.Worksheets.Add("log2");
+
+        wsXYZ.SetValue(1, 1, "Slide");
+        wsLog2.SetValue(1, 1, "Slide");
+        for (int i = 0; i < AnalyteNames.Count; i++) 
+        {
+            wsXYZ.SetValue(1, i + 2, AnalyteNames[i]);
+            wsLog2.SetValue(1, i + 2, AnalyteNames[i]);
+        }
+        for (int i = 0; i < Slides.Count; i++) 
+        {
+            for (int j = 0; j < Slides[i].Blocks.Count; j++) 
+            {
+                wsXYZ.SetValue((j + 2) + (i * numOfBlocks), j + 1, i + 1);
+                wsLog2.SetValue((j + 2) + (i * numOfBlocks), j + 1, i + 1);
+
+                for (int k = 0; k < Slides[i].Blocks[j].Nplicates.Count; k++)
+                {
+                    wsXYZ.SetValue((j + 2) + (i * numOfBlocks), k + 2, Slides[i].Blocks[j].Nplicates[k].XYZ);
+
+                    wsLog2.SetValue((j + 2) + (i * numOfBlocks), k + 2, Slides[i].Blocks[j].Nplicates[k].RI);
+                }
+            }
+        }
+
+        package.Save();
     }
 
     public void CalculateClinicalTestResult()
     {
         int beginningIndex = 0;
         Regex start = new Regex(@"^Block\s*Row\s*Column\s*Name\s*ID", RegexOptions.IgnoreCase);
-        System.Console.WriteLine(SlideDataFiles.Count);
         for (int i = 0; i < SlideDataFiles.Count; i++) 
         {
             //Read all lines in a file and add each line as an element in a string array
@@ -99,7 +129,13 @@ public class ClinicalTest : BaseModel<ClinicalTest>
             List<string> spotInfo = new List<string>();
             nplicatesInBlock = spotLines.Length / numOfBlocks / NplicateSize;
 
-            for (int j = 0; j < Slides[i].Blocks.Count; j++)
+            // Find all slides where the barcode is included in the slideDataFile (Should only be 1)
+            List<Slide> matchedSlides = Slides.FindAll(s => SlideDataFiles[i].Filename.Contains(s.Barcode));
+            if (matchedSlides.Count != 1) throw new Exception("Didn't match exactly one slide");
+
+            Slide currentSlide = matchedSlides[0];
+
+            for (int j = 0; j < currentSlide.Blocks.Count; j++)
             {
                 for (int k = 0; k < nplicatesInBlock; k++)
                 {
@@ -110,7 +146,8 @@ public class ClinicalTest : BaseModel<ClinicalTest>
                     Nplicate nplicate = new Nplicate(spotInfo[Array.IndexOf(titles, "ID")].ToLower());
 
                     // Add analyteNames when looping through the first block
-                    if (j == 0) {
+                    if (i == 0 && j == 0) 
+                    {
                         AnalyteNames.Add(findSingleSpotInfo(spotInfo, titles, "Name"));
                     }
 
@@ -133,21 +170,21 @@ public class ClinicalTest : BaseModel<ClinicalTest>
                     nplicate.CalculateMean();
                     nplicate.SetFlag();
 
-                    Slides[i].Blocks[j].Nplicates.Add(nplicate);
+                    currentSlide.Blocks[j].Nplicates.Add(nplicate);
                 }
-                Nplicate? pos = Slides[i].Blocks[j].Nplicates.Find(nplicate => nplicate.AnalyteType == "pos");
-                Nplicate? neg = Slides[i].Blocks[j].Nplicates.Find(nplicate => nplicate.AnalyteType == "neg");
+                Nplicate? pos = currentSlide.Blocks[j].Nplicates.Find(nplicate => nplicate.AnalyteType == "pos");
+                Nplicate? neg = currentSlide.Blocks[j].Nplicates.Find(nplicate => nplicate.AnalyteType == "neg");
 
                 //Calculate the Quality control if the positive and negative control exist
                 if (pos == null || neg == null)
                 {
                     throw new NullReferenceException("Either the positive or negative control is missing");
                 }
-                Slides[i].Blocks[j].CalculateQC(pos, neg);
+                currentSlide.Blocks[j].CalculateQC(pos, neg);
             }
 
             //Calculate the RI for each Nplicate in each block and update max / min RI
-            foreach (Block block in Slides[i].Blocks)
+            foreach (Block block in currentSlide.Blocks)
             {
                 Nplicate? neg = block.Nplicates.Find(element => element.AnalyteType == "neg");
                 
@@ -158,7 +195,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
 
                 for (int j = 0; j < block.Nplicates.Count; j++)
                 {
-                    updateMaxMinRI(block.Nplicates[j].CalculateRI(Slides[i].Blocks[Slides[i].Blocks.Count - 1].Nplicates[j], neg));
+                    updateMaxMinRI(block.Nplicates[j].CalculateRI(currentSlide.Blocks[currentSlide.Blocks.Count - 1].Nplicates[j], neg));
                 }
             }
         }

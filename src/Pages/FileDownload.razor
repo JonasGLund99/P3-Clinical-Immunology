@@ -1,0 +1,27 @@
+@* SKAL SLETTES *@
+
+@page "/download/{clinicalTestId}"
+
+@using src.Data
+
+@inject IJSRuntime JS
+
+<h1>File Download</h1>
+
+<button @onclick="DownloadFileFromURL">
+    Download File From URL
+</button>
+
+
+
+@code {
+    [Parameter]
+    public string clinicalTestId { get; set; }
+
+    private async Task DownloadFileFromURL()
+    {
+        var fileName = $"{clinicalTestId}.xlsx";
+        var fileURL = $"http://localhost:5110/export/{clinicalTestId}";
+        await JS.InvokeVoidAsync("triggerFileDownload", fileName, fileURL);
+    }
+}

@@ -11,6 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="EPPlus" Version="6.1.0" />
+    <PackageReference Include="IronXL.Excel" Version="2022.11.10251" />
     <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.31.2" />
   </ItemGroup>
 
