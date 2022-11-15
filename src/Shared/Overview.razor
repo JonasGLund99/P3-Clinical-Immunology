@@ -39,7 +39,15 @@
 			{
 				<div class="plate">
 					<div class="overview-needs-info">
-						<img src="icons/Table_view_icon.svg" @onclick='() => switchMode("Table-view")' class="@((mode == "Overview" ? "activeMode" : "inactiveMode")) big-icon">
+						<p>
+							Input clinical data before viewing the overview
+						</p>
+
+						<button class="green-button">
+							Insert clinical data
+							<img src="icons/Table_view_icon.svg" @onclick='() => switchMode("Table-view")' class="@((mode == "Overview" ? "activeMode" : "inactiveMode")) big-icon">
+						</button>
+
 					</div>
 				</div>	
 			}

@@ -17,7 +17,8 @@
 }
 
 .big-icon {
-    height: 150px;
+    height: 20px;
+    padding-left: 10px;
 }
 
 #exportIcon {
@@ -47,14 +48,14 @@ i {
     width: 100%;
     align-items: center;
     justify-content: center;
-    height: calc(100vh - 130px);
+    height: calc(100vh - 100px);
     overflow-y: scroll;
     padding-top: 20px;
 }
 
 .plate {
     width: 90%;
-    height: 700px;
+    height: 500px;
     border: 5px solid black;
     border-radius: 20px;
     margin-bottom: 40px;
@@ -69,8 +70,28 @@ i {
 
 .selectors {
     display: flex;
+
+    margin-bottom: 20px;
 }
 
 .overview-needs-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
 
+.overview-needs-info p {
+    margin: 30px;
+}
+
+button {
+    padding: 10px 20px;
+    color: white;
+    display: flex;
+    background-color: #66985E;
+    border: none;
+    border-radius: 10px;
+    justify-content: center;
+    align-items: center;
 }
