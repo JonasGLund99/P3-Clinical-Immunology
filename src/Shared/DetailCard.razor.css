@@ -1,19 +1,19 @@
 ﻿.left-card {
-    grid-area: leftcard;
     background-color: var(--leftcard-color);
     margin: 3vh 4vw 3vh 8vw;
     border-radius: 20px;
     display: flex;
     flex-direction: column;
+    flex: 1;
 }
 
 .right-card {
-    grid-area: rightcard;
     background-color: var(--rightcard-color);
     margin: 3vh 8vw 3vh 4vw;
     border-radius: 20px;
     display: flex;
     flex-direction: column;
+    flex: 1;
 }
 
 .my-card-header {
@@ -52,7 +52,8 @@ img {
     overflow-wrap: break-word;
     text-overflow: ellipsis;
     max-width: 30vw;
-    margin: 0 20px 0 54px;
+    margin: 0 20px 0 55px;
+    text-align: left;
 }
 
 .my-row {
@@ -80,6 +81,7 @@ h3 {
 .title {
     color: var(--main-text-color);
     margin-left: 0vw;
+    text-align: left;
 }
 
 .main-info {
@@ -97,4 +99,5 @@ h3 {
 .fa-pen {
   font-size: 1.2vw;
   color: white;
+  cursor: pointer;
 }

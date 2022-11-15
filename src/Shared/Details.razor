@@ -1,12 +1,14 @@
 ﻿@using src.Shared
 @using src.Data
 
-<div class="grid-container">
-    <DetailCard IsExperiment="true" Experiment="@Experiment"></DetailCard>
-
-    <DetailCard IsExperiment="false" ClinicalTest="@ClinicalTest"></DetailCard>
+<div class="flex-box">
+    <div class="top-part"></div>
+    
+    <div class ="card-flex-box">
+        <DetailCard IsExperiment="true" Experiment="@Experiment"></DetailCard>
+        <DetailCard IsExperiment="false" ClinicalTest="@ClinicalTest"></DetailCard>
+    </div>
 </div>
-
 
 @code {
     [Parameter]
