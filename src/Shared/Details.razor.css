@@ -1,18 +1,7 @@
-﻿.flex-box {
+﻿.card-box {
     display: flex;
-    height: 100vh;
-    padding: 100px 0px 0px 0px;
-    flex-direction: column;
-    background-color: var(--main-background-color);
-}
-.card-flex-box {
-    display: flex;
-    flex-direction: row;
-    height: 100vh;
+    height: calc(100vh - 100px);
     justify-content: center;
-}
-.flex-box > div {
-    text-align: center;
-    padding: 0px 0px 0px 0px;
-    font-size: 30px;
+    align-items: center;
+    padding: 2vw 8vw 2vw 8vw;
 }

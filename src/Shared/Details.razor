@@ -1,13 +1,9 @@
 ﻿@using src.Shared
 @using src.Data
 
-<div class="flex-box">
-    <div class="top-part"></div>
-    
-    <div class ="card-flex-box">
-        <DetailCard IsExperiment="true" Experiment="@Experiment"></DetailCard>
-        <DetailCard IsExperiment="false" ClinicalTest="@ClinicalTest"></DetailCard>
-    </div>
+<div class ="card-box">
+    <DetailCard IsExperiment="true" Experiment="@Experiment"></DetailCard>
+    <DetailCard IsExperiment="false" ClinicalTest="@ClinicalTest" Experiment="@Experiment"></DetailCard>
 </div>
 
 @code {

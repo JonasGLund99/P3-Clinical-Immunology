@@ -67,12 +67,8 @@ else
             </div>
             <div class="my-row">
                 <img src="icons/Exp_Icon.svg">
-                <h3 class="main-info">Experiments</h3>
-                @foreach (Experiment experiment in ClinicalTest.Experiments)
-                {
-                    <h3>@experiment.ExperimentNumber</h3>
-                }
-
+                <h3 class="main-info">Experiment</h3>
+                <h3>@Experiment.ExperimentNumber</h3>
             </div>
             <div class="my-row">
                 <i class="fa-solid fa-circle-info"></i>

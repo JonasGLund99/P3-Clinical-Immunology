@@ -1,43 +1,46 @@
 ﻿.left-card {
     background-color: var(--leftcard-color);
-    margin: 3vh 4vw 3vh 8vw;
+    color: var(--main-text-color);
     border-radius: 20px;
     display: flex;
     flex-direction: column;
     flex: 1;
+    height: 100%;
+    margin-right: 4vw;
+    padding: 40px;
 }
 
 .right-card {
     background-color: var(--rightcard-color);
-    margin: 3vh 8vw 3vh 4vw;
+    color: var(--main-text-color);
     border-radius: 20px;
     display: flex;
     flex-direction: column;
     flex: 1;
+    height: 100%;
+    margin-left: 4vw;
+    padding: 40px;
 }
 
 .my-card-header {
     border: hidden;
-    padding: 20px 30px 0px 20px;
 }
 
 .hr-line {
     align-self: center;
-    color: white;
     width: 100%;
+    opacity: 1;
 }
 
 .info-cumtainer {
     display: flex;
     flex-direction: column;
-    padding: 0px 20px 0px 20px;
 }
 
 i {
     margin-bottom: 8px;
     margin-right: 10px;
     font-size: 24px;
-    color: var(--main-text-color);
 }
 
 img {
@@ -52,7 +55,7 @@ img {
     overflow-wrap: break-word;
     text-overflow: ellipsis;
     max-width: 30vw;
-    margin: 0 20px 0 55px;
+    margin: 0 20px 0 34px;
     text-align: left;
 }
 
@@ -62,31 +65,26 @@ img {
     align-items: center;
     margin-top: 1.5vh;
 }
-
 h2 {
-    color: var(--main-text-color);
     line-height: 1;
-    margin: 0px 0px 0px 0px;
     text-align: left;
-    font-size: 1.6vw;
+    font-size: 30px;
     font-weight: 600;
 }
 
 h3 {
-    font-size: 1vw;
-    color: var(--main-text-color);
-    margin-right: 4vw;
+    font-size: 20px;
+    margin-right: 6vw;
 }
 
 .title {
-    color: var(--main-text-color);
-    margin-left: 0vw;
     text-align: left;
 }
 
 .main-info {
-    width: 4vw;
+    width: 80px;
     white-space: nowrap;
+    font-weight: 600;
 }
 
 .pen-header {
@@ -97,7 +95,7 @@ h3 {
 }
 
 .fa-pen {
-  font-size: 1.2vw;
+  font-size: 24px;
   color: white;
   cursor: pointer;
 }
