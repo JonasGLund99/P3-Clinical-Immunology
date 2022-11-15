@@ -1,9 +1,4 @@
-﻿.navbar {
-    grid-area: header;
-    height: fit-content;
-}
-
-.grid-container {
+﻿.grid-container {
     display: grid;
     grid-template-rows: fit-content(100%);
     grid-template-areas:

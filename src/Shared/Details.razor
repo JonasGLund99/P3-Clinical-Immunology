@@ -2,10 +2,6 @@
 @using src.Data
 
 <div class="grid-container">
-    <div class="navbar">
-        <Navbar ClinicalTestTitle="@ClinicalTest.Title"
-                ExperimentNumber="@Experiment.ExperimentNumber"></Navbar>
-    </div>
     <DetailCard IsExperiment="true" Experiment="@Experiment"></DetailCard>
 
     <DetailCard IsExperiment="false" ClinicalTest="@ClinicalTest"></DetailCard>
