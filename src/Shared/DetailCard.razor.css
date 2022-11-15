@@ -18,37 +18,32 @@
 
 .my-card-header {
     border: hidden;
-    margin: 20px 30px 0px 20px;
+    padding: 20px 30px 0px 20px;
 }
 
 .hr-line {
     align-self: center;
     color: white;
-    width: 35vw;
+    width: 100%;
 }
 
 .info-cumtainer {
     display: flex;
-    flex-direction: row;
-    padding: 0px, 20px, 0px, 20px;
+    flex-direction: column;
+    padding: 0px 20px 0px 20px;
 }
 
-.icons {
-    margin-left: 20px;
+i {
+    margin-bottom: 8px;
+    margin-right: 10px;
     font-size: 24px;
     color: var(--main-text-color);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-}
-
-.icons > i {
-    margin-bottom: 8px;
 }
 
 img {
     margin-bottom: 8px;
-    width: 24px;
+    margin-right: 10px;
+    width: 22px;
     height: 24px;
 }
 
@@ -58,6 +53,13 @@ img {
     text-overflow: ellipsis;
     max-width: 30vw;
     margin: 0 20px 0 54px;
+}
+
+.my-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-top: 1.5vh;
 }
 
 h2 {
@@ -71,26 +73,18 @@ h2 {
 
 h3 {
     font-size: 1vw;
+    color: var(--main-text-color);
+    margin-right: 4vw;
 }
 
 .title {
     color: var(--main-text-color);
-}
-
-.text-titles > h3 {
-    font-weight: 600;
-    color: var(--main-text-color);
-}
-
-.text-titles {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    margin-left: 10px;
+    margin-left: 0vw;
 }
 
 .main-info {
-    margin-left: 25px;
+    width: 4vw;
+    white-space: nowrap;
 }
 
 .pen-header {
