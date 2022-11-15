@@ -4,26 +4,17 @@ namespace src.Data;
 
 public class Nplicate
 {
-    public Nplicate(double ri, double xyz, double mean, string analyteType, bool isFlagged, Color heatmapColour, List<Spot> spots)
-    {
-        RI = ri;
-        XYZ = xyz;
-        Mean = mean;
-        AnalyteType = analyteType;
-        IsFlagged = isFlagged;
-        HeatmapColour = heatmapColour;
-        Spots = spots;
-    }
     public Nplicate(string analyteType)
     {
         AnalyteType = analyteType;
     }
-    public double RI { get; private set; }
-    public double XYZ { get; private set; }
-    public double Mean { get; private set; }
-    public string AnalyteType { get; }
-    public bool IsFlagged { get; private set; }
-    public Color HeatmapColour { get; private set; }
+    public Nplicate() { }
+    public double RI { get; private set; } = default;
+    public double XYZ { get; private set; } = default;
+    public double Mean { get; private set; } = default;
+    public string AnalyteType { get; } = "";
+    public bool IsFlagged { get; private set; } = default;
+    public Color HeatmapColour { get; private set; } = default;
     public List<Spot> Spots = new List<Spot>();
 
     public void SetFlag()

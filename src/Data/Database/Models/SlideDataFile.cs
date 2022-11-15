@@ -7,6 +7,7 @@ public class SlideDataFile
         Filename = filename;
         Content = content;
     }
-    public string Filename { get; set; }
-    public string Content { get; set; }
+    public SlideDataFile() { }
+    public string Filename { get; set; } = "";
+    public string Content { get; set; } = "";
 }
