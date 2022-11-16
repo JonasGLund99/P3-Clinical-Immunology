@@ -1,0 +1,43 @@
+﻿@page "/clinicaltest"
+@using src.Data
+@using src.Shared
+@using Microsoft.Azure.Cosmos
+
+<PageTitle>Clinical Test</PageTitle>
+
+<Navbar 
+	ClinicalTestTitle="Delforsøg 3" 
+	ExperimentTitle="EXP-22-AB123" 
+	setActiveButtonCallback="@SetActiveButton" 
+	ActiveButton="@activeButton">
+</Navbar>
+
+<div class="component-container">
+	@switch (activeButton)
+	{
+		case 0:
+			<h1>Details</h1>
+			break;
+		case 1:
+			<Overview></Overview>
+			break;
+		case 2:
+			<h1>File Upload</h1>
+			break;
+		case 3:
+			<h1>Result Table</h1>
+			break;
+		case 4:
+			<h1>Heatmap</h1>
+			break;
+	}
+</div>
+
+@code{
+	private int activeButton { get; set; } = 0;
+
+	private void SetActiveButton(int buttonId)
+	{
+		activeButton = buttonId;
+	}
+}

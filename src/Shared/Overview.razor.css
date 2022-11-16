@@ -1,0 +1,93 @@
+﻿.all-icons {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 150px;
+    padding: 20px;
+}
+
+.icons {
+    background-color: var(--primary-dark-color);
+    margin-top: 40px;
+    border-radius: 20px;
+    width: 70px;
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+}
+
+.big-icon {
+    height: 20px;
+    padding-left: 10px;
+}
+
+#exportIcon {
+    padding: 15px;
+    width: 70px;
+}
+
+.icons img {
+    height: 35px;
+    margin-bottom: 15px;
+    cursor: pointer;
+    color: var(--navbar-buton-color);
+}
+
+.icons img:last-child {
+    margin-bottom: 0;
+}
+
+i {
+    color: #D9D9D9;
+    font-size: 40px;
+}
+
+.overview-container {
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    height: calc(100vh - 100px);
+    overflow-y: scroll;
+    padding-top: 20px;
+}
+
+.plate {
+    background-color: white;
+    width: 90%;
+    height: 500px;
+    border: 5px solid var(--primary-dark-color);
+    border-radius: 20px;
+    margin-bottom: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.overview-component{
+    display: flex;
+}
+
+.selectors {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.selectors select{
+    width: 150px;
+    background-color: white;
+    border: 2px solid var(--navbar-button-color);
+    border-radius: 5px;
+    padding: 5px;
+    margin-right: 10px;
+}
+
+.overview-needs-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.overview-needs-info p {
+    margin: 30px;
+}
