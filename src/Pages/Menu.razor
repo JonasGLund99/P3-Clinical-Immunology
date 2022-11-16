@@ -5,20 +5,24 @@
 <PageTitle>Menu</PageTitle>
 
 <main>
-    <div id="experiments-container">
-        <div id="experiment-header" class="menu-header">Experiments</div>
+   <div id="experiments-container">
+         <div id="experiment-header" class="menu-header">
+            <img src="icons/ExperimentIcon.svg" />
+            Experiments
+         </div>
         <div class="toolbar">
-            <button class="btn btn-secondary" @onclick="openNewExperimentModal">
-                <span>
-                  <i class="fa-regular fa-square-plus"></i>
-                  Add
-                </span>
+            <button class="add-element-button" @onclick="openNewExperimentModal">
+                <i class="fa-solid fa-square-plus"></i>
+                Add Experiment
             </button>
-            <input type="text" placeholder="Search..." @oninput="@searchExperiments">
+            <div class="searchbar">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" placeholder="Search Experiment..." @oninput="@searchExperiments">
+            </div>
         </div>
         <div id="experiment-grid">
             <div class="grid-header">
-                <span>Experiment Number</span>
+                <span>Experiment no.</span>
                 <span>Author</span>
                 <span>Title</span>
                 <span>Created At</span>
@@ -28,33 +32,38 @@
                 <span>Loading...</span>
             } 
             else {
-                @foreach (Experiment e in experiments) {
-                  <div class="grid-content active-@((e == selectedExp).ToString().ToLower())">
-                  @* <div class="grid-content" @onclick='() => openCancelConfirmModal("Delete Experiment", "This will delete the experiment and clinical tests that is only related to this experiment.", e)'> *@
-                     <MenuCard 
-                        MenuCardType="@Experiment"
-                        objectDeleteCallback="MenuCardDeleteCallback"
-                        objectEditCallback="MenuCardEditCallback"
-                        objectOnclickCallback="MenuCardOnclickCallback"
-                        obj="@e"
-                     />
-                  </div>
-                }
+               <div class="all-experiment-cards">
+                  @foreach (Experiment e in experiments) {
+                     <div class="grid-content active-@((e == selectedExp).ToString().ToLower())">
+                        <MenuCard 
+                           MenuCardType="@Experiment"
+                           objectDeleteCallback="MenuCardDeleteCallback"
+                           objectEditCallback="MenuCardEditCallback"
+                           objectOnclickCallback="MenuCardOnclickCallback"
+                           obj="@e"
+                           selectedObj="@selectedExp"
+                        />
+                     </div>
+                  }
+               </div>
             }
         </div>
     </div>
     <div id="clinical-test-container">
-        <div id="clinical-test-header" class="menu-header">Clinical Tests</div>
+        <div id="clinical-test-header" class="menu-header">
+            <img src="icons/ct.svg" />
+            Clinical Tests</div>
         <div class="toolbar">
          @if (selectedExp != null) {
-            <button class="btn btn-secondary" @onclick="openNewClinicalTestModal">
-               <span>
-                     <i class="fa-regular fa-square-plus"></i>
-                     Add
-               </span>
+            <button class="add-element-button" @onclick="openNewClinicalTestModal">
+                    <i class="fa-solid fa-square-plus"></i>
+                     Add Clinical Test
             </button>
          }
+         <div class="searchbar">
+            <i class="fa-solid fa-magnifying-glass"></i>
             <input type="text" placeholder="Search...">
+         </div>
         </div>
         <div id="clinical-test-grid">
             <div class="grid-header-clinicalTest">
@@ -68,20 +77,23 @@
                <span>No Clinical Tests To Show</span>
             }
             else {
-                foreach (ClinicalTest ct in currentClinicalTests) {
-                    <div class="grid-content active-@((ct == selectedCT).ToString().ToLower())" >
+               <div class="all-clinicaltest-cards">
+                  @foreach (ClinicalTest ct in currentClinicalTests) {
+                     <div class="grid-content active-@((ct == selectedCT).ToString().ToLower())" >
                         <MenuCard 
                         MenuCardType="@ClinicalTest"
                         objectDeleteCallback="MenuCardDeleteCallback"
                         objectEditCallback="MenuCardEditCallback"
                         objectOnclickCallback="MenuCardOnclickCallback"
                         obj="@ct"
-                     />
-                    </div>
-                }
+                        selectedObj="@selectedCT"
+                        />
+                     </div>
+                  }
+               </div>
             }
         </div>
-    </div>
+   </div>
 </main>
 
 

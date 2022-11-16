@@ -34,8 +34,13 @@ main {
     font-weight: 700;
 }
 
+.menu-header img {
+    margin-right: 20px;
+}
+
+
 #experiment-header {
-    background-color: rgb(62, 62, 62);
+    background-color: var(--primary-dark-color);
 }
 
 #clinical-test-header {
@@ -45,26 +50,57 @@ main {
 .toolbar {
     display: flex;
     justify-content: space-around;
+    margin: 20px 0;
     width: 100%;
+    align-items: center;
 }
 
-.toolbar button {
-    width: 100px;
+.toolbar i {
+    font-size: 20px;
+    margin-right: 10px;
 }
+
 
 .toolbar input {
-    width: 50%;
+    width: 100%;
+    height: 40px;
+    border-radius: 0 15px 15px 0;
+    background-color: transparent;
+    border: none;
 }
+
+input:focus {
+    outline: none;
+}
+
+
+.searchbar {
+    width: 50%;
+    height: 40px;
+    border-radius: 15px;
+    text-align: center;
+    background-color: var(--menu-button-color);
+    display: flex;
+    justify-content:left;
+    align-items: center;
+}
+.searchbar i {
+    margin-left: 20px;
+}
+
+
 
 #experiment-grid,
 #clinical-test-grid {
     width: 100%;
 }
 
+
 .grid-header {
     display: grid;
-    width: 100%;
-    grid-template-columns: 20% 10% 30% 15% 15%;
+    width: calc(100% - 30px);
+    padding: 10px;
+    grid-template-columns: 15% 20% 32% 13% 13% 4% 3%;
 }
 
 .grid-header-clinicalTest {
@@ -72,3 +108,11 @@ main {
     width: 100%;
     grid-template-columns: 60% 15% 15%;
 }
+
+.all-experiment-cards {
+    height: calc(100vh - 100px - 84px - 44px);
+    overflow-y: scroll;
+    margin-right: 10px;
+}
+
+

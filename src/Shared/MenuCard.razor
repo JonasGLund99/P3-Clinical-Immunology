@@ -5,24 +5,48 @@
 	<ExperimentCard exp=experiment object/>
 -->
 
-<div class="card_Content" >
-   <div class="cardTextcontent_@(typeof(MenuCardType).Name)" @onclick="objectOnclick">
+<div class="card-content">
+   @if (obj is Experiment)
+   {
+      <div class="card-textcontent-experiment active-experiment-@((((Experiment)(object)obj) == (Experiment)(object)selectedObj).ToString().ToLower())" @onclick="objectOnclick">
+         <span>@(((Experiment)((object)obj)).ExperimentNumber)</span>
+         <span>@(((Experiment)((object)obj)).Author)</span>
+         <span>@(((Experiment)((object)obj)).Title)</span>
+         <span>@(((Experiment)((object)obj)).CreatedAt?.ToShortDateString())</span>
+         <span>@(((Experiment)((object)obj)).EditedAt.ToShortDateString())</span>
+         <i class="fa-solid fa-pencil" @onclick="editObject"></i>
+         <i class="fa-solid fa-trash" @onclick="deleteObject"></i>  
+      </div>
+
+   } else
+   {
+      <div class="card-textcontent-experiment active-clinicaltest-@((((ClinicalTest)(object)obj) == (ClinicalTest)(object)selectedObj).ToString().ToLower())" @onclick="objectOnclick">
+         <span>@(((ClinicalTest)((object)obj)).Title)</span>
+         <span>@(((ClinicalTest)((object)obj)).CreatedAt?.ToShortDateString())</span>
+         <span>@(((ClinicalTest)((object)obj)).EditedAt.ToShortDateString())</span>
+         <i class="fa-solid fa-pencil" @onclick="editObject"></i>
+         <i class="fa-solid fa-trash" @onclick="deleteObject"></i>
+      </div>
+   }
+
+<!--    
+   <div class="card-textcontent-@(typeof(MenuCardType).Name.ToLower()) active-@(typeof(MenuCardType).Name.ToLower())-@((obj == selectedObj).ToString().ToLower())" @onclick="objectOnclick">
       @if (obj is Experiment)
       {
          <span>@(((Experiment)((object)obj)).ExperimentNumber)</span>
-         <span>@(((Experiment)((object)obj)).Title)</span>
          <span>@(((Experiment)((object)obj)).Author)</span>
+         <span>@(((Experiment)((object)obj)).Title)</span>
          <span>@(((Experiment)((object)obj)).CreatedAt?.ToShortDateString())</span>
-         <span>@(((Experiment)((object)obj)).EditedAt)</span>
+         <span>@(((Experiment)((object)obj)).EditedAt.ToShortDateString())</span>
       } else 
-      {
+      {  
          <span>@(((ClinicalTest)((object)obj)).Title)</span>
          <span>@(((ClinicalTest)((object)obj)).CreatedAt?.ToShortDateString())</span>
-         <span>@(((ClinicalTest)((object)obj)).EditedAt)</span>
+         <span>@(((ClinicalTest)((object)obj)).EditedAt.ToShortDateString())</span>
       }
-   </div>
-   <i class="fa-solid fa-pencil" @onclick="editObject"></i>
-   <i class="fa-solid fa-trash" @onclick="deleteObject"></i>  
+       <i class="fa-solid fa-pencil" @onclick="editObject"></i>
+       <i class="fa-solid fa-trash" @onclick="deleteObject"></i>  
+   </div> -->
 </div>
 
 @code {
@@ -30,6 +54,7 @@
    [Parameter] public EventCallback<MenuCardType> objectOnclickCallback {get; set; }
    [Parameter] public EventCallback<MenuCardType> objectEditCallback {get; set; }
    [Parameter] public EventCallback<MenuCardType> objectDeleteCallback {get; set; }
+   [Parameter] public MenuCardType selectedObj {get; set; }
 
    private async void deleteObject() 
    {
