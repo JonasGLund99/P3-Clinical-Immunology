@@ -22,11 +22,11 @@
         </div>
         <div id="experiment-grid">
             <div class="grid-header">
-                <span>Experiment no.</span>
-                <span>Author</span>
-                <span>Title</span>
-                <span>Created At</span>
-                <span>Last Edit</span>
+                <div>Experiment no.</div>
+                <div>Author</div>
+                <div>Title</div>
+                <div>Created At</div>
+                <div>Last Edit</div>
             </div>
             @if (experiments == null) {
                 <span>Loading...</span>
@@ -59,11 +59,11 @@
                     <i class="fa-solid fa-square-plus"></i>
                      Add Clinical Test
             </button>
+            <div class="searchbar">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" placeholder="Search...">
+            </div>
          }
-         <div class="searchbar">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" placeholder="Search...">
-         </div>
         </div>
         <div id="clinical-test-grid">
             <div class="grid-header-clinicalTest">
