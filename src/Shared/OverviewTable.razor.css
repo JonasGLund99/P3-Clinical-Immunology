@@ -1,0 +1,40 @@
+
+table {
+    overflow: scroll;
+}
+td {
+    border: 0.5px solid rgb(170, 170, 170);
+    min-width: 100px;
+    height: 20px;
+    padding: 3px 6px;
+    white-space: nowrap;
+    box-sizing: border-box;
+    z-index: 0;
+
+}
+tr:first-child td {
+    height: 40px;
+    font-weight: bold;
+    background-color: rgb(39, 80, 53);
+    outline: 1px solid rgb(37, 62, 39);
+    border-top: none;
+    color: rgb(244, 244, 244);
+    position: sticky;
+    top: 0;
+}
+tr:first-child td:first-child {
+    z-index: 2;
+}
+td:focus {
+    outline: 3px solid rgb(19, 96, 25);
+    outline-offset: -2px;
+}
+.line-number {
+    border-left: none;
+    background-color: rgb(244, 244, 244);
+    outline: 0.5px solid rgb(37, 62, 39);
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    min-width: 50px;
+}

@@ -1,0 +1,31 @@
+@using src.Data
+
+@inject IJSRuntime JS
+
+<table id="overview-table">
+    <tr>
+        <td class="line-number"></td>
+        @for (int j = 0; j < numCols - 1; j++) {
+            <td contenteditable></td>
+        }
+    </tr>
+
+    @for (int i = 0; i < numRows; i++) {
+        <tr>
+            <td class="line-number">@(i + 1)</td>
+            @for (int j = 0; j < numCols - 1; j++) {
+                <td contenteditable></td>
+            }
+        </tr>
+    }
+</table>
+
+
+
+@code {
+    private int numRows { get; set; } = 350;
+    private int numCols { get; set; } = 50;
+
+    [Parameter]
+    public ClinicalTest? clinicalTest { get; set; }
+}
