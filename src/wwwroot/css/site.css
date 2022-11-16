@@ -7,6 +7,7 @@
     --primary-dark-color: #383838;
     --secondary-dark-color: #474747;
     --main-text-color: #e2e2e2;
+    --green-btn-color: #66985E;
     --rightcard-color: #9e9e9e;
     --leftcard-color: #7d7d7d;
     --secondary-text-color: #ffffff;
@@ -22,6 +23,7 @@
 body {
     overflow: hidden;
     width: 100vw;
+    background-color: var(--main-background-color);
 }
 
 h1:focus {
@@ -82,3 +84,15 @@ a, .btn-link {
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
+
+/*custom*/
+.green-button {
+    padding: 10px 20px;
+    color: white;
+    display: flex;
+    background-color: var(--green-btn-color);
+    border: none;
+    border-radius: 10px;
+    justify-content: center;
+    align-items: center;
+}
