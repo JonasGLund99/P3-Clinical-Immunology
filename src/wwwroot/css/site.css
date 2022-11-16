@@ -7,6 +7,7 @@
     --primary-dark-color: #383838;
     --secondary-dark-color: #474747;
     --main-text-color: #e2e2e2;
+    --green-btn-color: #66985E;
 }
 
 * {
@@ -86,7 +87,7 @@ a, .btn-link {
     padding: 10px 20px;
     color: white;
     display: flex;
-    background-color: #66985E;
+    background-color: var(--green-btn-color);
     border: none;
     border-radius: 10px;
     justify-content: center;
