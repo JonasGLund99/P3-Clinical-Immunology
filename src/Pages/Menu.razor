@@ -8,27 +8,37 @@
     <div id="experiments-container">
         <div id="experiment-header" class="menu-header">Experiments</div>
         <div class="toolbar">
-            <button>+ Add</button>
+            <button class="btn btn-secondary" @onclick="openNewExperimentModal">
+                <span>
+                  <i class="fa-regular fa-square-plus"></i>
+                  Add
+                </span>
+            </button>
             <input type="text" placeholder="Search..." @oninput="@searchExperiments">
         </div>
         <div id="experiment-grid">
             <div class="grid-header">
-                <span>Experiment number</span>
+                <span>Experiment Number</span>
                 <span>Author</span>
                 <span>Title</span>
-                <span>Created</span>
-                <span>Edited</span>
+                <span>Created At</span>
+                <span>Last Edit</span>
             </div>
             @if (experiments == null) {
                 <span>Loading...</span>
             } 
             else {
                 @foreach (Experiment e in experiments) {
-                    <div class="grid-content" @onclick="() => showClinicalTests(e)">
-                        <span>@e.ExperimentNumber</span>
-                        <span>@e.Author</span>
-                        <span>@e.Title</span>
-                    </div>
+                  <div class="grid-content active-@((e == selectedExp).ToString().ToLower())">
+                  @* <div class="grid-content" @onclick='() => openCancelConfirmModal("Delete Experiment", "This will delete the experiment and clinical tests that is only related to this experiment.", e)'> *@
+                     <MenuCard 
+                        MenuCardType="@Experiment"
+                        objectDeleteCallback="MenuCardDeleteCallback"
+                        objectEditCallback="MenuCardEditCallback"
+                        objectOnclickCallback="MenuCardOnclickCallback"
+                        obj="@e"
+                     />
+                  </div>
                 }
             }
         </div>
@@ -36,22 +46,37 @@
     <div id="clinical-test-container">
         <div id="clinical-test-header" class="menu-header">Clinical Tests</div>
         <div class="toolbar">
-            <button>+ Add</button>
+         @if (selectedExp != null) {
+            <button class="btn btn-secondary" @onclick="openNewClinicalTestModal">
+               <span>
+                     <i class="fa-regular fa-square-plus"></i>
+                     Add
+               </span>
+            </button>
+         }
             <input type="text" placeholder="Search...">
         </div>
         <div id="clinical-test-grid">
-            <div class="grid-header">
+            <div class="grid-header-clinicalTest">
                 <span>Title</span>
-                <span>Created</span>
-                <span>Edited</span>
+                <span>Created At</span>
+                <span>Last Edit</span>
             </div>
-            @if (currentClinicalTests == null) {
-                <span>Select an experiment</span>
+            @if (selectedExp == null) {
+               <span>Select An Experiment</span>
+            } else if (currentClinicalTests == null || currentClinicalTests.Count == 0) {
+               <span>No Clinical Tests To Show</span>
             }
             else {
                 foreach (ClinicalTest ct in currentClinicalTests) {
-                    <div class="grid-content">
-                        <span>@ct.Title</span>
+                    <div class="grid-content active-@((ct == selectedCT).ToString().ToLower())" >
+                        <MenuCard 
+                        MenuCardType="@ClinicalTest"
+                        objectDeleteCallback="MenuCardDeleteCallback"
+                        objectEditCallback="MenuCardEditCallback"
+                        objectOnclickCallback="MenuCardOnclickCallback"
+                        obj="@ct"
+                     />
                     </div>
                 }
             }
@@ -60,11 +85,63 @@
 </main>
 
 
-@code {
-    private List<Experiment>? experiments;
-    private List<ClinicalTest>? currentClinicalTests;
 
-    private string? experimentSearchValue { get; set; }
+@if (showExperimentModal)
+{
+   <EditorModal 
+		CallbackClose="closeEditorModal"
+      CallbackSave="SaveExperimentCallback"
+      ModalObject="@selectedExp"
+		ModalType="@Experiment"
+      ModalTitle="@EditorModalTitle"
+   />
+}
+
+@if (showClinicalTestModal)
+{
+   <EditorModal 
+		CallbackClose="closeEditorModal"
+      CallbackSave="SaveClinicalTestCallback"
+      ModalObject="@selectedCT"
+		ModalType="@ClinicalTest"
+      ModalTitle="@EditorModalTitle"
+   />
+}
+
+
+@if (showCancelConfirmModalDeleteExperiment)
+{
+   <CancelOrConfirmModal
+      Title="@cancelConfirmModalTitle"
+      Body="@cancelConfirmModalBody"
+      CallbackCancel="@(() => showCancelConfirmModalDeleteExperiment = false)"
+      CallbackConfirm="deleteExperiment"
+   />
+} 
+
+@if (showCancelConfirmModalDeleteClinicalTest)
+{
+   <CancelOrConfirmModal
+      Title="@cancelConfirmModalTitle"
+      Body="@cancelConfirmModalBody"
+      CallbackCancel="@(() => showCancelConfirmModalDeleteClinicalTest = false)"
+      CallbackConfirm="@deleteClinicalTest"
+   />
+} 
+
+@code {
+   private List<Experiment>? experiments;
+   private List<ClinicalTest>? currentClinicalTests;
+   private bool showExperimentModal = false;
+	private bool showClinicalTestModal = false;
+   private string EditorModalTitle;
+   private Experiment? selectedExp;
+   private ClinicalTest? selectedCT;
+   private string? experimentSearchValue { get; set; }
+   private bool showCancelConfirmModalDeleteExperiment = false;
+   private bool showCancelConfirmModalDeleteClinicalTest = false;
+   private string cancelConfirmModalTitle;
+   private string cancelConfirmModalBody;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -74,13 +151,127 @@
         }
     }
     private async void searchExperiments(ChangeEventArgs args) {
-        string? experimentSearchValue = args.Value?.ToString();
+        experimentSearchValue = args.Value?.ToString();
         if (experimentSearchValue == null) return;
         experiments = await ExperimentManager.QueryExperiments(experimentSearchValue);
         StateHasChanged();
     }
-    private async void showClinicalTests(Experiment exp) {
+    private async Task showClinicalTests(Experiment exp) {
         currentClinicalTests = await exp.QueryClinicalTests("");
         StateHasChanged();
     }
+
+    private void openNewExperimentModal<T>(T obj)
+	{
+		selectedExp = new Experiment(Guid.NewGuid().ToString());
+      showExperimentModal = true;
+      EditorModalTitle = "Create New Experiment";
+	}
+    private async void openNewClinicalTestModal<T>(T obj)
+	{
+      selectedCT = new ClinicalTest(Guid.NewGuid().ToString());
+		showClinicalTestModal = true;
+	}
+
+	private void closeEditorModal<T> (T? obj)
+	{	
+		showExperimentModal = false;
+		showClinicalTestModal = false;
+	}
+
+   public async void SaveExperimentCallback(Experiment e) 
+   {
+      //implement validation of experiment
+      showExperimentModal = false;
+      await e.SaveToDatabase();
+      experiments = await ExperimentManager.QueryExperiments("");
+      selectedExp = e;
+      StateHasChanged();
+   }
+   public async void SaveClinicalTestCallback(ClinicalTest ct)
+   {
+      //implement validation of clinical test
+      showClinicalTestModal = false;
+      if (selectedCT.ExperimentIds.Contains(selectedExp.id))
+      {
+         await ct.SaveToDatabase();
+      }
+      {
+         await ExperimentManager.Associate(selectedExp, selectedCT);
+      }
+
+      showClinicalTests(selectedExp);
+   }
+
+   private void setCurrentObject<T>(T obj) 
+   {
+      if (obj is Experiment)
+      {
+         selectedExp = ((Experiment)(object)obj);
+         selectedCT = null;
+      } else if (obj is ClinicalTest)
+      {
+         selectedCT = ((ClinicalTest)(object)obj);
+      }
+   }
+   
+   private async void deleteExperiment()
+   {
+      showCancelConfirmModalDeleteExperiment = false;
+      await ExperimentManager.DeleteExperiment(selectedExp);
+      experiments = await ExperimentManager.QueryExperiments("");
+      currentClinicalTests = null;
+      selectedExp = null;
+      StateHasChanged();
+   }
+
+   private async void deleteClinicalTest()
+   {
+      showCancelConfirmModalDeleteClinicalTest = false;
+      await ExperimentManager.DeleteClinicalTest(selectedCT);
+      currentClinicalTests = await selectedExp.QueryClinicalTests("");
+      StateHasChanged();
+   }
+   private async void MenuCardOnclickCallback<T>(T obj) 
+   {
+      setCurrentObject(obj);
+      if (selectedCT == null) 
+      {
+         await showClinicalTests(selectedExp);
+      } else
+      {
+         //Handle hvad der sker når der bliver trykket på en clinical test
+      }
+   }
+
+   private void MenuCardEditCallback<T>(T obj)
+   {
+      setCurrentObject(obj);
+      if (selectedCT == null) {
+         EditorModalTitle = "Edit " + selectedExp.ExperimentNumber;
+         showExperimentModal = true;
+      } else
+      {
+         EditorModalTitle = "Edit " + selectedCT.Title;
+         showClinicalTestModal = true;
+      }
+      
+   }
+
+   private async void MenuCardDeleteCallback<T>(T obj)
+   {
+      setCurrentObject(obj);
+      if (selectedCT == null)
+      {
+         cancelConfirmModalTitle = "Delete Experiment: " + selectedExp.ExperimentNumber;
+         cancelConfirmModalBody = "The experiment and clinical tests that only relate to this experiment will be deleted.";
+         showCancelConfirmModalDeleteExperiment = true;
+      } else 
+      {
+         cancelConfirmModalTitle = "Delete Clinical Test: " + selectedCT.Title;
+         cancelConfirmModalBody = "The clinical test will be deleted permanently.";
+         showCancelConfirmModalDeleteClinicalTest = true;
+      }
+      
+   }
 }

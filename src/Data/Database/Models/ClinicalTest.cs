@@ -1,5 +1,5 @@
 ﻿using System.Text.RegularExpressions;
-
+using System.ComponentModel.DataAnnotations;
 namespace src.Data;
 
 public class ClinicalTest : BaseModel<ClinicalTest>
@@ -16,7 +16,6 @@ public class ClinicalTest : BaseModel<ClinicalTest>
     }
     public ClinicalTest(string id) : base(id) { }
     public ClinicalTest() : base() { }
-
     public List<SlideDataFile> SlideDataFiles { get; set; } = new List<SlideDataFile>();
     public Dictionary<string, bool> PatientKeys { get; set; } = new Dictionary<string, bool>();
     public List<string> ActiveKeys { get; set; } = new List<string>();
@@ -28,7 +27,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
     public string Description { get; set; } = "";
     public double MaxRI { get; private set; } = 0;
     public double MinRI { get; private set; } = 0;
-    public DateTime CreatedAt { get; } = DateTime.Now;
+    public DateTime? CreatedAt { get; set; } = DateTime.Now;
     public DateTime EditedAt { get; private set; } = DateTime.Now;
 
     public void AddSlide(Slide slide, List<Dictionary<string, string>> patientData)

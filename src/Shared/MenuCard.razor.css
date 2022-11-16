@@ -1,0 +1,23 @@
+.cardTextcontent_Experiment {
+    display: grid;
+    width: 100%;
+    grid-template-columns: 20% 10% 30% 15% 15%;
+}
+
+.cardTextcontent_ClinicalTest {
+    display: grid;
+    width: 100%;
+    grid-template-columns: 60% 15% 15%;
+}
+
+.card_Content {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: row;
+    background-color: grey;
+}
+
+
+/*     background-color: grey;
+    padding: 5px;
+    margin-top: 10px; */

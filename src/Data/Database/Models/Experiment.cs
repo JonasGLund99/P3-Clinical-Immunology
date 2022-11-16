@@ -1,4 +1,5 @@
 ﻿using Microsoft.Azure.Cosmos;
+using System.ComponentModel.DataAnnotations;
 
 namespace src.Data;
 
@@ -20,13 +21,16 @@ public class Experiment : BaseModel<Experiment>
     {
 
     }
-
     public string ExperimentNumber { get; set; } = "";
+    [Required]
     public string Title { get; set; } = "";
+    [Required]
     public string Author { get; set; } = "";
+    [Required]
     public string Description { get; set; } = "";
     public List<string> ClinicalTestIds { get; set; } = new List<string>();
-    public DateTime CreatedAt { get; private set; } = DateTime.Now;
+    [Required]
+    public DateTime? CreatedAt { get; set; } = DateTime.Now;
     public DateTime EditedAt { get; private set; } = DateTime.Now;
 
     public async Task<List<ClinicalTest>> QueryClinicalTests(string searchParameter) {

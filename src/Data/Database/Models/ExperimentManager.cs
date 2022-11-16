@@ -1,4 +1,4 @@
-﻿using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.Cosmos;
 
 namespace src.Data;
 
@@ -50,14 +50,17 @@ public static class ExperimentManager
         }
     }
     
-    public static async Task Associate(Experiment experiment, ClinicalTest clinicalTest)
-    {
-        experiment.ClinicalTestIds.Add(clinicalTest.id);
-        await experiment.SaveToDatabase();
+   public static async Task Associate(Experiment experiment, ClinicalTest clinicalTest)
+   {
+      if ( !experiment.ClinicalTestIds.Contains(clinicalTest.id))
+      {
+         experiment.ClinicalTestIds.Add(clinicalTest.id);
+         await experiment.SaveToDatabase();
 
-        clinicalTest.ExperimentIds.Add(experiment.id);
-        await clinicalTest.SaveToDatabase();
-    }
+         clinicalTest.ExperimentIds.Add(experiment.id);
+         await clinicalTest.SaveToDatabase();
+      }
+   }
 
     public static async Task DeleteExperiment(Experiment experiment)
     {
@@ -68,4 +71,19 @@ public static class ExperimentManager
         }
         await experiment.RemoveFromDatabase();
     }
+
+   public static async Task DeleteClinicalTest(ClinicalTest clinicalTest)
+   {
+      //Vi skal have lavet en funktion som kan query experiment eller clinical test baseret på deres id.
+      //Så vi kan få et håndtag direkte til et experiment eller clinicalTest fra databasen.
+      List<Experiment> experiments = await QueryExperiments("");
+      foreach (Experiment e in experiments)
+      {
+         if (e.ClinicalTestIds.Contains(clinicalTest.id))
+         {
+            await Disassociate(e, clinicalTest);
+         }
+      }
+   }
+
 }

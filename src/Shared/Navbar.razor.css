@@ -35,7 +35,6 @@ i {
     flex: 1;
 }
 
-
 .ct-title {
     font-weight: 600;
 }
@@ -64,7 +63,7 @@ i {
     margin-right: 15px;
 }
 
-#navButtonContainer button:last-child{
+#navButtonContainer button:last-child {
     margin-right: 0;
 }
 
@@ -87,4 +86,23 @@ span {
 
 #navButtonContainer button.active {
     background-color: var(--main-background-color)
+}
+
+#topnavContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    background-color: var(--primary-dark-color);
+    padding-top: 0.6em;
+}
+
+.ct-title {
+    font-weight: 600;
+}
+
+#homeButton {
+    margin-left: 1vw;
+    background-color: var(--primary-dark-color);
+    border: none;
 }

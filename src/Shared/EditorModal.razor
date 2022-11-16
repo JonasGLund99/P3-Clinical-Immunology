@@ -1,0 +1,84 @@
+﻿@using src.Data
+@typeparam ModalType where ModalType : new() 
+
+<!--Usage:
+
+    <EditorModal 
+		ModalTitle="Title of modal"
+		CallbackClose="name of callback function when modal is closed"
+		ModalObject="optional Experiment or ClinicalTest object"
+		ModalType="Type of inserted component: Experiment/ClinicalTest"
+   />
+-->
+
+<div class="modal fade show" id="myModal" style="display:block; background-color: rgba(10,10,10,.8);" aria-modal="true" role="dialog">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <h4 class="modal-title">@ModalTitle</h4>
+         </div>
+         <form onclick="return false;">
+            <div class="modalContent">
+               @if(ModalObject is Experiment)
+               {
+                  <p>Experiment Number</p>
+                  <input type="text" @bind="((Experiment)((object)ModalObject)).ExperimentNumber"/>
+                  
+                  <p>Title</p>
+                  <input type="text" @bind="((Experiment)((object)ModalObject)).Title"/>
+                  
+                  <p>Author</p>
+                  <input type="text" @bind="((Experiment)((object)ModalObject)).Author"/>
+                  
+                  <p>Created At</p>
+                  <input type="date" @bind="((Experiment)((object)ModalObject)).CreatedAt"/>
+                  
+                  <p>Description</p>
+                  <textarea @bind="((Experiment)((object)ModalObject)).Description"/>
+               } else
+               {
+                  <p>Title</p>
+                  <input type="text" @bind="((ClinicalTest)((object)ModalObject)).Title"/>
+                  
+                  <p>Created At</p>
+                  <input type="date" @bind="((ClinicalTest)((object)ModalObject)).CreatedAt" required/>
+
+                  <p>N-plicate size</p>
+                  <input type="number" @bind="((ClinicalTest)((object)ModalObject)).NplicateSize" required min="1" max="10"/>
+
+                  <p>Description</p>
+                  <textarea @bind="((ClinicalTest)((object)ModalObject)).Description"/>
+               }
+            </div>
+                  
+            <div class="modal-footer">
+               <button type="button" class="btn btn-secondary" @onclick="cancelEdits">Cancel</button>
+               <button type="button" class="btn btn-primary" @onclick="saveEdits">Save</button>
+            </div>
+
+         </form>
+      </div>
+   </div>
+</div>
+
+
+@code {
+   [Parameter] 
+   public string ModalTitle { get; set; } = "";
+   [Parameter] 
+   public EventCallback<ModalType> CallbackClose {get; set;}
+   [Parameter] 
+   public ModalType ModalObject { get; set; }
+   [Parameter] 
+   public EventCallback<ModalType> CallbackSave {get; set;}
+   private async void saveEdits()
+   {
+      await CallbackSave.InvokeAsync(ModalObject);
+   }
+
+   private async void cancelEdits()
+   {
+      await CallbackClose.InvokeAsync(ModalObject);
+   }
+
+}
