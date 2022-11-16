@@ -33,5 +33,38 @@
     </div>
 
     <script src="_framework/blazor.server.js"></script>
+
+    <script>
+        function listenForPaste() {
+            const overviewTable = document.querySelector('#overview-table');
+            if (!overviewTable) return;
+            const cells = overviewTable.querySelectorAll('td');
+
+            cells.forEach(c => {
+                c.addEventListener('paste', event => {
+
+                    event.preventDefault();
+
+                    const clipboard = event.clipboardData.getData('text');
+
+                    const formatedClipboard = clipboard.split('\n').map(line => line.split('\t').map(elm => elm.trim()));
+
+                    const rowIndex = event.target.parentElement.rowIndex;
+                    const cellIndex = event.target.cellIndex;
+
+                    const cells = [...document.querySelectorAll('tr')].map(row => row.querySelectorAll('td'));
+
+                    for (const [i, line] of formatedClipboard.entries()) {
+                        for (const [j, value] of line.entries()) {
+                            if (cells[i + rowIndex]?.[j + cellIndex]) {
+                                cells[i + rowIndex][j + cellIndex].innerHTML = value;
+                            }
+                        }
+                    }
+                })
+            })
+        }
+    </script>
+
 </body>
 </html>

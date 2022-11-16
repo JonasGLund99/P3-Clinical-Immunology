@@ -81,7 +81,6 @@ public class ClinicalTest : BaseModel<ClinicalTest>
     {
         int beginningIndex = 0;
         Regex start = new Regex(@"^Block\s*Row\s*Column\s*Name\s*ID", RegexOptions.IgnoreCase);
-        System.Console.WriteLine(SlideDataFiles.Count);
         for (int i = 0; i < SlideDataFiles.Count; i++) 
         {
             //Read all lines in a file and add each line as an element in a string array

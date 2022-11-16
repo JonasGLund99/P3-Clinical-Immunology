@@ -3,6 +3,8 @@
 @using src.Data
 @using Microsoft.Azure.Cosmos
 
+@inject IJSRuntime JS
+
 @if (clinicalTest == null) {
     <p>Loading...</p>
 } 
@@ -23,8 +25,12 @@ else
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        Container? container = DatabaseService.Instance.Database?.GetContainer("ClinicalTest");
-        clinicalTest = await container?.ReadItemAsync<ClinicalTest>(clinicalTestId, new PartitionKey(clinicalTestId));
-        StateHasChanged();
+        if (firstRender) {
+            Container? container = DatabaseService.Instance.Database?.GetContainer("ClinicalTest");
+            clinicalTest = await container?.ReadItemAsync<ClinicalTest>(clinicalTestId, new PartitionKey(clinicalTestId));
+            StateHasChanged();
+
+            await JS.InvokeVoidAsync("listenForPaste");
+        }
     }
 }

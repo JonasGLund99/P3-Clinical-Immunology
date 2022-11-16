@@ -1,17 +1,20 @@
 @using src.Data
 
-<table>
+@inject IJSRuntime JS
+
+<table id="overview-table">
     <tr>
-        @for (int j = 0; j < numCols; j++) {
-            <th></th>
+        <td class="line-number"></td>
+        @for (int j = 0; j < numCols - 1; j++) {
+            <td contenteditable></td>
         }
     </tr>
 
     @for (int i = 0; i < numRows; i++) {
-        <tr class="table-row">
-            <td>@(i + 1)</td>
+        <tr>
+            <td class="line-number">@(i + 1)</td>
             @for (int j = 0; j < numCols - 1; j++) {
-                <td @onkeypress=insertClipboard contenteditable></td>
+                <td contenteditable></td>
             }
         </tr>
     }
@@ -25,6 +28,7 @@
 
     [Parameter]
     public ClinicalTest? clinicalTest { get; set; }
+
 
     private void insertClipboard(KeyboardEventArgs args) {
         System.Console.WriteLine("ctrl: " + args.CtrlKey.ToString());
