@@ -83,9 +83,9 @@ else
     [Parameter]
     public bool IsExperiment { get;  set; } = false;
     [Parameter]
-    public Experiment? Experiment { get; set; } = null;
+    public Experiment Experiment { get; set; } = null;
     [Parameter]
-    public ClinicalTest? ClinicalTest { get; set; } = null;
+    public ClinicalTest ClinicalTest { get; set; } = null;
 
     public void EditClinicalTest() {}
     public void EditExperiment() {}
