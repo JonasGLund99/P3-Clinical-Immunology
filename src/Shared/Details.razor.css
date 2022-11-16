@@ -1,0 +1,7 @@
+﻿.card-box {
+    display: flex;
+    height: calc(100vh - 100px);
+    justify-content: center;
+    align-items: center;
+    padding: 2vw 8vw 2vw 8vw;
+}

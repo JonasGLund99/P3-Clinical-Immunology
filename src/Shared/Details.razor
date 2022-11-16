@@ -1,0 +1,15 @@
+﻿@using src.Shared
+@using src.Data
+
+<div class ="card-box">
+    <DetailCard IsExperiment="true" Experiment="@Experiment"></DetailCard>
+    <DetailCard IsExperiment="false" ClinicalTest="@ClinicalTest" Experiment="@Experiment"></DetailCard>
+</div>
+
+@code {
+    [Parameter]
+    public Experiment Experiment { get; set; }
+    [Parameter]
+    public ClinicalTest ClinicalTest { get; set; }
+
+}

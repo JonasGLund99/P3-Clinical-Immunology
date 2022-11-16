@@ -1,0 +1,81 @@
+﻿@using src.Data
+
+	
+
+<div class="overview-component">
+	
+	<div class="all-icons">
+		<div class="icons">
+			<img src="@(mode == "Overview" ? "icons/Overview_icon_active.svg" : "icons/Overview_icon.svg")" title="View overview" @onclick='() => switchMode("Overview")'/>
+			<img src="@(mode == "Table-view" ? "icons/Table-view_icon_active.svg" : "icons/Table-view_icon.svg")" title="View table-view" @onclick='() => switchMode("Table-view")'/>
+		</div>
+
+		<div class="icons" id="exportIcon">
+			<i class="fa-solid fa-file-export"></i>
+		</div>
+	</div>
+	
+	@if (mode == "Overview")
+	{
+		<div class="overview-container">
+			<div class="selectors">
+				@for (int i = 0; i < chosenDataTypes.Length; i++)
+				{
+					int dataTypeNo = i;
+					<select @onchange="(e) => chooseDataType(e, dataTypeNo)">
+						<option value="Choose type">Choose type</option>
+						@foreach (string dataTypeName in allDataTypeNames)
+						{
+							<option value="@dataTypeName">@dataTypeName</option>
+						}
+					</select>
+				}
+			</div>
+			
+			<div class="plate">
+				<div class="overview-needs-info">
+					<p>
+						Input clinical data before viewing the overview
+					</p>
+
+					<button class="green-button" @onclick='() => switchMode("Table-view")'>
+						Insert clinical data
+						<img src="icons/Table-view_icon_active.svg" class="btn-icon"/>
+					</button>
+				</div>
+			</div>	
+		</div>
+	} else
+	{
+		<div class="table-view-container">
+			
+		</div>
+	}
+
+</div>
+
+@code {
+	//[Parameter]
+	//public ClinicalTest clinicalTest { get; set; }
+
+	public string mode = "Overview";
+
+	public void switchMode(string newMode)
+	{
+		mode = newMode;
+	}
+
+	private string selectedDataType = "";
+	void chooseDataType(ChangeEventArgs e, int typeNo)
+	{
+		string? value = e.Value?.ToString();
+		if (value == null) return;
+
+		selectedDataType = value;
+		chosenDataTypes[typeNo] = selectedDataType;
+	}
+
+	public string[] chosenDataTypes = new string[3];
+	public List<string> allDataTypeNames = new List<string> {"Name", "SoT", "Died", "Age at SOT", "Baseline BP", "BDH"};
+}
+
