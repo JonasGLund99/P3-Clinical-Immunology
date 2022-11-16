@@ -40,7 +40,7 @@
 
 					<button class="green-button" @onclick='() => switchMode("Table-view")'>
 						Insert clinical data
-						<img src="icons/Table-view_icon_active.svg" class="big-icon"/>
+						<img src="icons/Table-view_icon_active.svg" class="btn-icon"/>
 					</button>
 				</div>
 			</div>	
@@ -68,7 +68,10 @@
 	private string selectedDataType = "";
 	void chooseDataType(ChangeEventArgs e, int typeNo)
 	{
-		selectedDataType = e.Value.ToString();
+		string? value = e.Value?.ToString();
+		if (value == null) return;
+
+		selectedDataType = value;
 		chosenDataTypes[typeNo] = selectedDataType;
 	}
 
