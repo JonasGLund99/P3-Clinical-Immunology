@@ -1,0 +1,37 @@
+@using src.Data
+
+
+<div class="modal fade show" id="myModal" style="display:block; background-color: rgba(10,10,10,.8);" aria-modal="true" role="dialog">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <h4 class="modal-title">@Title</h4>
+         </div>
+         <div class="modal-body">
+            <p>@Body</p>
+         </div>
+         <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" @onclick="cancel">Cancel</button>
+                  <button type="button" class="btn btn-primary" @onclick="confirm">Confirm</button>
+            </div>
+         </div>
+      </div>
+</div>
+
+@code {
+   [Parameter] public string Title { get; set; }
+   [Parameter] public string Body { get; set; }
+   [Parameter] public EventCallback CallbackCancel {get; set;}
+   [Parameter] public EventCallback CallbackConfirm {get; set;}
+
+   private async void confirm()
+   {
+      await CallbackConfirm.InvokeAsync();
+   }
+
+   private async void cancel()
+   {
+      await CallbackCancel.InvokeAsync();
+   }
+   
+}
