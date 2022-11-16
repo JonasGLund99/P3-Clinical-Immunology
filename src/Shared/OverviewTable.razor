@@ -28,11 +28,4 @@
 
     [Parameter]
     public ClinicalTest? clinicalTest { get; set; }
-
-
-    private void insertClipboard(KeyboardEventArgs args) {
-        System.Console.WriteLine("ctrl: " + args.CtrlKey.ToString());
-        System.Console.WriteLine("meta: " + args.MetaKey.ToString());
-        System.Console.WriteLine("key: " + args.Key.ToString());
-    }
 }
