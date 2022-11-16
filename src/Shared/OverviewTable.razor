@@ -28,4 +28,12 @@
 
     [Parameter]
     public ClinicalTest? clinicalTest { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("listenForPaste");
+        }
+    }
 }

@@ -3,10 +3,10 @@
 @using src.Shared
 @using Microsoft.Azure.Cosmos
 
-if (experiment != null && clinicaltest != null) {
+@if (experiment != null && clinicalTest != null) {
 	<PageTitle>@clinicalTest.Title</PageTitle>
 
-	<Navbar 
+	<Navbar
 		ClinicalTestTitle="@clinicalTest.Title" 
 		ExperimentNumber="@experiment.ExperimentNumber" 
 		setActiveButtonCallback="@SetActiveButton" 
@@ -41,11 +41,9 @@ if (experiment != null && clinicaltest != null) {
 	{
 		if (firstRender)
 		{
-			Console.WriteLine("Here");
 			experiment = await DatabaseService.Instance.GetItemById<Experiment>(ExperimentId);
 			clinicalTest = await DatabaseService.Instance.GetItemById<ClinicalTest>(ClinicalTestId);
-			Console.WriteLine(experiment.id);
-			Console.WriteLine(clinicalTest.id);
+			StateHasChanged();
 		}
 	}
 
