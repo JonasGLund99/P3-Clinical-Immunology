@@ -19,18 +19,10 @@
 	{
 		<div class="overview-container">
 			<div class="selectors">
-				@*@for (int i = 0; i < 3; i++) {
-					<select name="DataType@(i)" @bind="chosenDataTypes[i]">
-						<option value="Choose type">Choose type</option>
-						@foreach (string dataTypeName in allDataTypeNames)
-						{
-							<option value="@dataTypeName">@dataTypeName</option>
-						}
-					</select>
-				}*@
 				@for (int i = 0; i < chosenDataTypes.Length; i++)
 				{
-					<select @onchange="chooseDataType">
+					int dataTypeNo = i;
+					<select @onchange="(e) => chooseDataType(e, dataTypeNo)">
 						<option value="Choose type">Choose type</option>
 						@foreach (string dataTypeName in allDataTypeNames)
 						{
@@ -38,28 +30,20 @@
 						}
 					</select>
 				}
-
-				@foreach (string item in chosenDataTypes)
-				{
-					<p>@item</p>
-				}
 			</div>
-			@for (int i = 0; i < 5; i++)
-			{
-				<div class="plate">
-					<div class="overview-needs-info">
-						<p>
-							Input clinical data before viewing the overview
-						</p>
+			
+			<div class="plate">
+				<div class="overview-needs-info">
+					<p>
+						Input clinical data before viewing the overview
+					</p>
 
-						<button class="green-button">
-							Insert clinical data
-							<img src="icons/Table-view_icon_active.svg" @onclick='() => switchMode("Table-view")' class="big-icon"/>
-						</button>
-
-					</div>
-				</div>	
-			}
+					<button class="green-button" @onclick='() => switchMode("Table-view")'>
+						Insert clinical data
+						<img src="icons/Table-view_icon_active.svg" class="big-icon"/>
+					</button>
+				</div>
+			</div>	
 		</div>
 	} else
 	{
@@ -82,15 +66,13 @@
 	}
 
 	private string selectedDataType = "";
-	void chooseDataType(ChangeEventArgs e)
+	void chooseDataType(ChangeEventArgs e, int typeNo)
 	{
 		selectedDataType = e.Value.ToString();
-		Console.WriteLine(selectedDataType);
-		//chosenDataTypes[typeNo] = selectedDataType;
+		chosenDataTypes[typeNo] = selectedDataType;
 	}
 
 	public string[] chosenDataTypes = new string[3];
 	public List<string> allDataTypeNames = new List<string> {"Name", "SoT", "Died", "Age at SOT", "Baseline BP", "BDH"};
-
 }
 
