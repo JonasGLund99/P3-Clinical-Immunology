@@ -43,7 +43,7 @@ main {
 }
 
 #clinical-test-header {
-    background-color: rgb(88, 88, 88);
+    background-color: var(--rightcard-color);
 }
 
 .toolbar {
@@ -106,6 +106,7 @@ input:focus {
 .grid-header-clinicalTest {
     display: grid;
     width: 100%;
+    font-weight: bold;
     grid-template-columns: 60% 15% 15%;
 }
 
@@ -113,4 +114,25 @@ input:focus {
     height: calc(100vh - 100px - 84px - 44px);
     overflow-y: scroll;
     margin-right: 10px;
+}
+
+.no-experiment-selected-placeholder {
+    display: flex;
+    justify-content: center;
+}
+
+.clinicaltest-content-empty-true {
+    width: 100%;
+    height: calc(100% - 100px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    color: var(--rightcard-color);
+    font-size: 30px;
+}
+
+.clinicaltest-content-empty-false {
+    width: 100%;
+    height: calc(100% - 100px);
 }

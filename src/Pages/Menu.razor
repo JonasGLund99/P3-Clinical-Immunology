@@ -52,45 +52,52 @@
     <div id="clinical-test-container">
         <div id="clinical-test-header" class="menu-header">
             <img src="icons/ct.svg" />
-            Clinical Tests</div>
-        <div class="toolbar">
-         @if (selectedExp != null) {
-            <button class="add-element-button" @onclick="openNewClinicalTestModal">
-                    <i class="fa-solid fa-square-plus"></i>
-                     Add Clinical Test
-            </button>
-            <div class="searchbar">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" placeholder="Search...">
-            </div>
-         }
+            Clinical Tests
         </div>
-        <div id="clinical-test-grid">
-            <div class="grid-header-clinicalTest">
-                <span>Title</span>
-                <span>Created At</span>
-                <span>Last Edit</span>
-            </div>
-            @if (selectedExp == null) {
-               <span>Select An Experiment</span>
-            } else if (currentClinicalTests == null || currentClinicalTests.Count == 0) {
-               <span>No Clinical Tests To Show</span>
-            }
-            else {
-               <div class="all-clinicaltest-cards">
-                  @foreach (ClinicalTest ct in currentClinicalTests) {
-                     <div class="grid-content active-@((ct == selectedCT).ToString().ToLower())" >
-                        <MenuCard 
-                        MenuCardType="@ClinicalTest"
-                        objectDeleteCallback="MenuCardDeleteCallback"
-                        objectEditCallback="MenuCardEditCallback"
-                        objectOnclickCallback="MenuCardOnclickCallback"
-                        obj="@ct"
-                        selectedObj="@selectedCT"
-                        />
-                     </div>
-                  }
-               </div>
+        <div class="clinicaltest-content-empty-@((selectedExp == null).ToString().ToLower())">
+            @if (selectedExp != null) {
+                <div class="toolbar">
+                    <button class="add-element-button" @onclick="openNewClinicalTestModal">
+                            <i class="fa-solid fa-square-plus"></i>
+                            Add Clinical Test
+                    </button>
+                    <div class="searchbar">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" placeholder="Search...">
+                    </div>
+                </div>
+                <div id="clinical-test-grid">
+                <div class="grid-header-clinicalTest">
+                    <span>Title</span>
+                    <span>Created At</span>
+                    <span>Last Edit</span>
+                </div>
+                @if (currentClinicalTests == null || currentClinicalTests.Count == 0) 
+                {
+                    <span>No Clinical Tests To Show</span>
+                } else 
+                {
+                    <div class="all-clinicaltest-cards">
+                        @foreach (ClinicalTest ct in currentClinicalTests) {
+                            <div class="grid-content active-@((ct == selectedCT).ToString().ToLower())" >
+                                <MenuCard 
+                                MenuCardType="@ClinicalTest"
+                                objectDeleteCallback="MenuCardDeleteCallback"
+                                objectEditCallback="MenuCardEditCallback"
+                                objectOnclickCallback="MenuCardOnclickCallback"
+                                obj="@ct"
+                                selectedObj="@selectedCT"
+                                />
+                            </div>
+                        }
+                    </div>
+                }
+                </div>
+            } else 
+            {
+                <div class="no-experiment-selected-placeholder">
+                    Select An Experiment
+                </div>
             }
         </div>
    </div>
