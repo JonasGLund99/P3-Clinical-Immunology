@@ -1,7 +1,5 @@
 ﻿@using src.Data
 
-	
-
 <div class="overview-component">
 	
 	<div class="all-icons">
@@ -55,8 +53,12 @@
 </div>
 
 @code {
-	//[Parameter]
-	//public ClinicalTest clinicalTest { get; set; }
+	[Parameter]
+	public Experiment? Experiment { get; set; }
+
+	[Parameter]
+	public ClinicalTest? ClinicalTest { get; set; }
+
 
 	public string mode = "Overview";
 

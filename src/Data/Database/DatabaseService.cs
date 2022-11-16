@@ -27,4 +27,12 @@ public class DatabaseService
         await Database.CreateContainerIfNotExistsAsync("Experiment", "/id");
         await Database.CreateContainerIfNotExistsAsync("ClinicalTest", "/id");
     }
+
+    public async Task<T> GetItemById<T>(string id)
+    {
+        if (Database == null)
+            throw new NullReferenceException("Database is null");
+
+        return await Database.GetContainer(typeof(T).Name).ReadItemAsync<T>(id, new PartitionKey(id));
+    } 
 }
