@@ -6,8 +6,8 @@
 <PageTitle>Clinical Test</PageTitle>
 
 <Navbar 
-	ClinicalTestTitle="Delforsøg 3" 
-	ExperimentNumber="EXP-22-JE1900" 
+	ClinicalTestTitle="@ct.Title" 
+	ExperimentNumber="@ex.ExperimentNumber" 
 	setActiveButtonCallback="@SetActiveButton" 
 	ActiveButton="@activeButton">
 </Navbar>
@@ -22,7 +22,7 @@
 			<Overview></Overview>
 			break;
 		case 2:
-			<h1>File Upload</h1>
+			<FileUpload ClinicalTest="@ct"></FileUpload>
 			break;
 		case 3:
 			<h1>Result Table</h1>

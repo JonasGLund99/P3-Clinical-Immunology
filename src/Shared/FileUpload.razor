@@ -1,61 +1,121 @@
 ﻿
 @using src.Data
 
-
 <div class="file-component">
     <div class="square">
-        @if (@slideDataFiles.Count == 0)
-        {
-            <div class="row-container">
-                <div class="my-row">
-                    <i class="fa-solid fa-cloud-arrow-up"></i>
-                </div>
-                <div class="my-row">
-                    <h3>Drag & drop files here</h3>
-                </div>
-                <div class="my-row">
-                    <h3>or</h3>
-                </div>
-                <div class="my-row">
-                    <button class="grey-button file-upload-button">
-                        Browse files
-                        <i class="fa-solid fa-file-lines"></i>
-                    </button>
-                </div>
-            </div>
-        }
-        else {
-            <div class="all-files">
-                <div class="file-container">
-                    @{int i = 1;}
-                    @foreach(SlideDataFile slideDataFile in slideDataFiles)
-                    {
-                        <div class="file-row">
-                            <span class="file-indexer">File @i</span>
-                            <span class="file">10000467_0005_flag.txt</span>
-                        </div>
-                        i++;
-                    }
-                </div>
-                <div class="my-row">
-                    <button class="grey-button file-upload-button">
-                        Browse files
-                        <i class="fa-solid fa-file-lines"></i>
-                    </button>
+        <div class="square-body">
+            <div class="expected background-card">
+                <h2>Expected files</h2>
+                <div class="files">
+                    <div class="file-container">
+                        @*@{int j = 1;}
+                            @*foreach(Slide slide in ClinicalTest.Slides) {
+                            <div class="file-row">
+                                <span class="file-indexer">Slide @j</span>
+                                <div class="file">
+                                    <i class="fa-solid fa-circle-check check"></i>
+                                    <span>slide.barcode</span>
+                                </div>
+                            </div>
+                            j++;
+                        }
+                        *@
+                        @for(int j = 1; j <= 16; j++) {
+                            <div class="file-row">
+                                <span class="file-indexer">Slide @j</span>
+                                <div class="file">
+                                    <i class="fa-solid fa-circle-check check"></i>
+                                    <span>10000467</span>
+                                </div>
+                            </div>
+                        }
+                    </div>
                 </div>
             </div>
-        }
+            <div class="uploaded background-card">
+                <h2>Uploaded files</h2>
+                <div class="files">
+                    <div class="file-container">
+                        @*@{int i = 1;}
+                        @foreach(SlideDataFile slideDataFile in ClinicalTest.SlideDataFiles)
+                        {
+                            <div class="file-row">
+                                <span class="file-indexer">File @i</span>
+                                <div class="file">
+                                    <i class="fa-solid fa-circle-check check"></i>
+                                    <span>10000467_0005_flag.txt</span>
+                                </div>
+                            </div>
+                            i++;
+                        }*@
+                        @for(int l = 1; l <= 16; l++) {
+                            <div class="file-row">
+                                <span class="file-indexer">File @l</span>
+                                <div class="file">
+                                    <i class="fa-solid fa-circle-check check"></i>
+                                    <span>10000467_0005_flag.txt</span>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <label class="grey-button file-upload-button">
+            Browse files
+            <i class="fa-solid fa-file-lines"></i>
+            <InputFile style="display: none;" accept=".txt" OnChange="@UploadFiles" multiple />
+        </label>
     </div>
+    <button class="@(AllChecked ? "green-button start-calc-button" : "green-button wait-calc-button")"> 
+        @(AllChecked ? "Start calculations" : "Files missing")
+        <i class="@(AllChecked ? "fa-sharp fa-solid fa-calculator" : "fa-sharp fa-solid fa-file-circle-exclamation")"></i>
+    </button>            
 </div>
 
 
 
 @code {
-    public List<SlideDataFile> slideDataFiles = new List<SlideDataFile>() { new SlideDataFile(), new SlideDataFile(), new SlideDataFile(), new SlideDataFile(), new SlideDataFile(), new SlideDataFile(), new SlideDataFile(), new SlideDataFile(), new SlideDataFile(), new SlideDataFile() };
+    private int maximumAllowedFiles = 16;
+    private long maxFileSize = 1024 * 100;
+    private List<SlideDataFile> slideDataFiles = new List<SlideDataFile>();
+    private Dictionary<string, bool> fileCheckStatus = new Dictionary<string, bool>();
+    private Dictionary<int, bool> slideCheckStatus = new Dictionary<int, bool>();
 
-    public void BrowseFiles(InputFileChangeEventArgs e)
+    [Parameter]
+    public ClinicalTest? ClinicalTest { get; set; } = null;
+
+    public bool AllChecked = true;
+
+    public async Task UploadFiles(InputFileChangeEventArgs e)
     {
+        foreach (var file in e.GetMultipleFiles(maximumAllowedFiles))
+        {
+            try {
+                var fileContent = new StreamContent(file.OpenReadStream(maxFileSize));
+                slideDataFiles.Add(new SlideDataFile(file.Name, await fileContent.ReadAsStringAsync()));
+                MatchBarcodes(file.Name);
+            } 
+            catch(Exception err) {
+                Console.WriteLine(err.Message);
+                Console.WriteLine("Couldn't read file: " + file.Name);
+            }
 
+        }
     }
 
+    public void MatchBarcodes(string fileName) {
+        //4    16 
+        bool fileMatchesSlide = false;
+
+        for(int i = 0; i < ClinicalTest.Slides.Count; i++) {
+            if (fileName.Contains(ClinicalTest.Slides[i].Barcode)) {
+                fileCheckStatus.Add(fileName, true);
+                fileMatchesSlide = true;
+            }
+
+        }
+
+        allChecked = fileMatchesSlide;
+    }
 }
