@@ -20,3 +20,15 @@
     align-items: center;
     justify-content: space-evenly;
 }
+
+/*custom*/
+.green-button {
+    padding: 10px 20px;
+    color: white;
+    display: flex;
+    background-color: var(--green-btn-color);
+    border: none;
+    border-radius: 10px;
+    justify-content: center;
+    align-items: center;
+}
