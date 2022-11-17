@@ -1,4 +1,4 @@
-﻿using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.Cosmos;
 
 namespace src.Data;
 
@@ -31,6 +31,18 @@ public static class ExperimentManager
         return experiments;
     }
 
+    public static async Task<Experiment> GetExperimentById(string id)
+    {
+        Experiment e = await DatabaseService.Instance.GetItemById<Experiment>(id);
+        return e;
+    }
+
+    public static async Task<ClinicalTest> GetClinicalTestById(string id)
+    {
+        ClinicalTest ct = await DatabaseService.Instance.GetItemById<ClinicalTest>(id);
+        return ct;
+    }
+
     // Deletes the relation between an experiment and clinical test, 
     // and deletes the clinical test if it is not related to any other experiments
     public static async Task Disassociate(Experiment experiment, ClinicalTest clinicalTest)
@@ -50,14 +62,17 @@ public static class ExperimentManager
         }
     }
     
-    public static async Task Associate(Experiment experiment, ClinicalTest clinicalTest)
-    {
-        experiment.ClinicalTestIds.Add(clinicalTest.id);
-        await experiment.SaveToDatabase();
+   public static async Task Associate(Experiment experiment, ClinicalTest clinicalTest)
+   {
+      if ( !experiment.ClinicalTestIds.Contains(clinicalTest.id))
+      {
+         experiment.ClinicalTestIds.Add(clinicalTest.id);
+         await experiment.SaveToDatabase();
 
-        clinicalTest.ExperimentIds.Add(experiment.id);
-        await clinicalTest.SaveToDatabase();
-    }
+         clinicalTest.ExperimentIds.Add(experiment.id);
+         await clinicalTest.SaveToDatabase();
+      }
+   }
 
     public static async Task DeleteExperiment(Experiment experiment)
     {
@@ -68,4 +83,16 @@ public static class ExperimentManager
         }
         await experiment.RemoveFromDatabase();
     }
+
+   public static async Task DeleteClinicalTest(ClinicalTest clinicalTest)
+   {
+        List<string> ids = new();
+        ids.AddRange(clinicalTest.ExperimentIds); 
+        foreach (string id in ids)
+        {
+            Experiment e = await GetExperimentById(id);
+            await Disassociate(e, clinicalTest);
+        }
+   }
+
 }
