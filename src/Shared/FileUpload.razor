@@ -37,15 +37,16 @@
                 <div class="files">
                     <div class="file-container">
                         @*@{int i = 1;}
-                        @foreach(SlideDataFile slideDataFile in ClinicalTest.SlideDataFiles)
+                        @foreach(SlideDataFile slideDataFile in slideDataFiles)
                         {
-                            <div class="file-row">
-                                <span class="file-indexer">File @i</span>
-                                <div class="file">
-                                    <i class="fa-solid fa-circle-check check"></i>
-                                    <span>10000467_0005_flag.txt</span>
+                            if(filesandSlides[i-1].Barcode && filesandSlides[i-1].Filename)
+                                <div class="file-row">
+                                    <span class="file-indexer">File @l</span>
+                                    <div class="file">
+                                        <i class="fa-solid fa-circle-check check"></i>
+                                        <span>@slideDataFile.Filename.txt</span>
+                                    </div>
                                 </div>
-                            </div>
                             i++;
                         }*@
                         @for(int l = 1; l <= 16; l++) {
@@ -79,8 +80,40 @@
     private int maximumAllowedFiles = 16;
     private long maxFileSize = 1024 * 100;
     private List<SlideDataFile> slideDataFiles = new List<SlideDataFile>();
-    private Dictionary<string, bool> fileCheckStatus = new Dictionary<string, bool>();
-    private Dictionary<int, bool> slideCheckStatus = new Dictionary<int, bool>();
+
+    private int fileCount = 0;
+
+    private List<FilesandSlides> filesandSlides = new List<FilesandSlides>()
+    {
+        new FilesandSlides(),
+        new FilesandSlides(),
+        new FilesandSlides(),
+        new FilesandSlides(),
+        new FilesandSlides(),
+        new FilesandSlides(),
+        new FilesandSlides(),
+        new FilesandSlides(),
+        new FilesandSlides(),
+        new FilesandSlides(),
+        new FilesandSlides(),
+        new FilesandSlides(),
+        new FilesandSlides(),
+        new FilesandSlides(),
+        new FilesandSlides(),
+        new FilesandSlides(),
+    };
+
+    private class FilesandSlides
+    {
+        public FilesandSlides ()
+        {
+            Barcode = null;
+            Filename = null;
+        }
+        public string? Barcode { get; set; }
+        public string? Filename { get; set; }
+    }
+
 
     [Parameter]
     public ClinicalTest? ClinicalTest { get; set; } = null;
@@ -94,8 +127,9 @@
             try {
                 var fileContent = new StreamContent(file.OpenReadStream(maxFileSize));
                 slideDataFiles.Add(new SlideDataFile(file.Name, await fileContent.ReadAsStringAsync()));
+                fileCount++;
                 MatchBarcodes(file.Name);
-            } 
+            }
             catch(Exception err) {
                 Console.WriteLine(err.Message);
                 Console.WriteLine("Couldn't read file: " + file.Name);
@@ -104,18 +138,30 @@
         }
     }
 
-    public void MatchBarcodes(string fileName) {
-        //4    16 
-        bool fileMatchesSlide = false;
+    public void MatchBarcodes(string fileName)
+    {
+        if (ClinicalTest == null) return;
 
-        for(int i = 0; i < ClinicalTest.Slides.Count; i++) {
-            if (fileName.Contains(ClinicalTest.Slides[i].Barcode)) {
-                fileCheckStatus.Add(fileName, true);
-                fileMatchesSlide = true;
+        for (int i = 0; i < ClinicalTest.Slides.Count; i++)
+        {
+            if (fileName.Contains(ClinicalTest.Slides[i].Barcode))
+            {
+                filesandSlides[i].Filename = fileName;
             }
-
         }
+    }
 
-        allChecked = fileMatchesSlide;
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            if (ClinicalTest == null) return;
+
+
+            for (int i = 0; i < ClinicalTest.Slides.Count; i++)
+            {
+                filesandSlides[i].Barcode = "100004" + $"{i}";
+            }
+        }
     }
 }
