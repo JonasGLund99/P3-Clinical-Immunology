@@ -43,7 +43,7 @@ main {
 }
 
 #clinical-test-header {
-    background-color: var(--rightcard-color);
+    background-color: var(--leftcard-color);
 }
 
 .toolbar {
@@ -119,8 +119,6 @@ input:focus {
     margin-right: 10px;
 }
 
-
-
 .no-experiment-selected-placeholder {
     display: flex;
     justify-content: center;
@@ -142,3 +140,12 @@ input:focus {
     height: calc(100% - 100px);
 }
 
+
+.no-clinical-tests {
+    display: flex;
+    justify-content: center;
+    margin-top: 30vh;
+    font-weight: bold;
+    color: var(--rightcard-color);
+    font-size: 30px;
+}

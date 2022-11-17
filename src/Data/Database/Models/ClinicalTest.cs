@@ -1,5 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using System.ComponentModel.DataAnnotations;
+
 namespace src.Data;
 
 public class ClinicalTest : BaseModel<ClinicalTest>

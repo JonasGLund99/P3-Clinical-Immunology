@@ -21,15 +21,14 @@ public class Experiment : BaseModel<Experiment>
     {
 
     }
+    [Required]
+    [StringLength(10, ErrorMessage = "Name is too long.")]
     public string ExperimentNumber { get; set; } = "";
-    [Required]
+
     public string Title { get; set; } = "";
-    [Required]
     public string Author { get; set; } = "";
-    [Required]
     public string Description { get; set; } = "";
     public List<string> ClinicalTestIds { get; set; } = new List<string>();
-    [Required]
     public DateTime? CreatedAt { get; set; } = DateTime.Now;
     public DateTime EditedAt { get; private set; } = DateTime.Now;
 
