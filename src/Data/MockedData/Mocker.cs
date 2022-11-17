@@ -56,15 +56,15 @@ static class Mocker
                 ct.SlideDataFiles = slideDataFiles;
                 ct.AddSlide(
                     slide: new Slide("10000465"),
-                    patientData: new Dictionary<string, string>[21].ToList()
+                    patientData: new Dictionary<string, string>[20].ToList()
                 );
                 ct.AddSlide(
                     slide: new Slide("10000466"),
-                    patientData: new Dictionary<string, string>[21].ToList()
+                    patientData: new Dictionary<string, string>[20].ToList()
                 );
                 ct.AddSlide(
                     slide: new Slide("10000467"),
-                    patientData: new Dictionary<string, string>[21].ToList()
+                    patientData: new Dictionary<string, string>[20].ToList()
                 );
                 ct.CreatePatientKeys(new List<string>() { "key1", "key2", "key3", "key4", "key5" }, "key1", "key3", "key4");
                 ct.CalculateClinicalTestResult();

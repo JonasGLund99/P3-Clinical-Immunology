@@ -69,11 +69,8 @@
 @code {
     private List<Experiment>? experiments { get; set; }
     private Experiment? selectedExperiment { get; set; }
-
     private List<ClinicalTest>? currentClinicalTests { get; set; }
-
     private string? experimentSearchValue { get; set; }
-
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender) {

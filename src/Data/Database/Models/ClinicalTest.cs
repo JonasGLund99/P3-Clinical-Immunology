@@ -36,7 +36,11 @@ public class ClinicalTest : BaseModel<ClinicalTest>
         Slides.Add(slide);
         for (int i = 0; i < numOfBlocks; i++)
         {
-            slide.Blocks.Add(new Block(patientData[i]));
+            if (i < patientData.Count) {
+                slide.Blocks.Add(new Block(patientData[i]));
+            } else {
+                slide.Blocks.Add(new Block(new Dictionary<string, string>()));
+            }
         }
     }
 
@@ -47,7 +51,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
 
         foreach (string key in allKeys)
         {
-            PatientKeys.Add(key, false);
+            PatientKeys[key] = false;
         }
 
         foreach (string key in shownKeys)
