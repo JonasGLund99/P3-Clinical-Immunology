@@ -2,15 +2,15 @@
 
 @inject IJSRuntime JS
 
-
 <table id="overview-table">
+    @*Title row*@
     <tr>
         <td class="line-number"></td>
         @for (int i = 0; i < numCols - 1; i++) 
         {
-            @if (i < clinicalTest.PatientKeys.Count) 
+            @if (i < clinicalTest.TableTitles.Count) 
             {
-                <td contenteditable>@clinicalTest.PatientKeys.ToList()[i].Key</td>
+                <td contenteditable>@clinicalTest.TableTitles[i]</td>
             }
             else 
             {
@@ -19,6 +19,7 @@
         }
     </tr>
 
+    @*Data rows*@
     @for (int i = 0; i < numRows; i++) 
     {
         <tr>
@@ -34,7 +35,6 @@
 @code {
     private int numRows { get; set; } = 320;
     private int numCols { get; set; } = 40;
-
 
     [Parameter]
     public ClinicalTest? clinicalTest { get; set; }

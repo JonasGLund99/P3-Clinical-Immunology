@@ -18,8 +18,8 @@ public class ClinicalTest : BaseModel<ClinicalTest>
     public ClinicalTest() : base() { }
 
     public List<SlideDataFile> SlideDataFiles { get; set; } = new List<SlideDataFile>();
-    public Dictionary<string, bool> PatientKeys { get; set; } = new Dictionary<string, bool>();
-    public List<string> ActiveKeys { get; set; } = new List<string>();
+    public List<string> TableTitles { get; set; } = new List<string>();
+    public string[] ChosenTableTitles { get; set; } = new string[3];
     public List<string> ExperimentIds { get; set; } = new List<string>();
     public List<Slide> Slides { get; set; } = new List<Slide>();
     public List<string> AnalyteNames { get; set; } = new List<string>();
@@ -44,37 +44,37 @@ public class ClinicalTest : BaseModel<ClinicalTest>
         }
     }
 
-    public void CreatePatientKeys(List<string> allKeys, params string[] shownKeys)
-    {
-        PatientKeys.Clear();
-        ActiveKeys.Clear();
+    //public void CreatePatientKeys(List<string> allKeys, params string[] shownKeys)
+    //{
+    //    PatientKeys.Clear();
+    //    ActiveKeys.Clear();
 
-        foreach (string key in allKeys)
-        {
-            PatientKeys[key] = false;
-        }
+    //    foreach (string key in allKeys)
+    //    {
+    //        PatientKeys[key] = false;
+    //    }
 
-        foreach (string key in shownKeys)
-        {
-            PatientKeys[key] = true;
-            ActiveKeys.Add(key);
-        }
-    }
+    //    foreach (string key in shownKeys)
+    //    {
+    //        PatientKeys[key] = true;
+    //        ActiveKeys.Add(key);
+    //    }
+    //}
 
-    private void UpdatePatientKeys(params string[] newKeys)
-    {
-        foreach (string key in ActiveKeys)
-        {
-            PatientKeys[key] = false;
-        }
-        ActiveKeys.Clear();
+    //private void UpdatePatientKeys(params string[] newKeys)
+    //{
+    //    foreach (string key in ActiveKeys)
+    //    {
+    //        PatientKeys[key] = false;
+    //    }
+    //    ActiveKeys.Clear();
 
-        foreach (string key in newKeys)
-        {
-            PatientKeys[key] = true;
-            ActiveKeys.Add(key);
-        }        
-    }
+    //    foreach (string key in newKeys)
+    //    {
+    //        PatientKeys[key] = true;
+    //        ActiveKeys.Add(key);
+    //    }        
+    //}
 
     public void ExportClinicalTest(string exportType)
     {

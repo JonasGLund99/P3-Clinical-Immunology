@@ -66,7 +66,8 @@ static class Mocker
                     slide: new Slide("10000467"),
                     patientData: new List<List<string>>()
                 );
-                ct.CreatePatientKeys(new List<string>() { "key1", "key2", "key3", "key4", "key5" }, "key1", "key3", "key4");
+                ct.TableTitles = new List<string>() { "key1", "key2", "key3", "key4", "key5" };
+                ct.ChosenTableTitles = new string[] { "key2", "key1", "key3" };
                 ct.CalculateClinicalTestResult();
                 await ct.SaveToDatabase();
                 await ExperimentManager.Associate(e, ct);

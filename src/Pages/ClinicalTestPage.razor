@@ -23,8 +23,17 @@
 			case 4: <h1>Heatmap</h1> break;
 		}
 	</div>
-} else {
-	<p>Loading.....</p>
+} 
+else 
+{
+	<Navbar ClinicalTestTitle="@placeholderCt.Title"
+		ExperimentNumber="@placeholderExp.ExperimentNumber"
+		setActiveButtonCallback="@SetActiveButton"
+		ActiveButton="@activeButton">
+	</Navbar>
+	<div class="component-container">
+		<Details Experiment="@placeholderExp" ClinicalTest="@placeholderCt"></Details>
+	</div>
 }
 
 @code{
@@ -32,6 +41,23 @@
 	public string ExperimentId { get; set; } = "";
 	[Parameter]
 	public string ClinicalTestId { get; set; } = "";
+
+	private Experiment placeholderExp = new Experiment(
+		id: "",
+		experimentNumber: "EXP-##-######",
+		title: "Title",
+        author: "Author",
+        description: "",
+        createdAt: DateTime.Now
+	);
+	
+	private ClinicalTest placeholderCt = new ClinicalTest(
+		id: "",
+		title: "Title",
+		nplicateSize: 3,
+        description: "",
+        createdAt: DateTime.Now
+	);
 
 	private Experiment? experiment;
 	private ClinicalTest? clinicalTest;
@@ -46,9 +72,6 @@
 			StateHasChanged();
 		}
 	}
-
-
-
 
 	private int activeButton { get; set; } = 0;
 
