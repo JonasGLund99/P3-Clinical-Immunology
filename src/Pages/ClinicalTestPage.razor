@@ -25,13 +25,17 @@
 			case 4: <h1>Heatmap</h1> break;
 		}
 	</div>
+} else 
+{
+    <p>Loading.....</p>
+}
 
 @if (showExperimentModal)
 {
    <EditorModal 
         CallbackClose="closeEditorModal"
         CallbackSave="saveEditorModal"
-        ModalObject="@ex"
+        ModalObject="@experiment"
         ModalType="@Experiment"
         ModalTitle='@editModalTitle'
    />
@@ -42,13 +46,11 @@
    <EditorModal 
         CallbackClose="closeEditorModal"
         CallbackSave="saveEditorModal"
-        ModalObject="@ct"
+        ModalObject="@clinicalTest"
         ModalType="@ClinicalTest"
         ModalTitle="@editModalTitle"
    />
-} else {
-	<p>Loading.....</p>
-}
+} 
 
 @code{
 	[Parameter]

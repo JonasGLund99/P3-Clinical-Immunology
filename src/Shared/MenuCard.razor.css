@@ -20,7 +20,7 @@
     height: 38px;
     border-radius: 10px;
     border: 10px solid var(--menu-button-color);
-    grid-template-columns: 60% 15% 15%;
+    grid-template-columns: 51% 20% 18% 6% 5%;
 }
 
 .card-textcontent-clinicaltest span,

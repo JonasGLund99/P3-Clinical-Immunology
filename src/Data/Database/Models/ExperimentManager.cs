@@ -31,43 +31,15 @@ public static class ExperimentManager
         return experiments;
     }
 
-    public static async Task<T> GetObjectById<T>(string searchContainer, string idParameter)
-    {
-        List<T> objects = new List<T>();
-
-        if (DatabaseService.Instance.Database == null)
-        {
-            throw new NullReferenceException("No database");
-        }
-        string queryString = @"SELECT * FROM " + searchContainer + 
-                            " WHERE " + searchContainer +".id = @expid";
-
-        FeedIterator<T> feed = DatabaseService.Instance.Database.GetContainer(searchContainer)
-                                        .GetItemQueryIterator<T>(
-                                            queryDefinition: new QueryDefinition(queryString)
-                                            .WithParameter("@expid", idParameter)
-                                        );
-        
-        while (feed.HasMoreResults)
-        {
-            FeedResponse<T> response = await feed.ReadNextAsync();
-            objects.AddRange(response);
-        }
-        if (objects.Count != 1)
-            throw new ArgumentException("0 or more than 1 objects matched the id");
-
-        return objects[0];
-    }
-
     public static async Task<Experiment> GetExperimentById(string id)
     {
-        Experiment e = await GetObjectById<Experiment>("Experiment", id);
+        Experiment e = await DatabaseService.Instance.GetItemById<Experiment>(id);
         return e;
     }
 
     public static async Task<ClinicalTest> GetClinicalTestById(string id)
     {
-        ClinicalTest ct = await GetObjectById<ClinicalTest>("ClinicalTest", id);
+        ClinicalTest ct = await DatabaseService.Instance.GetItemById<ClinicalTest>(id);
         return ct;
     }
 

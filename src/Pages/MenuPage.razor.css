@@ -99,22 +99,27 @@ input:focus {
     font-weight: bold;
 }
 
-.grid-header div {
+.grid-header div,
+.grid-header-clinicalTest div {
     border-bottom: 2px solid var(--primary-dark-color);
 }
 
 .grid-header-clinicalTest {
     display: grid;
-    width: 100%;
+    width: calc(100% - 30px);
+    padding: 10px 10px 0 20px;
+    grid-template-columns: 51% 20% 29%;
     font-weight: bold;
-    grid-template-columns: 60% 15% 15%;
 }
 
-.all-experiment-cards {
+.all-experiment-cards, 
+.all-clinicaltest-cards {
     height: calc(100vh - 100px - 84px - 44px);
     overflow-y: scroll;
     margin-right: 10px;
 }
+
+
 
 .no-experiment-selected-placeholder {
     display: flex;
@@ -136,3 +141,4 @@ input:focus {
     width: 100%;
     height: calc(100% - 100px);
 }
+

@@ -19,7 +19,7 @@
             <div class="searchbar">
                 <i class="fa-solid fa-magnifying-glass"></i>
                 <input type="text" placeholder="Search Experiment..." @oninput="@searchExperiments">
-        </div>
+            </div>
         </div>
         <div id="experiment-grid">
             <div class="grid-header">
@@ -34,8 +34,8 @@
             } 
             else {
                <div class="all-experiment-cards">
-                @foreach (Experiment e in experiments) {
-                     <div class="grid-content active-@((e == selectedExp).ToString().ToLower())">
+               @foreach (Experiment e in experiments) {
+                    <div class="grid-content active-@((e == selectedExp).ToString().ToLower())">
                         <MenuCard 
                            MenuCardType="@Experiment"
                            objectDeleteCallback="MenuCardDeleteCallback"
@@ -45,7 +45,7 @@
                            selectedObj="@selectedExp"
                         />
                     </div>
-                }
+               }
                </div>
             }
         </div>
@@ -57,53 +57,42 @@
         </div>
         <div class="clinicaltest-content-empty-@((selectedExp == null).ToString().ToLower())">
             @if (selectedExp != null) {
-        <div class="toolbar">
+                <div class="toolbar">
                     <button class="add-element-button" @onclick="openNewClinicalTestModal">
-                            <i class="fa-solid fa-square-plus"></i>
-                            Add Clinical Test
+                        <i class="fa-solid fa-square-plus"></i>
+                        Add Clinical Test
                     </button>
                     <div class="searchbar">
                         <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" placeholder="Search...">
-        </div>
-                </div>
-        <div id="clinical-test-grid">
-                <div class="grid-header-clinicalTest">
-                <span>Title</span>
-                    <span>Created At</span>
-                    <span>Last Edit</span>
-                </div>
-                @if (currentClinicalTests == null || currentClinicalTests.Count == 0) 
-                {
-                    <span>No Clinical Tests To Show</span>
-                } else 
-                {
-                    <div class="all-clinicaltest-cards">
-                        @foreach (ClinicalTest ct in currentClinicalTests) {
-                            <div class="grid-content active-@((ct == selectedCT).ToString().ToLower())" >
-                                <MenuCard 
-                                MenuCardType="@ClinicalTest"
-                                objectDeleteCallback="MenuCardDeleteCallback"
-                                objectEditCallback="MenuCardEditCallback"
-                                objectOnclickCallback="MenuCardOnclickCallback"
-                                obj="@ct"
-                                selectedObj="@selectedCT"
-                                />
-            </div>
-            @if (currentClinicalTests == null) {
-                <span>Select an experiment</span>
-            }
-            else {
-                foreach (ClinicalTest ct in currentClinicalTests) {
-                    string expId = selectedExperiment.id;
-                    string ctId = ct.id; 
-
-                    <div class="grid-content">
-                        <NavLink href='@($"/{expId}/{ctId}")'>
-                            <span>@ct.Title</span>
-                        </NavLink>
+                        <input type="text" placeholder="Search...">
                     </div>
-                }
+                </div>
+                <div id="clinical-test-grid">
+                    <div class="grid-header-clinicalTest">
+                        <div>Title</div>
+                        <div>Created At</div>
+                        <div>Last Edit</div>
+                    </div>
+                    @if (currentClinicalTests == null || currentClinicalTests.Count == 0) 
+                    {
+                        <span>No Clinical Tests To Show</span>
+                    } else 
+                    {
+                        <div class="all-clinicaltest-cards">
+                            @foreach (ClinicalTest ct in currentClinicalTests) {
+                                <div class="grid-content active-@((ct == selectedCT).ToString().ToLower())" >
+                                    <MenuCard 
+                                    MenuCardType="@ClinicalTest"
+                                    objectDeleteCallback="MenuCardDeleteCallback"
+                                    objectEditCallback="MenuCardEditCallback"
+                                    objectOnclickCallback="MenuCardOnclickCallback"
+                                    obj="@ct"
+                                    selectedObj="@selectedCT"
+                                    />
+                                </div>
+                            }
+                        </div>
+                    }
                 </div>
             } else 
             {
@@ -205,7 +194,7 @@
 	}
 
 	private void closeEditorModal<T> (T? obj)
-	{	
+	{
 		showExperimentModal = false;
 		showClinicalTestModal = false;
 	}
@@ -216,9 +205,10 @@
       showExperimentModal = false;
       await e.SaveToDatabase();
       experiments = await ExperimentManager.QueryExperiments("");
-      selectedExp = e;
       StateHasChanged();
+      await showClinicalTests(e);
    }
+
    public async void SaveClinicalTestCallback(ClinicalTest ct)
    {
       //implement validation of clinical test
@@ -263,6 +253,7 @@
       currentClinicalTests = await selectedExp.QueryClinicalTests("");
       StateHasChanged();
    }
+
    private async void MenuCardOnclickCallback<T>(T obj) 
    {
       setCurrentObject(obj);
@@ -285,8 +276,7 @@
       {
          EditorModalTitle = "Edit " + selectedCT.Title;
          showClinicalTestModal = true;
-      }
-      
+      }  
    }
 
    private async void MenuCardDeleteCallback<T>(T obj)
