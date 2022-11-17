@@ -4,7 +4,7 @@
 /*    height: calc(100vh - 185px);*/
     border: 5px solid var(--primary-dark-color);
     border-radius: 20px;
-    margin: 0 20px 20px 0;
+    margin-bottom: 30px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -17,18 +17,21 @@ table {
 td {
     background-color: white;
     border: 0.5px solid rgb(170, 170, 170);
-    min-width: 100px;
+    min-width: 75px;
     height: 20px;
     padding: 3px 6px;
     white-space: nowrap;
     box-sizing: border-box;
-    text-align: right;
+    text-align: center;
 }
 
 .heading {
-    text-align: center;
-    border-left: none;
-    background-color: white;
-    outline: 0.5px solid rgb(37, 62, 39);
+    background-color: var(--primary-dark-color);
+    color: white;
+    outline: 0.5px solid rgb(138, 138, 138);
     min-width: 50px;
+}
+
+.block {
+    font-size: 12px;
 }

@@ -138,8 +138,10 @@
 }
 
 .plates{
+    height: calc(100vh - 175px);
     width: 100%;
     overflow-y: scroll;
+    padding: 0 40px;
 }
 
 /* Plate */

@@ -49,7 +49,7 @@
             <div class="plates">
                 @for (int i = 0; i <= ClinicalTest.Slides.Count / 4; i++)
                 {
-                    <Plate PlateNumber=i+1 Slides="ClinicalTest.Slides.GetRange(i*4, (i * 4) + 4 <= ClinicalTest.Slides.Count ? 4 :ClinicalTest.Slides.Count % 4)" />
+                    <Plate ClinicalTest="@ClinicalTest" PlateNumber=i+1 Slides="ClinicalTest.Slides.GetRange(i*4, (i * 4) + 4 <= ClinicalTest.Slides.Count ? 4 :ClinicalTest.Slides.Count % 4)" />
                 }
             </div>
         } 

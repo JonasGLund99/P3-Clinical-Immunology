@@ -2,6 +2,7 @@
 
 <div class="plate numSlides@(Slides.Count)">
 	<table id="plate@(PlateNumber)">
+        @*Heading row*@
         <tr>
             <td class="heading"></td>
             @for (int i = 0; i < numCols - 1; i++)
@@ -10,12 +11,34 @@
             }
         </tr>
 
-        @for (int i = 0; i < numRows - 1; i++)
+        @*Block rows*@
+        @for (int i = 0; i < numRows - 2; i++)
         {
             <tr>
-
+                <td class="heading">@(headingLetters[i])</td>
+                @for (int j = 0; j < numCols - 1; j++)
+                {
+                    <td class="block">Type1<br>Type2<br>Type3</td>
+                    @*<td class="block">
+                        @for (int k = 0; k < 3; k++)
+                        {
+                            int index = k;
+                            @(Slides[i].Blocks[j].PatientData[findTitleIndex(index)])
+                            <br>
+                        }
+                    </td>*@
+                }
             </tr>
         }
+
+        @*Barcode row*@
+        <tr>
+            <td class="heading">@headingLetters[headingLetters.Length-1]</td>
+            @for (int j = 0; j < 4; j++)
+            {
+                <td colspan="3">Barcode slide@(j+1)</td>
+            }
+        </tr>
 	</table>
 </div>
 
@@ -23,11 +46,21 @@
 @code
 {
     [Parameter]
+    public ClinicalTest? ClinicalTest { get; set; }
+
+    [Parameter]
     public int PlateNumber { get; set; }
 
     [Parameter]
     public List<Slide>? Slides { get; set; }
 
+    private int findTitleIndex(int i)
+    {
+        return ClinicalTest.TableTitles.IndexOf(ClinicalTest.ChosenTableTitles[i]);
+    }
+
     private int numCols = 13;
     private int numRows = 9;
+
+    private string[] headingLetters = { "A", "B", "C", "D", "E", "F", "G", "H" };
 }
