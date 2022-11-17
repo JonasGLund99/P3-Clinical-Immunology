@@ -31,6 +31,46 @@ public static class ExperimentManager
         return experiments;
     }
 
+    public static async Task<T> GetObjectById<T>(string searchContainer, string idParameter)
+    {
+        List<T> objects = new List<T>();
+
+        if (DatabaseService.Instance.Database == null)
+        {
+            throw new NullReferenceException("No database");
+        }
+        string queryString = @"SELECT * FROM " + searchContainer + 
+                            " WHERE " + searchContainer +".id = @expid";
+
+        FeedIterator<T> feed = DatabaseService.Instance.Database.GetContainer(searchContainer)
+                                        .GetItemQueryIterator<T>(
+                                            queryDefinition: new QueryDefinition(queryString)
+                                            .WithParameter("@expid", idParameter)
+                                        );
+        
+        while (feed.HasMoreResults)
+        {
+            FeedResponse<T> response = await feed.ReadNextAsync();
+            objects.AddRange(response);
+        }
+        if (objects.Count != 1)
+            throw new ArgumentException("0 or more than 1 objects matched the id");
+
+        return objects[0];
+    }
+
+    public static async Task<Experiment> GetExperimentById(string id)
+    {
+        Experiment e = await GetObjectById<Experiment>("Experiment", id);
+        return e;
+    }
+
+    public static async Task<ClinicalTest> GetClinicalTestById(string id)
+    {
+        ClinicalTest ct = await GetObjectById<ClinicalTest>("ClinicalTest", id);
+        return ct;
+    }
+
     // Deletes the relation between an experiment and clinical test, 
     // and deletes the clinical test if it is not related to any other experiments
     public static async Task Disassociate(Experiment experiment, ClinicalTest clinicalTest)
@@ -74,16 +114,13 @@ public static class ExperimentManager
 
    public static async Task DeleteClinicalTest(ClinicalTest clinicalTest)
    {
-      //Vi skal have lavet en funktion som kan query experiment eller clinical test baseret på deres id.
-      //Så vi kan få et håndtag direkte til et experiment eller clinicalTest fra databasen.
-      List<Experiment> experiments = await QueryExperiments("");
-      foreach (Experiment e in experiments)
-      {
-         if (e.ClinicalTestIds.Contains(clinicalTest.id))
-         {
+        List<string> ids = new();
+        ids.AddRange(clinicalTest.ExperimentIds); 
+        foreach (string id in ids)
+        {
+            Experiment e = await GetExperimentById(id);
             await Disassociate(e, clinicalTest);
-         }
-      }
+        }
    }
 
 }

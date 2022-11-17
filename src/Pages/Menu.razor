@@ -1,6 +1,7 @@
 ﻿@page "/"
 @using src.Data
 @using Microsoft.Azure.Cosmos
+@inject NavigationManager NavManager
 
 <PageTitle>Menu</PageTitle>
 
@@ -259,7 +260,7 @@
          await showClinicalTests(selectedExp);
       } else
       {
-         //Handle hvad der sker når der bliver trykket på en clinical test
+         NavManager.NavigateTo($"/clinicaltest/{selectedExp.id}/{selectedCT.id}");
       }
    }
 
