@@ -1,0 +1,33 @@
+﻿@using src.Data
+
+<div class="plate numSlides@(Slides.Count)">
+	<table id="plate@(PlateNumber)">
+        <tr>
+            <td class="heading"></td>
+            @for (int i = 0; i < numCols - 1; i++)
+            {
+                <td class="heading">@(i+1)</td>
+            }
+        </tr>
+
+        @for (int i = 0; i < numRows - 1; i++)
+        {
+            <tr>
+
+            </tr>
+        }
+	</table>
+</div>
+
+
+@code
+{
+    [Parameter]
+    public int PlateNumber { get; set; }
+
+    [Parameter]
+    public List<Slide>? Slides { get; set; }
+
+    private int numCols = 13;
+    private int numRows = 9;
+}
