@@ -110,14 +110,6 @@
     public async Task UploadFiles(InputFileChangeEventArgs e)
     {
         if (ClinicalTest == null) return;
-        for(int i = 1; i <= 16; i++) {
-            int barcodeInt = 10000464 + i;
-            string barcode = $"{barcodeInt}";
-            ClinicalTest.AddSlide(
-                slide: new Slide(barcode),
-                patientData: new Dictionary<string, string>[21].ToList()
-            );
-        }
 
         foreach (var file in e.GetMultipleFiles(maximumAllowedFiles))
         {
