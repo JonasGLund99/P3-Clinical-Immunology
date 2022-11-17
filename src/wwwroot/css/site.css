@@ -6,6 +6,7 @@
     --secondary-dark-color: #474747;
     --main-text-color: #e2e2e2;
     --green-btn-color: #66985E;
+    --green-btn-hover-color: #30572A;
     --red-btn-color: #BE5959;
     --rightcard-color: #9e9e9e;
     --leftcard-color: #7d7d7d;
@@ -92,6 +93,17 @@ a, .btn-link {
     color: white;
     display: flex;
     background-color: var(--green-btn-color);
+    border: none;
+    border-radius: 10px;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.red-button {
+    padding: 10px 20px;
+    color: white;
+    display: flex;
+    background-color: var(--red-btn-color);
     border: none;
     border-radius: 10px;
     align-items: center;

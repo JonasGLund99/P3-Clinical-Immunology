@@ -27,7 +27,7 @@
     }
     <div class="square">
         <div class="square-body">
-            <div class="expected background-card">
+            <div class="background-card">
                 <h2>Slides</h2>
                 <div class="files">
                     <div class="file-container">
@@ -48,7 +48,7 @@
                     </div>
                 </div>
             </div>
-            <div class="uploaded background-card">
+            <div class="background-card">
                 <h2>Uploaded files</h2>
                 <div class="files">
                     <div class="file-container">
@@ -77,10 +77,18 @@
             <InputFile style="display: none;" accept=".txt" OnChange="@UploadFiles" multiple />
         </label>
     </div>
-    <button @onclick="StartCalculation" class="@(allMatched ? "green-button start-calc-button" : "green-button wait-calc-button")">
-        @(allMatched ? "Start calculations" : "Files not matching")
-        <i class="@(allMatched ? "fa-sharp fa-solid fa-calculator" : "fa-sharp fa-solid fa-file-circle-exclamation")"></i>
+    @if (allMatched) {
+    <button @onclick="StartCalculation" class="green-button start-calc-button">
+        Start calculations
+        <i class="fa-sharp fa-solid fa-calculator"></i>
     </button>
+    }
+    else {
+    <button class="red-button wait-calc-button">
+        Files not matching
+        <i class="fa-sharp fa-solid fa-file-circle-exclamation"></i>
+    </button>
+    }
 </div>
 
 
@@ -90,7 +98,7 @@
     private bool displayError = false;
     private string? errorMessage = "File(s) with the name(s): ";
     private static string? errorMessageEnd = " already exists";
-    private bool allMatched = true;
+    private bool allMatched = false;
 
     [Parameter]
     public ClinicalTest? ClinicalTest { get; set; } = null;
@@ -164,6 +172,8 @@
 
     public bool AllMatched() 
     {
+        if (ClinicalTest.Slides.Count == 0) return false;
+
         foreach (Slide slide in ClinicalTest.Slides)
         {
             if (!ClinicalTest.Matches.ContainsValue(slide)) return false;
