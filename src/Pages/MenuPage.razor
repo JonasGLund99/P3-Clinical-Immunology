@@ -26,8 +26,8 @@
                 <div>Experiment no.</div>
                 <div>Author</div>
                 <div>Title</div>
-                <div>Created At</div>
-                <div>Last Edit</div>
+                <div>Created at</div>
+                <div>Last edit</div>
             </div>
             @if (experiments == null) {
                 <span>Loading...</span>
@@ -70,12 +70,14 @@
                 <div id="clinical-test-grid">
                     <div class="grid-header-clinicalTest">
                         <div>Title</div>
-                        <div>Created At</div>
-                        <div>Last Edit</div>
+                        <div>Created at</div>
+                        <div>Last edit</div>
                     </div>
                     @if (currentClinicalTests == null || currentClinicalTests.Count == 0) 
                     {
-                        <span>No Clinical Tests To Show</span>
+                        <div class="no-clinical-tests">
+                            No clinical tests to show
+                        </div>
                     } else 
                     {
                         <div class="all-clinicaltest-cards">
@@ -97,7 +99,7 @@
             } else 
             {
                 <div class="no-experiment-selected-placeholder">
-                    Select An Experiment
+                    Select an experiment
                 </div>
             }
         </div>
