@@ -31,16 +31,18 @@ public class ClinicalTest : BaseModel<ClinicalTest>
     public DateTime CreatedAt { get; } = DateTime.Now;
     public DateTime EditedAt { get; private set; } = DateTime.Now;
 
-    public void AddSlide(Slide slide, List<List<string>> patientData)
+    public void AddSlide(Slide slide, string[][] patientData)
     {
         Slides.Add(slide);
         for (int i = 0; i < numOfBlocks; i++)
         {
-            if (i < patientData.Count) {
-                slide.Blocks.Add(new Block(patientData[i]));
-            } else {
-                slide.Blocks.Add(new Block(new List<string>()));
-            }
+            slide.Blocks.Add(new Block(patientData[i]));
+
+            // if (i < patientData.Count) {
+            //     slide.Blocks.Add(new Block(patientData[i]));
+            // } else {
+            //     slide.Blocks.Add(new Block(new List<string>()));
+            // }
         }
     }
 

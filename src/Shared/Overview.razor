@@ -5,11 +5,6 @@
 <div class="overview-component">
     @if (mode == "Overview") {
         <div id="toolbar">
-            @*
-            <div id="mode-icons">
-                <img src="@(mode == "Overview" ? "icons/Overview_icon_active.svg" : "icons/Overview_icon.svg")" title="View overview" @onclick='() => switchMode("Overview")'/>
-                <img src="@(mode == "Table-view" ? "icons/Table-view_icon_active.svg" : "icons/Table-view_icon.svg")" title="View table-view" @onclick='() => switchMode("Table-view")'/>
-            </div>*@
             <div id="info-button" title="Select which information to show in the overview">
                 <i class="fa fa-info-circle"></i>
             </div>
@@ -49,7 +44,7 @@
             <div class="plates">
                 @for (int i = 0; i <= ClinicalTest.Slides.Count / 4; i++)
                 {
-                    <Plate ClinicalTest="@ClinicalTest" PlateNumber=i+1 Slides="ClinicalTest.Slides.GetRange(i*4, (i * 4) + 4 <= ClinicalTest.Slides.Count ? 4 :ClinicalTest.Slides.Count % 4)" />
+                    <Plate ClinicalTest="@ClinicalTest" PlateNumber=i+1 Slides="ClinicalTest.Slides.GetRange(i * 4, (i * 4) + 4 <= ClinicalTest.Slides.Count ? 4 : ClinicalTest.Slides.Count % 4)" />
                 }
             </div>
         } 
@@ -85,15 +80,20 @@
             </div>
         </div>
         <div class="table-view-container">
-            <OverviewTable clinicalTest="@ClinicalTest"/>
+            <OverviewTable ClinicalTest="@ClinicalTest"/>
 		</div>
     }
 
 </div>
 
 @code {
-    [Parameter]
-    public ClinicalTest? ClinicalTest { get; set; }
+    [Parameter, EditorRequired]
+    public ClinicalTest ClinicalTest { get; set; } = new();
+
+    private const int SlideWidth = 3;
+    private const int SlidesInPlate = 21;
+    private const int BlocksInSlide = 21;
+    private const int BlocksInPlate = 84;
 
     //Switch viewmode (Overview or Table-view)
     public string mode { get; set; } = "Overview";
@@ -115,7 +115,7 @@
         if (ClinicalTest == null) throw new NullReferenceException("ClinicalTest object is null");
 
         // Remove existing slides
-        //ClinicalTest.Slides = new List<Slide>();
+        // ClinicalTest.Slides = new List<Slide>();
         ClinicalTest.Slides.Clear();
 
         // Get table data from DOM
@@ -130,32 +130,39 @@
         }
         ClinicalTest.TableTitles = tableTitles;
 
-        // Add slides to the clinical test
-        List<List<string>> patientData = new List<List<string>>();
-        for (int i = 1; i < tableData.Length; i++)
-        {
-            var list = new List<string>();
-            for (int j = 0; j < tableData[i].Length; j++)
-            {
-                list.Add(tableData[i][j]);
-            }
-            patientData.Add(list);
+        // Remove first line from table data
+        tableData = tableData.Skip(1).ToArray();
 
-            if (i % 20 == 0)
-            {
+        // Add slides to the clinical test
+        var numPlatesTotal = tableData.Length / BlocksInPlate + (tableData.Length % BlocksInPlate == 0 ? 0 : 1);
+        var numSlidesTotal = tableData.Length / BlocksInSlide + (tableData.Length % BlocksInSlide == 0 ? 0 : 1);
+
+        // Plates loop
+        for (int i = 0; i < numPlatesTotal; i++) {
+            int numSlides = (i * 4) + 4 <= numSlidesTotal ? 4 : numSlidesTotal % 4;
+            string[][][] plate = new string[numSlides][][].Select(blocks => new string[BlocksInSlide][]).ToArray();
+
+            // Slides loop
+            for (int j = 0; j < numSlides; j++) {
+                int numBlocks = (i * BlocksInPlate + j * BlocksInSlide) + BlocksInSlide <= tableData.Length ? BlocksInSlide : tableData.Length % BlocksInSlide;
+
+                // Blocks loop
+                for (int k = 0; k < numBlocks; k++) {
+                    int index = i * 84 + j * 21 + k;
+                    int slideIndex = index / 3 % numSlides;
+                    int blockIndex = (index % 3) + (index / (numSlides * 3) * 3) - (i * 84 / numSlides);
+
+                    plate[slideIndex][blockIndex] = tableData[index];
+                }
+            }
+
+            for (int j = 0; j < numSlides; j++) {
                 ClinicalTest.AddSlide(
                     slide: new Slide(""),
-                    patientData: new List<List<string>>(patientData)
+                    patientData: plate[j]
                 );
-                patientData.Clear();
             }
         }
-
-        // Add last slide with remaining patient data
-        ClinicalTest.AddSlide(
-            slide: new Slide(""),
-            patientData: new List<List<string>>(patientData)
-        );
 
         // Save to database and switch back to the overview
         await ClinicalTest.SaveToDatabase();

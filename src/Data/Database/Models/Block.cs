@@ -11,7 +11,7 @@ public class Block
     //     TextColour = textColour;
     //     QC = qc;
     // }
-    public Block(List<string> patientData)
+    public Block(string[] patientData)
     {
         PatientData = patientData;
     }
@@ -20,7 +20,7 @@ public class Block
     public List<Nplicate> Nplicates { get; set; } = new List<Nplicate>();
     // public Dictionary<string, string> PatientData { get; set; } = new Dictionary<string, string>();
 
-    public List<string> PatientData { get; set; } = new List<string>();
+    public string[] PatientData { get; set; } = new string[21];
     public Color TextColour { get; set; } = new Color();
     public double QC { get; private set; } = 0;
 

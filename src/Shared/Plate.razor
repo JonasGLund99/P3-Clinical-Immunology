@@ -45,14 +45,14 @@
 
 @code
 {
-    [Parameter]
-    public ClinicalTest? ClinicalTest { get; set; }
+    [Parameter, EditorRequired]
+    public ClinicalTest ClinicalTest { get; set; } = new();
 
     [Parameter]
     public int PlateNumber { get; set; }
 
-    [Parameter]
-    public List<Slide>? Slides { get; set; }
+    [Parameter, EditorRequired]
+    public List<Slide> Slides { get; set; } = new();
 
     private int findTitleIndex(int i)
     {

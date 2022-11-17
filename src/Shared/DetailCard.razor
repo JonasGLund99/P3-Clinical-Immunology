@@ -82,10 +82,10 @@ else
 @code {
     [Parameter]
     public bool IsExperiment { get;  set; } = false;
-    [Parameter]
-    public Experiment? Experiment { get; set; } = null;
-    [Parameter]
-    public ClinicalTest? ClinicalTest { get; set; } = null;
+    [Parameter, EditorRequired]
+    public Experiment Experiment { get; set; } = new();
+    [Parameter, EditorRequired]
+    public ClinicalTest ClinicalTest { get; set; } = new();
 
     public void EditClinicalTest() {}
     public void EditExperiment() {}
