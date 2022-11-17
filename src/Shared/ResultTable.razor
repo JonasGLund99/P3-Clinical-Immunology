@@ -1,0 +1,53 @@
+﻿@using src.Data
+<div class="result-table-component">
+    <div id="toolbar">
+        <button class="result-buttons">
+            (X-Y)/Z
+            </button>
+        <button class="result-buttons">
+            Log
+            <sub>2</sub>
+            </button>
+
+        <div id="export-icon" title="Export overview">
+            <i class="fa-solid fa-file-export"></i>
+        </div>
+    </div>
+</div>
+
+<table id="result-table">
+    <tr>
+        <td class="line-number">Slide</td>
+        <td class="line-number">@ClinicalTest.ChosenTableTitles[0]</td>
+        <td class="line-number">@ClinicalTest.ChosenTableTitles[1]</td>
+        <td class="line-number">@ClinicalTest.ChosenTableTitles[2]</td>
+        <td class="line-number"></td>
+
+        @foreach (string analyteName in ClinicalTest.AnalyteNames) 
+        {
+                <td contenteditable="false">@analyteName</td>
+        }
+    </tr>
+
+    @{int i = 0;}
+    @foreach(Slide slide in ClinicalTest.Slides)
+    {
+        foreach(Block block in slide.Blocks) {
+            <tr>
+                <td class="line-number">@(i + 1)</td>
+            @foreach (Nplicate nplicate in block.Nplicates) 
+            {
+                <td contenteditable ="false"></td>
+            }
+            </tr>
+            
+        }
+        i++;
+    }
+</table>
+
+@code {
+    [Parameter]
+    public ClinicalTest ClinicalTest { get; set; }
+
+}
