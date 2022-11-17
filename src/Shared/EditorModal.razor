@@ -1,16 +1,6 @@
 ﻿@using src.Data
 @typeparam ModalType where ModalType : new() 
 
-<!--Usage:
-
-    <EditorModal 
-		ModalTitle="Title of modal"
-		CallbackClose="name of callback function when modal is closed"
-		ModalObject="optional Experiment or ClinicalTest object"
-		ModalType="Type of inserted component: Experiment/ClinicalTest"
-   />
--->
-
 <div class="modal fade show" id="myModal" style="display:block; background-color: rgba(10,10,10,.8);" aria-modal="true" role="dialog">
    <div class="modal-dialog">
       <div class="modal-content">

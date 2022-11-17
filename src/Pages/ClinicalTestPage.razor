@@ -74,6 +74,7 @@
             StateHasChanged();
         }
     }
+
     private async void closeEditorModal() 
     {
         showClinicalTestModal = false;
@@ -82,29 +83,27 @@
         clinicalTest = await ExperimentManager.GetClinicalTestById(clinicalTest.id);
         StateHasChanged();
     }
+
     private async void saveEditorModal() 
-		{
+    {
         showClinicalTestModal = false;
         showExperimentModal = false;
         await experiment.SaveToDatabase();
         await clinicalTest.SaveToDatabase();
-			StateHasChanged();
-		}
+        StateHasChanged();
+    }
+
     private async void editExp () 
     {
         showExperimentModal = true;
         editModalTitle = $"Edit Experiment: {experiment.ExperimentNumber}";
     }
+
     private async void editCT() 
     {
         showClinicalTestModal = true;
         editModalTitle = $"Edit test: {clinicalTest.Title}";
-        //save ct to database
-        //get ct from database
 	}
-
-
-
 
 	private int activeButton { get; set; } = 0;
 
