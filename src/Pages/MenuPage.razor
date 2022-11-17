@@ -6,7 +6,7 @@
 <PageTitle>Menu</PageTitle>
 
 <main>
-   <div id="experiments-container">
+    <div id="experiments-container">
          <div id="experiment-header" class="menu-header">
             <img src="icons/ExperimentIcon.svg" />
             Experiments
@@ -19,7 +19,7 @@
             <div class="searchbar">
                 <i class="fa-solid fa-magnifying-glass"></i>
                 <input type="text" placeholder="Search Experiment..." @oninput="@searchExperiments">
-            </div>
+        </div>
         </div>
         <div id="experiment-grid">
             <div class="grid-header">
@@ -34,7 +34,7 @@
             } 
             else {
                <div class="all-experiment-cards">
-                  @foreach (Experiment e in experiments) {
+                @foreach (Experiment e in experiments) {
                      <div class="grid-content active-@((e == selectedExp).ToString().ToLower())">
                         <MenuCard 
                            MenuCardType="@Experiment"
@@ -44,8 +44,8 @@
                            obj="@e"
                            selectedObj="@selectedExp"
                         />
-                     </div>
-                  }
+                    </div>
+                }
                </div>
             }
         </div>
@@ -57,19 +57,19 @@
         </div>
         <div class="clinicaltest-content-empty-@((selectedExp == null).ToString().ToLower())">
             @if (selectedExp != null) {
-                <div class="toolbar">
+        <div class="toolbar">
                     <button class="add-element-button" @onclick="openNewClinicalTestModal">
                             <i class="fa-solid fa-square-plus"></i>
                             Add Clinical Test
                     </button>
                     <div class="searchbar">
                         <i class="fa-solid fa-magnifying-glass"></i>
-                        <input type="text" placeholder="Search...">
-                    </div>
+            <input type="text" placeholder="Search...">
+        </div>
                 </div>
-                <div id="clinical-test-grid">
+        <div id="clinical-test-grid">
                 <div class="grid-header-clinicalTest">
-                    <span>Title</span>
+                <span>Title</span>
                     <span>Created At</span>
                     <span>Last Edit</span>
                 </div>
@@ -89,8 +89,19 @@
                                 obj="@ct"
                                 selectedObj="@selectedCT"
                                 />
-                            </div>
-                        }
+            </div>
+            @if (currentClinicalTests == null) {
+                <span>Select an experiment</span>
+            }
+            else {
+                foreach (ClinicalTest ct in currentClinicalTests) {
+                    string expId = selectedExperiment.id;
+                    string ctId = ct.id; 
+
+                    <div class="grid-content">
+                        <NavLink href='@($"/{expId}/{ctId}")'>
+                            <span>@ct.Title</span>
+                        </NavLink>
                     </div>
                 }
                 </div>
@@ -101,7 +112,7 @@
                 </div>
             }
         </div>
-   </div>
+    </div>
 </main>
 
 
@@ -157,7 +168,7 @@
    private string EditorModalTitle;
    private Experiment? selectedExp;
    private ClinicalTest? selectedCT;
-   private string? experimentSearchValue { get; set; }
+    private string? experimentSearchValue { get; set; }
    private bool showCancelConfirmModalDeleteExperiment = false;
    private bool showCancelConfirmModalDeleteClinicalTest = false;
    private string cancelConfirmModalTitle;
@@ -243,7 +254,7 @@
       currentClinicalTests = null;
       selectedExp = null;
       StateHasChanged();
-   }
+    }
 
    private async void deleteClinicalTest()
    {

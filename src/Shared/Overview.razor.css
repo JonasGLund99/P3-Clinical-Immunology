@@ -1,48 +1,4 @@
-﻿.all-icons {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    width: 150px;
-    padding: 20px;
-}
-
-.icons {
-    background-color: var(--primary-dark-color);
-    margin-top: 40px;
-    border-radius: 20px;
-    width: 70px;
-    display: flex;
-    flex-direction: column;
-    padding: 15px;
-}
-
-.btn-icon {
-    height: 20px;
-    padding-left: 10px;
-}
-
-#exportIcon {
-    padding: 15px;
-    width: 70px;
-}
-
-.icons img {
-    height: 35px;
-    margin-bottom: 15px;
-    cursor: pointer;
-    color: var(--navbar-buton-color);
-}
-
-.icons img:last-child {
-    margin-bottom: 0;
-}
-
-i {
-    color: var(--main-background-color);
-    font-size: 40px;
-}
-
-.overview-container {
+﻿.overview-container {
     width: 100%;
     align-items: center;
     justify-content: center;
@@ -50,11 +6,129 @@ i {
     overflow-y: scroll;
     padding-top: 20px;
 }
+.overview-component{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.table-view-container{
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    height: calc(100vh - 170px);
+    overflow: scroll;
+}
 
+/* Toolbar */
+#toolbar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    margin: 10px 0;
+    background-color: rgb(49, 49, 49);
+    border-radius: 10px;
+    height: 50px;
+}
+#toolbar > * {
+    display: flex;
+    align-items: center;
+    height: inherit;
+}
+/* #mode-icons {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 85px;
+} */
+/* #mode-icons img {
+    height: 35px;
+    cursor: pointer;
+    color: var(--navbar-buton-color);
+} */
+#key-selectors {
+    display: flex;
+    justify-content: space-between;
+    width: 560px;
+    margin: 0 50px;
+}
+#key-selectors .key-selector {
+    display: flex;
+    align-items: center;
+}
+#key-selectors .selector-number {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+    width: 25px;
+    height: 35px;
+    border-radius: 5px 0 0 5px;
+    background-color: rgb(213, 213, 213);
+}
+#key-selectors select {
+    position: relative;
+    display: inline-block;
+    width: 150px;
+    height: 35px;
+    background-color: white;
+    /* border: 2px solid var(--navbar-button-color); */
+    border: none;
+    border-radius: 0 5px 5px 0;
+    padding: 5px 5px 5px;
+    cursor: pointer;
+}
+#key-selectors select:focus {
+    outline: none;
+}
+#edit-icon i {
+    font-size: 25px;
+    color: var(--main-background-color);
+    cursor: pointer;
+}
+#export-icon i {
+    font-size: 30px;
+    color: var(--main-background-color);
+    cursor: pointer;
+}
+
+#buttons {
+    display: flex;
+    justify-content: space-between;
+    width: 170px;
+    height: inherit;
+}
+#buttons > span {
+    padding: 3px;
+    border-radius: 5px;
+    height: 35px;
+    min-width: 35px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+#buttons i {
+    font-size: 25px;
+}
+#clear-button {
+    background-color: rgb(72, 117, 151);
+    color: rgb(38, 61, 79);
+}
+#check-button {
+    background-color: rgb(57, 135, 53);
+    color: rgb(26, 63, 24);
+}
+#xmark-button {
+    background-color: rgb(170, 64, 64);
+    color: rgb(70, 25, 25);
+}
+
+/* Plate */
 .plate {
     background-color: white;
-    width: 90%;
-    height: 500px;
+    width: 98%;
+    height: calc(100vh - 185px);
     border: 5px solid var(--primary-dark-color);
     border-radius: 20px;
     margin-bottom: 40px;
@@ -62,32 +136,16 @@ i {
     justify-content: center;
     align-items: center;
 }
-
-.overview-component{
-    display: flex;
-}
-
-.selectors {
-    display: flex;
-    margin-bottom: 20px;
-}
-
-.selectors select{
-    width: 150px;
-    background-color: white;
-    border: 2px solid var(--navbar-button-color);
-    border-radius: 5px;
-    padding: 5px;
-    margin-right: 10px;
-}
-
 .overview-needs-info {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 }
-
 .overview-needs-info p {
     margin: 30px;
+}
+.green-button i {
+    font-size: 14px;
+    margin-left: 12px;
 }

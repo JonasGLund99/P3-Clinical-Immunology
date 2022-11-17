@@ -81,11 +81,11 @@ span {
 }
 
 #navButtonContainer button:hover {
-    background-color: var(--main-background-color)
+    background-color: var(--navbar-button-hover-color);
 }
 
 #navButtonContainer button.active {
-    background-color: var(--main-background-color)
+    background-color: var(--main-background-color);
 }
 
 #topnavContainer {

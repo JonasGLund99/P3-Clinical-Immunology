@@ -64,6 +64,42 @@
                 })
             })
         }
+
+        function getTableData() {
+            const cells = [...document.querySelectorAll('tr')].map(row => [...row.querySelectorAll('td')].slice(1).map(cell => cell.innerText.trim()));
+            
+            // Filter by columns containing a value in the header
+            const registeredColumns = [];
+            let lastDataIndex;
+
+            // Find registered columns
+            for (const [i, row] of cells.entries()) {
+                for (const [j, cell] of row.entries()) {
+                    if (i === 0 && cell !== '') {
+                        registeredColumns.push(j);
+                    }
+                }
+            }
+            // Find index of last data
+            for (let i = cells.length - 1; i >= 0; i--) {
+                const rowAsString = cells[i].join('');
+                if (rowAsString !== '') {
+                    lastDataIndex = i;
+                    break;
+                }
+            }
+            
+            return cells.slice(0, lastDataIndex + 1).map(row => row.filter((cell, index) => registeredColumns.includes(index)));
+        }
+
+        function clearTable() {
+            for (const row of document.querySelectorAll('tr')) {
+                for (const [i, cell] of [...row.querySelectorAll('td')].entries()) {
+                    if (i === 0) continue;
+                    cell.innerText = '';
+                }
+            }
+        }
     </script>
 
 </body>
