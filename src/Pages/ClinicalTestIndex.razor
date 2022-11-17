@@ -23,7 +23,7 @@
                 <p>loading...</p>
             } else 
             {
-                <Details Experiment="@ex" ClinicalTest="@ct"></Details>
+                <Details Experiment="@ex" ClinicalTest="@ct" editCTCallback="editCT" editExpCallback="editExp"></Details>
             }
 			break;
 		case 1:
@@ -41,11 +41,11 @@
 	}
 </div>
 
-@* @if (showExperimentModal)
+@if (showExperimentModal)
 {
    <EditorModal 
         CallbackClose="closeEditorModal"
-        CallbackSave="saveExperimentCallback"
+        CallbackSave="saveEditorModal"
         ModalObject="@ex"
         ModalType="@Experiment"
         ModalTitle='@editModalTitle'
@@ -56,12 +56,12 @@
 {
    <EditorModal 
         CallbackClose="closeEditorModal"
-        CallbackSave="saveClinicalTestCallback"
+        CallbackSave="saveEditorModal"
         ModalObject="@ct"
         ModalType="@ClinicalTest"
         ModalTitle="@editModalTitle"
    />
-} *@
+}
 
 @code{
 	public Experiment? ex;
@@ -87,16 +87,29 @@
     }
     private async void closeEditorModal() 
     {
-        // get ex from database
-        // get ct from database
+        showClinicalTestModal = false;
+        showExperimentModal = false;
+        ex = await ExperimentManager.GetExperimentById(ex.id);
+        ct = await ExperimentManager.GetClinicalTestById(ct.id);
+        StateHasChanged();
     }
-    private async void saveExperimentCallback () 
+    private async void saveEditorModal() 
     {
-        // save ex to database
-        // get ex from database
+        showClinicalTestModal = false;
+        showExperimentModal = false;
+        await ex.SaveToDatabase();
+        await ct.SaveToDatabase();
+        StateHasChanged();
     }
-    private async void saveClinicalTestCallback() 
+    private async void editExp () 
     {
+        showExperimentModal = true;
+        editModalTitle = $"Edit Experiment: {ex.ExperimentNumber}";
+    }
+    private async void editCT() 
+    {
+        showClinicalTestModal = true;
+        editModalTitle = $"Edit test: {ct.Title}";
         //save ct to database
         //get ct from database
     }

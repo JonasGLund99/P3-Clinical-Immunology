@@ -2,8 +2,8 @@
 @using src.Data
 
 <div class ="card-box">
-    <DetailCard IsExperiment="true" Experiment="@Experiment"></DetailCard>
-    <DetailCard IsExperiment="false" ClinicalTest="@ClinicalTest" Experiment="@Experiment"></DetailCard>
+    <DetailCard IsExperiment="true" Experiment="@Experiment" EditCTCallback="executeCtCallback" EditExpCallback="executeExpCallback"></DetailCard>
+    <DetailCard IsExperiment="false" ClinicalTest="@ClinicalTest" Experiment="@Experiment" EditCTCallback="executeCtCallback" EditExpCallback="executeExpCallback"></DetailCard>
 </div>
 
 @code {
@@ -11,5 +11,17 @@
     public Experiment Experiment { get; set; }
     [Parameter]
     public ClinicalTest ClinicalTest { get; set; }
+    [Parameter]
+    public EventCallback editCTCallback {get; set; }
+    [Parameter] 
+    public EventCallback editExpCallback {get; set; }
 
+    public async void executeCtCallback ()
+    {
+        await editCTCallback.InvokeAsync(); 
+    }
+    public async void executeExpCallback ()
+    {
+        await editExpCallback.InvokeAsync(); 
+    }
 }
