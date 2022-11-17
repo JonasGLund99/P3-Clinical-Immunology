@@ -63,7 +63,7 @@ i {
     font-weight: 600;
     margin-top: 20px;
     opacity: 1;
-    cursor: grabbing;
+    cursor: pointer;
 }
 
 .wait-calc-button {
@@ -83,7 +83,7 @@ h3 {
 .file-container {
     padding-right: 10px;
     padding-left: 20px;
-    overflow-y: scroll;
+    overflow-y: auto;
     width: 90%;
 }
 
@@ -101,15 +101,22 @@ h3 {
     font-weight: bold;
 }
 
-.file {
+.slide, .file {
     background: white;
     padding: 10px;
     border-radius: 10px;
     width: 100%;
     display: flex;
-    justify-content: left;
     align-items: center;
     overflow-wrap: anywhere;
+}
+
+.file {
+    justify-content: space-between;
+}
+
+.slide {
+    justify-content: left;
 }
 
 .files {
@@ -132,4 +139,18 @@ h3 {
 .check {
     font-size: 25px;
     margin-right: 8px;
+}
+
+.fa-circle-check {
+    color: var(--green-btn-color);
+}
+
+.fa-circle-xmark {
+    color: var(--red-btn-color);
+}
+
+.fa-trash {
+    font-size: 25px;
+    margin-left: 8px;
+    cursor: pointer;
 }

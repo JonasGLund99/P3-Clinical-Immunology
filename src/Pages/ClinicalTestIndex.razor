@@ -22,7 +22,10 @@
 			<Overview></Overview>
 			break;
 		case 2:
-			<FileUpload ClinicalTest="@ct"></FileUpload>
+			<FileUpload
+				setActiveButtonCallback="@SetActiveButton" 
+				ActiveButton="@activeButton"
+				ClinicalTest="@ct"></FileUpload>
 			break;
 		case 3:
 			<h1>Result Table</h1>

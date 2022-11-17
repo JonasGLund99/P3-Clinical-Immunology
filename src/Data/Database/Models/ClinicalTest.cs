@@ -17,6 +17,8 @@ public class ClinicalTest : BaseModel<ClinicalTest>
     public ClinicalTest(string id) : base(id) { }
     public ClinicalTest() : base() { }
 
+    //Dictionary conisting of a filename and its matching slide
+    public Dictionary<string, Slide> Matches = new Dictionary<string, Slide>();
     public List<SlideDataFile> SlideDataFiles { get; set; } = new List<SlideDataFile>();
     public Dictionary<string, bool> PatientKeys { get; set; } = new Dictionary<string, bool>();
     public List<string> ActiveKeys { get; set; } = new List<string>();
@@ -174,6 +176,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
                 }
             }
         }
+        Console.WriteLine("Den har calculated");
     }
 
     private string findSingleSpotInfo(List<string> spotInfo, string[] titles, string key) 

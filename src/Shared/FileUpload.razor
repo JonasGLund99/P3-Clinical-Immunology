@@ -1,34 +1,50 @@
 ﻿
 @using src.Data
-
 <div class="file-component">
+    @if (displayError) {
+        <div class="modal fade show" style="display:block" aria-modal="true" role="dialog" @onclick="@ModalCancel">
+            <div class="modal-dialog">
+                <div class="modal-content">
+
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h4 class="modal-title">Confirm action</h4>
+                    </div>
+
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        <p>@errorMessage @errorMessageEnd</p>
+                    </div>
+
+                    <!-- Modal footer -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" @onclick=@ModalCancel>Ok</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    }
     <div class="square">
         <div class="square-body">
             <div class="expected background-card">
-                <h2>Expected files</h2>
+                <h2>Slides</h2>
                 <div class="files">
                     <div class="file-container">
-                        @{int j = 1;}
-                            @foreach(Slide slide in ClinicalTest.Slides) {
+                        @{
+                            int j = 1;
+                        }
+                        @foreach (Slide slide in ClinicalTest.Slides)
+                        {
                             <div class="file-row">
                                 <span class="file-indexer">Slide @j</span>
-                                <div class="file">
-                                    <i class="@(matches.ContainsValue(slide) ? "fa-solid fa-circle-check check" : "fa-solid fa-circle-xmark check")"></i>
+                                <div class="slide">
+                                    <i class="@(ClinicalTest.Matches.ContainsValue(slide) ? "fa-solid fa-circle-check check" : "fa-solid fa-circle-xmark check")"></i>
                                     <span>@slide.Barcode</span>
                                 </div>
                             </div>
                             j++;
                         }
-                        @*
-                        @for(int j = 1; j <= 16; j++) {
-                            <div class="file-row">
-                                <span class="file-indexer">Slide @j</span>
-                                <div class="file">
-                                    <i class="fa-solid fa-circle-check check"></i>
-                                    <span>10000467</span>
-                                </div>
-                            </div>
-                        }*@
                     </div>
                 </div>
             </div>
@@ -36,14 +52,17 @@
                 <h2>Uploaded files</h2>
                 <div class="files">
                     <div class="file-container">
-                        @{int i = 1;}
-                        @foreach(SlideDataFile slideDataFile in ClinicalTest.SlideDataFiles)
+                        @{
+                            int i = 1;
+                        }
+                        @foreach (SlideDataFile slideDataFile in ClinicalTest.SlideDataFiles)
                         {
                             <div class="file-row">
                                 <span class="file-indexer">File @i</span>
                                 <div class="file">
-                                    <i class="@(matches.ContainsKey(slideDataFile) ? "fa-solid fa-circle-check check" : "fa-solid fa-circle-xmark check")"></i>
+                                    <i class="@(ClinicalTest.Matches.ContainsKey(slideDataFile.Filename) ? "fa-solid fa-circle-check check" : "fa-solid fa-circle-xmark check")"></i>
                                     <span>@slideDataFile.Filename</span>
+                                    <i @onclick="() => RemoveFile(slideDataFile)" class="fa-solid fa-trash"></i>
                                 </div>
                             </div>
                             i++;
@@ -58,64 +77,119 @@
             <InputFile style="display: none;" accept=".txt" OnChange="@UploadFiles" multiple />
         </label>
     </div>
-    <button class="@(AllChecked ? "green-button start-calc-button" : "green-button wait-calc-button")"> 
-        @(AllChecked ? "Start calculations" : "Files missing")
-        <i class="@(AllChecked ? "fa-sharp fa-solid fa-calculator" : "fa-sharp fa-solid fa-file-circle-exclamation")"></i>
-    </button>            
+    <button @onclick="StartCalculation" class="@(allMatched ? "green-button start-calc-button" : "green-button wait-calc-button")">
+        @(allMatched ? "Start calculations" : "Files not matching")
+        <i class="@(allMatched ? "fa-sharp fa-solid fa-calculator" : "fa-sharp fa-solid fa-file-circle-exclamation")"></i>
+    </button>
 </div>
-
 
 
 @code {
     private int maximumAllowedFiles = 16;
-    private long maxFileSize = 1024 * 100
-    private Dictionary<SlideDataFile, Slide> matches = new Dictionary<SlideDataFile, Slide>();
+    private long maxFileSize = 1024 * 100;
+    private bool displayError = false;
+    private string? errorMessage = "File(s) with the name(s): ";
+    private static string? errorMessageEnd = " already exists";
+    private bool allMatched = true;
 
     [Parameter]
     public ClinicalTest? ClinicalTest { get; set; } = null;
 
-    public bool AllChecked = true;
+    [Parameter]
+    public int ActiveButton { get; set; }
+
+    [Parameter]
+    public EventCallback<int> setActiveButtonCallback { get; set; }
+
+    void ModalCancel() 
+    {
+        displayError = false;
+        errorMessage = "File(s) with the name(s): ";
+    }
 
     public async Task UploadFiles(InputFileChangeEventArgs e)
     {
         if (ClinicalTest == null) return;
-        
+        ClinicalTest.AddSlide(
+                    slide: new Slide("10000465"),
+                    patientData: new Dictionary<string, string>[21].ToList()
+                );
+        ClinicalTest.AddSlide(
+            slide: new Slide("10000466"),
+            patientData: new Dictionary<string, string>[21].ToList()
+        );
+        ClinicalTest.AddSlide(
+            slide: new Slide("10000467"),
+            patientData: new Dictionary<string, string>[21].ToList()
+        );
+
         foreach (var file in e.GetMultipleFiles(maximumAllowedFiles))
         {
             try {
                 var fileContent = new StreamContent(file.OpenReadStream(maxFileSize));
                 SlideDataFile slideDataFile = new SlideDataFile(file.Name, await fileContent.ReadAsStringAsync());
-                ClinicalTest.slideDataFiles.Add(slideDataFile);
-                MatchBarcodes(slideDataFile);
-            }
-            catch(Exception err) {
-                Console.WriteLine(err.Message);
-                Console.WriteLine("Couldn't read file: " + file.Name);
-            }
+                if(FileExists(slideDataFile.Filename)) {
+                    throw new Exception();
+                }
+                ClinicalTest.SlideDataFiles.Add(slideDataFile);
+                MatchBarcodes(slideDataFile.Filename);
 
+            }
+            catch {
+                errorMessage += $"'{file.Name}'\n";
+                displayError = true;
+            }
         }
+        StateHasChanged();
+        await ClinicalTest.SaveToDatabase();
     }
 
-    public void MatchBarcodes(SlideDataFile slideDataFile)
+    public async Task RemoveFile(SlideDataFile slideDataFile) 
+    {
+        ClinicalTest.SlideDataFiles.Remove(slideDataFile);
+        ClinicalTest.Matches.Remove(slideDataFile.Filename);
+
+        await ClinicalTest.SaveToDatabase();
+        allMatched = AllMatched();
+    }
+
+    public bool FileExists(string Filename) 
+    {
+        if (ClinicalTest.SlideDataFiles.Where((file) => file.Filename == Filename).Count() > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public void MatchBarcodes(string filename)
     {
         if (ClinicalTest == null) return;
 
         foreach(Slide slide in ClinicalTest.Slides) {
-            if (slideDataFile.Filename.Contains(slide.Barcode)){
-                matches.Add(slideDataFile, slide);
+            if (filename.Contains(slide.Barcode)){
+                Console.WriteLine(ClinicalTest.Matches.Count);
+                ClinicalTest.Matches.Add(filename, slide);
             }
         }
-
-        foreach(var kp in matches) {
-            Console.WriteLine($"key = {kp.Key.Filename} |  value = {kp.Value.Barcode}");
-        }
+        allMatched = AllMatched();
     }
 
-    protected override void OnAfterRender(bool firstRender) 
+    public bool AllMatched() 
     {
-        ClinicalTest.Slides.Clear();
-        Slide[] slides = { new Slide("10000465"), new Slide("10000466"), new Slide("10000467") };
-        ClinicalTest.Slides.AddRange(slides);
+        foreach (Slide slide in ClinicalTest.Slides)
+        {
+            if (!ClinicalTest.Matches.ContainsValue(slide)) return false;
+        }
 
+        foreach (SlideDataFile slideDataFile in ClinicalTest.SlideDataFiles) {
+            if (!ClinicalTest.Matches.ContainsKey(slideDataFile.Filename)) return false;
+        }
+        return true;
+    }
+
+    public async void StartCalculation() 
+    {
+        ClinicalTest.CalculateClinicalTestResult();
+        await setActiveButtonCallback.InvokeAsync(4);
     }
 }
