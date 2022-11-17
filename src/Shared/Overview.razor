@@ -105,18 +105,18 @@
 
 
         // Add slides to the clinical test
-        List<Dictionary<string, string>> patientData = new List<Dictionary<string, string>>();
+        List<List<string>> patientData = new List<List<string>>();
         for (int i = 1; i < tableData.Length; i++) {
-            var dict = new Dictionary<string, string>();
+            var list = new List<string>();
             for (int j = 0; j < tableData[i].Length; j++) {
-                dict[patientKeys[j]] = tableData[i][j];
+                list.Add(tableData[i][j]);
             }
-            patientData.Add(dict);
+            patientData.Add(list);
 
             if (i % 20 == 0) {
                 ClinicalTest.AddSlide(
                     slide: new Slide(""),
-                    patientData: new List<Dictionary<string, string>>(patientData)
+                    patientData: new List<List<string>>(patientData)
                 );
                 patientData.Clear();
             }
@@ -124,7 +124,7 @@
         // Add last slide with remaining patient data
         ClinicalTest.AddSlide(
             slide: new Slide(""),
-            patientData: new List<Dictionary<string, string>>(patientData)
+            patientData: new List<List<string>>(patientData)
         );
 
 

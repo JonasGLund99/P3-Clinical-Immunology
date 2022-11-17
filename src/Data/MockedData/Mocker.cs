@@ -4,7 +4,7 @@ using src.Data;
 
 static class Mocker
 {
-    static int numExperiments = 1;
+    static int numExperiments = 5;
 
     static List<string> authors = new List<string>() {
         "Rikke Bæk",
@@ -56,15 +56,15 @@ static class Mocker
                 ct.SlideDataFiles = slideDataFiles;
                 ct.AddSlide(
                     slide: new Slide("10000465"),
-                    patientData: new Dictionary<string, string>[20].ToList()
+                    patientData: new List<List<string>>()
                 );
                 ct.AddSlide(
                     slide: new Slide("10000466"),
-                    patientData: new Dictionary<string, string>[20].ToList()
+                    patientData: new List<List<string>>()
                 );
                 ct.AddSlide(
                     slide: new Slide("10000467"),
-                    patientData: new Dictionary<string, string>[20].ToList()
+                    patientData: new List<List<string>>()
                 );
                 ct.CreatePatientKeys(new List<string>() { "key1", "key2", "key3", "key4", "key5" }, "key1", "key3", "key4");
                 ct.CalculateClinicalTestResult();
