@@ -8,18 +8,18 @@
                 <h2>Expected files</h2>
                 <div class="files">
                     <div class="file-container">
-                        @*@{int j = 1;}
-                            @*foreach(Slide slide in ClinicalTest.Slides) {
+                        @{int j = 1;}
+                            @foreach(Slide slide in ClinicalTest.Slides) {
                             <div class="file-row">
                                 <span class="file-indexer">Slide @j</span>
                                 <div class="file">
-                                    <i class="fa-solid fa-circle-check check"></i>
-                                    <span>slide.barcode</span>
+                                    <i class="@(matches.ContainsValue(slide) ? "fa-solid fa-circle-check check" : "fa-solid fa-circle-xmark check")"></i>
+                                    <span>@slide.Barcode</span>
                                 </div>
                             </div>
                             j++;
                         }
-                        *@
+                        @*
                         @for(int j = 1; j <= 16; j++) {
                             <div class="file-row">
                                 <span class="file-indexer">Slide @j</span>
@@ -28,7 +28,7 @@
                                     <span>10000467</span>
                                 </div>
                             </div>
-                        }
+                        }*@
                     </div>
                 </div>
             </div>
@@ -36,27 +36,17 @@
                 <h2>Uploaded files</h2>
                 <div class="files">
                     <div class="file-container">
-                        @*@{int i = 1;}
-                        @foreach(SlideDataFile slideDataFile in slideDataFiles)
+                        @{int i = 1;}
+                        @foreach(SlideDataFile slideDataFile in ClinicalTest.SlideDataFiles)
                         {
-                            if(filesandSlides[i-1].Barcode && filesandSlides[i-1].Filename)
-                                <div class="file-row">
-                                    <span class="file-indexer">File @l</span>
-                                    <div class="file">
-                                        <i class="fa-solid fa-circle-check check"></i>
-                                        <span>@slideDataFile.Filename.txt</span>
-                                    </div>
-                                </div>
-                            i++;
-                        }*@
-                        @for(int l = 1; l <= 16; l++) {
                             <div class="file-row">
-                                <span class="file-indexer">File @l</span>
+                                <span class="file-indexer">File @i</span>
                                 <div class="file">
-                                    <i class="fa-solid fa-circle-check check"></i>
-                                    <span>10000467_0005_flag.txt</span>
+                                    <i class="@(matches.ContainsKey(slideDataFile) ? "fa-solid fa-circle-check check" : "fa-solid fa-circle-xmark check")"></i>
+                                    <span>@slideDataFile.Filename</span>
                                 </div>
                             </div>
+                            i++;
                         }
                     </div>
                 </div>
@@ -78,42 +68,8 @@
 
 @code {
     private int maximumAllowedFiles = 16;
-    private long maxFileSize = 1024 * 100;
-    private List<SlideDataFile> slideDataFiles = new List<SlideDataFile>();
-
-    private int fileCount = 0;
-
-    private List<FilesandSlides> filesandSlides = new List<FilesandSlides>()
-    {
-        new FilesandSlides(),
-        new FilesandSlides(),
-        new FilesandSlides(),
-        new FilesandSlides(),
-        new FilesandSlides(),
-        new FilesandSlides(),
-        new FilesandSlides(),
-        new FilesandSlides(),
-        new FilesandSlides(),
-        new FilesandSlides(),
-        new FilesandSlides(),
-        new FilesandSlides(),
-        new FilesandSlides(),
-        new FilesandSlides(),
-        new FilesandSlides(),
-        new FilesandSlides(),
-    };
-
-    private class FilesandSlides
-    {
-        public FilesandSlides ()
-        {
-            Barcode = null;
-            Filename = null;
-        }
-        public string? Barcode { get; set; }
-        public string? Filename { get; set; }
-    }
-
+    private long maxFileSize = 1024 * 100
+    private Dictionary<SlideDataFile, Slide> matches = new Dictionary<SlideDataFile, Slide>();
 
     [Parameter]
     public ClinicalTest? ClinicalTest { get; set; } = null;
@@ -122,13 +78,15 @@
 
     public async Task UploadFiles(InputFileChangeEventArgs e)
     {
+        if (ClinicalTest == null) return;
+        
         foreach (var file in e.GetMultipleFiles(maximumAllowedFiles))
         {
             try {
                 var fileContent = new StreamContent(file.OpenReadStream(maxFileSize));
-                slideDataFiles.Add(new SlideDataFile(file.Name, await fileContent.ReadAsStringAsync()));
-                fileCount++;
-                MatchBarcodes(file.Name);
+                SlideDataFile slideDataFile = new SlideDataFile(file.Name, await fileContent.ReadAsStringAsync());
+                ClinicalTest.slideDataFiles.Add(slideDataFile);
+                MatchBarcodes(slideDataFile);
             }
             catch(Exception err) {
                 Console.WriteLine(err.Message);
@@ -138,30 +96,26 @@
         }
     }
 
-    public void MatchBarcodes(string fileName)
+    public void MatchBarcodes(SlideDataFile slideDataFile)
     {
         if (ClinicalTest == null) return;
 
-        for (int i = 0; i < ClinicalTest.Slides.Count; i++)
-        {
-            if (fileName.Contains(ClinicalTest.Slides[i].Barcode))
-            {
-                filesandSlides[i].Filename = fileName;
+        foreach(Slide slide in ClinicalTest.Slides) {
+            if (slideDataFile.Filename.Contains(slide.Barcode)){
+                matches.Add(slideDataFile, slide);
             }
+        }
+
+        foreach(var kp in matches) {
+            Console.WriteLine($"key = {kp.Key.Filename} |  value = {kp.Value.Barcode}");
         }
     }
 
-    protected override void OnAfterRender(bool firstRender)
+    protected override void OnAfterRender(bool firstRender) 
     {
-        if (firstRender)
-        {
-            if (ClinicalTest == null) return;
+        ClinicalTest.Slides.Clear();
+        Slide[] slides = { new Slide("10000465"), new Slide("10000466"), new Slide("10000467") };
+        ClinicalTest.Slides.AddRange(slides);
 
-
-            for (int i = 0; i < ClinicalTest.Slides.Count; i++)
-            {
-                filesandSlides[i].Barcode = "100004" + $"{i}";
-            }
-        }
     }
 }
