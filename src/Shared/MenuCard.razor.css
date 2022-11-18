@@ -1,6 +1,6 @@
 * {
     font-size: 12px;
-    font-weight: bold;
+    font-weight: 600;
 }
 
 .card-textcontent-experiment {
@@ -43,9 +43,9 @@
 
 .card-textcontent-experiment:hover {
     margin: 0;
-    border: 10px solid var(--primary-dark-color);
+    border: 10px solid var(--secondary-dark-color);
     border-radius: 10px;
-    background-color: var(--primary-dark-color);
+    background-color: var(--secondary-dark-color);
     color: var(--menu-button-color);
     cursor: pointer;
 }

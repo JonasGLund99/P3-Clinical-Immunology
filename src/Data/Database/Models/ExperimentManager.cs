@@ -15,7 +15,8 @@ public static class ExperimentManager
         string queryString = @"SELECT * FROM Experiment 
                             WHERE CONTAINS(Experiment.ExperimentNumber, @searchParameter, true)
                             OR CONTAINS(Experiment.Title, @searchParameter, true)
-                            OR CONTAINS(Experiment.Author, @searchParameter, true)";
+                            OR CONTAINS(Experiment.Author, @searchParameter, true)
+                            ORDER BY Experiment.EditedAt DESC";
 
         FeedIterator<Experiment> feed = DatabaseService.Instance.Database.GetContainer("Experiment")
                                         .GetItemQueryIterator<Experiment>(

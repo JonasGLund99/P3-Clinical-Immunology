@@ -64,7 +64,6 @@
    public EventCallback<ModalType> CallbackSave {get; set;}
    private async void saveEdits()
    {
-       Console.WriteLine("working?");
       await CallbackSave.InvokeAsync(ModalObject);
    }
 
