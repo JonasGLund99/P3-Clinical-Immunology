@@ -124,3 +124,23 @@ a, .btn-link {
     border-radius: 24px;
 }
 /*Scrollbar - end*/
+
+/*You can use [data-title] selector as well*/
+[data-title] {
+    position: relative;
+}
+
+[data-title]:hover::before {
+    z-index: 3;
+    content: attr(data-title);
+    position: absolute;
+    bottom: -30px;
+    display: inline-block;
+    padding: 3px 6px;
+    border-radius: 5px;
+    border: 1px solid var(--primary-dark-color);
+    background: white;
+    color: var(--primary-dark-color);
+    font-size: 12px;
+    white-space: nowrap;
+}

@@ -137,7 +137,7 @@
     color: rgb(70, 25, 25);
 }
 
-.plates{
+.plates {
     height: calc(100vh - 175px);
     width: 100%;
     overflow-y: scroll;
@@ -149,7 +149,7 @@
     background-color: white;
     width: 98%;
     height: calc(100vh - 185px);
-    border: 5px solid var(--primary-dark-color);
+/*    border: 5px solid var(--primary-dark-color);*/
     border-radius: 20px;
     margin-bottom: 40px;
     display: flex;

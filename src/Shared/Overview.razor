@@ -5,10 +5,10 @@
 <div class="overview-component">
     @if (mode == "Overview") {
         <div id="toolbar">
-            <div id="info-button" title="Select which information to show in the overview">
+            <div id="info-button" data-title="Select which information to show in the overview">
                 <i class="fa fa-info-circle"></i>
             </div>
-            <div id="edit-icon" title="Edit overview in table view">
+            <div id="edit-icon" data-title="Edit overview in table view">
                 <i class="fa-solid fa-pen" @onclick='() => switchMode("Table-view")'></i>
             </div>
             <div id="key-selectors">
@@ -34,7 +34,7 @@
                     </div>
                 }
             </div>
-            <div id="export-icon" title="Export overview">
+            <div id="export-icon" data-title="Export overview">
                 <i class="fa-solid fa-file-export"></i>
             </div>
         </div>
@@ -71,12 +71,12 @@
     {
         <div id="toolbar">
             <div id="buttons">
-                <span id="info-button" title="Editing overview - insert clinical data in the table">
+                <span id="info-button" data-title="Editing overview - insert clinical data in the table">
                     <i class="fa fa-info-circle"></i>
                 </span>
-                <span id="clear-button" title="Clear entire table" @onclick=clearTable>Clear table</span>
-                <span id="xmark-button" title="Continue without saving" @onclick='() => switchMode("Overview")'><i class="fa-solid fa-xmark"></i></span>
-                <span id="check-button" title="Continue and save changes" @onclick=savePatientData><i class="fa-solid fa-check"></i></span>
+                <span id="clear-button" data-title="Clear entire table" @onclick=clearTable>Clear table</span>
+                <span id="xmark-button" data-title="Continue without saving" @onclick='() => switchMode("Overview")'><i class="fa-solid fa-xmark"></i></span>
+                <span id="check-button" data-title="Continue and save changes" @onclick=savePatientData><i class="fa-solid fa-check"></i></span>
             </div>
         </div>
         <div class="table-view-container">
