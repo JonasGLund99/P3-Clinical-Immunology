@@ -43,8 +43,8 @@
             </div>
                   
             <div class="modal-footer">
-               <button type="button" class="btn btn-secondary" @onclick="cancelEdits">Cancel</button>
-               <button type="submit" class="btn btn-primary">Save</button>
+               <button type="button" class="grey-button" @onclick="cancelEdits">Cancel</button>
+               <button type="submit" class="green-button">Save</button>
             </div>
 
          </form>
@@ -64,7 +64,6 @@
    public EventCallback<ModalType> CallbackSave {get; set;}
    private async void saveEdits()
    {
-       Console.WriteLine("working?");
       await CallbackSave.InvokeAsync(ModalObject);
    }
 

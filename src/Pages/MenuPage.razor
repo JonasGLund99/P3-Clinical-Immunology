@@ -14,7 +14,7 @@
         <div class="toolbar">
             <button class="add-element-button" @onclick="openNewExperimentModal">
                 <i class="fa-solid fa-square-plus"></i>
-                Add Experiment
+                Add experiment
             </button>
             <div class="searchbar">
                 <i class="fa-solid fa-magnifying-glass"></i>
@@ -60,7 +60,7 @@
                 <div class="toolbar">
                     <button class="add-element-button" @onclick="openNewClinicalTestModal">
                         <i class="fa-solid fa-square-plus"></i>
-                        Add Clinical Test
+                        Add clinical test
                     </button>
                     <div class="searchbar">
                         <i class="fa-solid fa-magnifying-glass"></i>
@@ -203,8 +203,8 @@
 
    public async void SaveExperimentCallback(Experiment e) 
    {
-      //implement validation of experiment
       showExperimentModal = false;
+      e.EditedAt = DateTime.Now;
       await e.SaveToDatabase();
       experiments = await ExperimentManager.QueryExperiments("");
       StateHasChanged();
@@ -213,17 +213,21 @@
 
    public async void SaveClinicalTestCallback(ClinicalTest ct)
    {
-      //implement validation of clinical test
       showClinicalTestModal = false;
       if (selectedCT.ExperimentIds.Contains(selectedExp.id))
       {
+         ct.EditedAt = DateTime.Now;
+         selectedExp.EditedAt = DateTime.Now;
+         await selectedExp.SaveToDatabase();
          await ct.SaveToDatabase();
       }
       {
          await ExperimentManager.Associate(selectedExp, selectedCT);
       }
+      experiments = await ExperimentManager.QueryExperiments("");
+      StateHasChanged();
+      await showClinicalTests(selectedExp);
 
-      showClinicalTests(selectedExp);
    }
 
    private void setCurrentObject<T>(T obj) 

@@ -15,7 +15,8 @@ public static class ExperimentManager
         string queryString = @"SELECT * FROM Experiment 
                             WHERE CONTAINS(Experiment.ExperimentNumber, @searchParameter, true)
                             OR CONTAINS(Experiment.Title, @searchParameter, true)
-                            OR CONTAINS(Experiment.Author, @searchParameter, true)";
+                            OR CONTAINS(Experiment.Author, @searchParameter, true)
+                            ORDER BY Experiment.EditedAt DESC";
 
         FeedIterator<Experiment> feed = DatabaseService.Instance.Database.GetContainer("Experiment")
                                         .GetItemQueryIterator<Experiment>(
@@ -48,6 +49,7 @@ public static class ExperimentManager
     public static async Task Disassociate(Experiment experiment, ClinicalTest clinicalTest)
     {
         experiment.ClinicalTestIds.Remove(clinicalTest.id);
+        experiment.EditedAt = DateTime.Now;
         await experiment.SaveToDatabase();
 
         clinicalTest.ExperimentIds.Remove(experiment.id);
@@ -58,6 +60,7 @@ public static class ExperimentManager
         } 
         else 
         {
+            clinicalTest.EditedAt = DateTime.Now;
             await clinicalTest.SaveToDatabase();
         }
     }
@@ -67,9 +70,11 @@ public static class ExperimentManager
       if ( !experiment.ClinicalTestIds.Contains(clinicalTest.id))
       {
          experiment.ClinicalTestIds.Add(clinicalTest.id);
+         experiment.EditedAt = DateTime.Now;
          await experiment.SaveToDatabase();
 
          clinicalTest.ExperimentIds.Add(experiment.id);
+         clinicalTest.EditedAt = DateTime.Now;
          await clinicalTest.SaveToDatabase();
       }
    }

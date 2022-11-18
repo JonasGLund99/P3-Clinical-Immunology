@@ -29,7 +29,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
     public double MaxRI { get; private set; } = 0;
     public double MinRI { get; private set; } = 0;
     public DateTime? CreatedAt { get; set; } = DateTime.Now;
-    public DateTime EditedAt { get; private set; } = DateTime.Now;
+    public DateTime EditedAt { get; set; } = DateTime.Now;
 
     public void AddSlide(Slide slide, List<List<string>> patientData)
     {
