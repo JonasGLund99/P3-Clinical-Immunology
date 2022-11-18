@@ -1,45 +1,42 @@
 ﻿@using src.Data
 
 <div class="plate numSlides@(Slides.Count)">
-	<table id="plate@(PlateNumber)">
-        @*Heading row*@
-        <tr>
-            <td class="heading"></td>
-            @for (int i = 0; i < numCols - 1; i++)
+    <div class="container">
+        <div class="Letters">
+            @foreach (string letter in headingLetters)
             {
-                <td class="heading">@(i+1)</td>
+                <div class="heading">@(letter)</div>
             }
-        </tr>
-
-        @*Block rows*@
-        @for (int i = 0; i < numRows - 2; i++)
+        </div>
+        @for (int i = 0; i < Slides.Count; i++)
         {
-            <tr>
-                <td class="heading">@(headingLetters[i])</td>
-                @for (int j = 0; j < numCols - 1; j++)
+            <div class="Slide-@(i+1)">
+                @for (int j = 0; j < 21; j++)
                 {
-                    <td class="block">Type1<br>Type2<br>Type3</td>
-                    @*<td class="block">
+                    <div class="block">
                         @for (int k = 0; k < 3; k++)
                         {
-                            int index = k;
-                            @(Slides[i].Blocks[j].PatientData[findTitleIndex(index)])
-                            <br>
+                            <div>Type@(k)</div>
                         }
-                    </td>*@
+                    </div>
                 }
-            </tr>
+            </div>
+            
         }
-
-        @*Barcode row*@
-        <tr>
-            <td class="heading">@headingLetters[headingLetters.Length-1]</td>
-            @for (int j = 0; j < 4; j++)
+        <div class="Numbers">
+            @for (int i = 0; i < 12; i++)
             {
-                <td colspan="3">Barcode slide@(j+1)</td>
+                <div class="heading">@(i+1)</div>
             }
-        </tr>
-	</table>
+        </div>
+        @for (int i = 0; i < Slides.Count; i++)
+        {
+            <div class="Barcode-@(i+1)">
+                <input type="text" placeholder="Enter barcode..." value="">
+            </div>
+        }
+        <div class="Empty"></div>
+    </div>
 </div>
 
 
