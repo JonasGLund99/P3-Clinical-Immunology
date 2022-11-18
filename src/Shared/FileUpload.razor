@@ -161,7 +161,6 @@
         if (ClinicalTest == null) return;
 
         for(int i = 0; i < ClinicalTest.Slides.Count; i++) {
-            Console.WriteLine(ClinicalTest.Slides[i].Barcode);
             if (filename.Contains(ClinicalTest.Slides[i].Barcode)){
                 ClinicalTest.Matches.Add(filename, i);
             }
@@ -195,9 +194,7 @@
 
     public async void StartCalculation() 
     {
-        Console.WriteLine("CALCULATION STARTEHD!");
         ClinicalTest.CalculateClinicalTestResult();
-        Console.WriteLine("Calculation finished");
         await setActiveButtonCallback.InvokeAsync(4);
     }
 }
