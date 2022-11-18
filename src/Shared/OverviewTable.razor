@@ -22,13 +22,43 @@
     @*Data rows*@
     @for (int i = 0; i < numRows; i++) 
     {
-        <tr>
-            <td class="line-number">@(i + 1)</td>
-            @for (int j = 0; j < numCols - 1; j++) 
-            {
-                <td contenteditable></td>
-            }
-        </tr>
+        int numSlides = ClinicalTest.Slides.Count;
+
+        @if (numSlides != 0) {
+
+            int slideIndex = (i / 3) % numSlides + i / (numSlides * 21) * 3;
+            int blockIndex = (i % 3 + i / (numSlides * 3) * 3) % 21;
+            <tr>
+                <td class="line-number">@(i + 1)</td>
+                @for (int j = 0; j < numCols - 1; j++) 
+                {
+                    @if (numSlides > 0) 
+                    {
+                        @if (slideIndex < numSlides && j < ClinicalTest.Slides[slideIndex].Blocks[blockIndex].PatientData.Count) 
+                        {
+                            <td contenteditable>@ClinicalTest.Slides[slideIndex].Blocks[blockIndex].PatientData[j]</td>
+                        } 
+                        else 
+                        {
+                            <td contenteditable></td>
+                        }
+                    } 
+                    else 
+                    {
+                        <td contenteditable></td>
+                    }   
+                }
+            </tr>
+        }
+        else 
+        {
+            <tr>
+                <td class="line-number">@(i + 1)</td>
+                @for (int j = 0; j < numCols - 1; j++) {
+                    <td contenteditable></td>
+                }
+            </tr>
+        }
     }
 </table>
 

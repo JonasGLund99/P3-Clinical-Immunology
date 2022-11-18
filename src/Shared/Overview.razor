@@ -141,7 +141,7 @@
         // Plates loop
         for (int i = 0; i < numPlatesTotal; i++) {
             int numSlides = (i * 4) + 4 <= numSlidesTotal ? 4 : numSlidesTotal % 4;
-            string[][][] plate = new string[numSlides][][].Select(blocks => new string[BlocksInSlide][]).ToArray();
+            List<string>[][] plate = new string[numSlides][][].Select(blocks => new List<string>[BlocksInSlide]).ToArray();
 
             // Slides loop
             for (int j = 0; j < numSlides; j++) {
@@ -152,8 +152,7 @@
                     int index = i * 84 + j * 21 + k;
                     int slideIndex = index / 3 % numSlides;
                     int blockIndex = (index % 3) + (index / (numSlides * 3) * 3) - (i * 84 / numSlides);
-
-                    plate[slideIndex][blockIndex] = tableData[index];
+                    plate[slideIndex][blockIndex] = tableData[index].ToList();
                 }
             }
 
