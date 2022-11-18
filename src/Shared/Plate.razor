@@ -1,7 +1,9 @@
 ﻿@using src.Data
 
 @{
-    int maxSlides = 4;
+    const int MaxSlides = 4;
+    const int BlocksPerSlide = 21;
+    const int NumPatientDataPerBlock = 3;
     int numSlides = Slides.Count;
 }
 <div class="plate numSlides@(numSlides)">
@@ -12,25 +14,26 @@
                 <div class="heading">@(letter)</div>
             }
         </div>
-        @for (int i = 0; i < maxSlides; i++)
+        @for (int i = 0; i < MaxSlides; i++)
         {
             <div class="Slide-@(i+1)">
-                @for (int j = 0; j < 21; j++)
+                @for (int j = 0; j < BlocksPerSlide; j++)
                 {
                 <div class="block">
                     @if (i < numSlides)
                     {
-                        @for (int k = 0; k < 3; k++)
-                        {
-                            <div>Type@(k)</div>
-                            @*int index = k;
-                            string dataString = ClinicalTest.TableTitles[findTitleIndex(index)];
-                            <div>
-                                @if (dataString != null)
-                                {
-                                    @(dataString)
-                                }
-                            </div>   *@
+                            @for (int k = 0; k < NumPatientDataPerBlock; k++)
+                            {
+                            int index = k;
+                            @if (findTitleIndex(index) == -1)
+                            {
+                                <div></div>
+                            }
+                            else
+                            {
+                                <div>@(ClinicalTest.TableTitles[findTitleIndex(index)])</div>
+                                @*<div>@(ClinicalTest.Slides[i].Blocks[j].PatientData[findTitleIndex(index)])</div>*@
+                            }
                         }
                     }
                     else
@@ -48,7 +51,7 @@
                 <div class="heading">@(i+1)</div>
             }
         </div>
-        @for (int i = 0; i < maxSlides; i++)
+        @for (int i = 0; i < MaxSlides; i++)
         {
             int slideIndex = (PlateIndex*4) + i;
             <div class="Barcode-@(i+1)">
@@ -76,7 +79,11 @@
 
     private int findTitleIndex(int i)
     {
-        return ClinicalTest.TableTitles.IndexOf(ClinicalTest.ChosenTableTitles[i]);
+        string? title = ClinicalTest.TableTitles.Find((title) => title == ClinicalTest.ChosenTableTitles[i]);
+        if (title == null)
+            return -1;
+
+        return ClinicalTest.TableTitles.IndexOf(title);
     }
 
     //Update barcode for a slide
