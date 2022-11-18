@@ -30,7 +30,7 @@ public class Experiment : BaseModel<Experiment>
     public string Description { get; set; } = "";
     public List<string> ClinicalTestIds { get; set; } = new List<string>();
     public DateTime? CreatedAt { get; set; } = DateTime.Now;
-    public DateTime? EditedAt { get; set; } = DateTime.Now;
+    public DateTime EditedAt { get; set; } = DateTime.Now;
 
     public async Task<List<ClinicalTest>> QueryClinicalTests(string searchParameter) {
         List<ClinicalTest> clinicalTests = new List<ClinicalTest>();
@@ -40,7 +40,8 @@ public class Experiment : BaseModel<Experiment>
         }
         string queryString = @"SELECT * FROM ClinicalTest
                             WHERE CONTAINS(ClinicalTest.Title, @searchParameter, true) 
-                            AND ARRAY_CONTAINS(ClinicalTest.ExperimentIds, @expId)";
+                            AND ARRAY_CONTAINS(ClinicalTest.ExperimentIds, @expId)
+                            ORDER BY ClinicalTest.EditedAt DESC";
 
         FeedIterator<ClinicalTest> feed = DatabaseService.Instance.Database.GetContainer("ClinicalTest")
                                         .GetItemQueryIterator<ClinicalTest>(
