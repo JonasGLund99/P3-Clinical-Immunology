@@ -1,10 +1,12 @@
 ﻿@using src.Data
+@using src.Shared
+
 <div class="result-table-component">
     <div id="toolbar">
-        <button class="result-buttons">
+        <button @onclick='() => SetMode("XYZ")' class="result-buttons @mode==XYZ ? 'result-button-active' : ''">
             (X-Y)/Z
             </button>
-        <button class="result-buttons">
+        <button @onclick='() => SetMode("Log2")' class="result-buttons @mode==Log2 ? 'result-button-active' : ''">
             Log
             <sub>2</sub>
             </button>
@@ -13,41 +15,24 @@
             <i class="fa-solid fa-file-export"></i>
         </div>
     </div>
+    <div class="table-view-container">
+        <table id="result-table">
+            @switch(mode) {
+                case "Log2": <Log2 ClinicalTest="@ClinicalTest"> </Log2> break;
+                case "XYZ": <XYZ ClinicalTest="@ClinicalTest"></XYZ> break;
+            }
+        </table>
+    </div>
 </div>
 
-<table id="result-table">
-    <tr>
-        <td class="line-number">Slide</td>
-        <td class="line-number">@ClinicalTest.ChosenTableTitles[0]</td>
-        <td class="line-number">@ClinicalTest.ChosenTableTitles[1]</td>
-        <td class="line-number">@ClinicalTest.ChosenTableTitles[2]</td>
-        <td class="line-number"></td>
-
-        @foreach (string analyteName in ClinicalTest.AnalyteNames) 
-        {
-                <td contenteditable="false">@analyteName</td>
-        }
-    </tr>
-
-    @{int i = 0;}
-    @foreach(Slide slide in ClinicalTest.Slides)
-    {
-        foreach(Block block in slide.Blocks) {
-            <tr>
-                <td class="line-number">@(i + 1)</td>
-            @foreach (Nplicate nplicate in block.Nplicates) 
-            {
-                <td contenteditable ="false"></td>
-            }
-            </tr>
-            
-        }
-        i++;
-    }
-</table>
-
 @code {
+    private string mode = "XYZ";
+
     [Parameter]
     public ClinicalTest ClinicalTest { get; set; }
 
+
+    public void SetMode(string newmode) {
+        mode = newmode;
+    }
 }

@@ -95,6 +95,7 @@ else
         if (firstRender) {
             experiment = await ExperimentManager.GetExperimentById(ExperimentId);
             clinicalTest = await ExperimentManager.GetClinicalTestById(ClinicalTestId);
+
             NavManager.NavigateTo("/clinicaltest");
             StateHasChanged();
         }
