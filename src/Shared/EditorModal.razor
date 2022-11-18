@@ -39,7 +39,37 @@
 
                   <p>Description</p>
                   <textarea @bind="((ClinicalTest)((object)ModalObject)).Description"/>
-               }
+                  
+                  <div class="associator">
+                     <div class="search-experiments">
+                        <div class="searchbar">
+                           <i class="fa-solid fa-magnifying-glass"></i>
+                           <input type="text" placeholder="Search experiment..." @oninput="@searchExperiments">
+                        </div>
+                        <div class="experiments-found">
+                        @foreach (Experiment e in searchedExperiments)
+                        {
+                           if (((ClinicalTest)((object)ModalObject)).ExperimentIds.Contains(e.id))
+                           {
+                              <p class="experiment-is-added" title="@titleHelper(e)" >@e.ExperimentNumber</p>
+                           } else 
+                           {
+                              <p title="@titleHelper(e)" @onclick="@(() => clickedExperimentToRelate(e.id))">@e.ExperimentNumber</p>
+                           }
+
+                        }
+                        </div>
+                     </div>
+                     <div class="associated-experiments">
+                        <div class="related-experiments">
+                        @foreach (string id in ((ClinicalTest)((object)ModalObject)).ExperimentIds)
+                        {
+                            <p title="@titleHelperRelatedExperiments(id)" @onclick="@(() => clickedRelatedExperiment(id))">@(getRelatedExperimentNumber(id))</p>
+                        }
+                        </div>
+                     </div>
+                  </div>
+                  }
             </div>
                   
             <div class="modal-footer">
@@ -54,22 +84,79 @@
 
 
 @code {
-   [Parameter] 
-   public string ModalTitle { get; set; } = "";
-   [Parameter] 
-   public EventCallback<ModalType> CallbackClose {get; set;}
-   [Parameter] 
-   public ModalType ModalObject { get; set; }
-   [Parameter] 
-   public EventCallback<ModalType> CallbackSave {get; set;}
-   private async void saveEdits()
-   {
-      await CallbackSave.InvokeAsync(ModalObject);
-   }
+    [Parameter] 
+    public string ModalTitle { get; set; } = "";
+    [Parameter] 
+    public EventCallback<ModalType> CallbackClose {get; set;}
+    [Parameter] 
+    public ModalType ModalObject { get; set; }
+    [Parameter] 
+    public EventCallback<ModalType> CallbackSave {get; set;}
 
-   private async void cancelEdits()
-   {
-      await CallbackClose.InvokeAsync(ModalObject);
-   }
+    private List<Experiment> allExperiments = new();
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender) {
+            allExperiments = await ExperimentManager.QueryExperiments("");
+            StateHasChanged();
+        }
+    }
+
+    private string titleHelper(Experiment e)
+    {
+        return "Author: " + e.Author + "\nTitle: " + e.Title + "\nCreated: " + e.CreatedAt + "\nLast edit: " + e.EditedAt;
+    }
+
+    private string titleHelperRelatedExperiments(string id)
+    {
+      Console.WriteLine(id);
+      Experiment experiment = allExperiments.Find((e) => e.id == id);
+      return titleHelper(experiment);
+    } 
+
+    private List<Experiment> searchedExperiments = new(); 
+
+    private async void saveEdits()
+    {
+        await CallbackSave.InvokeAsync(ModalObject);
+    }
+
+    private async void cancelEdits()
+    {
+        await CallbackClose.InvokeAsync(ModalObject);
+    }
+
+    private async void searchExperiments(ChangeEventArgs args) 
+    {
+        string experimentSearchValue = args.Value?.ToString();
+        if (experimentSearchValue == null) return;
+        searchedExperiments = await ExperimentManager.QueryExperiments(experimentSearchValue);
+        StateHasChanged();
+    }
+
+    private string getRelatedExperimentNumber(string id) 
+    {
+        string nr = "";
+        foreach (Experiment e in allExperiments)
+        {
+            if (e.id == id)
+                nr = e.ExperimentNumber;
+        }
+        return nr;
+    }
+
+    private void clickedRelatedExperiment(string experimentId) 
+    {
+        ClinicalTest clinicalTest = (ClinicalTest)((object)ModalObject);
+        clinicalTest.ExperimentIds.Remove(experimentId);
+        StateHasChanged();
+    }
+
+    private void clickedExperimentToRelate(string experimentId)
+    {
+        ClinicalTest clinicalTest = (ClinicalTest)((object)ModalObject);
+        clinicalTest.ExperimentIds.Add(experimentId);
+        StateHasChanged();
+    }
 }
