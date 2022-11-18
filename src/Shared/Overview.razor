@@ -18,7 +18,7 @@
                     <div class="key-selector">
                         <span class="selector-number">@(i + 1)</span>
                         <select @onchange="(e) => chooseTableTitle(e, tableTitleNumber)">
-                            <option value="-">-</option>
+                            <option value="">-</option>
                             @foreach (string tableTitle in ClinicalTest.TableTitles)
                             {
                                 @if (ClinicalTest.ChosenTableTitles[i] == tableTitle) 
@@ -44,7 +44,7 @@
             <div class="plates">
                 @for (int i = 0; i <= ClinicalTest.Slides.Count / 4; i++)
                 {
-                    <Plate ClinicalTest="@ClinicalTest" PlateNumber=i+1 Slides="ClinicalTest.Slides.GetRange(i * 4, (i * 4) + 4 <= ClinicalTest.Slides.Count ? 4 : ClinicalTest.Slides.Count % 4)" />
+                    <Plate ClinicalTest="@ClinicalTest" PlateIndex=i Slides="ClinicalTest.Slides.GetRange(i * 4, (i * 4) + 4 <= ClinicalTest.Slides.Count ? 4 : ClinicalTest.Slides.Count % 4)"/>
                 }
             </div>
         } 
@@ -103,12 +103,13 @@
     }
 
     //Update chosen table titles
-    void chooseTableTitle(ChangeEventArgs e, int tableTitleNumber)
+    async void chooseTableTitle(ChangeEventArgs e, int tableTitleNumber)
     {
         string? selectedTableTitle = e.Value?.ToString();
         if (selectedTableTitle == null) return;
 
         ClinicalTest.ChosenTableTitles[tableTitleNumber] = selectedTableTitle;
+        await ClinicalTest.SaveToDatabase();
     }
 
     private async void savePatientData() {
@@ -174,4 +175,3 @@
         await JS.InvokeVoidAsync("clearTable");
     }
 }
-

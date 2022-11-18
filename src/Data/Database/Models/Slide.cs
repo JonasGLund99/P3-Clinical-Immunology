@@ -8,5 +8,5 @@ public class Slide
     }
     public Slide(){ }
     public List<Block> Blocks = new List<Block>();
-    public string Barcode { get; private set; } = "";
+    public string Barcode { get; set; } = "";
 }

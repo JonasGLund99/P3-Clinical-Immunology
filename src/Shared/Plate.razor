@@ -1,6 +1,10 @@
 ﻿@using src.Data
 
-<div class="plate numSlides@(Slides.Count)">
+@{
+    int maxSlides = 4;
+    int numSlides = Slides.Count;
+}
+<div class="plate numSlides@(numSlides)">
     <div class="container">
         <div class="Letters">
             @foreach (string letter in headingLetters)
@@ -8,31 +12,50 @@
                 <div class="heading">@(letter)</div>
             }
         </div>
-        @for (int i = 0; i < Slides.Count; i++)
+        @for (int i = 0; i < maxSlides; i++)
         {
             <div class="Slide-@(i+1)">
                 @for (int j = 0; j < 21; j++)
                 {
-                    <div class="block">
+                <div class="block">
+                    @if (i < numSlides)
+                    {
                         @for (int k = 0; k < 3; k++)
                         {
                             <div>Type@(k)</div>
+                            @*int index = k;
+                            string dataString = ClinicalTest.TableTitles[findTitleIndex(index)];
+                            <div>
+                                @if (dataString != null)
+                                {
+                                    @(dataString)
+                                }
+                            </div>   *@
                         }
-                    </div>
+                    }
+                    else
+                    {
+                        <div></div>
+                    }
+                </div>
                 }
             </div>
-            
         }
+
         <div class="Numbers">
             @for (int i = 0; i < 12; i++)
             {
                 <div class="heading">@(i+1)</div>
             }
         </div>
-        @for (int i = 0; i < Slides.Count; i++)
+        @for (int i = 0; i < maxSlides; i++)
         {
+            int slideIndex = (PlateIndex*4) + i;
             <div class="Barcode-@(i+1)">
-                <input type="text" placeholder="Enter barcode..." value="">
+                @if (i < numSlides)
+                {
+                    <input type="text" placeholder="Enter barcode..." value="@(ClinicalTest.Slides[i].Barcode)" @onchange="(e) => enterBarcode(e, slideIndex)">
+                }
             </div>
         }
         <div class="Empty"></div>
@@ -46,7 +69,7 @@
     public ClinicalTest ClinicalTest { get; set; } = new();
 
     [Parameter]
-    public int PlateNumber { get; set; }
+    public int PlateIndex { get; set; }
 
     [Parameter, EditorRequired]
     public List<Slide> Slides { get; set; } = new();
@@ -54,6 +77,16 @@
     private int findTitleIndex(int i)
     {
         return ClinicalTest.TableTitles.IndexOf(ClinicalTest.ChosenTableTitles[i]);
+    }
+
+    //Update barcode for a slide
+    async void enterBarcode(ChangeEventArgs e, int slideIndex)
+    {
+        string? enteredBarcode = e.Value?.ToString();
+        if (enteredBarcode == null) return;
+
+        ClinicalTest.Slides[slideIndex].Barcode = enteredBarcode;
+        await ClinicalTest.SaveToDatabase();
     }
 
     private int numCols = 13;

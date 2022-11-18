@@ -3,7 +3,7 @@
 :root {
     --main-background-color: #d9d9d9;
     --navbar-button-color: #808080;
-    --navbar-button-hover-color: #B9B9B9; 
+    --navbar-button-hover-color: #B9B9B9;
     --menu-button-color: #ebebeb;
     --primary-dark-color: #383838;
     --secondary-dark-color: #474747;
@@ -12,6 +12,8 @@
     --rightcard-color: #9e9e9e;
     --leftcard-color: #7d7d7d;
     --secondary-text-color: #ffffff;
+    --grey: rgb(213, 213, 213);
+    --light-grey: rgb(243, 243, 243);
 }
 
 * {

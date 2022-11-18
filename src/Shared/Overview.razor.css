@@ -66,13 +66,13 @@
     width: 25px;
     height: 35px;
 /*    border-radius: 5px 0 0 5px;*/
-    background-color: rgb(213, 213, 213);
+    background-color: var(--grey);
 }
 #key-selectors select {
     display: inline-block;
     width: 150px;
     height: 35px;
-    background-color: rgb(243, 243, 243);
+    background-color: var(--light-grey);
     border: none;
     padding: 5px 5px 5px;
     cursor: pointer;
@@ -141,7 +141,7 @@
     height: calc(100vh - 175px);
     width: 100%;
     overflow-y: scroll;
-    padding: 0 200px;
+    padding: 0 100px;
 }
 
 /* Plate */

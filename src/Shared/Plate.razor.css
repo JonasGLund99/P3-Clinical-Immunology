@@ -6,22 +6,26 @@
     margin-bottom: 30px;
 }
 
+.Empty {
+    background-color: var(--primary-dark-color);
+}
+
 .heading {
     display: flex;
     flex-direction: column;
     background-color: var(--primary-dark-color);
-    border: 1px solid white;
+    border: 1px solid var(--secondary-dark-color);
     color: white;
-    min-width: 50px;
+    /*    min-width: 50px;*/
     justify-content: center;
 }
 
 .block {
-    background-color: lightgray;
-    border: 1px solid white;
+    border: 1px solid var(--secondary-dark-color);
     padding: 5px;
     display: flex;
     flex-direction: column;
+    justify-content: center;
     font-size: 12px;
 }
 .block > div {
@@ -32,6 +36,8 @@
 }
 
 .container {
+    border: none;
+    padding: 0;
     display: grid;
     grid-template-columns: 1fr 3fr 3fr 3fr 3fr;
     grid-template-rows: 1fr 7fr 1fr;
@@ -145,15 +151,17 @@
 }
 
 .Barcode-1, .Barcode-2, .Barcode-3, .Barcode-4 {
-    background-color: lightgray;
-    border: 1px solid white;
-    padding: 20px;
+    border: 1px solid var(--secondary-dark-color);
+    padding: 0 30px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     text-align: center;
 }
 input {
+    background-color: var(--light-grey);
+    border: 2px solid var(--grey);
+    padding: 2px;
     border-radius: 5px;
     text-align: center;
 }
