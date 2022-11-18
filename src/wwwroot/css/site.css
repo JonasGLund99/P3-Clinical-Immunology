@@ -119,6 +119,7 @@ a,
 
 .grey-button {
     padding: 10px 20px;
+    color: white;
     display: flex;
     background-color: var(--main-button-dark-color);
     border: none;
@@ -127,13 +128,21 @@ a,
     justify-content: space-evenly;
 }
 
-
+.add-element-button {
+    padding: 10px 20px;
+    color: var(--Dark-grey);
+    display: flex;
+    background-color: var(--menu-button-color);
+    border: none;
+    border-radius: 15px;
+    justify-content: center;
+    align-items: center;
+}
 
 .add-element-button:hover {
     color: var(--menu-button-color);
     background-color: var(--Dark-grey);
 }
-
 
 /* Custom scrollbar */
 

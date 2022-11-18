@@ -39,7 +39,7 @@
                             <div class="file-row">
                                 <span class="file-indexer">Slide @j</span>
                                 <div class="slide">
-                                    <i class="@(ClinicalTest.Matches.ContainsValue(slide) ? "fa-solid fa-circle-check check" : "fa-solid fa-circle-xmark check")"></i>
+                                    <i class="@(ClinicalTest.Matches.ContainsValue(j - 1) ? "fa-solid fa-circle-check check" : "fa-solid fa-circle-xmark check")"></i>
                                     <span>@slide.Barcode</span>
                                 </div>
                             </div>
@@ -97,7 +97,7 @@
     private bool displayError = false;
     private string? errorMessage = "File(s) with the name(s): ";
     private static string? errorMessageEnd = " already exists";
-    private bool allMatched = false;
+    private bool allMatched;
 
     [Parameter]
     public ClinicalTest? ClinicalTest { get; set; } = null;
@@ -160,22 +160,23 @@
     {
         if (ClinicalTest == null) return;
 
-        foreach(Slide slide in ClinicalTest.Slides) {
-            if (filename.Contains(slide.Barcode)){
-                Console.WriteLine(ClinicalTest.Matches.Count);
-                ClinicalTest.Matches.Add(filename, slide);
+        for(int i = 0; i < ClinicalTest.Slides.Count; i++) {
+            Console.WriteLine(ClinicalTest.Slides[i].Barcode);
+            if (filename.Contains(ClinicalTest.Slides[i].Barcode)){
+                ClinicalTest.Matches.Add(filename, i);
             }
         }
         allMatched = AllMatched();
     }
 
+
     public bool AllMatched() 
     {
         if (ClinicalTest.Slides.Count == 0) return false;
 
-        foreach (Slide slide in ClinicalTest.Slides)
+        for (int i = 0; i < ClinicalTest.Slides.Count; i++)
         {
-            if (!ClinicalTest.Matches.ContainsValue(slide)) return false;
+            if (!ClinicalTest.Matches.ContainsValue(i)) return false;
         }
 
         foreach (SlideDataFile slideDataFile in ClinicalTest.SlideDataFiles) {
@@ -184,9 +185,19 @@
         return true;
     }
 
+    protected override void OnAfterRender(bool firstrender) {
+        if (firstrender) {
+            allMatched = AllMatched();
+            StateHasChanged();
+        }
+    }
+
+
     public async void StartCalculation() 
     {
+        Console.WriteLine("CALCULATION STARTEHD!");
         ClinicalTest.CalculateClinicalTestResult();
+        Console.WriteLine("Calculation finished");
         await setActiveButtonCallback.InvokeAsync(4);
     }
 }

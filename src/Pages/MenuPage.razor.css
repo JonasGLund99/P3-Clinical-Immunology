@@ -34,9 +34,9 @@ main {
     font-weight: 700;
 }
 
-    .menu-header img {
-        margin-right: 20px;
-    }
+.menu-header img {
+    margin-right: 20px;
+}
 
 #experiment-header {
     background-color: var(--primary-dark-color);
@@ -54,18 +54,18 @@ main {
     align-items: center;
 }
 
-    .toolbar i {
-        font-size: 20px;
-        margin-right: 10px;
-    }
+.toolbar i {
+    font-size: 20px;
+    margin-right: 10px;
+}
 
-    .toolbar input {
-        width: 100%;
-        height: 40px;
-        border-radius: 0 15px 15px 0;
-        background-color: transparent;
-        border: none;
-    }
+.toolbar input {
+    width: 100%;
+    height: 40px;
+    border-radius: 0 15px 15px 0;
+    background-color: transparent;
+    border: none;
+}
 
 input:focus {
     outline: none;
@@ -82,9 +82,9 @@ input:focus {
     align-items: center;
 }
 
-    .searchbar i {
-        margin-left: 20px;
-    }
+.searchbar i {
+    margin-left: 20px;
+}
 
 #experiment-grid,
 #clinical-test-grid {
@@ -99,10 +99,10 @@ input:focus {
     font-weight: bold;
 }
 
-    .grid-header div,
-    .grid-header-clinicalTest div {
-        border-bottom: 2px solid var(--primary-dark-color);
-    }
+.grid-header div,
+.grid-header-clinicalTest div {
+    border-bottom: 2px solid var(--primary-dark-color);
+}
 
 .grid-header-clinicalTest {
     display: grid;

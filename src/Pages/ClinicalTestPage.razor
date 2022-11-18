@@ -25,7 +25,9 @@
                 <Overview ClinicalTest="@clinicalTest"></Overview>
                 break;
             case 2:
-                <h1>File Upload</h1>
+                <FileUpload ClinicalTest="@clinicalTest"
+                            ActiveButton="@activeButton"
+                            setActiveButtonCallback="@SetActiveButton"></FileUpload>
                 break;
             case 3:
                 <h1>Result Table</h1>

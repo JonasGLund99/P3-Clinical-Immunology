@@ -19,7 +19,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
     public ClinicalTest() : base() { }
 
     //Dictionary conisting of a filename and its matching slide
-    public Dictionary<string, Slide> Matches = new Dictionary<string, Slide>();
+    public Dictionary<string, int> Matches = new Dictionary<string, int>();
     public List<SlideDataFile> SlideDataFiles { get; set; } = new List<SlideDataFile>();
     public Dictionary<string, bool> PatientKeys { get; set; } = new Dictionary<string, bool>();
     public List<string> ActiveKeys { get; set; } = new List<string>();
@@ -29,8 +29,8 @@ public class ClinicalTest : BaseModel<ClinicalTest>
     public string Title { get; set; } = "";
     public int NplicateSize { get; set; } = 3;
     public string Description { get; set; } = "";
-    public double MaxRI { get; private set; } = 0;
-    public double MinRI { get; private set; } = 0;
+    public double MaxRI { get; set; } = 0;
+    public double MinRI { get; set; } = 0;
     public DateTime? CreatedAt { get; set; } = DateTime.Now;
     public DateTime EditedAt { get; set; } = DateTime.Now;
 
@@ -104,7 +104,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
             List<string> spotInfo = new List<string>();
             nplicatesInBlock = spotLines.Length / numOfBlocks / NplicateSize;
 
-            for (int j = 0; j < Matches[slideDataFile.Filename].Blocks.Count; j++)
+            for (int j = 0; j < Slides[Matches[slideDataFile.Filename]].Blocks.Count; j++)
             {
                 for (int k = 0; k < nplicatesInBlock; k++)
                 {
@@ -137,21 +137,21 @@ public class ClinicalTest : BaseModel<ClinicalTest>
                     nplicate.CalculateMean();
                     nplicate.SetFlag();
 
-                    Matches[slideDataFile.Filename].Blocks[j].Nplicates.Add(nplicate);
+                    Slides[Matches[slideDataFile.Filename]].Blocks[j].Nplicates.Add(nplicate);
                 }
-                Nplicate? pos = Matches[slideDataFile.Filename].Blocks[j].Nplicates.Find(nplicate => nplicate.AnalyteType == "pos");
-                Nplicate? neg = Matches[slideDataFile.Filename].Blocks[j].Nplicates.Find(nplicate => nplicate.AnalyteType == "neg");
+                Nplicate? pos = Slides[Matches[slideDataFile.Filename]].Blocks[j].Nplicates.Find(nplicate => nplicate.AnalyteType == "pos");
+                Nplicate? neg = Slides[Matches[slideDataFile.Filename]].Blocks[j].Nplicates.Find(nplicate => nplicate.AnalyteType == "neg");
 
                 //Calculate the Quality control if the positive and negative control exist
                 if (pos == null || neg == null)
                 {
                     throw new NullReferenceException("Either the positive or negative control is missing");
                 }
-                Matches[slideDataFile.Filename].Blocks[j].CalculateQC(pos, neg);
+                Slides[Matches[slideDataFile.Filename]].Blocks[j].CalculateQC(pos, neg);
             }
 
             //Calculate the RI for each Nplicate in each block and update max / min RI
-            foreach (Block block in Matches[slideDataFile.Filename].Blocks)
+            foreach (Block block in Slides[Matches[slideDataFile.Filename]].Blocks)
             {
                 Nplicate? neg = block.Nplicates.Find(element => element.AnalyteType == "neg");
                 
@@ -162,7 +162,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
 
                 for (int j = 0; j < block.Nplicates.Count; j++)
                 {
-                    updateMaxMinRI(block.Nplicates[j].CalculateRI(Matches[slideDataFile.Filename].Blocks[Matches[slideDataFile.Filename].Blocks.Count - 1].Nplicates[j], neg));
+                    updateMaxMinRI(block.Nplicates[j].CalculateRI(Slides[Matches[slideDataFile.Filename]].Blocks[Slides[Matches[slideDataFile.Filename]].Blocks.Count - 1].Nplicates[j], neg));
                 }
             }
         }

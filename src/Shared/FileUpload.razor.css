@@ -1,7 +1,6 @@
 ﻿.square {
     width: 90%;
     height: 700px;
-    border: 5px solid var(--primary-dark-color);
     border-radius: 20px;
     display: flex;
     flex-direction: column;
