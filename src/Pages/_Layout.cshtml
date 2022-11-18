@@ -33,5 +33,74 @@
     </div>
 
     <script src="_framework/blazor.server.js"></script>
+
+    <script>
+        function listenForPaste() {
+            const overviewTable = document.querySelector('#overview-table');
+            if (!overviewTable) return;
+            const cells = overviewTable.querySelectorAll('td');
+
+            cells.forEach(c => {
+                c.addEventListener('paste', event => {
+
+                    event.preventDefault();
+
+                    const clipboard = event.clipboardData.getData('text');
+
+                    const formatedClipboard = clipboard.split('\n').map(line => line.split('\t').map(elm => elm.trim()));
+
+                    const rowIndex = event.target.parentElement.rowIndex;
+                    const cellIndex = event.target.cellIndex;
+
+                    const cells = [...document.querySelectorAll('tr')].map(row => row.querySelectorAll('td'));
+
+                    for (const [i, line] of formatedClipboard.entries()) {
+                        for (const [j, value] of line.entries()) {
+                            if (cells[i + rowIndex]?.[j + cellIndex]) {
+                                cells[i + rowIndex][j + cellIndex].innerHTML = value;
+                            }
+                        }
+                    }
+                })
+            })
+        }
+
+        function getTableData() {
+            const cells = [...document.querySelectorAll('tr')].map(row => [...row.querySelectorAll('td')].slice(1).map(cell => cell.innerText.trim()));
+            
+            // Filter by columns containing a value in the header
+            const registeredColumns = [];
+            let lastDataIndex;
+
+            // Find registered columns
+            for (const [i, row] of cells.entries()) {
+                for (const [j, cell] of row.entries()) {
+                    if (i === 0 && cell !== '') {
+                        registeredColumns.push(j);
+                    }
+                }
+            }
+            // Find index of last data
+            for (let i = cells.length - 1; i >= 0; i--) {
+                const rowAsString = cells[i].join('');
+                if (rowAsString !== '') {
+                    lastDataIndex = i;
+                    break;
+                }
+            }
+            
+            return cells.slice(0, lastDataIndex + 1).map(row => row.filter((cell, index) => registeredColumns.includes(index)));
+        }
+
+        function clearTable() {
+            for (const row of document.querySelectorAll('tr')) {
+                for (const [i, cell] of [...row.querySelectorAll('td')].entries()) {
+                    if (i === 0) continue;
+                    cell.innerText = '';
+                }
+            }
+        }
+    </script>
+
 </body>
 </html>

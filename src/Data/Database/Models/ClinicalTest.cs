@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using System.ComponentModel.DataAnnotations;
 
 namespace src.Data;
 
@@ -30,15 +31,19 @@ public class ClinicalTest : BaseModel<ClinicalTest>
     public string Description { get; set; } = "";
     public double MaxRI { get; private set; } = 0;
     public double MinRI { get; private set; } = 0;
-    public DateTime CreatedAt { get; } = DateTime.Now;
-    public DateTime EditedAt { get; private set; } = DateTime.Now;
+    public DateTime? CreatedAt { get; set; } = DateTime.Now;
+    public DateTime EditedAt { get; set; } = DateTime.Now;
 
-    public void AddSlide(Slide slide, List<Dictionary<string, string>> patientData)
+    public void AddSlide(Slide slide, List<List<string>> patientData)
     {
         Slides.Add(slide);
         for (int i = 0; i < numOfBlocks; i++)
         {
-            slide.Blocks.Add(new Block(patientData[i]));
+            if (i < patientData.Count) {
+                slide.Blocks.Add(new Block(patientData[i]));
+            } else {
+                slide.Blocks.Add(new Block(new List<string>()));
+            }
         }
     }
 
@@ -49,7 +54,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
 
         foreach (string key in allKeys)
         {
-            PatientKeys.Add(key, false);
+            PatientKeys[key] = false;
         }
 
         foreach (string key in shownKeys)
@@ -83,7 +88,6 @@ public class ClinicalTest : BaseModel<ClinicalTest>
     {
         int beginningIndex = 0;
         Regex start = new Regex(@"^Block\s*Row\s*Column\s*Name\s*ID", RegexOptions.IgnoreCase);
-        System.Console.WriteLine(SlideDataFiles.Count);
         foreach (SlideDataFile slideDataFile in SlideDataFiles) {
             //Read all lines in a file and add each line as an element in a string array
             string[] allLines = slideDataFile.Content.Split("\n");

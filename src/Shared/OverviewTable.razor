@@ -1,0 +1,49 @@
+@using src.Data
+
+@inject IJSRuntime JS
+
+
+<table id="overview-table">
+    <tr>
+        <td class="line-number"></td>
+        @for (int i = 0; i < numCols - 1; i++) 
+        {
+            @if (i < clinicalTest.PatientKeys.Count) 
+            {
+                <td contenteditable>@clinicalTest.PatientKeys.ToList()[i].Key</td>
+            }
+            else 
+            {
+                <td contenteditable></td>
+            }
+        }
+    </tr>
+
+    @for (int i = 0; i < numRows; i++) 
+    {
+        <tr>
+            <td class="line-number">@(i + 1)</td>
+            @for (int j = 0; j < numCols - 1; j++) 
+            {
+                <td contenteditable></td>
+            }
+        </tr>
+    }
+</table>
+
+@code {
+    private int numRows { get; set; } = 320;
+    private int numCols { get; set; } = 40;
+
+
+    [Parameter]
+    public ClinicalTest? clinicalTest { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("listenForPaste");
+        }
+    }
+}

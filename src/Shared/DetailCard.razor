@@ -7,7 +7,7 @@
         <div class="my-card-header">
             <div class="pen-header">
                 <h2>@Experiment.ExperimentNumber</h2>
-                    <i @onclick="EditExperiment" class="fa-solid fa-pen"></i>
+                    <i @onclick="EditExperimentCallback" class="fa-solid fa-pen"></i>
             </div>
             <h3 class="title">@Experiment.Title</h3>
             <hr class="hr-line">
@@ -44,7 +44,7 @@ else
         <div class="my-card-header">
             <div class="pen-header">
                 <h2>@ClinicalTest.Title</h2>
-                    <i @onclick="EditClinicalTest" class="fa-solid fa-pen"></i>
+                    <i @onclick="EditClinicalTestCallback" class="fa-solid fa-pen"></i>
             </div>
             <hr class="hr-line">
         </div>
@@ -86,7 +86,14 @@ else
     public Experiment? Experiment { get; set; } = null;
     [Parameter]
     public ClinicalTest? ClinicalTest { get; set; } = null;
-
-    public void EditClinicalTest() {}
-    public void EditExperiment() {}
+    [Parameter] public EventCallback EditCTCallback {get; set; }
+    [Parameter] public EventCallback EditExpCallback {get; set; }
+    public async void EditClinicalTestCallback() 
+    {
+        await EditCTCallback.InvokeAsync();
+    }
+    public async void EditExperimentCallback() 
+    {
+        await EditExpCallback.InvokeAsync();
+    }
 }

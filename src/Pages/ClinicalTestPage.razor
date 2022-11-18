@@ -1,48 +1,122 @@
 ﻿@page "/clinicaltest"
+@page "/clinicaltest/{ExperimentId}/{ClinicalTestId}"
 @using src.Data
 @using src.Shared
 @using Microsoft.Azure.Cosmos
+@inject NavigationManager NavManager
 
-<PageTitle>Clinical Test</PageTitle>
+@if (experiment != null && clinicalTest != null)
+{
+    <PageTitle>@clinicalTest.Title</PageTitle>
 
-<Navbar 
-	ClinicalTestTitle="@ct.Title" 
-	ExperimentNumber="@ex.ExperimentNumber" 
-	setActiveButtonCallback="@SetActiveButton" 
-	ActiveButton="@activeButton">
-</Navbar>
+    <Navbar ClinicalTestTitle="@clinicalTest.Title"
+        ExperimentNumber="@experiment.ExperimentNumber"
+        setActiveButtonCallback="@SetActiveButton"
+        ActiveButton="@activeButton">
+    </Navbar>
 
-<div class="component-container">
-	@switch (activeButton)
-	{
-		case 0:
-			<Details Experiment="@ex" ClinicalTest="@ct"></Details>
-			break;
-		case 1:
-			<Overview></Overview>
-			break;
-		case 2:
-			<FileUpload
-				setActiveButtonCallback="@SetActiveButton" 
-				ActiveButton="@activeButton"
-				ClinicalTest="@ct"></FileUpload>
-			break;
-		case 3:
-			<h1>Result Table</h1>
-			break;
-		case 4:
-			<h1>Heatmap</h1>
-			break;
-	}
-</div>
+    <div class="component-container">
+        @switch (activeButton)
+        {
+            case 0:
+                <Details Experiment="@experiment" ClinicalTest="@clinicalTest" editCTCallback="editCT" editExpCallback="editExp"></Details>
+                break;
+            case 1:
+                <Overview ClinicalTest="@clinicalTest"></Overview>
+                break;
+            case 2:
+                <h1>File Upload</h1>
+                break;
+            case 3:
+                <h1>Result Table</h1>
+                break;
+            case 4:
+                <h1>Heatmap</h1>
+                break;
+        }
+    </div>
+}
+else
+{
+    <p>Loading.....</p>
+}
 
-@code{
-	public Experiment ex = new Experiment("1", "EXP-22-JE1900", "Arthur", "Rikke", "basd", DateTime.Now);
-    public ClinicalTest ct = new ClinicalTest("5", "Delforsøg 1", 3, "bøv", DateTime.Now);
-	private int activeButton { get; set; } = 0;
+@if (showExperimentModal)
+{
+    <EditorModal CallbackClose="closeEditorModal"
+             CallbackSave="saveEditorModal"
+             ModalObject="@experiment"
+             ModalType="@Experiment"
+             ModalTitle='@editModalTitle' />
+}
 
-	private void SetActiveButton(int buttonId)
-	{
-		activeButton = buttonId;
-	}
+@if (showClinicalTestModal)
+{
+    <EditorModal CallbackClose="closeEditorModal"
+             CallbackSave="saveEditorModal"
+             ModalObject="@clinicalTest"
+             ModalType="@ClinicalTest"
+             ModalTitle="@editModalTitle" />
+}
+
+@code {
+    [Parameter]
+    public string ExperimentId { get; set; } = "";
+    [Parameter]
+    public string ClinicalTestId { get; set; } = "";
+
+    private Experiment? experiment;
+    private ClinicalTest? clinicalTest;
+    private bool showClinicalTestModal = false;
+    private bool showExperimentModal = false;
+    private string editModalTitle;
+
+    // Get experiment and clincical test from database on the first render
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            experiment = await ExperimentManager.GetExperimentById(ExperimentId);
+            clinicalTest = await ExperimentManager.GetClinicalTestById(ClinicalTestId);
+            NavManager.NavigateTo("/clinicaltest");
+            StateHasChanged();
+        }
+    }
+
+    private async void closeEditorModal()
+    {
+        showClinicalTestModal = false;
+        showExperimentModal = false;
+        experiment = await ExperimentManager.GetExperimentById(experiment.id);
+        clinicalTest = await ExperimentManager.GetClinicalTestById(clinicalTest.id);
+        StateHasChanged();
+    }
+
+    private async void saveEditorModal()
+    {
+        showClinicalTestModal = false;
+        showExperimentModal = false;
+        await experiment.SaveToDatabase();
+        await clinicalTest.SaveToDatabase();
+        StateHasChanged();
+    }
+
+    private async void editExp()
+    {
+        showExperimentModal = true;
+        editModalTitle = $"Edit Experiment: {experiment.ExperimentNumber}";
+    }
+
+    private async void editCT()
+    {
+        showClinicalTestModal = true;
+        editModalTitle = $"Edit test: {clinicalTest.Title}";
+    }
+
+    private int activeButton { get; set; } = 0;
+
+    private void SetActiveButton(int buttonId)
+    {
+        activeButton = buttonId;
+    }
 }
