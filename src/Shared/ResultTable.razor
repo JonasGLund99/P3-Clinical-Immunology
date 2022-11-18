@@ -15,11 +15,67 @@
             <i class="fa-solid fa-file-export"></i>
         </div>
     </div>
+
     <div class="table-view-container">
         <table id="result-table">
-            @switch(mode) {
-                case "Log2": <Log2 ClinicalTest="@ClinicalTest"> </Log2> break;
-                case "XYZ": <XYZ ClinicalTest="@ClinicalTest"></XYZ> break;
+            <tr>
+                <td class="line-number">Slide</td>
+                @{int j = 1;}
+                @foreach (string chosenTableTitle in ClinicalTest.ChosenTableTitles)
+                {
+                    if (chosenTableTitle != null) {
+                        <td id="key-number-@j">@chosenTableTitle</td>
+                        j++;
+                    }       
+                }
+
+                @if (mode == "Log2") {
+                    <td>Quality control</td>
+                }
+                else if (mode == "XYZ") {
+                    <td>Pos raw</td>
+                    <td>Neg raw</td>
+                }
+
+                @foreach (string analyteName in ClinicalTest.AnalyteNames) 
+                {
+                    <td contenteditable="false">@analyteName</td>
+                }
+            </tr>
+            
+            @{int i = 0;}
+            @foreach(Slide slide in ClinicalTest.Slides)
+            {
+                @foreach(Block block in slide.Blocks) {
+                    <tr>
+                        <td class="line-number">@(i + 1)</td>
+                        @{int k = 0;}
+                        @foreach (string chosenTableTitle in ClinicalTest.ChosenTableTitles)
+                        {
+                            if (chosenTableTitle != null)
+                            {
+                                @*<td class="key-number-@k">@block.PatientData[ClinicalTest.TableTitles.IndexOf(chosenTableTitle)])</td>*@
+                                k++;
+                            }
+                        }
+
+                        @if (mode == "Log2")
+                        {
+                            <td>@block.QC</td>
+                        }
+                        else if (mode == "XYZ")
+                        {
+                            <td>@block.Nplicates.Find(nplicate => nplicate.AnalyteType == "pos")</td>
+                            <td>@block.Nplicates.Find(nplicate => nplicate.AnalyteType == "neg")</td>
+                        }
+            
+                        @foreach (Nplicate nplicate in block.Nplicates) 
+                        {
+                            <td contenteditable="false">@nplicate.RI</td>
+                        }
+                    </tr>    
+                }
+                i++;
             }
         </table>
     </div>
