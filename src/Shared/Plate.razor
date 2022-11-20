@@ -7,7 +7,7 @@
     int numSlides = Slides.Count;
 }
 <div class="plate numSlides@(numSlides)">
-    <div class="container">
+    <div class="plate-container">
         <div class="Letters">
             @foreach (string letter in headingLetters)
             {
@@ -60,11 +60,13 @@
             <div class="Barcode-@(i+1)">
                 @if (i < numSlides)
                 {
-                    <input type="text" placeholder="Enter barcode..." value="@(ClinicalTest.Slides[i].Barcode)" @onchange="(e) => enterBarcode(e, slideIndex)">
+                    <input type="text" placeholder="Enter barcode..." @bind="@(ClinicalTest.Slides[slideIndex].Barcode)" @bind:event="onchange" @onblur="() => saveBarcode()">
                 }
             </div>
         }
-        <div class="Empty"></div>
+        <div class="Empty">
+            <div>@(PlateIndex + 1) / @((ClinicalTest.Slides.Count - 1) / 4 + 1)</div>
+        </div>
     </div>
 </div>
 
@@ -90,12 +92,19 @@
     }
 
     //Update barcode for a slide
-    async void enterBarcode(ChangeEventArgs e, int slideIndex)
+    @* async void enterBarcode(FocusEventArgs e, int slideIndex)
     {
         string? enteredBarcode = e.Value?.ToString();
         if (enteredBarcode == null) return;
 
         ClinicalTest.Slides[slideIndex].Barcode = enteredBarcode;
+        await ClinicalTest.SaveToDatabase();
+        System.Console.WriteLine("Blur");
+    } *@
+    private async void saveBarcode() {
+        for(int i = 0; i < ClinicalTest.Slides.Count; i++) {
+            System.Console.WriteLine(i.ToString() + "  " + ClinicalTest.Slides[i].Barcode);
+        }
         await ClinicalTest.SaveToDatabase();
     }
 

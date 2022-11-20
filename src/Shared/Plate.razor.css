@@ -1,8 +1,11 @@
 .plate {
     background-color: white;
     width: 100%;
+    max-width: 1500px;
+    height: calc(100vh - 300px);
+    min-height: 850px;
     border: 5px solid var(--primary-dark-color);
-    border-radius: 20px;
+    border-radius: 10px;
     margin-bottom: 30px;
 }
 
@@ -16,8 +19,8 @@
     background-color: var(--primary-dark-color);
     border: 1px solid var(--secondary-dark-color);
     color: white;
-    /*    min-width: 50px;*/
     justify-content: center;
+    font-size: 18px;
 }
 
 .block {
@@ -25,22 +28,27 @@
     padding: 5px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    font-size: 12px;
+    justify-content: space-evenly;
+    font-size: clamp(12px, 0.8vw, 16px);
 }
 .block > div {
-    margin-bottom: 2px;
+    height: 33.33%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
-.block > div:last-child {
+/* .block > div:last-child {
     margin-bottom: 0;
-}
+} */
 
-.container {
+.plate-container {
+    width: 100%;
+    height: 100%;
     border: none;
     padding: 0;
     display: grid;
     grid-template-columns: 1fr 3fr 3fr 3fr 3fr;
-    grid-template-rows: 1fr 7fr 1fr;
+    grid-template-rows: 2fr 14fr 1fr;
     gap: 0px 0px;
     grid-auto-flow: row;
     grid-template-areas:
@@ -48,14 +56,14 @@
         "Letters Slide-1 Slide-2 Slide-3 Slide-4"
         "Letters Barcode-1 Barcode-2 Barcode-3 Barcode-4";
 }
-.container > div {
+.plate-container > div {
     text-align: center;
 }
 
 .Letters {
     display: grid;
     grid-template-columns: 1fr;
-    grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-rows: 2fr 2fr 2fr 2fr 2fr 2fr 2fr 1fr;
     grid-auto-columns: 1fr;
     gap: 0px 0px;
     grid-auto-flow: row;
@@ -71,8 +79,9 @@
     grid-area: Letters;
 }
 
-.Slide-1, .Slide-2, .Slide-3, .Slide-4 {
-    border: none !important;
+.Slide-1, .Slide-2, .Slide-3 {
+    /* border: none !important; */
+    border-right: 3px solid var(--secondary-dark-color);
 }
 .Slide-1 {
     display: grid;
@@ -151,17 +160,26 @@
 }
 
 .Barcode-1, .Barcode-2, .Barcode-3, .Barcode-4 {
-    border: 1px solid var(--secondary-dark-color);
-    padding: 0 30px;
+    border-left: 1px solid var(--secondary-dark-color);
+    border-top: 1px solid var(--secondary-dark-color);
+    padding: 5px 5px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     text-align: center;
 }
+.Barcode-1, .Barcode-2, .Barcode-3 {
+    border-right: 4px solid var(--secondary-dark-color);
+}
+.Barcode-4 {
+    border-right: 1px solid var(--secondary-dark-color);
+}
 input {
     background-color: var(--light-grey);
     border: 2px solid var(--grey);
     padding: 2px;
+    width: 100%;
+    height: 100%;
     border-radius: 5px;
     text-align: center;
 }
@@ -180,5 +198,20 @@ input {
 
 .Empty {
     grid-area: Empty;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.Empty > div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+    color: var(--primary-dark-color);
+    padding: 20px;
+    width: min(90px, 90%);
+    aspect-ratio: 1/1;
+    border-radius: 50%;
+    font-size: 14px;
 }
 
