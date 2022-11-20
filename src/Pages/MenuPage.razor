@@ -191,7 +191,8 @@
 	}
     private async void openNewClinicalTestModal<T>(T obj)
 	{
-      selectedCT = new ClinicalTest(Guid.NewGuid().ToString());
+        selectedCT = new ClinicalTest(Guid.NewGuid().ToString());
+        selectedCT.ExperimentIds.Add(selectedExp.id);
 		showClinicalTestModal = true;
 	}
 
@@ -211,23 +212,59 @@
       await showClinicalTests(e);
    }
 
-   public async void SaveClinicalTestCallback(ClinicalTest ct)
+   public async void SaveClinicalTestCallback(ClinicalTest SavedClinicalTest)
    {
+        showClinicalTestModal = false;
+        ClinicalTest ClinicalTestFromDB = await ExperimentManager.GetClinicalTestById(SavedClinicalTest.id);
+        if (ClinicalTestFromDB == null)
+        {
+            foreach (string ExpId in SavedClinicalTest.ExperimentIds)
+            {   
+                await SavedClinicalTest.SaveToDatabase();
+                Experiment e = await ExperimentManager.GetExperimentById(ExpId);
+                await ExperimentManager.Associate(e, SavedClinicalTest);
+            }
+        } else //if clinical test exists, the relations needs to be checked
+        {
+            List<string> NewExpIds = SavedClinicalTest.ExperimentIds.Except(ClinicalTestFromDB.ExperimentIds).ToList();
+            List<string> RemovedIds = ClinicalTestFromDB.ExperimentIds.Except(SavedClinicalTest.ExperimentIds).ToList();
+            foreach(string ExpId in NewExpIds)
+            {
+                Experiment e = await ExperimentManager.GetExperimentById(ExpId);
+                await ExperimentManager.Associate(e, ClinicalTestFromDB);
+                Console.WriteLine("NewId: " + ExpId);
+            }
 
-      showClinicalTestModal = false;
-      if (selectedCT.ExperimentIds.Contains(selectedExp.id))
-      {
-         ct.EditedAt = DateTime.Now;
-         selectedExp.EditedAt = DateTime.Now;
-         await selectedExp.SaveToDatabase();
-         await ct.SaveToDatabase();
-      }
-      {
-         await ExperimentManager.Associate(selectedExp, selectedCT);
-      }
-      experiments = await ExperimentManager.QueryExperiments("");
-      StateHasChanged();
-      await showClinicalTests(selectedExp);
+            foreach (string ExpId in RemovedIds)
+            {
+                Experiment e = await ExperimentManager.GetExperimentById(ExpId);
+                await ExperimentManager.Disassociate(e, ClinicalTestFromDB);
+                Console.WriteLine("RemovedId: " + ExpId);
+            }
+            
+            Console.WriteLine ("____________________");
+        }
+
+        experiments = await ExperimentManager.QueryExperiments("");
+        StateHasChanged();
+        await showClinicalTests(selectedExp);
+
+
+@*      original code for saving clinical test.
+        showClinicalTestModal = false;
+        if (selectedCT.ExperimentIds.Contains(selectedExp.id))
+        {
+            ct.EditedAt = DateTime.Now;
+            selectedExp.EditedAt = DateTime.Now;
+            await selectedExp.SaveToDatabase();
+            await ct.SaveToDatabase();
+        }
+        {
+            await ExperimentManager.Associate(selectedExp, selectedCT);
+        }
+        experiments = await ExperimentManager.QueryExperiments("");
+        StateHasChanged();
+        await showClinicalTests(selectedExp); *@
 
    }
 

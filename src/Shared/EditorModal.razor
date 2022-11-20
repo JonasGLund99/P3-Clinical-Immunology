@@ -99,6 +99,7 @@
     {
         if (firstRender) {
             allExperiments = await ExperimentManager.QueryExperiments("");
+            searchedExperiments = allExperiments;
             StateHasChanged();
         }
     }
@@ -111,9 +112,12 @@
     //this not works
     private string titleHelperRelatedExperiments(string id)
     {
-      Console.WriteLine(id);
-      Experiment experiment = allExperiments.Find((e) => e.id == id);
-      return titleHelper(experiment);
+        Experiment experiment = allExperiments.Find((e) => e.id == id);
+        if (experiment == null)   
+            return "";
+        else
+            return titleHelper(experiment);
+
     } 
 
     private List<Experiment> searchedExperiments = new(); 
