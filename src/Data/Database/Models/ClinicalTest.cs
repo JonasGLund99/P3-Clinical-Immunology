@@ -69,7 +69,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
         return slides;
     }
 
-    public void SetSlide(Slide slide)
+    public void AddSlide(Slide slide)
     {
         slides.Add(slide);
     }

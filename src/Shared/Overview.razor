@@ -39,12 +39,12 @@
             </div>
         </div>
         
-        @if (ClinicalTest.GetSlides().Count != 0)
+        @if (slides.Count != 0)
         {
             <div class="plates">
-                @for (int i = 0; i <= (ClinicalTest.GetSlides().Count - 1) / 4; i++)
+                @for (int i = 0; i <= (slides.Count - 1) / 4; i++)
                 {
-                    <Plate ClinicalTest="@ClinicalTest" PlateIndex=i Slides="ClinicalTest.GetSlides().GetRange(i * 4, (i * 4) + 4 <= ClinicalTest.GetSlides().Count ? 4 : ClinicalTest.GetSlides().Count % 4)"/>
+                    <Plate ClinicalTest="@ClinicalTest" PlateIndex=i Slides="slides.GetRange(i * 4, (i * 4) + 4 <= slides.Count ? 4 : slides.Count % 4)"/>
                 }
             </div>
         } 
@@ -89,6 +89,13 @@
 @code {
     [Parameter, EditorRequired]
     public ClinicalTest ClinicalTest { get; set; } = new();
+   
+    private List<Slide> slides { 
+        get 
+        {
+            return ClinicalTest.GetSlides();
+        }
+    }
 
     private const int SlideWidth = 3;
     private const int SlidesInPlate = 21;
@@ -117,7 +124,7 @@
 
         // Remove existing slides
         // ClinicalTest.Slides = new List<Slide>();
-        ClinicalTest.GetSlides().Clear();
+        slides.Clear();
 
         // Get table data from DOM
         string[][] tableData = await JS.InvokeAsync<string[][]>("getTableData");

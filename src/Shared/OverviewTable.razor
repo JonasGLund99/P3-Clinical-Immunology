@@ -22,8 +22,8 @@
     @*Data rows*@
     @for (int i = 0; i < numRows; i++) 
     {
-        int numFilledPlates = ClinicalTest.GetSlides().Count / 4;
-        int numSlides = i / 84 < numFilledPlates ? 4 : ClinicalTest.GetSlides().Count % 4;
+        int numFilledPlates = slides.Count / 4;
+        int numSlides = i / 84 < numFilledPlates ? 4 : slides.Count % 4;
         
         @if (numSlides != 0) {
 
@@ -35,9 +35,9 @@
                 {
                     @if (numSlides > 0) 
                     {
-                        @if (slideIndex < ClinicalTest.GetSlides().Count && blockIndex < ClinicalTest.GetSlides()[slideIndex].Blocks.Length && j < ClinicalTest.GetSlides()[slideIndex].Blocks[blockIndex].PatientData.Count) 
+                        @if (slideIndex < slides.Count && blockIndex < slides[slideIndex].Blocks.Length && j < slides[slideIndex].Blocks[blockIndex].PatientData.Count) 
                         {
-                            <td contenteditable>@ClinicalTest.GetSlides()[slideIndex].Blocks[blockIndex].PatientData[j]</td>
+                            <td contenteditable>@slides[slideIndex].Blocks[blockIndex].PatientData[j]</td>
                         } 
                         else 
                         {
@@ -66,6 +66,13 @@
 @code {
     private int numRows { get; set; } = 320;
     private int numCols { get; set; } = 40;
+    
+    private List<Slide> slides { 
+        get 
+        {
+            return ClinicalTest.GetSlides();
+        }
+    }
 
     [Parameter, EditorRequired]
     public ClinicalTest ClinicalTest { get; set; } = new();
