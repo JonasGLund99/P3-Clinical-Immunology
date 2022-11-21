@@ -248,24 +248,6 @@
         experiments = await ExperimentManager.QueryExperiments("");
         StateHasChanged();
         await showClinicalTests(selectedExp);
-
-
-@*      original code for saving clinical test.
-        showClinicalTestModal = false;
-        if (selectedCT.ExperimentIds.Contains(selectedExp.id))
-        {
-            ct.EditedAt = DateTime.Now;
-            selectedExp.EditedAt = DateTime.Now;
-            await selectedExp.SaveToDatabase();
-            await ct.SaveToDatabase();
-        }
-        {
-            await ExperimentManager.Associate(selectedExp, selectedCT);
-        }
-        experiments = await ExperimentManager.QueryExperiments("");
-        StateHasChanged();
-        await showClinicalTests(selectedExp); *@
-
    }
 
    private void setCurrentObject<T>(T obj) 

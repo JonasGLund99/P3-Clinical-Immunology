@@ -18,16 +18,16 @@
     height: 6em;
 }
 
-.associator{
+.associator {
     display: flex;
     justify-content: space-between;
+    border: 1px solid black;
 }
 
 .search-experiments,
-.associated-experiments{
+.associated-experiments {
     width: 50%;
-    border: 1px solid black;
-    height: 10rem;
+    height: 14rem;
 }
 
 .searchbar {
@@ -39,6 +39,7 @@
     display: flex;
     justify-content: left;
     align-items: center;
+    margin-top: 5px;
     /* border-bottom: 2px solid var(--primary-dark-color); */
     margin-right: 10px;
     filter: drop-shadow(0px 2px 1px var(--primary-dark-color));
@@ -62,15 +63,19 @@ input:focus {
     outline: none;
 }
 
-.experiments-found {
+.experiments-found,
+.related-experiments {
     overflow-y: scroll;
     overflow-x: visible;
-    height: calc(100% - 40px);
+    height: calc(100% - 55px);
 }
 
+.related-experiments {
+    height: calc(100% - 25px);
+}
 
-
-.experiments-found p {
+.experiments-found p,
+.related-experiments p {
     width: 100%;
     border: 3px solid var(--menu-button-color);
     background-color: var(--menu-button-color);
@@ -81,8 +86,8 @@ input:focus {
     font-size: 12px;
 }
 
-
-.experiments-found p:hover {
+.experiments-found p:hover,
+.related-experiments p:hover {
     border: 3px solid var(--secondary-dark-color);
     background-color: var(--secondary-dark-color);
     color: var(--menu-button-color);

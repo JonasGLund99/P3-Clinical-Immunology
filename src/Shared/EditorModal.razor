@@ -42,6 +42,7 @@
                   
                   <div class="associator">
                      <div class="search-experiments">
+                        All Experiments
                         <div class="searchbar">
                            <i class="fa-solid fa-magnifying-glass"></i>
                            <input type="text" placeholder="Search experiment..." @oninput="@searchExperiments">
@@ -56,16 +57,16 @@
                            {
                               <p title="@titleHelper(e)" @onclick="@(() => clickedExperimentToRelate(e.id))">@e.ExperimentNumber</p>
                            }
-
                         }
                         </div>
                      </div>
                      <div class="associated-experiments">
+                        Associated Experiments
                         <div class="related-experiments">
-                        @foreach (string id in ((ClinicalTest)((object)ModalObject)).ExperimentIds)
-                        {
-                            <p title="@titleHelperRelatedExperiments(id)" @onclick="@(() => clickedRelatedExperiment(id))">@(getRelatedExperimentNumber(id))</p>
-                        }
+                            @foreach (string id in ((ClinicalTest)((object)ModalObject)).ExperimentIds)
+                            {
+                                <p title="@titleHelperRelatedExperiments(id)" @onclick="@(() => clickedRelatedExperiment(id))">@(getRelatedExperimentNumber(id))</p>
+                            }
                         </div>
                      </div>
                   </div>
@@ -113,11 +114,7 @@
     private string titleHelperRelatedExperiments(string id)
     {
         Experiment experiment = allExperiments.Find((e) => e.id == id);
-        if (experiment == null)   
-            return "";
-        else
-            return titleHelper(experiment);
-
+        return experiment == null ? "" : titleHelper(experiment);
     } 
 
     private List<Experiment> searchedExperiments = new(); 
