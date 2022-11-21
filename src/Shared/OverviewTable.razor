@@ -29,7 +29,6 @@
 
             int slideIndex = (i % 84 / 3) % numSlides + i / 84 * 4;
             int blockIndex = i % 3 + (i % 84) / (numSlides * 3) * 3;
-            @* System.Console.WriteLine($"{i}  {slideIndex}  {blockIndex}"); *@
             <tr>
                 <td class="line-number">@(i + 1)</td>
                 @for (int j = 0; j < numCols - 1; j++) 

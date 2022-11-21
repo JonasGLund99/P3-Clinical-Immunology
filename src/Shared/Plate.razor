@@ -33,8 +33,6 @@
                             }
                             else
                             {
-                                @* <div>@(ClinicalTest.TableTitles[findTitleIndex(index)])</div> *@
-                                @* <div>@(ClinicalTest.Slides[i].Blocks[j].PatientData.Count)</div> *@
                                 <div>@(Slides[i].Blocks[j].PatientData[patientDataIndex])</div>
                             }
                         }
@@ -65,7 +63,7 @@
             </div>
         }
         <div class="Empty">
-            <div>@(PlateIndex + 1) / @((ClinicalTest.Slides.Count - 1) / 4 + 1)</div>
+            <div>Plate<br>@(PlateIndex + 1) of @((ClinicalTest.Slides.Count - 1) / 4 + 1)</div>
         </div>
     </div>
 </div>
