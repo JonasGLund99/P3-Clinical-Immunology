@@ -102,7 +102,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
                 partitionKey: new PartitionKey(slide.id)
             );
         }
-        base.DeleteFromDatabase();
+        base.RemoveFromDatabase();
     }
 
     public void CalculateClinicalTestResult()
