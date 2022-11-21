@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq.Expressions;
 using Microsoft.Azure.Cosmos;
 namespace src.Data;
 
@@ -28,11 +29,21 @@ public class DatabaseService
         await Database.CreateContainerIfNotExistsAsync("ClinicalTest", "/id");
     }
 
-    public async Task<T> GetItemById<T>(string id)
+    public async Task<T?> GetItemById<T>(string id)
     {
         if (Database == null)
             throw new NullReferenceException("Database is null");
 
-        return await Database.GetContainer(typeof(T).Name).ReadItemAsync<T>(id, new PartitionKey(id));
+        T? res;
+        try
+        {
+            res = await Database.GetContainer(typeof(T).Name).ReadItemAsync<T>(id, new PartitionKey(id));
+        }
+        catch
+        {
+      
+            res = default;
+        }
+        return res;
     } 
 }

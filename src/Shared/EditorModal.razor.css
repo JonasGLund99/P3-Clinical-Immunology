@@ -8,7 +8,8 @@
     margin: 0;
 }
 
-.modal-content input {
+.modal-content input, 
+.modal-content textarea{
     margin-bottom: 15px;
     width: 100%;
 }
@@ -18,10 +19,15 @@
     height: 6em;
 }
 
+.associator-titles {
+    display: grid;
+    grid-template-columns: 50% 50%;
+}
 .associator {
     display: flex;
     justify-content: space-between;
-    border: 1px solid black;
+    border: 1px solid #666666;
+    border-radius: 2px;
 }
 
 .search-experiments,
@@ -31,7 +37,7 @@
 }
 
 .searchbar {
-    width: calc(100% - 10px);
+    width: calc(100% - 20px);
     height: 25px;
     border-radius: 10px;
     text-align: center;
@@ -40,8 +46,8 @@
     justify-content: left;
     align-items: center;
     margin-top: 5px;
-    /* border-bottom: 2px solid var(--primary-dark-color); */
     margin-right: 10px;
+    margin: 5px 15px 0 5px;
     filter: drop-shadow(0px 2px 1px var(--primary-dark-color));
 }
 
@@ -67,34 +73,46 @@ input:focus {
 .related-experiments {
     overflow-y: scroll;
     overflow-x: visible;
-    height: calc(100% - 55px);
+    height: calc(100% - 30px);
 }
 
 .related-experiments {
-    height: calc(100% - 25px);
+    height: 100%
 }
 
 .experiments-found p,
 .related-experiments p {
-    width: 100%;
+    width: calc(100% - 20px);
     border: 3px solid var(--menu-button-color);
     background-color: var(--menu-button-color);
     color: var(--secondary-dark-color);
     border-radius: 10px;
     align-items: center;
-    margin-top: 5px;
+    margin: 5px 10px 0 10px;
     font-size: 12px;
+    padding-left: 10px;
 }
 
-.experiments-found p:hover,
-.related-experiments p:hover {
+.experiments-found p:hover {
     border: 3px solid var(--secondary-dark-color);
     background-color: var(--secondary-dark-color);
     color: var(--menu-button-color);
+    cursor: pointer;
 }
 
-.experiment-is-added {
+.experiment-is-added,
+.related-experiments p
+{
     background-color: var(--green-btn-color) !important;
     border-color: var(--green-btn-color) !important;
     color: white !important;
+
+}
+
+.experiment-is-added:hover,
+.related-experiments p:hover {
+    border: 3px solid var(--red-btn-color) !important;
+    background-color: var(--red-btn-color) !important;
+    color: var(--menu-button-color) !important;
+    cursor: pointer;
 }
