@@ -1,0 +1,77 @@
+* {
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.card-textcontent-experiment {
+    display: grid;
+    width: 100%;
+    border: 10px solid var(--menu-button-color);
+    border-radius: 10px;
+    align-items: center;
+    height: 38px;
+    grid-template-columns: 15% 20% 32% 13% 13% 4% 3%;
+}
+
+.card-textcontent-clinicaltest {
+    display: grid;
+    align-items: center;
+    width: 100%;
+    height: 38px;
+    border-radius: 10px;
+    border: 10px solid var(--menu-button-color);
+    grid-template-columns: 51% 20% 18% 6% 5%;
+}
+
+.card-textcontent-clinicaltest span,
+.card-textcontent-experiment span {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    margin-right: 15px;
+}
+
+.card-content {
+    margin: 10px 10px 0 10px;
+    display: flex;
+    align-items: center;
+    background-color: var(--menu-button-color);
+    border-radius: 10px;
+    color: var(--primary-dark-color);
+    filter: drop-shadow(1px 1px 1px var(--navbar-button-color));
+}
+
+.card-textcontent-experiment:hover {
+    margin: 0;
+    border: 10px solid var(--secondary-dark-color);
+    border-radius: 10px;
+    background-color: var(--secondary-dark-color);
+    color: var(--menu-button-color);
+    cursor: pointer;
+}
+
+.card-textcontent-clinicaltest:hover {
+    margin: 0;
+    border: 10px solid var(--primary-dark-color);
+    border-radius: 10px;
+    background-color: var(--primary-dark-color);
+    color: var(--menu-button-color);
+    cursor: pointer;
+}
+
+.active-experiment-true {
+    margin: 0;
+    border: 10px solid var(--primary-dark-color);
+    border-radius: 10px;
+    background-color: var(--primary-dark-color);
+    color: var(--menu-button-color);
+}
+
+
+/* .active-clinicaltest-true {
+
+} */
+
+.card-content i {
+    font-size: 18px;
+}

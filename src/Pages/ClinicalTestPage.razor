@@ -1,7 +1,9 @@
-﻿@page "/{ExperimentId}/{ClinicalTestId}"
+﻿@page "/clinicaltest"
+@page "/clinicaltest/{ExperimentId}/{ClinicalTestId}"
 @using src.Data
 @using src.Shared
 @using Microsoft.Azure.Cosmos
+@inject NavigationManager NavManager
 
 @if (experiment != null && clinicalTest != null) {
 	<PageTitle>@clinicalTest.Title</PageTitle>
@@ -16,7 +18,7 @@
 	<div class="component-container">
 		@switch (activeButton)
 		{
-			case 0: <Details Experiment="@experiment" ClinicalTest="@clinicalTest"></Details> break;
+			case 0: <Details Experiment="@experiment" ClinicalTest="@clinicalTest" editCTCallback="editCT" editExpCallback="editExp"></Details> break;
 			case 1: <Overview ClinicalTest="@clinicalTest"></Overview> break;
 			case 2: <h1>File Upload</h1> break;
 			case 3: <h1>Result Table</h1> break;
@@ -35,6 +37,28 @@ else
 		<Details Experiment="@placeholderExp" ClinicalTest="@placeholderCt"></Details>
 	</div>
 }
+
+@if (showExperimentModal)
+{
+   <EditorModal 
+        CallbackClose="closeEditorModal"
+        CallbackSave="saveEditorModal"
+        ModalObject="@experiment"
+        ModalType="@Experiment"
+        ModalTitle='@editModalTitle'
+   />
+}
+
+@if (showClinicalTestModal)
+{
+   <EditorModal 
+        CallbackClose="closeEditorModal"
+        CallbackSave="saveEditorModal"
+        ModalObject="@clinicalTest"
+        ModalType="@ClinicalTest"
+        ModalTitle="@editModalTitle"
+   />
+} 
 
 @code{
 	[Parameter]
@@ -61,16 +85,49 @@ else
 
 	private Experiment? experiment;
 	private ClinicalTest? clinicalTest;
+    private bool showClinicalTestModal = false;
+    private bool showExperimentModal = false;
+    private string editModalTitle;
 
 	// Get experiment and clincical test from database on the first render
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
-		if (firstRender)
-		{
-			experiment = await DatabaseService.Instance.GetItemById<Experiment>(ExperimentId);
-			clinicalTest = await DatabaseService.Instance.GetItemById<ClinicalTest>(ClinicalTestId);
-			StateHasChanged();
-		}
+        if (firstRender) {
+            experiment = await ExperimentManager.GetExperimentById(ExperimentId);
+            clinicalTest = await ExperimentManager.GetClinicalTestById(ClinicalTestId);
+            NavManager.NavigateTo("/clinicaltest");
+            StateHasChanged();
+        }
+    }
+
+    private async void closeEditorModal() 
+    {
+        showClinicalTestModal = false;
+        showExperimentModal = false;
+        experiment = await ExperimentManager.GetExperimentById(experiment.id);
+        clinicalTest = await ExperimentManager.GetClinicalTestById(clinicalTest.id);
+        StateHasChanged();
+    }
+
+    private async void saveEditorModal() 
+    {
+        showClinicalTestModal = false;
+        showExperimentModal = false;
+        await experiment.SaveToDatabase();
+        await clinicalTest.SaveToDatabase();
+        StateHasChanged();
+    }
+
+    private async void editExp () 
+    {
+        showExperimentModal = true;
+        editModalTitle = $"Edit Experiment: {experiment.ExperimentNumber}";
+    }
+
+    private async void editCT() 
+    {
+        showClinicalTestModal = true;
+        editModalTitle = $"Edit test: {clinicalTest.Title}";
 	}
 
 	private int activeButton { get; set; } = 0;

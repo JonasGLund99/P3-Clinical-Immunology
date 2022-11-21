@@ -1,0 +1,19 @@
+.modal-content {
+    display: flex;
+    padding: 30px;
+    flex-direction: column;
+}
+
+.modal-content p {
+    margin: 0;
+}
+
+.modal-content input {
+    margin-bottom: 15px;
+    width: 100%;
+}
+
+.modal-content textarea {
+    width: 100%;
+    height: 6em;
+}
