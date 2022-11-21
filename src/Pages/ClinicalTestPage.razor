@@ -1,8 +1,6 @@
-﻿@page "/clinicaltest"
-@page "/clinicaltest/{ExperimentId}/{ClinicalTestId}"
+﻿@page "/clinicaltest/{ExperimentId}/{ClinicalTestId}"
 @using src.Data
 @using src.Shared
-@using Microsoft.Azure.Cosmos
 @inject NavigationManager NavManager
 
 @if (experiment != null && clinicalTest != null) {
@@ -95,7 +93,6 @@ else
         if (firstRender) {
             experiment = await ExperimentManager.GetExperimentById(ExperimentId);
             clinicalTest = await ExperimentManager.GetClinicalTestById(ClinicalTestId);
-            NavManager.NavigateTo("/clinicaltest");
             StateHasChanged();
         }
     }
