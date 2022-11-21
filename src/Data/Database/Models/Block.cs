@@ -12,7 +12,7 @@ public class Block
     public List<Nplicate> Nplicates { get; set; } = new List<Nplicate>();
     public List<string> PatientData { get; set; } = new List<string>();
     public Color TextColour { get; set; } = new Color();
-    public double QC { get; private set; } = 0;
+    public double QC { get; set; } = 0;
 
     public void CalculateQC(Nplicate pos, Nplicate neg)
     {

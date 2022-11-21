@@ -3,22 +3,22 @@
 @using src.Shared
 @inject NavigationManager NavManager
 
-@if (experiment != null && clinicalTest != null) {
-	<PageTitle>@clinicalTest.Title</PageTitle>
+@if (experiment != null && clinicalTest != null)
+{
+    <PageTitle>@clinicalTest.Title</PageTitle>
 
-	<Navbar
-		ClinicalTestTitle="@clinicalTest.Title" 
-		ExperimentNumber="@experiment.ExperimentNumber" 
-		setActiveButtonCallback="@SetActiveButton" 
-		ActiveButton="@activeButton">
-	</Navbar>
+    <Navbar ClinicalTestTitle="@clinicalTest.Title"
+        ExperimentNumber="@experiment.ExperimentNumber"
+        setActiveButtonCallback="@SetActiveButton"
+        ActiveButton="@activeButton">
+    </Navbar>
 
 	<div class="component-container">
 		@switch (activeButton)
 		{
 			case 0: <Details Experiment="@experiment" ClinicalTest="@clinicalTest" editCTCallback="editCT" editExpCallback="editExp"></Details> break;
 			case 1: <Overview ClinicalTest="@clinicalTest"></Overview> break;
-			case 2: <h1>File Upload</h1> break;
+			case 2: <FileUpload ClinicalTest="@clinicalTest" ActiveButton="@activeButton" setActiveButtonCallback="@SetActiveButton"></FileUpload> break;
 			case 3: <h1>Result Table</h1> break;
 			case 4: <h1>Heatmap</h1> break;
 		}
@@ -38,31 +38,27 @@ else
 
 @if (showExperimentModal)
 {
-   <EditorModal 
-        CallbackClose="closeEditorModal"
-        CallbackSave="saveEditorModal"
-        ModalObject="@experiment"
-        ModalType="@Experiment"
-        ModalTitle='@editModalTitle'
-   />
+    <EditorModal CallbackClose="closeEditorModal"
+             CallbackSave="saveEditorModal"
+             ModalObject="@experiment"
+             ModalType="@Experiment"
+             ModalTitle='@editModalTitle' />
 }
 
 @if (showClinicalTestModal)
 {
-   <EditorModal 
-        CallbackClose="closeEditorModal"
-        CallbackSave="saveEditorModal"
-        ModalObject="@clinicalTest"
-        ModalType="@ClinicalTest"
-        ModalTitle="@editModalTitle"
-   />
-} 
+    <EditorModal CallbackClose="closeEditorModal"
+             CallbackSave="saveEditorModal"
+             ModalObject="@clinicalTest"
+             ModalType="@ClinicalTest"
+             ModalTitle="@editModalTitle" />
+}
 
-@code{
-	[Parameter]
-	public string ExperimentId { get; set; } = "";
-	[Parameter]
-	public string ClinicalTestId { get; set; } = "";
+@code {
+    [Parameter]
+    public string ExperimentId { get; set; } = "";
+    [Parameter]
+    public string ClinicalTestId { get; set; } = "";
 
 	private Experiment placeholderExp = new Experiment(
 		id: "",
@@ -87,17 +83,18 @@ else
     private bool showExperimentModal = false;
     private string editModalTitle = "";
 
-	// Get experiment and clincical test from database on the first render
-	protected override async Task OnAfterRenderAsync(bool firstRender)
-	{
-        if (firstRender) {
+    // Get experiment and clincical test from database on the first render
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
             experiment = await ExperimentManager.GetExperimentById(ExperimentId);
             clinicalTest = await ExperimentManager.GetClinicalTestById(ClinicalTestId);
             StateHasChanged();
         }
     }
 
-    private async void closeEditorModal() 
+    private async void closeEditorModal()
     {
         if (experiment == null || clinicalTest == null) return;
         showClinicalTestModal = false;
@@ -107,7 +104,7 @@ else
         StateHasChanged();
     }
 
-    private async void saveEditorModal() 
+    private async void saveEditorModal()
     {
         if (experiment == null || clinicalTest == null) return;
         showClinicalTestModal = false;
@@ -129,9 +126,9 @@ else
         if (clinicalTest == null) return;
         showClinicalTestModal = true;
         editModalTitle = $"Edit test: {clinicalTest.Title}";
-	}
+    }
 
-	private int activeButton { get; set; } = 0;
+    private int activeButton { get; set; } = 0;
 
 	private void SetActiveButton(int buttonId)
 	{
