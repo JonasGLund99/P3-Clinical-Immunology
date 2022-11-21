@@ -1,10 +1,12 @@
 ﻿using System.Text.RegularExpressions;
-using System.ComponentModel.DataAnnotations;
+using Microsoft.Azure.Cosmos;
+
 
 namespace src.Data;
 
 public class ClinicalTest : BaseModel<ClinicalTest>
 {
+    private List<Slide> slides { get; set; } = new List<Slide>();
     private int nplicatesInBlock { get; set; }
     private int numOfBlocks { get; } = 21;
 
@@ -23,8 +25,8 @@ public class ClinicalTest : BaseModel<ClinicalTest>
     public List<SlideDataFile> SlideDataFiles { get; set; } = new List<SlideDataFile>();
     public List<string> TableTitles { get; set; } = new List<string>();
     public string[] ChosenTableTitles { get; set; } = new string[3];
+    public List<string> SlideIds { get; set; } = new List<string>();
     public List<string> ExperimentIds { get; set; } = new List<string>();
-    public List<Slide> Slides { get; set; } = new List<Slide>();
     public List<string> AnalyteNames { get; set; } = new List<string>();
     public string Title { get; set; } = "";
     public int NplicateSize { get; set; } = 3;
@@ -34,9 +36,16 @@ public class ClinicalTest : BaseModel<ClinicalTest>
     public DateTime? CreatedAt { get; set; } = DateTime.Now;
     public DateTime EditedAt { get; set; } = DateTime.Now;
 
+    public async Task<Slide> GetSlideById(string id)
+    {
+        Slide slide = await DatabaseService.Instance.GetItemById<Slide>(id);
+        return slide;
+    }
+
     public void AddSlide(Slide slide, List<string>[] patientData)
     {
-        Slides.Add(slide);
+        slides.Add(slide);
+        SlideIds.Add(slide.id);
         for (int i = 0; i < numOfBlocks; i++)
         {
             if (patientData[i] != null) 
@@ -55,7 +64,55 @@ public class ClinicalTest : BaseModel<ClinicalTest>
         
     }
 
-    public async void CalculateClinicalTestResult()
+    public List<Slide> GetSlides()
+    {
+        return slides;
+    }
+
+    public void SetSlide(Slide slide)
+    {
+        slides.Add(slide);
+    }
+
+    public override async Task SaveToDatabase()
+    {
+        Database? db = DatabaseService.Instance.Database;
+
+        if (db == null) throw new NullReferenceException("There was no reference to the database");
+
+        foreach (Slide slide in slides)
+        {
+            await db.GetContainer("Slide").UpsertItemAsync<Slide>(
+            item: slide
+            );
+        }
+
+        await db.GetContainer("ClinicalTest").UpsertItemAsync<ClinicalTest>(
+            item: this
+        );
+    }
+
+
+    public override async Task RemoveFromDatabase()
+    {
+        Database? db = DatabaseService.Instance.Database;
+
+        if (db == null) throw new NullReferenceException("There was no reference to the database");
+        foreach (Slide slide in slides)
+        {
+            await db.GetContainer("Slide").DeleteItemAsync<Slide>(
+                id: slide.id,
+                partitionKey: new PartitionKey(slide.id)
+            );
+        }
+
+        await db.GetContainer("ClinicalTest").DeleteItemAsync<ClinicalTest>(
+            id: this.id,
+            partitionKey: new PartitionKey(this.id)
+        );
+    }
+
+    public void CalculateClinicalTestResult()
     {
         int beginningIndex = 0;
         Regex start = new Regex(@"^Block\s*Row\s*Column\s*Name\s*ID", RegexOptions.IgnoreCase);
@@ -75,7 +132,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
             List<string> spotInfo = new List<string>();
             nplicatesInBlock = spotLines.Length / numOfBlocks / NplicateSize;
 
-            for (int j = 0; j < Slides[Matches[slideDataFile.Filename]].Blocks.Length; j++)
+            for (int j = 0; j < slides[Matches[slideDataFile.Filename]].Blocks.Length; j++)
             {
                 for (int k = 0; k < nplicatesInBlock; k++)
                 {
@@ -108,21 +165,21 @@ public class ClinicalTest : BaseModel<ClinicalTest>
                     nplicate.CalculateMean();
                     nplicate.SetFlag();
 
-                    Slides[Matches[slideDataFile.Filename]].Blocks[j].Nplicates.Add(nplicate);
+                    slides[Matches[slideDataFile.Filename]].Blocks[j].Nplicates.Add(nplicate);
                 }
-                Nplicate? pos = Slides[Matches[slideDataFile.Filename]].Blocks[j].Nplicates.Find(nplicate => nplicate.AnalyteType == "pos");
-                Nplicate? neg = Slides[Matches[slideDataFile.Filename]].Blocks[j].Nplicates.Find(nplicate => nplicate.AnalyteType == "neg");
+                Nplicate? pos = slides[Matches[slideDataFile.Filename]].Blocks[j].Nplicates.Find(nplicate => nplicate.AnalyteType == "pos");
+                Nplicate? neg = slides[Matches[slideDataFile.Filename]].Blocks[j].Nplicates.Find(nplicate => nplicate.AnalyteType == "neg");
 
                 //Calculate the Quality control if the positive and negative control exist
                 if (pos == null || neg == null)
                 {
                     throw new NullReferenceException("Either the positive or negative control is missing");
                 }
-                Slides[Matches[slideDataFile.Filename]].Blocks[j].CalculateQC(pos, neg);
+                slides[Matches[slideDataFile.Filename]].Blocks[j].CalculateQC(pos, neg);
             }
 
             //Calculate the RI for each Nplicate in each block and update max / min RI
-            foreach (Block block in Slides[Matches[slideDataFile.Filename]].Blocks)
+            foreach (Block block in slides[Matches[slideDataFile.Filename]].Blocks)
             {
                 Nplicate? neg = block.Nplicates.Find(element => element.AnalyteType == "neg");
                 
@@ -133,12 +190,12 @@ public class ClinicalTest : BaseModel<ClinicalTest>
 
                 for (int j = 0; j < block.Nplicates.Count; j++)
                 {
-                    updateMaxMinRI(block.Nplicates[j].CalculateRI(Slides[Matches[slideDataFile.Filename]].Blocks[Slides[Matches[slideDataFile.Filename]].Blocks.Length - 1].Nplicates[j], neg));
+                    updateMaxMinRI(block.Nplicates[j].CalculateRI(slides[Matches[slideDataFile.Filename]].Blocks[slides[Matches[slideDataFile.Filename]].Blocks.Length - 1].Nplicates[j], neg));
                 }
             }
         }
         //Set the heatmapcolour of all Nplicates (The RI of all Nplicates in all slides must be calculated before)
-        foreach (Slide slide in Slides)
+        foreach (Slide slide in slides)
         {
             foreach (Block block in slide.Blocks)
             {
