@@ -84,7 +84,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
         
     }
 
-    public void CalculateClinicalTestResult()
+    public async void CalculateClinicalTestResult()
     {
         int beginningIndex = 0;
         Regex start = new Regex(@"^Block\s*Row\s*Column\s*Name\s*ID", RegexOptions.IgnoreCase);
@@ -177,6 +177,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
                 }
             }
         }
+        await SaveToDatabase();
     }
 
     private string findSingleSpotInfo(List<string> spotInfo, string[] titles, string key) 

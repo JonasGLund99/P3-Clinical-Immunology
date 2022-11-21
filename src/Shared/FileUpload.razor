@@ -144,8 +144,8 @@
         ClinicalTest.SlideDataFiles.Remove(slideDataFile);
         ClinicalTest.Matches.Remove(slideDataFile.Filename);
 
-        await ClinicalTest.SaveToDatabase();
         allMatched = AllMatched();
+        await ClinicalTest.SaveToDatabase();
     }
 
     public bool FileExists(string Filename) 
@@ -195,7 +195,6 @@
     public async void StartCalculation() 
     {
         ClinicalTest.CalculateClinicalTestResult();
-        await ClinicalTest.SaveToDatabase();
         await setActiveButtonCallback.InvokeAsync(4);
     }
 }
