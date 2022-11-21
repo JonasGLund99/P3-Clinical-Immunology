@@ -90,10 +90,10 @@ else
         {
             experiment = await ExperimentManager.GetExperimentById(ExperimentId);
             clinicalTest = await ExperimentManager.GetClinicalTestById(ClinicalTestId);
-            foreach (string slideId in clinicalTest.SlideIds) {
-                clinicalTest.AddSlide(await clinicalTest.GetSlideById(slideId));
-            }
             StateHasChanged();
+	        foreach (string slideId in clinicalTest.SlideIds) {
+                clinicalTest.SetSlide(await clinicalTest.GetSlideById(slideId));
+            }
         }
     }
 

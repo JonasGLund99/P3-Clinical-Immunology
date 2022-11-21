@@ -86,10 +86,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
             item: slide
             );
         }
-
-        await db.GetContainer("ClinicalTest").UpsertItemAsync<ClinicalTest>(
-            item: this
-        );
+        base.SaveToDatabase();
     }
 
 
@@ -105,11 +102,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
                 partitionKey: new PartitionKey(slide.id)
             );
         }
-
-        await db.GetContainer("ClinicalTest").DeleteItemAsync<ClinicalTest>(
-            id: this.id,
-            partitionKey: new PartitionKey(this.id)
-        );
+        base.RemoveFromDatabase();
     }
 
     public void CalculateClinicalTestResult()
