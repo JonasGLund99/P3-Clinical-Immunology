@@ -39,40 +39,50 @@
 
                 @foreach (string analyteName in ClinicalTest.AnalyteNames) 
                 {
+                    Console.WriteLine(ClinicalTest.AnalyteNames.Count);
                     <td contenteditable="false">@analyteName</td>
                 }
             </tr>
             
             @{int i = 0;}
-            @foreach(Slide slide in ClinicalTest.Slides)
+            @foreach(Slide slide in slides)
             {
                 @foreach(Block block in slide.Blocks) {
                     <tr>
                         <td class="line-number">@(i + 1)</td>
-                        @{int k = 0;}
+                        @{int k = 1;}
                         @foreach (string chosenTableTitle in ClinicalTest.ChosenTableTitles)
                         {
                             if (chosenTableTitle != null)
                             {
-                                @*<td class="key-number-@k">@block.PatientData[ClinicalTest.TableTitles.IndexOf(chosenTableTitle)])</td>*@
+                                <td class="key-number-@k">@block.PatientData[ClinicalTest.TableTitles.IndexOf(chosenTableTitle)]</td>
                                 k++;
                             }
                         }
 
                         @if (mode == "Log2")
                         {
-                            <td>@block.QC</td>
+                            <td>@Math.Round(block.QC, 9)</td>
+                            @foreach (Nplicate nplicate in block.Nplicates) 
+                            {
+                                <td contenteditable="false">@Math.Round(nplicate.RI, 2)</td>
+                            }
                         }
                         else if (mode == "XYZ")
                         {
-                            <td>@block.Nplicates.Find(nplicate => nplicate.AnalyteType == "pos")</td>
-                            <td>@block.Nplicates.Find(nplicate => nplicate.AnalyteType == "neg")</td>
-                        }
-            
-                        @foreach (Nplicate nplicate in block.Nplicates) 
-                        {
-                            <td contenteditable="false">@nplicate.RI</td>
-                        }
+                            if (block.Nplicates.Find(nplicate => nplicate.AnalyteType == "pos") == null || block.Nplicates.Find(nplicate => nplicate.AnalyteType == "neg") == null) {
+                                <td>Test1</td>
+                                <td>Test2</td>
+                            }
+                            else {
+                                <td>@Math.Round(block.Nplicates.Find(nplicate => nplicate.AnalyteType == "pos").Mean, 2)</td>
+                                <td>@Math.Round(block.Nplicates.Find(nplicate => nplicate.AnalyteType == "neg").Mean, 2)</td>
+                                @foreach (Nplicate nplicate in block.Nplicates) 
+                                {
+                                    <td contenteditable="false">@Math.Round(nplicate.XYZ, 2)</td>
+                                }
+                            }
+                        } 
                     </tr>    
                 }
                 i++;
@@ -83,6 +93,12 @@
 
 @code {
     private string mode = "XYZ";
+    private List<Slide> slides { 
+        get 
+        {
+            return ClinicalTest.GetSlides();
+        }
+    }
 
     [Parameter]
     public ClinicalTest ClinicalTest { get; set; }

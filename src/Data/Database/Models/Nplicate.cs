@@ -9,12 +9,12 @@ public class Nplicate
         AnalyteType = analyteType;
     }
     public Nplicate() { }
-    public double RI { get; private set; } = default;
-    public double XYZ { get; private set; } = default;
-    public double Mean { get; private set; } = default;
-    public string AnalyteType { get; } = "";
-    public bool IsFlagged { get; private set; } = default;
-    public Color HeatmapColour { get; private set; } = default;
+    public double RI { get; set; } = default;
+    public double XYZ { get; set; } = default;
+    public double Mean { get; set; } = default;
+    public string AnalyteType { get; set; } = "";
+    public bool IsFlagged { get; set; } = default;
+    public Color HeatmapColour { get; set; } = default;
     public List<Spot> Spots = new List<Spot>();
 
     public void SetFlag()

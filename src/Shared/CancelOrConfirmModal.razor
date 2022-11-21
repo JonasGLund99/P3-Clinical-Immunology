@@ -11,18 +11,18 @@
             <p>@Body</p>
          </div>
          <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" @onclick="cancel">Cancel</button>
-                  <button type="button" class="btn btn-primary" @onclick="confirm">Confirm</button>
+                  <button type="button" class="grey-button" @onclick="cancel">Cancel</button>
+                  <button type="button" class="green-button" @onclick="confirm">Confirm</button>
             </div>
          </div>
       </div>
 </div>
 
 @code {
-   [Parameter] public string Title { get; set; }
-   [Parameter] public string Body { get; set; }
-   [Parameter] public EventCallback CallbackCancel {get; set;}
-   [Parameter] public EventCallback CallbackConfirm {get; set;}
+   [Parameter, EditorRequired] public string Title { get; set; } = "";
+   [Parameter, EditorRequired] public string Body { get; set; } = "";
+   [Parameter, EditorRequired] public EventCallback CallbackCancel {get; set;}
+   [Parameter, EditorRequired] public EventCallback CallbackConfirm {get; set;}
 
    private async void confirm()
    {

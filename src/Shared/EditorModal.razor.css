@@ -1,13 +1,19 @@
-.modalContent {
+.modal-content {
     display: flex;
     padding: 30px;
     flex-direction: column;
 }
 
-.modalContent p {
+.modal-content p {
     margin: 0;
 }
 
-.modalContent input {
+.modal-content input {
     margin-bottom: 15px;
+    width: 100%;
+}
+
+.modal-content textarea {
+    width: 100%;
+    height: 6em;
 }

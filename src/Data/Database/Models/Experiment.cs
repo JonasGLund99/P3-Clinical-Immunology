@@ -21,17 +21,16 @@ public class Experiment : BaseModel<Experiment>
     {
 
     }
+    [Required]
+    [StringLength(10, ErrorMessage = "Name is too long.")]
     public string ExperimentNumber { get; set; } = "";
-    [Required]
+
     public string Title { get; set; } = "";
-    [Required]
     public string Author { get; set; } = "";
-    [Required]
     public string Description { get; set; } = "";
     public List<string> ClinicalTestIds { get; set; } = new List<string>();
-    [Required]
     public DateTime? CreatedAt { get; set; } = DateTime.Now;
-    public DateTime EditedAt { get; private set; } = DateTime.Now;
+    public DateTime EditedAt { get; set; } = DateTime.Now;
 
     public async Task<List<ClinicalTest>> QueryClinicalTests(string searchParameter) {
         List<ClinicalTest> clinicalTests = new List<ClinicalTest>();
@@ -41,7 +40,8 @@ public class Experiment : BaseModel<Experiment>
         }
         string queryString = @"SELECT * FROM ClinicalTest
                             WHERE CONTAINS(ClinicalTest.Title, @searchParameter, true) 
-                            AND ARRAY_CONTAINS(ClinicalTest.ExperimentIds, @expId)";
+                            AND ARRAY_CONTAINS(ClinicalTest.ExperimentIds, @expId)
+                            ORDER BY ClinicalTest.EditedAt DESC";
 
         FeedIterator<ClinicalTest> feed = DatabaseService.Instance.Database.GetContainer("ClinicalTest")
                                         .GetItemQueryIterator<ClinicalTest>(

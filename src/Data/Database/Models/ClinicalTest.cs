@@ -1,9 +1,12 @@
 ﻿using System.Text.RegularExpressions;
-using System.ComponentModel.DataAnnotations;
+using Microsoft.Azure.Cosmos;
+
+
 namespace src.Data;
 
 public class ClinicalTest : BaseModel<ClinicalTest>
 {
+    private List<Slide> slides { get; set; } = new List<Slide>();
     private int nplicatesInBlock { get; set; }
     private int numOfBlocks { get; } = 21;
 
@@ -16,93 +19,118 @@ public class ClinicalTest : BaseModel<ClinicalTest>
     }
     public ClinicalTest(string id) : base(id) { }
     public ClinicalTest() : base() { }
+
+    //Dictionary conisting of a filename and its matching slide
+    public Dictionary<string, int> Matches = new Dictionary<string, int>();
     public List<SlideDataFile> SlideDataFiles { get; set; } = new List<SlideDataFile>();
     public List<string> TableTitles { get; set; } = new List<string>();
     public string[] ChosenTableTitles { get; set; } = new string[3];
+    public List<string> SlideIds { get; set; } = new List<string>();
     public List<string> ExperimentIds { get; set; } = new List<string>();
-    public List<Slide> Slides { get; set; } = new List<Slide>();
     public List<string> AnalyteNames { get; set; } = new List<string>();
     public string Title { get; set; } = "";
     public int NplicateSize { get; set; } = 3;
     public string Description { get; set; } = "";
-    public double MaxRI { get; private set; } = 0;
-    public double MinRI { get; private set; } = 0;
+    public double MaxRI { get; set; } = 0;
+    public double MinRI { get; set; } = 0;
     public DateTime? CreatedAt { get; set; } = DateTime.Now;
-    public DateTime EditedAt { get; private set; } = DateTime.Now;
+    public DateTime EditedAt { get; set; } = DateTime.Now;
 
-    public void AddSlide(Slide slide, List<List<string>> patientData)
+    public async Task<Slide> GetSlideById(string id)
     {
-        Slides.Add(slide);
+        Slide slide = await DatabaseService.Instance.GetItemById<Slide>(id);
+        return slide;
+    }
+
+    public void AddSlide(Slide slide, List<string>[] patientData)
+    {
+        slides.Add(slide);
+        SlideIds.Add(slide.id);
         for (int i = 0; i < numOfBlocks; i++)
         {
-            if (i < patientData.Count) {
-                slide.Blocks.Add(new Block(patientData[i]));
-            } else {
-                slide.Blocks.Add(new Block(new List<string>()));
+            if (patientData[i] != null) 
+            {
+                slide.Blocks[i] = new Block(patientData[i]);
+            } 
+            else 
+            {
+                slide.Blocks[i] = new Block(new List<string>() { "" });
             }
         }
     }
-
-    //public void CreatePatientKeys(List<string> allKeys, params string[] shownKeys)
-    //{
-    //    PatientKeys.Clear();
-    //    ActiveKeys.Clear();
-
-    //    foreach (string key in allKeys)
-    //    {
-    //        PatientKeys[key] = false;
-    //    }
-
-    //    foreach (string key in shownKeys)
-    //    {
-    //        PatientKeys[key] = true;
-    //        ActiveKeys.Add(key);
-    //    }
-    //}
-
-    //private void UpdatePatientKeys(params string[] newKeys)
-    //{
-    //    foreach (string key in ActiveKeys)
-    //    {
-    //        PatientKeys[key] = false;
-    //    }
-    //    ActiveKeys.Clear();
-
-    //    foreach (string key in newKeys)
-    //    {
-    //        PatientKeys[key] = true;
-    //        ActiveKeys.Add(key);
-    //    }        
-    //}
 
     public void ExportClinicalTest(string exportType)
     {
         
     }
 
+    public List<Slide> GetSlides()
+    {
+        return slides;
+    }
+
+    public void AddSlide(Slide slide)
+    {
+        slides.Add(slide);
+    }
+
+    public override async Task SaveToDatabase()
+    {
+        Database? db = DatabaseService.Instance.Database;
+
+        if (db == null) throw new NullReferenceException("There was no reference to the database");
+
+
+        foreach (Slide slide in slides)
+        {
+            Console.WriteLine($"Saved {slide.id} database");
+            await db.GetContainer("Slide").UpsertItemAsync<Slide>(
+            item: slide
+            );
+        }
+        await base.SaveToDatabase();
+    }
+
+
+    public override async Task RemoveFromDatabase()
+    {
+        Database? db = DatabaseService.Instance.Database;
+
+        if (db == null) throw new NullReferenceException("There was no reference to the database");
+        foreach (Slide slide in slides)
+        {
+            await db.GetContainer("Slide").DeleteItemAsync<Slide>(
+                id: slide.id,
+                partitionKey: new PartitionKey(slide.id)
+            );
+        }
+        await base.RemoveFromDatabase();
+    }
+
     public void CalculateClinicalTestResult()
     {
+        AnalyteNames.Clear();
         int beginningIndex = 0;
         Regex start = new Regex(@"^Block\s*Row\s*Column\s*Name\s*ID", RegexOptions.IgnoreCase);
-        for (int i = 0; i < SlideDataFiles.Count; i++) 
-        {
+        foreach (SlideDataFile slideDataFile in SlideDataFiles) {
             //Read all lines in a file and add each line as an element in a string array
-            string[] allLines = SlideDataFiles[i].Content.Split("\n");
+            string[] allLines = slideDataFile.Content.Split("\n");
 
             //Find the line in which the information about spots begin
             beginningIndex = Array.FindIndex(allLines, line => start.Match(line).Success);
 
             //Create string array with only spot information
             string[] spotLines = new ArraySegment<string>(allLines, beginningIndex + 1, allLines.Length - beginningIndex - 2).ToArray();
-            
+
             //Create array where each entry is a title for spot information
             string[] titles = allLines[beginningIndex].Split("\t");
 
             List<string> spotInfo = new List<string>();
             nplicatesInBlock = spotLines.Length / numOfBlocks / NplicateSize;
 
-            for (int j = 0; j < Slides[i].Blocks.Count; j++)
+            for (int j = 0; j < slides[Matches[slideDataFile.Filename]].Blocks.Length; j++)
             {
+                slides[Matches[slideDataFile.Filename]].Blocks[j].Nplicates.Clear();
                 for (int k = 0; k < nplicatesInBlock; k++)
                 {
                     //Split the line with spotinformation, add the information elements to spotinfo.
@@ -122,7 +150,6 @@ public class ClinicalTest : BaseModel<ClinicalTest>
                         {
                             spotInfo.AddRange(spotLines[l + (k * NplicateSize) + (j * nplicatesInBlock * NplicateSize)].Split("\t"));
                         }
-
                         nplicate.Spots.Add(
                             new Spot(
                                 intensity: double.Parse(findSingleSpotInfo(spotInfo, titles, "Intensity")), 
@@ -135,21 +162,21 @@ public class ClinicalTest : BaseModel<ClinicalTest>
                     nplicate.CalculateMean();
                     nplicate.SetFlag();
 
-                    Slides[i].Blocks[j].Nplicates.Add(nplicate);
+                    slides[Matches[slideDataFile.Filename]].Blocks[j].Nplicates.Add(nplicate);
                 }
-                Nplicate? pos = Slides[i].Blocks[j].Nplicates.Find(nplicate => nplicate.AnalyteType == "pos");
-                Nplicate? neg = Slides[i].Blocks[j].Nplicates.Find(nplicate => nplicate.AnalyteType == "neg");
+                Nplicate? pos = slides[Matches[slideDataFile.Filename]].Blocks[j].Nplicates.Find(nplicate => nplicate.AnalyteType == "pos");
+                Nplicate? neg = slides[Matches[slideDataFile.Filename]].Blocks[j].Nplicates.Find(nplicate => nplicate.AnalyteType == "neg");
 
                 //Calculate the Quality control if the positive and negative control exist
                 if (pos == null || neg == null)
                 {
                     throw new NullReferenceException("Either the positive or negative control is missing");
                 }
-                Slides[i].Blocks[j].CalculateQC(pos, neg);
+                slides[Matches[slideDataFile.Filename]].Blocks[j].CalculateQC(pos, neg);
             }
 
             //Calculate the RI for each Nplicate in each block and update max / min RI
-            foreach (Block block in Slides[i].Blocks)
+            foreach (Block block in slides[Matches[slideDataFile.Filename]].Blocks)
             {
                 Nplicate? neg = block.Nplicates.Find(element => element.AnalyteType == "neg");
                 
@@ -160,13 +187,12 @@ public class ClinicalTest : BaseModel<ClinicalTest>
 
                 for (int j = 0; j < block.Nplicates.Count; j++)
                 {
-                    updateMaxMinRI(block.Nplicates[j].CalculateRI(Slides[i].Blocks[Slides[i].Blocks.Count - 1].Nplicates[j], neg));
+                    updateMaxMinRI(block.Nplicates[j].CalculateRI(slides[Matches[slideDataFile.Filename]].Blocks[slides[Matches[slideDataFile.Filename]].Blocks.Length - 1].Nplicates[j], neg));
                 }
             }
         }
-
         //Set the heatmapcolour of all Nplicates (The RI of all Nplicates in all slides must be calculated before)
-        foreach (Slide slide in Slides)
+        foreach (Slide slide in slides)
         {
             foreach (Block block in slide.Blocks)
             {

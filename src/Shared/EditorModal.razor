@@ -7,34 +7,35 @@
          <div class="modal-header">
             <h4 class="modal-title">@ModalTitle</h4>
          </div>
-         <form onclick="return false;">
+
+         <form onsubmit="@(() => saveEdits())">
             <div class="modalContent">
                @if(ModalObject is Experiment)
                {
                   <p>Experiment Number</p>
-                  <input type="text" @bind="((Experiment)((object)ModalObject)).ExperimentNumber"/>
+                  <input type="text" required @bind="((Experiment)((object)ModalObject)).ExperimentNumber"/>
                   
                   <p>Title</p>
-                  <input type="text" @bind="((Experiment)((object)ModalObject)).Title"/>
+                  <input type="text" required @bind="((Experiment)((object)ModalObject)).Title" />
                   
                   <p>Author</p>
-                  <input type="text" @bind="((Experiment)((object)ModalObject)).Author"/>
+                  <input type="text" required @bind="((Experiment)((object)ModalObject)).Author"/>
                   
                   <p>Created At</p>
-                  <input type="date" @bind="((Experiment)((object)ModalObject)).CreatedAt"/>
+                  <input type="date" required @bind="((Experiment)((object)ModalObject)).CreatedAt" />
                   
                   <p>Description</p>
                   <textarea @bind="((Experiment)((object)ModalObject)).Description"/>
                } else
                {
                   <p>Title</p>
-                  <input type="text" @bind="((ClinicalTest)((object)ModalObject)).Title"/>
+                  <input type="text" required @bind="((ClinicalTest)((object)ModalObject)).Title"/>
                   
                   <p>Created At</p>
-                  <input type="date" @bind="((ClinicalTest)((object)ModalObject)).CreatedAt" required/>
+                  <input type="date" required @bind="((ClinicalTest)((object)ModalObject)).CreatedAt"/>
 
                   <p>N-plicate size</p>
-                  <input type="number" @bind="((ClinicalTest)((object)ModalObject)).NplicateSize" required min="1" max="10"/>
+                  <input type="number" required min="1" @bind="((ClinicalTest)((object)ModalObject)).NplicateSize"/>
 
                   <p>Description</p>
                   <textarea @bind="((ClinicalTest)((object)ModalObject)).Description"/>
@@ -42,8 +43,8 @@
             </div>
                   
             <div class="modal-footer">
-               <button type="button" class="btn btn-secondary" @onclick="cancelEdits">Cancel</button>
-               <button type="button" class="btn btn-primary" @onclick="saveEdits">Save</button>
+               <button type="button" class="grey-button" @onclick="cancelEdits">Cancel</button>
+               <button type="submit" class="green-button">Save</button>
             </div>
 
          </form>
@@ -53,13 +54,13 @@
 
 
 @code {
-   [Parameter] 
+   [Parameter, EditorRequired] 
    public string ModalTitle { get; set; } = "";
-   [Parameter] 
+   [Parameter, EditorRequired] 
    public EventCallback<ModalType> CallbackClose {get; set;}
-   [Parameter] 
-   public ModalType ModalObject { get; set; }
-   [Parameter] 
+   [Parameter, EditorRequired] 
+   public ModalType ModalObject { get; set; } = new();
+   [Parameter, EditorRequired] 
    public EventCallback<ModalType> CallbackSave {get; set;}
    private async void saveEdits()
    {

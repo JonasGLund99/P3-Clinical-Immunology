@@ -1,4 +1,10 @@
-﻿.overview-container {
+﻿.overview-component{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: calc(100vh - 100px);
+}
+.overview-container {
     width: 100%;
     align-items: center;
     justify-content: center;
@@ -6,16 +12,11 @@
     overflow-y: scroll;
     padding-top: 20px;
 }
-.overview-component{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
 .table-view-container{
     width: 100%;
     align-items: center;
     justify-content: center;
-    height: calc(100vh - 170px);
+    height: calc(100vh - 190px);
     overflow: scroll;
 }
 
@@ -25,7 +26,7 @@
     display: flex;
     align-items: center;
     padding: 0 20px;
-    margin: 10px 0;
+    margin: 20px 0;
     background-color: white;
     border-radius: 10px;
     height: 50px;
@@ -35,17 +36,6 @@
     align-items: center;
     height: inherit;
 }
-/* #mode-icons {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 85px;
-} */
-/* #mode-icons img {
-    height: 35px;
-    cursor: pointer;
-    color: var(--navbar-buton-color);
-} */
 #key-selectors {
     display: flex;
     justify-content: space-between;
@@ -66,13 +56,13 @@
     width: 25px;
     height: 35px;
 /*    border-radius: 5px 0 0 5px;*/
-    background-color: rgb(213, 213, 213);
+    background-color: var(--grey);
 }
 #key-selectors select {
     display: inline-block;
     width: 150px;
     height: 35px;
-    background-color: rgb(243, 243, 243);
+    background-color: var(--light-grey);
     border: none;
     padding: 5px 5px 5px;
     cursor: pointer;
@@ -137,9 +127,14 @@
     color: rgb(70, 25, 25);
 }
 
-.plates{
+.plates {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: calc(100vh - 175px);
     width: 100%;
     overflow-y: scroll;
+    padding: 0 100px;
 }
 
 /* Plate */
@@ -147,7 +142,7 @@
     background-color: white;
     width: 98%;
     height: calc(100vh - 185px);
-    border: 5px solid var(--primary-dark-color);
+/*    border: 5px solid var(--primary-dark-color);*/
     border-radius: 20px;
     margin-bottom: 40px;
     display: flex;

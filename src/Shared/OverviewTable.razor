@@ -8,9 +8,9 @@
         <td class="line-number"></td>
         @for (int i = 0; i < numCols - 1; i++) 
         {
-            @if (i < clinicalTest.TableTitles.Count) 
+            @if (i < ClinicalTest.TableTitles.Count) 
             {
-                <td contenteditable>@clinicalTest.TableTitles[i]</td>
+                <td contenteditable>@ClinicalTest.TableTitles[i]</td>
             }
             else 
             {
@@ -22,22 +22,60 @@
     @*Data rows*@
     @for (int i = 0; i < numRows; i++) 
     {
-        <tr>
-            <td class="line-number">@(i + 1)</td>
-            @for (int j = 0; j < numCols - 1; j++) 
-            {
-                <td contenteditable></td>
-            }
-        </tr>
+        int numFilledPlates = slides.Count / 4;
+        int numSlides = i / 84 < numFilledPlates ? 4 : slides.Count % 4;
+        
+        @if (numSlides != 0) {
+
+            int slideIndex = (i % 84 / 3) % numSlides + i / 84 * 4;
+            int blockIndex = i % 3 + (i % 84) / (numSlides * 3) * 3;
+            <tr>
+                <td class="line-number">@(i + 1)</td>
+                @for (int j = 0; j < numCols - 1; j++) 
+                {
+                    @if (numSlides > 0) 
+                    {
+                        @if (slideIndex < slides.Count && blockIndex < slides[slideIndex].Blocks.Length && j < slides[slideIndex].Blocks[blockIndex].PatientData.Count) 
+                        {
+                            <td contenteditable>@slides[slideIndex].Blocks[blockIndex].PatientData[j]</td>
+                        } 
+                        else 
+                        {
+                            <td contenteditable></td>
+                        }
+                    } 
+                    else 
+                    {
+                        <td contenteditable></td>
+                    }   
+                }
+            </tr>
+        }
+        else 
+        {
+            <tr>
+                <td class="line-number">@(i + 1)</td>
+                @for (int j = 0; j < numCols - 1; j++) {
+                    <td contenteditable></td>
+                }
+            </tr>
+        }
     }
 </table>
 
 @code {
     private int numRows { get; set; } = 320;
     private int numCols { get; set; } = 40;
+    
+    private List<Slide> slides { 
+        get 
+        {
+            return ClinicalTest.GetSlides();
+        }
+    }
 
-    [Parameter]
-    public ClinicalTest? clinicalTest { get; set; }
+    [Parameter, EditorRequired]
+    public ClinicalTest ClinicalTest { get; set; } = new();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

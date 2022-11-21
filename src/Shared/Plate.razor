@@ -1,33 +1,116 @@
 ﻿@using src.Data
 
-<div class="plate numSlides@(Slides.Count)">
-	<table id="plate@(PlateNumber)">
-        <tr>
-            <td class="heading"></td>
-            @for (int i = 0; i < numCols - 1; i++)
+@{
+    const int MaxSlides = 4;
+    const int BlocksPerSlide = 21;
+    const int NumPatientDataPerBlock = 3;
+    int numSlides = Slides.Count;
+}
+<div class="plate numSlides@(numSlides)">
+    <div class="plate-container">
+        <div class="Letters">
+            @foreach (string letter in headingLetters)
             {
-                <td class="heading">@(i+1)</td>
+                <div class="heading">@(letter)</div>
             }
-        </tr>
-
-        @for (int i = 0; i < numRows - 1; i++)
+        </div>
+        @for (int i = 0; i < MaxSlides; i++)
         {
-            <tr>
-
-            </tr>
+            <div class="Slide-@(i+1)">
+                @for (int j = 0; j < BlocksPerSlide; j++)
+                {
+                <div class="block">
+                    @if (i < numSlides)
+                    {
+                        @for (int k = 0; k < NumPatientDataPerBlock; k++)
+                        {
+                            int index = k;
+                            int patientDataIndex = findTitleIndex(index);
+                            int patientDataCount = Slides[i].Blocks[j].PatientData.Count;
+                            @if (patientDataIndex == -1 || patientDataIndex >= patientDataCount)
+                            {
+                                <div></div>
+                            }
+                            else
+                            {
+                                <div>@(Slides[i].Blocks[j].PatientData[patientDataIndex])</div>
+                            }
+                        }
+                    }
+                    else
+                    {
+                        <div></div>
+                    }
+                </div>
+                }
+            </div>
         }
-	</table>
+
+        <div class="Numbers">
+            @for (int i = 0; i < 12; i++)
+            {
+                <div class="heading">@(i+1)</div>
+            }
+        </div>
+        @for (int i = 0; i < MaxSlides; i++)
+        {
+            int slideIndex = (PlateIndex*4) + i;
+            <div class="Barcode-@(i+1)">
+                @if (i < numSlides)
+                {
+                    <input type="text" placeholder="Enter barcode..." @bind="@(slides[slideIndex].Barcode)" @bind:event="onchange" @onblur="() => saveBarcode()">
+                }
+            </div>
+        }
+        <div class="Empty">
+            <div>Plate<br>@(PlateIndex + 1) of @((slides.Count - 1) / 4 + 1)</div>
+        </div>
+    </div>
 </div>
 
 
 @code
 {
-    [Parameter]
-    public int PlateNumber { get; set; }
+    [Parameter, EditorRequired]
+    public ClinicalTest ClinicalTest { get; set; } = new();
 
     [Parameter]
-    public List<Slide>? Slides { get; set; }
+    public int PlateIndex { get; set; }
 
-    private int numCols = 13;
-    private int numRows = 9;
+    [Parameter, EditorRequired]
+    public List<Slide> Slides { get; set; } = new();
+
+    private List<Slide> slides { 
+        get 
+        {
+            return ClinicalTest.GetSlides();
+        }
+    }
+
+    private int findTitleIndex(int i)
+    {
+        string? title = ClinicalTest.TableTitles.Find((title) => title == ClinicalTest.ChosenTableTitles[i]);
+        if (title == null)
+            return -1;
+
+        return ClinicalTest.TableTitles.IndexOf(title);
+    }
+
+    //Update barcode for a slide
+    @* async void enterBarcode(FocusEventArgs e, int slideIndex)
+    {
+        string? enteredBarcode = e.Value?.ToString();
+        if (enteredBarcode == null) return;
+
+        ClinicalTest.Slides[slideIndex].Barcode = enteredBarcode;
+        await ClinicalTest.SaveToDatabase();
+        System.Console.WriteLine("Blur");
+    } *@
+    private async void saveBarcode() {
+        for(int i = 0; i < slides.Count; i++) {
+            System.Console.WriteLine(i.ToString() + "  " + slides[i].Barcode);
+        }
+        await ClinicalTest.SaveToDatabase();
+    }
+    private string[] headingLetters = { "A", "B", "C", "D", "E", "F", "G", "H" };
 }

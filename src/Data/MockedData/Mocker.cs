@@ -4,7 +4,7 @@ using src.Data;
 
 static class Mocker
 {
-    static int numExperiments = 5;
+    static int numExperiments = 8;
 
     static List<string> authors = new List<string>() {
         "Rikke Bæk",
@@ -43,8 +43,8 @@ static class Mocker
             );
             await e.SaveToDatabase();
 
-            // int numCT = r.Next(1, 6);
-            int numCT = 1;
+            int numCT = r.Next(1, 3);
+            // int numCT = 1;
             for (int j = 0; j < numCT; j++) {
                 ClinicalTest ct = new ClinicalTest(
                     id: Guid.NewGuid().ToString(),
@@ -55,20 +55,20 @@ static class Mocker
                 );
                 ct.SlideDataFiles = slideDataFiles;
                 ct.AddSlide(
-                    slide: new Slide("10000465"),
-                    patientData: new List<List<string>>()
+                    slide: new Slide(Guid.NewGuid().ToString(),"10000465"),
+                    patientData: new List<string>[21].Select(l => new List<string>() { "1", "2", "3" }).ToArray()
                 );
                 ct.AddSlide(
-                    slide: new Slide("10000466"),
-                    patientData: new List<List<string>>()
+                    slide: new Slide(Guid.NewGuid().ToString(), "10000466"),
+                    patientData: new List<string>[21].Select(l => new List<string>() { "1", "2", "3" }).ToArray()
                 );
                 ct.AddSlide(
-                    slide: new Slide("10000467"),
-                    patientData: new List<List<string>>()
+                    slide: new Slide(Guid.NewGuid().ToString(),"10000467"),
+                    patientData: new List<string>[21].Select(l => new List<string>() { "1", "2", "3" }).ToArray()
                 );
                 ct.TableTitles = new List<string>() { "key1", "key2", "key3", "key4", "key5" };
                 ct.ChosenTableTitles = new string[] { "key2", "key1", "key3" };
-                ct.CalculateClinicalTestResult();
+                //ct.CalculateClinicalTestResult();
                 await ct.SaveToDatabase();
                 await ExperimentManager.Associate(e, ct);
             }
