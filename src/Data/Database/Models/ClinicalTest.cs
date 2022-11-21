@@ -112,9 +112,11 @@ public class ClinicalTest : BaseModel<ClinicalTest>
         AnalyteNames.Clear();
         int beginningIndex = 0;
         Regex start = new Regex(@"^Block\s*Row\s*Column\s*Name\s*ID", RegexOptions.IgnoreCase);
-        foreach (SlideDataFile slideDataFile in SlideDataFiles) {
+        for (int i = 0; i < SlideDataFiles.Count; i++) {
+            string filename = SlideDataFiles[i].Filename;
+            Slide matchingSlide = slides[Matches[filename]];
             //Read all lines in a file and add each line as an element in a string array
-            string[] allLines = slideDataFile.Content.Split("\n");
+            string[] allLines = SlideDataFiles[i].Content.Split("\n");
 
             //Find the line in which the information about spots begin
             beginningIndex = Array.FindIndex(allLines, line => start.Match(line).Success);
@@ -128,9 +130,9 @@ public class ClinicalTest : BaseModel<ClinicalTest>
             List<string> spotInfo = new List<string>();
             nplicatesInBlock = spotLines.Length / numOfBlocks / NplicateSize;
 
-            for (int j = 0; j < slides[Matches[slideDataFile.Filename]].Blocks.Length; j++)
+            for (int j = 0; j < matchingSlide.Blocks.Length; j++)
             {
-                slides[Matches[slideDataFile.Filename]].Blocks[j].Nplicates.Clear();
+                matchingSlide.Blocks[j].Nplicates.Clear();
                 for (int k = 0; k < nplicatesInBlock; k++)
                 {
                     //Split the line with spotinformation, add the information elements to spotinfo.
@@ -138,10 +140,10 @@ public class ClinicalTest : BaseModel<ClinicalTest>
 
                     //Find the index in spotInfo that contains the analyteType (ID) and create an Nplicate with it.
                     Nplicate nplicate = new Nplicate(spotInfo[Array.IndexOf(titles, "ID")].ToLower());
-
                     // Add analyteNames when looping through the first block
-                    if (j == 0) {
+                    if (i == 0 && j == 0) {
                         AnalyteNames.Add(findSingleSpotInfo(spotInfo, titles, "Name"));
+                        Console.WriteLine(spotInfo[Array.IndexOf(titles, "Name")]);
                     }
 
                     for (int l = 0; l < NplicateSize; l++)
@@ -162,21 +164,21 @@ public class ClinicalTest : BaseModel<ClinicalTest>
                     nplicate.CalculateMean();
                     nplicate.SetFlag();
 
-                    slides[Matches[slideDataFile.Filename]].Blocks[j].Nplicates.Add(nplicate);
+                    slides[Matches[filename]].Blocks[j].Nplicates.Add(nplicate);
                 }
-                Nplicate? pos = slides[Matches[slideDataFile.Filename]].Blocks[j].Nplicates.Find(nplicate => nplicate.AnalyteType == "pos");
-                Nplicate? neg = slides[Matches[slideDataFile.Filename]].Blocks[j].Nplicates.Find(nplicate => nplicate.AnalyteType == "neg");
+                Nplicate? pos = matchingSlide.Blocks[j].Nplicates.Find(nplicate => nplicate.AnalyteType == "pos");
+                Nplicate? neg = matchingSlide.Blocks[j].Nplicates.Find(nplicate => nplicate.AnalyteType == "neg");
 
                 //Calculate the Quality control if the positive and negative control exist
                 if (pos == null || neg == null)
                 {
                     throw new NullReferenceException("Either the positive or negative control is missing");
                 }
-                slides[Matches[slideDataFile.Filename]].Blocks[j].CalculateQC(pos, neg);
+                matchingSlide.Blocks[j].CalculateQC(pos, neg);
             }
 
             //Calculate the RI for each Nplicate in each block and update max / min RI
-            foreach (Block block in slides[Matches[slideDataFile.Filename]].Blocks)
+            foreach (Block block in matchingSlide.Blocks)
             {
                 Nplicate? neg = block.Nplicates.Find(element => element.AnalyteType == "neg");
                 
@@ -187,7 +189,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
 
                 for (int j = 0; j < block.Nplicates.Count; j++)
                 {
-                    updateMaxMinRI(block.Nplicates[j].CalculateRI(slides[Matches[slideDataFile.Filename]].Blocks[slides[Matches[slideDataFile.Filename]].Blocks.Length - 1].Nplicates[j], neg));
+                    updateMaxMinRI(block.Nplicates[j].CalculateRI(matchingSlide.Blocks[matchingSlide.Blocks.Length - 1].Nplicates[j], neg));
                 }
             }
         }
