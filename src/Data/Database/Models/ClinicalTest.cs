@@ -18,8 +18,8 @@ public class ClinicalTest : BaseModel<ClinicalTest>
     public ClinicalTest(string id) : base(id) { }
     public ClinicalTest() : base() { }
     public List<SlideDataFile> SlideDataFiles { get; set; } = new List<SlideDataFile>();
-    public Dictionary<string, bool> PatientKeys { get; set; } = new Dictionary<string, bool>();
-    public List<string> ActiveKeys { get; set; } = new List<string>();
+    public List<string> TableTitles { get; set; } = new List<string>();
+    public string[] ChosenTableTitles { get; set; } = new string[3];
     public List<string> ExperimentIds { get; set; } = new List<string>();
     public List<Slide> Slides { get; set; } = new List<Slide>();
     public List<string> AnalyteNames { get; set; } = new List<string>();
@@ -31,49 +31,20 @@ public class ClinicalTest : BaseModel<ClinicalTest>
     public DateTime? CreatedAt { get; set; } = DateTime.Now;
     public DateTime EditedAt { get; set; } = DateTime.Now;
 
-    public void AddSlide(Slide slide, List<List<string>> patientData)
+    public void AddSlide(Slide slide, List<string>[] patientData)
     {
         Slides.Add(slide);
         for (int i = 0; i < numOfBlocks; i++)
         {
-            if (i < patientData.Count) {
-                slide.Blocks.Add(new Block(patientData[i]));
-            } else {
-                slide.Blocks.Add(new Block(new List<string>()));
+            if (patientData[i] != null) 
+            {
+                slide.Blocks[i] = new Block(patientData[i]);
+            } 
+            else 
+            {
+                slide.Blocks[i] = new Block(new List<string>() { "" });
             }
         }
-    }
-
-    public void CreatePatientKeys(List<string> allKeys, params string[] shownKeys)
-    {
-        PatientKeys.Clear();
-        ActiveKeys.Clear();
-
-        foreach (string key in allKeys)
-        {
-            PatientKeys[key] = false;
-        }
-
-        foreach (string key in shownKeys)
-        {
-            PatientKeys[key] = true;
-            ActiveKeys.Add(key);
-        }
-    }
-
-    private void UpdatePatientKeys(params string[] newKeys)
-    {
-        foreach (string key in ActiveKeys)
-        {
-            PatientKeys[key] = false;
-        }
-        ActiveKeys.Clear();
-
-        foreach (string key in newKeys)
-        {
-            PatientKeys[key] = true;
-            ActiveKeys.Add(key);
-        }        
     }
 
     public void ExportClinicalTest(string exportType)
@@ -102,7 +73,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
             List<string> spotInfo = new List<string>();
             nplicatesInBlock = spotLines.Length / numOfBlocks / NplicateSize;
 
-            for (int j = 0; j < Slides[i].Blocks.Count; j++)
+            for (int j = 0; j < Slides[i].Blocks.Length; j++)
             {
                 for (int k = 0; k < nplicatesInBlock; k++)
                 {
@@ -161,7 +132,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
 
                 for (int j = 0; j < block.Nplicates.Count; j++)
                 {
-                    updateMaxMinRI(block.Nplicates[j].CalculateRI(Slides[i].Blocks[Slides[i].Blocks.Count - 1].Nplicates[j], neg));
+                    updateMaxMinRI(block.Nplicates[j].CalculateRI(Slides[i].Blocks[Slides[i].Blocks.Length - 1].Nplicates[j], neg));
                 }
             }
         }

@@ -1,13 +1,13 @@
 ﻿@using src.Shared
 @using src.Data
 
-@if (IsExperiment)
+@if (Experiment != null && ClinicalTest == null)
 {
     <div class="left-card">
         <div class="my-card-header">
             <div class="pen-header">
                 <h2>@Experiment.ExperimentNumber</h2>
-                    <i @onclick="EditExperimentCallback" class="fa-solid fa-pen"></i>
+                <i @onclick="EditExperimentCallback" class="fa-solid fa-pen"></i>
             </div>
             <h3 class="title">@Experiment.Title</h3>
             <hr class="hr-line">
@@ -38,13 +38,13 @@
         <h3 class="description">@Experiment.Description</h3>
     </div>
 }
-else
+else if (Experiment != null)
 {
     <div class="right-card">
         <div class="my-card-header">
             <div class="pen-header">
                 <h2>@ClinicalTest.Title</h2>
-                    <i @onclick="EditClinicalTestCallback" class="fa-solid fa-pen"></i>
+                <i @onclick="EditClinicalTestCallback" class="fa-solid fa-pen"></i>
             </div>
             <hr class="hr-line">
         </div>
@@ -81,13 +81,14 @@ else
 
 @code {
     [Parameter]
-    public bool IsExperiment { get;  set; } = false;
+    public Experiment Experiment { get; set; } = new();
     [Parameter]
-    public Experiment? Experiment { get; set; } = null;
-    [Parameter]
-    public ClinicalTest? ClinicalTest { get; set; } = null;
-    [Parameter] public EventCallback EditCTCallback {get; set; }
-    [Parameter] public EventCallback EditExpCallback {get; set; }
+    public ClinicalTest ClinicalTest { get; set; } = new();
+    [Parameter, EditorRequired] 
+    public EventCallback EditCTCallback {get; set; }
+    [Parameter, EditorRequired] 
+    public EventCallback EditExpCallback {get; set; }
+
     public async void EditClinicalTestCallback() 
     {
         await EditCTCallback.InvokeAsync();
