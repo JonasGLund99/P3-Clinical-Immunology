@@ -1,7 +1,7 @@
 ﻿@using src.Shared
 @using src.Data
 
-@if (IsExperiment)
+@if (Experiment != null && ClinicalTest == null)
 {
     <div class="left-card">
         <div class="my-card-header">
@@ -38,7 +38,7 @@
         <h3 class="description">@Experiment.Description</h3>
     </div>
 }
-else
+else if (Experiment != null)
 {
     <div class="right-card">
         <div class="my-card-header">
@@ -81,10 +81,8 @@ else
 
 @code {
     [Parameter]
-    public bool IsExperiment { get;  set; } = false;
-    [Parameter, EditorRequired]
     public Experiment Experiment { get; set; } = new();
-    [Parameter, EditorRequired]
+    [Parameter]
     public ClinicalTest ClinicalTest { get; set; } = new();
     [Parameter, EditorRequired] 
     public EventCallback EditCTCallback {get; set; }

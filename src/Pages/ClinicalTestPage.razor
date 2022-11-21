@@ -85,7 +85,7 @@ else
 	private ClinicalTest? clinicalTest;
     private bool showClinicalTestModal = false;
     private bool showExperimentModal = false;
-    private string editModalTitle;
+    private string editModalTitle = "";
 
 	// Get experiment and clincical test from database on the first render
 	protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -99,6 +99,7 @@ else
 
     private async void closeEditorModal() 
     {
+        if (experiment == null || clinicalTest == null) return;
         showClinicalTestModal = false;
         showExperimentModal = false;
         experiment = await ExperimentManager.GetExperimentById(experiment.id);
@@ -108,6 +109,7 @@ else
 
     private async void saveEditorModal() 
     {
+        if (experiment == null || clinicalTest == null) return;
         showClinicalTestModal = false;
         showExperimentModal = false;
         await experiment.SaveToDatabase();
@@ -115,14 +117,16 @@ else
         StateHasChanged();
     }
 
-    private async void editExp () 
+    private void editExp () 
     {
+        if (experiment == null) return;
         showExperimentModal = true;
         editModalTitle = $"Edit Experiment: {experiment.ExperimentNumber}";
     }
 
-    private async void editCT() 
+    private void editCT() 
     {
+        if (clinicalTest == null) return;
         showClinicalTestModal = true;
         editModalTitle = $"Edit test: {clinicalTest.Title}";
 	}
