@@ -194,7 +194,9 @@
 
     public async void StartCalculation() 
     {
+        if (ClinicalTest == null) return;
         ClinicalTest.CalculateClinicalTestResult();
+        await ClinicalTest.SaveToDatabase();
         await setActiveButtonCallback.InvokeAsync(4);
     }
 }

@@ -75,7 +75,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
             List<string> spotInfo = new List<string>();
             nplicatesInBlock = spotLines.Length / numOfBlocks / NplicateSize;
 
-            for (int j = 0; j < Slides[Matches[slideDataFile.Filename]].Blocks.Count; j++)
+            for (int j = 0; j < Slides[Matches[slideDataFile.Filename]].Blocks.Length; j++)
             {
                 for (int k = 0; k < nplicatesInBlock; k++)
                 {
@@ -133,7 +133,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
 
                 for (int j = 0; j < block.Nplicates.Count; j++)
                 {
-                    updateMaxMinRI(block.Nplicates[j].CalculateRI(Slides[Matches[slideDataFile.Filename]].Blocks[Slides[Matches[slideDataFile.Filename]].Blocks.Count - 1].Nplicates[j], neg));
+                    updateMaxMinRI(block.Nplicates[j].CalculateRI(Slides[Matches[slideDataFile.Filename]].Blocks[Slides[Matches[slideDataFile.Filename]].Blocks.Length - 1].Nplicates[j], neg));
                 }
             }
         }
@@ -148,7 +148,6 @@ public class ClinicalTest : BaseModel<ClinicalTest>
                 }
             }
         }
-        await SaveToDatabase();
     }
 
     private string findSingleSpotInfo(List<string> spotInfo, string[] titles, string key) 

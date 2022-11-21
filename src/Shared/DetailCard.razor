@@ -38,7 +38,7 @@
         <h3 class="description">@Experiment.Description</h3>
     </div>
 }
-else if (Experiment != null)
+else if (Experiment != null && ClinicalTest != null)
 {
     <div class="right-card">
         <div class="my-card-header">
@@ -81,9 +81,9 @@ else if (Experiment != null)
 
 @code {
     [Parameter]
-    public Experiment Experiment { get; set; } = new();
+    public Experiment? Experiment { get; set; } = null;
     [Parameter]
-    public ClinicalTest ClinicalTest { get; set; } = new();
+    public ClinicalTest? ClinicalTest { get; set; } = null;
     [Parameter, EditorRequired] 
     public EventCallback EditCTCallback {get; set; }
     [Parameter, EditorRequired] 
