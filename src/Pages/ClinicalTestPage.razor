@@ -92,7 +92,7 @@ else
             clinicalTest = await ExperimentManager.GetClinicalTestById(ClinicalTestId);
             StateHasChanged();
 	        foreach (string slideId in clinicalTest.SlideIds) {
-                clinicalTest.SetSlide(await clinicalTest.GetSlideById(slideId));
+                clinicalTest.AddSlide(await clinicalTest.GetSlideById(slideId));
             }
         }
     }
