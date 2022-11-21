@@ -19,10 +19,10 @@
 </div>
 
 @code {
-   [Parameter] public string Title { get; set; }
-   [Parameter] public string Body { get; set; }
-   [Parameter] public EventCallback CallbackCancel {get; set;}
-   [Parameter] public EventCallback CallbackConfirm {get; set;}
+   [Parameter, EditorRequired] public string Title { get; set; } = "";
+   [Parameter, EditorRequired] public string Body { get; set; } = "";
+   [Parameter, EditorRequired] public EventCallback CallbackCancel {get; set;}
+   [Parameter, EditorRequired] public EventCallback CallbackConfirm {get; set;}
 
    private async void confirm()
    {

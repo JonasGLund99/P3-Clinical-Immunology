@@ -13,6 +13,8 @@
     --rightcard-color: #9e9e9e;
     --leftcard-color: #7d7d7d;
     --secondary-text-color: #ffffff;
+    --grey: #d5d5d5;
+    --light-grey: #f3f3f3;
     --Dark-grey: #3a3a3a;
     --red-btn-color: #BE5959;
     --main-button-dark-color: #b3b3b3;
@@ -160,7 +162,27 @@ a,
     background: var(--secondary-dark-color);
     border-radius: 4px;
 }
-
 ::-webkit-scrollbar-thumb:hover {
     background: var(--primary-dark-color);
+}
+/*Scrollbar - end*/
+
+/*You can use [data-title] selector as well*/
+[data-title] {
+    position: relative;
+}
+
+[data-title]:hover::before {
+    z-index: 3;
+    content: attr(data-title);
+    position: absolute;
+    bottom: -30px;
+    display: inline-block;
+    padding: 3px 6px;
+    border-radius: 5px;
+    border: 1px solid var(--primary-dark-color);
+    background: white;
+    color: var(--primary-dark-color);
+    font-size: 12px;
+    white-space: nowrap;
 }

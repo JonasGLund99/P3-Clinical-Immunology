@@ -2,15 +2,15 @@
 
 @inject IJSRuntime JS
 
-
 <table id="overview-table">
+    @*Title row*@
     <tr>
         <td class="line-number"></td>
         @for (int i = 0; i < numCols - 1; i++) 
         {
-            @if (i < clinicalTest.PatientKeys.Count) 
+            @if (i < ClinicalTest.TableTitles.Count) 
             {
-                <td contenteditable>@clinicalTest.PatientKeys.ToList()[i].Key</td>
+                <td contenteditable>@ClinicalTest.TableTitles[i]</td>
             }
             else 
             {
@@ -19,15 +19,47 @@
         }
     </tr>
 
+    @*Data rows*@
     @for (int i = 0; i < numRows; i++) 
     {
-        <tr>
-            <td class="line-number">@(i + 1)</td>
-            @for (int j = 0; j < numCols - 1; j++) 
-            {
-                <td contenteditable></td>
-            }
-        </tr>
+        int numFilledPlates = ClinicalTest.Slides.Count / 4;
+        int numSlides = i / 84 < numFilledPlates ? 4 : ClinicalTest.Slides.Count % 4;
+        
+        @if (numSlides != 0) {
+
+            int slideIndex = (i % 84 / 3) % numSlides + i / 84 * 4;
+            int blockIndex = i % 3 + (i % 84) / (numSlides * 3) * 3;
+            <tr>
+                <td class="line-number">@(i + 1)</td>
+                @for (int j = 0; j < numCols - 1; j++) 
+                {
+                    @if (numSlides > 0) 
+                    {
+                        @if (slideIndex < ClinicalTest.Slides.Count && blockIndex < ClinicalTest.Slides[slideIndex].Blocks.Length && j < ClinicalTest.Slides[slideIndex].Blocks[blockIndex].PatientData.Count) 
+                        {
+                            <td contenteditable>@ClinicalTest.Slides[slideIndex].Blocks[blockIndex].PatientData[j]</td>
+                        } 
+                        else 
+                        {
+                            <td contenteditable></td>
+                        }
+                    } 
+                    else 
+                    {
+                        <td contenteditable></td>
+                    }   
+                }
+            </tr>
+        }
+        else 
+        {
+            <tr>
+                <td class="line-number">@(i + 1)</td>
+                @for (int j = 0; j < numCols - 1; j++) {
+                    <td contenteditable></td>
+                }
+            </tr>
+        }
     }
 </table>
 
@@ -35,9 +67,8 @@
     private int numRows { get; set; } = 320;
     private int numCols { get; set; } = 40;
 
-
-    [Parameter]
-    public ClinicalTest? clinicalTest { get; set; }
+    [Parameter, EditorRequired]
+    public ClinicalTest ClinicalTest { get; set; } = new();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

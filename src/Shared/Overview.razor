@@ -5,138 +5,172 @@
 <div class="overview-component">
     @if (mode == "Overview") {
         <div id="toolbar">
-            @* <div id="mode-icons">
-                <img src="@(mode == "Overview" ? "icons/Overview_icon_active.svg" : "icons/Overview_icon.svg")" title="View overview" @onclick='() => switchMode("Overview")'/>
-                <img src="@(mode == "Table-view" ? "icons/Table-view_icon_active.svg" : "icons/Table-view_icon.svg")" title="View table-view" @onclick='() => switchMode("Table-view")'/>
-            </div> *@
-            <div id="edit-icon">
+            <div id="info-button" data-title="Select which information to show in the overview">
+                <i class="fa fa-info-circle"></i>
+            </div>
+            <div id="edit-icon" data-title="Edit overview in table view">
                 <i class="fa-solid fa-pen" @onclick='() => switchMode("Table-view")'></i>
             </div>
             <div id="key-selectors">
-                @for (int i = 0; i < chosenDataTypes.Length; i++)
+                @for (int i = 0; i < ClinicalTest.ChosenTableTitles.Length; i++)
                 {
-                    int dataTypeNo = i;
+                    int tableTitleNumber = i;
                     <div class="key-selector">
                         <span class="selector-number">@(i + 1)</span>
-                        <select @onchange="(e) => chooseDataType(e, dataTypeNo)">
-                            <option value="Choose type">Choose type</option>
-                            @foreach (KeyValuePair<string, bool> kvPair in ClinicalTest.PatientKeys.ToList())
+                        <select @onchange="(e) => chooseTableTitle(e, tableTitleNumber)">
+                            <option value="">-</option>
+                            @foreach (string tableTitle in ClinicalTest.TableTitles)
                             {
-                                <option value="@kvPair.Key">@kvPair.Key</option>
+                                @if (ClinicalTest.ChosenTableTitles[i] == tableTitle) 
+                                {
+                                    <option selected value="@tableTitle">@tableTitle</option>
+                                }
+                                else
+                                {
+                                    <option value="@tableTitle">@tableTitle</option>
+                                }
                             }
                         </select>
                     </div>
                 }
             </div>
-            <div id="export-icon">
+            <div id="export-icon" data-title="Export overview">
                 <i class="fa-solid fa-file-export"></i>
             </div>
         </div>
-        <div class="plate">
-            <div class="overview-needs-info">
-                <p>
-                    Add clinical data before viewing the overview
-                </p>
-
-                <button class="green-button" @onclick='() => switchMode("Table-view")'>
-                    Add clinical data
-                    @* <img src="icons/Table-view_icon_active.svg" class="btn-icon"/> *@
-                    <i class="fa-solid fa-pen"></i>
-                </button>
+        
+        @if (ClinicalTest.Slides.Count != 0)
+        {
+            <div class="plates">
+                @for (int i = 0; i <= (ClinicalTest.Slides.Count - 1) / 4; i++)
+                {
+                    <Plate ClinicalTest="@ClinicalTest" PlateIndex=i Slides="ClinicalTest.Slides.GetRange(i * 4, (i * 4) + 4 <= ClinicalTest.Slides.Count ? 4 : ClinicalTest.Slides.Count % 4)"/>
+                }
             </div>
-        </div>	
+        } 
+        else
+        {
+            <div class="plate">
+                <div class="overview-needs-info">
+                    <p>
+                        @(ClinicalTest.Title) has no clinical data yet.
+                        <br>
+                        Add clinical data in the table-view to generate the overview.
+                    </p>
+
+                    <button class="green-button" @onclick='() => switchMode("Table-view")'>
+                        Open table-view
+                        @* <img src="icons/Table-view_icon_active.svg" class="btn-icon"/> *@
+                        <i class="fa-solid fa-pen"></i>
+                    </button>
+                </div>
+            </div>
+        }
     }
     else 
     {
         <div id="toolbar">
             <div id="buttons">
-                <span id="clear-button" @onclick=clearTable>Clear</span>
-                <span id="xmark-button" @onclick='() => switchMode("Overview")'><i class="fa-solid fa-xmark"></i></span>
-                <span id="check-button" @onclick=savePatientData><i class="fa-solid fa-check"></i></span>
+                <span id="info-button" data-title="Editing overview - insert clinical data in the table">
+                    <i class="fa fa-info-circle"></i>
+                </span>
+                <span id="clear-button" data-title="Clear entire table" @onclick=clearTable>Clear table</span>
+                <span id="xmark-button" data-title="Continue without saving" @onclick='() => switchMode("Overview")'><i class="fa-solid fa-xmark"></i></span>
+                <span id="check-button" data-title="Continue and save changes" @onclick=savePatientData><i class="fa-solid fa-check"></i></span>
             </div>
         </div>
         <div class="table-view-container">
-            <OverviewTable clinicalTest="@ClinicalTest"/>
+            <OverviewTable ClinicalTest="@ClinicalTest"/>
 		</div>
     }
 
 </div>
 
 @code {
-	[Parameter]
-	public ClinicalTest? ClinicalTest { get; set; }
+    [Parameter, EditorRequired]
+    public ClinicalTest ClinicalTest { get; set; } = new();
 
+    private const int SlideWidth = 3;
+    private const int SlidesInPlate = 21;
+    private const int BlocksInSlide = 21;
+    private const int BlocksInPlate = 84;
 
-	public string mode { get; set; } = "Overview";
-    public string[] chosenDataTypes = new string[3];
-	public List<string> allDataTypeNames = new List<string> {"Name", "SoT", "Died", "Age at SOT", "Baseline BP", "BDH"};
+    //Switch viewmode (Overview or Table-view)
+    public string mode { get; set; } = "Overview";
+    public void switchMode(string newMode)
+    {
+        mode = newMode;
+    }
 
-	public void switchMode(string newMode)
-	{
-		mode = newMode;
-	}
+    //Update chosen table titles
+    async void chooseTableTitle(ChangeEventArgs e, int tableTitleNumber)
+    {
+        string? selectedTableTitle = e.Value?.ToString();
+        if (selectedTableTitle == null) return;
 
-	private string selectedDataType = "";
-	void chooseDataType(ChangeEventArgs e, int typeNo)
-	{
-		string? value = e.Value?.ToString();
-		if (value == null) return;
+        ClinicalTest.ChosenTableTitles[tableTitleNumber] = selectedTableTitle;
+        await ClinicalTest.SaveToDatabase();
+    }
 
-		selectedDataType = value;
-		chosenDataTypes[typeNo] = selectedDataType;
-	}
     private async void savePatientData() {
         if (ClinicalTest == null) throw new NullReferenceException("ClinicalTest object is null");
 
         // Remove existing slides
-        ClinicalTest.Slides = new List<Slide>();
+        // ClinicalTest.Slides = new List<Slide>();
+        ClinicalTest.Slides.Clear();
 
         // Get table data from DOM
         string[][] tableData = await JS.InvokeAsync<string[][]>("getTableData");
-        
-        // Create patient keys
-        List<string> patientKeys;
-        if (tableData.Length > 0 && tableData[0].Length > 0) {
-            patientKeys = tableData[0].ToList();
-        } else {
-            patientKeys = new List<string>();
-        }
-        ClinicalTest.CreatePatientKeys(patientKeys);
 
+        // Create list of table titles
+        List<string> tableTitles;
+        if (tableData.Length > 0 && tableData[0].Length > 0) {
+            tableTitles = tableData[0].ToList();
+        } else {
+            tableTitles = new List<string>();
+        }
+        ClinicalTest.TableTitles = tableTitles;
+
+        // Remove first line from table data
+        tableData = tableData.Skip(1).ToArray();
 
         // Add slides to the clinical test
-        List<List<string>> patientData = new List<List<string>>();
-        for (int i = 1; i < tableData.Length; i++) {
-            var list = new List<string>();
-            for (int j = 0; j < tableData[i].Length; j++) {
-                list.Add(tableData[i][j]);
-            }
-            patientData.Add(list);
+        var numPlatesTotal = tableData.Length / BlocksInPlate + (tableData.Length % BlocksInPlate == 0 ? 0 : 1);
+        var numSlidesTotal = tableData.Length / BlocksInSlide + (tableData.Length % BlocksInSlide == 0 ? 0 : 1);
 
-            if (i % 20 == 0) {
+        // Plates loop
+        for (int i = 0; i < numPlatesTotal; i++) {
+            int numSlides = (i * 4) + 4 <= numSlidesTotal ? 4 : numSlidesTotal % 4;
+            List<string>[][] plate = new string[numSlides][][].Select(blocks => new List<string>[BlocksInSlide]).ToArray();
+
+            // Slides loop
+            for (int j = 0; j < numSlides; j++) {
+                int numBlocks = (i * BlocksInPlate + j * BlocksInSlide) + BlocksInSlide <= tableData.Length ? BlocksInSlide : tableData.Length % BlocksInSlide;
+
+                // Blocks loop
+                for (int k = 0; k < numBlocks; k++) {
+                    int index = i * 84 + j * 21 + k;
+                    int slideIndex = index % 84 / 3 % numSlides;
+                    int blockIndex = (index % 3) + (index % 84 / (numSlides * 3) * 3);
+                    plate[slideIndex][blockIndex] = tableData[index].ToList();
+                }
+            }
+
+            for (int j = 0; j < numSlides; j++) {
                 ClinicalTest.AddSlide(
                     slide: new Slide(""),
-                    patientData: new List<List<string>>(patientData)
+                    patientData: plate[j]
                 );
-                patientData.Clear();
             }
         }
-        // Add last slide with remaining patient data
-        ClinicalTest.AddSlide(
-            slide: new Slide(""),
-            patientData: new List<List<string>>(patientData)
-        );
-
-
-
 
         // Save to database and switch back to the overview
         await ClinicalTest.SaveToDatabase();
         switchMode("Overview");
         StateHasChanged();
     }
+
     private async void clearTable() {
         await JS.InvokeVoidAsync("clearTable");
     }
 }
-

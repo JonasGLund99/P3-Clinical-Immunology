@@ -65,6 +65,7 @@
             })
         }
 
+        //Returns a 2D string array
         function getTableData() {
             const cells = [...document.querySelectorAll('tr')].map(row => [...row.querySelectorAll('td')].slice(1).map(cell => cell.innerText.trim()));
             
@@ -80,6 +81,7 @@
                     }
                 }
             }
+
             // Find index of last data
             for (let i = cells.length - 1; i >= 0; i--) {
                 const rowAsString = cells[i].join('');
@@ -88,7 +90,7 @@
                     break;
                 }
             }
-            
+
             return cells.slice(0, lastDataIndex + 1).map(row => row.filter((cell, index) => registeredColumns.includes(index)));
         }
 

@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Data\Database\Models\NewFile.txt" />
     <None Remove="Shared\Overview.razor.css" />
   </ItemGroup>
 

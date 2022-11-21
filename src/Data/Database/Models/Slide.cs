@@ -6,7 +6,7 @@ public class Slide
     {
         Barcode = barcode;
     }
-    public Slide(){ }
-    public List<Block> Blocks = new List<Block>();
+    public Slide() { }
+    public Block[] Blocks { get; set; } = new Block[21].Select(b => new Block()).ToArray();
     public string Barcode { get; set; } = "";
 }

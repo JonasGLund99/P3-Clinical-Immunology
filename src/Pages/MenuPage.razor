@@ -1,6 +1,6 @@
 ﻿@page "/"
 @using src.Data
-@using Microsoft.Azure.Cosmos
+@using src.Shared
 @inject NavigationManager NavManager
 
 <PageTitle>Menu</PageTitle>
@@ -39,12 +39,13 @@
                     @foreach (Experiment e in experiments)
                     {
                         <div class="grid-content active-@((e == selectedExp).ToString().ToLower())">
-                            <MenuCard MenuCardType="@Experiment"
-                              objectDeleteCallback="MenuCardDeleteCallback"
-                              objectEditCallback="MenuCardEditCallback"
-                              objectOnclickCallback="MenuCardOnclickCallback"
-                              obj="@e"
-                              selectedObj="@selectedExp" />
+                            <MenuCard 
+                                MenuCardType="@Experiment" 
+                                objectDeleteCallback="MenuCardDeleteCallback"
+                                objectEditCallback="MenuCardEditCallback" 
+                                objectOnclickCallback="MenuCardOnclickCallback"
+                                obj="@e" 
+                                selectedObj="@selectedExp" />
                         </div>
                     }
                 </div>
@@ -70,12 +71,12 @@
                     </div>
                 </div>
                 <div id="clinical-test-grid">
-                    <div class="grid-header-clinicalTest">
-                        <div>Title</div>
-                        <div>Created at</div>
-                        <div>Last edit</div>
-                    </div>
-                    @if (currentClinicalTests == null || currentClinicalTests.Count == 0)
+                <div class="grid-header-clinicalTest">
+                    <div>Title</div>
+                    <div>Created at</div>
+                    <div>Last edit</div>
+                </div>
+                @if (currentClinicalTests == null || currentClinicalTests.Count == 0)
                     {
                         <div class="no-clinical-tests">
                             No clinical tests to show
@@ -87,12 +88,13 @@
                             @foreach (ClinicalTest ct in currentClinicalTests)
                             {
                                 <div class="grid-content active-@((ct == selectedCT).ToString().ToLower())">
-                                    <MenuCard MenuCardType="@ClinicalTest"
-                                  objectDeleteCallback="MenuCardDeleteCallback"
-                                  objectEditCallback="MenuCardEditCallback"
-                                  objectOnclickCallback="MenuCardOnclickCallback"
-                                  obj="@ct"
-                                  selectedObj="@selectedCT" />
+                                    <MenuCard 
+                                        MenuCardType="@ClinicalTest" 
+                                        objectDeleteCallback="MenuCardDeleteCallback"
+                                        objectEditCallback="MenuCardEditCallback" 
+                                        objectOnclickCallback="MenuCardOnclickCallback"
+                                        obj="@ct" 
+                                        selectedObj="@selectedCT" />
                                 </div>
                             }
                         </div>
@@ -113,7 +115,8 @@
 
 @if (showExperimentModal)
 {
-    <EditorModal CallbackClose="closeEditorModal"
+    <EditorModal 
+             CallbackClose="closeEditorModal"
              CallbackSave="SaveExperimentCallback"
              ModalObject="@selectedExp"
              ModalType="@Experiment"
@@ -122,43 +125,48 @@
 
 @if (showClinicalTestModal)
 {
-    <EditorModal CallbackClose="closeEditorModal"
+    <EditorModal 
+             CallbackClose="closeEditorModal"
              CallbackSave="SaveClinicalTestCallback"
              ModalObject="@selectedCT"
              ModalType="@ClinicalTest"
              ModalTitle="@EditorModalTitle" />
 }
 
-
 @if (showCancelConfirmModalDeleteExperiment)
 {
-    <CancelOrConfirmModal Title="@cancelConfirmModalTitle"
-                      Body="@cancelConfirmModalBody"
-                      CallbackCancel="@(() => showCancelConfirmModalDeleteExperiment = false)"
-                      CallbackConfirm="deleteExperiment" />
-}
+   <CancelOrConfirmModal
+      Title="@cancelConfirmModalTitle"
+      Body="@cancelConfirmModalBody"
+      CallbackCancel="@(() => showCancelConfirmModalDeleteExperiment = false)"
+      CallbackConfirm="deleteExperiment"
+   />
+} 
+
 
 @if (showCancelConfirmModalDeleteClinicalTest)
 {
-    <CancelOrConfirmModal Title="@cancelConfirmModalTitle"
-                      Body="@cancelConfirmModalBody"
-                      CallbackCancel="@(() => showCancelConfirmModalDeleteClinicalTest = false)"
-                      CallbackConfirm="@deleteClinicalTest" />
-}
+   <CancelOrConfirmModal
+      Title="@cancelConfirmModalTitle"
+      Body="@cancelConfirmModalBody"
+      CallbackCancel="@(() => showCancelConfirmModalDeleteClinicalTest = false)"
+      CallbackConfirm="@deleteClinicalTest"
+   />
+} 
 
 @code {
-    private List<Experiment>? experiments;
-    private List<ClinicalTest>? currentClinicalTests;
-    private bool showExperimentModal = false;
-    private bool showClinicalTestModal = false;
-    private string EditorModalTitle;
-    private Experiment? selectedExp;
-    private ClinicalTest? selectedCT;
-    private string? experimentSearchValue { get; set; }
-    private bool showCancelConfirmModalDeleteExperiment = false;
-    private bool showCancelConfirmModalDeleteClinicalTest = false;
-    private string cancelConfirmModalTitle;
-    private string cancelConfirmModalBody;
+   private List<Experiment>? experiments;
+   private List<ClinicalTest>? currentClinicalTests;
+   private bool showExperimentModal = false;
+   private bool showClinicalTestModal = false;
+   private string EditorModalTitle = "";
+   private Experiment? selectedExp;
+   private ClinicalTest? selectedCT;
+   private string? experimentSearchValue { get; set; }
+   private bool showCancelConfirmModalDeleteExperiment = false;
+   private bool showCancelConfirmModalDeleteClinicalTest = false;
+   private string cancelConfirmModalTitle = "";
+   private string cancelConfirmModalBody = "";
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -182,16 +190,16 @@
     }
 
     private void openNewExperimentModal<T>(T obj)
-    {
-        selectedExp = new Experiment(Guid.NewGuid().ToString());
+	{
+	    selectedExp = new Experiment(Guid.NewGuid().ToString());
         showExperimentModal = true;
         EditorModalTitle = "Create New Experiment";
-    }
-    private async void openNewClinicalTestModal<T>(T obj)
-    {
+	}
+    private void openNewClinicalTestModal<T>(T obj)
+	{
         selectedCT = new ClinicalTest(Guid.NewGuid().ToString());
-        showClinicalTestModal = true;
-    }
+		showClinicalTestModal = true;
+	}
 
     private void closeEditorModal<T>(T? obj)
     {
@@ -209,99 +217,97 @@
         await showClinicalTests(e);
     }
 
-    public async void SaveClinicalTestCallback(ClinicalTest ct)
-    {
-        showClinicalTestModal = false;
-        if (selectedCT.ExperimentIds.Contains(selectedExp.id))
-        {
-            ct.EditedAt = DateTime.Now;
-            selectedExp.EditedAt = DateTime.Now;
-            await selectedExp.SaveToDatabase();
-            await ct.SaveToDatabase();
-        }
-        {
-            await ExperimentManager.Associate(selectedExp, selectedCT);
-        }
-        experiments = await ExperimentManager.QueryExperiments("");
-        StateHasChanged();
-        await showClinicalTests(selectedExp);
+   public async void SaveClinicalTestCallback(ClinicalTest ct)
+   {
+      showClinicalTestModal = false;
+      if (selectedCT.ExperimentIds.Contains(selectedExp.id))
+      {
+         ct.EditedAt = DateTime.Now;
+         selectedExp.EditedAt = DateTime.Now;
+         await selectedExp.SaveToDatabase();
+         await ct.SaveToDatabase();
+      }
+      {
+         await ExperimentManager.Associate(selectedExp, selectedCT);
+      }
+      experiments = await ExperimentManager.QueryExperiments("");
+      StateHasChanged();
+      await showClinicalTests(selectedExp);
 
     }
 
-    private void setCurrentObject<T>(T obj)
-    {
-        if (obj is Experiment)
-        {
-            selectedExp = ((Experiment)(object)obj);
-            selectedCT = null;
-        }
-        else if (obj is ClinicalTest)
-        {
-            selectedCT = ((ClinicalTest)(object)obj);
-        }
+   private void setCurrentObject<T>(T obj) 
+   {
+      if (obj is Experiment)
+      {
+         selectedExp = ((Experiment)(object)obj);
+         selectedCT = null;
+      } else if (obj is ClinicalTest)
+      {
+         selectedCT = ((ClinicalTest)(object)obj);
+      }
+   }
+   
+   private async void deleteExperiment()
+   {
+      if (selectedExp == null) return;
+      showCancelConfirmModalDeleteExperiment = false;
+      await ExperimentManager.DeleteExperiment(selectedExp);
+      experiments = await ExperimentManager.QueryExperiments("");
+      currentClinicalTests = null;
+      selectedExp = null;
+      StateHasChanged();
     }
 
-    private async void deleteExperiment()
-    {
-        showCancelConfirmModalDeleteExperiment = false;
-        await ExperimentManager.DeleteExperiment(selectedExp);
-        experiments = await ExperimentManager.QueryExperiments("");
-        currentClinicalTests = null;
-        selectedExp = null;
-        StateHasChanged();
-    }
+   private async void deleteClinicalTest()
+   {
+      if (selectedCT == null || selectedExp == null) return;
+      showCancelConfirmModalDeleteClinicalTest = false;
+      await ExperimentManager.DeleteClinicalTest(selectedCT);
+      currentClinicalTests = await selectedExp.QueryClinicalTests("");
+      StateHasChanged();
+   }
 
-    private async void deleteClinicalTest()
-    {
-        showCancelConfirmModalDeleteClinicalTest = false;
-        await ExperimentManager.DeleteClinicalTest(selectedCT);
-        currentClinicalTests = await selectedExp.QueryClinicalTests("");
-        StateHasChanged();
-    }
+   private async void MenuCardOnclickCallback<T>(T obj) 
+   {
+      setCurrentObject(obj);
+      if (selectedExp == null) return;
+      if (selectedCT == null) 
+      {
+         await showClinicalTests(selectedExp);
+      } else
+      {
+         NavManager.NavigateTo($"/clinicaltest/{selectedExp.id}/{selectedCT.id}");
+      }
+   }
 
-    private async void MenuCardOnclickCallback<T>(T obj)
-    {
-        setCurrentObject(obj);
-        if (selectedCT == null)
-        {
-            await showClinicalTests(selectedExp);
-        }
-        else
-        {
-            NavManager.NavigateTo($"/clinicaltest/{selectedExp.id}/{selectedCT.id}");
-        }
-    }
+   private void MenuCardEditCallback<T>(T obj)
+   {
+      setCurrentObject(obj);
+      if (selectedCT == null && selectedExp != null) {
+         EditorModalTitle = "Edit " + selectedExp.ExperimentNumber;
+         showExperimentModal = true;
+      } else if (selectedCT != null)
+      {
+         EditorModalTitle = "Edit " + selectedCT.Title;
+         showClinicalTestModal = true;
+      }  
+   }
 
-    private void MenuCardEditCallback<T>(T obj)
-    {
-        setCurrentObject(obj);
-        if (selectedCT == null)
-        {
-            EditorModalTitle = "Edit " + selectedExp.ExperimentNumber;
-            showExperimentModal = true;
-        }
-        else
-        {
-            EditorModalTitle = "Edit " + selectedCT.Title;
-            showClinicalTestModal = true;
-        }
-    }
-
-    private async void MenuCardDeleteCallback<T>(T obj)
-    {
-        setCurrentObject(obj);
-        if (selectedCT == null)
-        {
-            cancelConfirmModalTitle = "Delete Experiment: " + selectedExp.ExperimentNumber;
-            cancelConfirmModalBody = "The experiment and clinical tests that only relate to this experiment will be deleted.";
-            showCancelConfirmModalDeleteExperiment = true;
-        }
-        else
-        {
-            cancelConfirmModalTitle = "Delete Clinical Test: " + selectedCT.Title;
-            cancelConfirmModalBody = "The clinical test will be deleted permanently.";
-            showCancelConfirmModalDeleteClinicalTest = true;
-        }
-
-    }
+   private async void MenuCardDeleteCallback<T>(T obj)
+   {
+      setCurrentObject(obj);
+      if (selectedCT == null && selectedExp != null)
+      {
+         cancelConfirmModalTitle = "Delete Experiment: " + selectedExp.ExperimentNumber;
+         cancelConfirmModalBody = "The experiment and clinical tests that only relate to this experiment will be deleted.";
+         showCancelConfirmModalDeleteExperiment = true;
+      } else if (selectedCT != null)
+      {
+         cancelConfirmModalTitle = "Delete Clinical Test: " + selectedCT.Title;
+         cancelConfirmModalBody = "The clinical test will be deleted permanently.";
+         showCancelConfirmModalDeleteClinicalTest = true;
+      }
+      
+   }
 }
