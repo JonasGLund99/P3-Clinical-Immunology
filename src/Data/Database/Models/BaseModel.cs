@@ -12,7 +12,7 @@ public abstract class BaseModel<T> where T : BaseModel<T>
 
     public string id { get; set; } = "";
 
-    public async Task SaveToDatabase()
+    public virtual async Task SaveToDatabase()
 	{
 		Database? db = DatabaseService.Instance.Database;
 
@@ -23,7 +23,7 @@ public abstract class BaseModel<T> where T : BaseModel<T>
         );
     }
 
-	public async Task RemoveFromDatabase()
+	public virtual async Task RemoveFromDatabase()
 	{
         Database? db = DatabaseService.Instance.Database;
 
