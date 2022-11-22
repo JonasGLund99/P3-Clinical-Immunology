@@ -41,28 +41,26 @@
     private bool displaySpots = false;
     private string yCoordinate = "";
     private string xCoordinate = "";
-    private Nplicate? selectedNplicate;
+    private Nplicate? selectedNplicate = default;
 
     [Parameter, EditorRequired]
-    public ClinicalTest ClinicalTest { get; set; }
+    public ClinicalTest? ClinicalTest { get; set; } = default;
 
     public void SetMode(string newmode) {
         mode = newmode;
     }
 
-    public async void ShowSpots(Tuple<MouseEventArgs, Nplicate> args)
+    public void ShowSpots(Tuple<MouseEventArgs, Nplicate> args)
     {
         xCoordinate = (args.Item1.ClientX - args.Item1.OffsetX - 500/2 + 50).ToString() + "px";
         yCoordinate = (args.Item1.ClientY - args.Item1.OffsetY - 213).ToString() + "px";
         selectedNplicate = args.Item2;
-        StateHasChanged();
         displaySpots = true;
     }   
 
     public void ModalCancel() 
     {
         selectedNplicate = default;
-        StateHasChanged();
         displaySpots = false;
     }
 }
