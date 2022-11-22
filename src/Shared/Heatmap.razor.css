@@ -32,3 +32,42 @@
     color: var(--secondary-dark-color);
     cursor: pointer;
 }
+
+.all-heatmap-cells {
+    width: 100%;
+    padding-left: 30px;
+    height: inherit;
+}
+
+.heatmap-and-scale {
+    display: grid;
+    grid-template-columns: 90% 10%;
+    width: 100%;
+    height: calc(100vh - 170px);
+    justify-items: center;
+    align-items: center;
+}
+
+.color-scale-indicator * {
+    font-size: 60px;
+}
+
+.heatmap-table tr {
+    width: 100%;
+}
+
+.heatmap-table {
+    width: 100%;
+}
+
+.heatmap-data-cells tr {
+    width: 100%;
+}
+
+.heatmap-data-cells td {
+    text-align: center;
+}
+
+.heatmap-data-cells {
+    width: 100%;
+}

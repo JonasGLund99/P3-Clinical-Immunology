@@ -11,7 +11,6 @@
         <div class="all-heatmap-cells">
             <table class ="heatmap-table">
                 <tr class="heatmap-header">
-                    <td class="line-number">Slide</td>
                     @{int j = 1;}
                     @foreach (string chosenTableTitle in ClinicalTest.ChosenTableTitles)
                     {
@@ -20,16 +19,37 @@
                             j++;
                         }       
                     }
-
                     @foreach (string analyteName in ClinicalTest.AnalyteNames) 
                     {
-                        <td contenteditable="false">@analyteName</td>
+                        <td>@analyteName</td>
                     }
                 </tr>
+                @{int i = 0;}
+                @foreach(Slide slide in slides)
+                {
+                    @foreach(Block block in slide.Blocks) {
+                        <tr>
+                            @{int k = 1;}
+                            @foreach (string chosenTableTitle in ClinicalTest.ChosenTableTitles)
+                            {
+                                if (chosenTableTitle != null)
+                                {
+                                    <td class="key-number-@k">@block.PatientData[ClinicalTest.TableTitles.IndexOf(chosenTableTitle)]</td>
+                                    k++;
+                                }
+                            }
+                            @foreach (Nplicate nplicate in block.Nplicates) 
+                            {
+                                <td style="background-color: @System.Drawing.ColorTranslator.ToHtml(nplicate.HeatmapColour);"></td>
+                            }
+                        </tr>    
+                    }
+                    i++;
+                }
             </table>
         </div>
         <div class="color-scale-indicator">
-
+            <i class="fa-solid fa-file-export"></i>
         </div>
     </div>
 </div>
