@@ -9,10 +9,6 @@
     margin-bottom: 30px;
 }
 
-.Empty {
-    background-color: var(--primary-dark-color);
-}
-
 .heading {
     display: flex;
     flex-direction: column;
@@ -169,6 +165,7 @@
     text-align: center;
 }
 .Barcode-1, .Barcode-2, .Barcode-3 {
+    padding: 10px;
     border-right: 4px solid var(--secondary-dark-color);
 }
 .Barcode-4 {
@@ -198,6 +195,9 @@ input {
 
 .Empty {
     grid-area: Empty;
+    background-color: var(--primary-dark-color);
+/*    padding: 5px;*/
+    grid-area: Empty;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -206,12 +206,12 @@ input {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: white;
+    background-color: var(--menu-button-color);
     color: var(--primary-dark-color);
-    padding: 20px;
-    width: min(90px, 90%);
-    aspect-ratio: 1/1;
+    padding: 10px;
+    width: min(80px, 75%);
     border-radius: 50%;
+    aspect-ratio: 1/1;
     font-size: 14px;
 }
 

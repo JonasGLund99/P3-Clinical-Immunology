@@ -12,7 +12,7 @@
             <div class="modalContent">
                @if(ModalObject is Experiment)
                {
-                  <p>Experiment Number</p>
+                  <p>Experiment number</p>
                   <input type="text" required @bind="((Experiment)((object)ModalObject)).ExperimentNumber"/>
                   
                   <p>Title</p>
@@ -21,7 +21,7 @@
                   <p>Author</p>
                   <input type="text" required @bind="((Experiment)((object)ModalObject)).Author"/>
                   
-                  <p>Created At</p>
+                  <p>Created</p>
                   <input type="date" required @bind="((Experiment)((object)ModalObject)).CreatedAt" />
                   
                   <p>Description</p>
@@ -31,17 +31,16 @@
                   <p>Title</p>
                   <input type="text" required @bind="((ClinicalTest)((object)ModalObject)).Title"/>
                   
-                  <p>Created At</p>
+                  <p>Created</p>
                   <input type="date" required @bind="((ClinicalTest)((object)ModalObject)).CreatedAt"/>
 
-                  <p>N-plicate size</p>
+                  <p>n-plicate size</p>
                   <input type="number" required min="1" @bind="((ClinicalTest)((object)ModalObject)).NplicateSize"/>
 
                   <p>Description</p>
                   <textarea @bind="((ClinicalTest)((object)ModalObject)).Description"/>
                   <div class="associator-titles">
-                     <div>All Experiments</div>
-                     <div>Associated Experiments</div>
+                     <p>Associate experiments</p>
                   </div>
                   <div class="associator">
                      <div class="search-experiments">
@@ -54,19 +53,20 @@
                         {
                            if (((ClinicalTest)((object)ModalObject)).ExperimentIds.Contains(e.id))
                            {
-                              <p class="experiment-is-added" @onclick="@(() => clickedRelatedExperiment(e.id))" title="@titleHelper(e)" >@e.ExperimentNumber</p>
+                              <div class="experiment-is-added" @onclick="@(() => clickedRelatedExperiment(e.id))" title="@titleHelper(e)" >@e.ExperimentNumber</div>
                            } else 
                            {
-                              <p title="@titleHelper(e)" @onclick="@(() => clickedExperimentToRelate(e.id))">@e.ExperimentNumber</p>
+                              <div title="@titleHelper(e)" @onclick="@(() => clickedExperimentToRelate(e.id))">@e.ExperimentNumber</div>
                            }
                         }
                         </div>
                      </div>
                      <div class="associated-experiments">
+                        <p>Associated experiments</p>
                         <div class="related-experiments">
                             @foreach (string id in ((ClinicalTest)((object)ModalObject)).ExperimentIds)
                             {
-                                <p title="@titleHelperRelatedExperiments(id)" @onclick="@(() => clickedRelatedExperiment(id))">@(getRelatedExperimentNumber(id))</p>
+                                <div title="@titleHelperRelatedExperiments(id)" @onclick="@(() => clickedRelatedExperiment(id))">@(getRelatedExperimentNumber(id))</div>
                             }
                         </div>
                      </div>

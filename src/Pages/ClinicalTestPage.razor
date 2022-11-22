@@ -91,8 +91,8 @@ else
 
 	private Experiment placeholderExp = new Experiment(
 		id: "",
-		experimentNumber: "EXP-##-######",
-		title: "Title",
+		experimentNumber: "EXP-AB-CD123",
+		title: "Experiment",
         author: "Author",
         description: "",
         createdAt: DateTime.Now
@@ -100,7 +100,7 @@ else
 	
 	private ClinicalTest placeholderCt = new ClinicalTest(
 		id: "",
-		title: "Title",
+		title: "Clinical test",
 		nplicateSize: 3,
         description: "",
         createdAt: DateTime.Now
@@ -170,14 +170,14 @@ else
     {
         if (experiment == null) return;
         showExperimentModal = true;
-        editModalTitle = $"Edit Experiment: {experiment.ExperimentNumber}";
+        editModalTitle = $"Edit: {experiment.ExperimentNumber}";
     }
 
     private void editCT() 
     {
         if (clinicalTest == null) return;
         showClinicalTestModal = true;
-        editModalTitle = $"Edit test: {clinicalTest.Title}";
+        editModalTitle = $"Edit: {clinicalTest.Title}";
     }
 
     private int activeButton { get; set; } = 0;

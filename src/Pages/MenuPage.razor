@@ -3,12 +3,12 @@
 @using src.Shared
 @inject NavigationManager NavManager
 
-<PageTitle>Menu</PageTitle>
+<PageTitle>Clinical Immunology | Manage experiments and clinical tests</PageTitle>
 
 <main>
     <div id="experiments-container">
         <div id="experiment-header" class="menu-header">
-            <img src="icons/ExperimentIcon.svg" />
+            <img src="icons/expIcon_white.svg"/>
             Experiments
         </div>
         <div class="toolbar">
@@ -18,16 +18,16 @@
             </button>
             <div class="searchbar">
                 <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" placeholder="Search Experiment..." @oninput="@searchExperiments">
+                <input type="text" placeholder="Search by experiment number, title, author or date..." @oninput="@searchExperiments">
             </div>
         </div>
         <div id="experiment-grid">
             <div class="grid-header">
-                <div>Experiment no.</div>
+                <div>Exp. no.</div>
                 <div>Author</div>
                 <div>Title</div>
-                <div>Created at</div>
-                <div>Last edit</div>
+                <div>Created</div>
+                <div>Edited</div>
             </div>
             @if (experiments == null)
             {
@@ -54,32 +54,39 @@
     </div>
     <div id="clinical-test-container">
         <div id="clinical-test-header" class="menu-header">
-            <img src="icons/ct.svg" />
+            <img src="icons/ctIcon_white.svg" />
             Clinical Tests
         </div>
         <div class="clinicaltest-content-empty-@((selectedExp == null).ToString().ToLower())">
-            @if (selectedExp != null)
+            @if (selectedExp != null && showExperimentModal == false)
             {
                 <div class="toolbar">
                     <button class="add-element-button" @onclick="openNewClinicalTestModal">
                         <i class="fa-solid fa-square-plus"></i>
                         Add clinical test
                     </button>
-                    <div class="searchbar">
+                    <div class="ct-searchbar">
                         <i class="fa-solid fa-magnifying-glass"></i>
-                        <input type="text" placeholder="Search...">
+                        <input type="text" placeholder="Search by title or barcode...">
                     </div>
                 </div>
                 <div id="clinical-test-grid">
                 <div class="grid-header-clinicalTest">
                     <div>Title</div>
-                    <div>Created at</div>
-                    <div>Last edit</div>
+                    <div>Created</div>
+                    <div>Edited</div>
                 </div>
                 @if (currentClinicalTests == null || currentClinicalTests.Count == 0)
                     {
                         <div class="no-clinical-tests">
-                            No clinical tests to show
+                            <p>
+                                Experiment contains no clinical tests
+                            </p>
+                            <button class="add-element-button" @onclick="openNewClinicalTestModal">
+                                <i class="fa-solid fa-square-plus"></i>
+                                Add clinical test
+                            </button>
+
                         </div>
                     }
                     else
@@ -103,9 +110,18 @@
             }
             else
             {
-                <div class="no-experiment-selected-placeholder">
-                    Select an experiment
-                </div>
+                if (showExperimentModal == false)
+                {
+                    <p>
+                        Select an experiment
+                        <br>
+                        or
+                    </p>
+                    <button class="add-element-button" @onclick="openNewExperimentModal">
+                        <i class="fa-solid fa-square-plus"></i>
+                        Add experiment
+                    </button>
+                }
             }
         </div>
     </div>
@@ -176,6 +192,7 @@
             StateHasChanged();
         }
     }
+
     private async void searchExperiments(ChangeEventArgs args)
     {
         experimentSearchValue = args.Value?.ToString();
@@ -183,6 +200,7 @@
         experiments = await ExperimentManager.QueryExperiments(experimentSearchValue);
         StateHasChanged();
     }
+
     private async Task showClinicalTests(Experiment exp)
     {
         currentClinicalTests = await exp.QueryClinicalTests("");
@@ -190,23 +208,39 @@
     }
 
     private void openNewExperimentModal<T>(T obj)
-	{
-		selectedExp = new Experiment(Guid.NewGuid().ToString());
+    {
+        selectedExp = new Experiment(Guid.NewGuid().ToString());
         showExperimentModal = true;
-        EditorModalTitle = "Create new experiment";
-	}
+        EditorModalTitle = "Add experiment";
+    }
+
     private void openNewClinicalTestModal<T>(T obj)
-	{
+    {
         selectedCT = new ClinicalTest(Guid.NewGuid().ToString());
         selectedCT.ExperimentIds.Add(selectedExp.id);
-        EditorModalTitle = "Create new clinical test";
-		showClinicalTestModal = true;
-	}
+        EditorModalTitle = "Add clinical test";
+        showClinicalTestModal = true;
+    }
 
-    private void closeEditorModal<T>(T? obj)
+    private async void closeEditorModal<T>(T? obj)
     {
+        selectedExp = null;
         showExperimentModal = false;
         showClinicalTestModal = false;
+        if (obj is Experiment)
+        {
+            Experiment exp = (Experiment)(object)obj;
+            List<Experiment> expList = await ExperimentManager.QueryExperiments("");
+            foreach (Experiment item in expList)
+            {
+                if (item.id == exp.id)
+                {
+                    selectedExp = exp;
+                    break;
+                }
+            }
+        }
+        StateHasChanged();
     }
 
     public async void SaveExperimentCallback(Experiment e)
