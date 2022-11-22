@@ -19,7 +19,7 @@
 			case 0: <Details Experiment="@experiment" ClinicalTest="@clinicalTest" editCTCallback="editCT" editExpCallback="editExp"></Details> break;
 			case 1: <Overview ClinicalTest="@clinicalTest"></Overview> break;
 			case 2: <FileUpload ClinicalTest="@clinicalTest" ActiveButton="@activeButton" setActiveButtonCallback="@SetActiveButton"></FileUpload> break;
-			case 3: <h1>Result Table</h1> break;
+		    case 3: <ResultTable ClinicalTest="@clinicalTest"></ResultTable> break;
 			case 4: <Heatmap ClinicalTest="@clinicalTest"></Heatmap> break;
 		}
 	</div>
@@ -89,25 +89,25 @@ else
     [Parameter]
     public string ClinicalTestId { get; set; } = "";
 
-	private Experiment placeholderExp = new Experiment(
-		id: "",
-		experimentNumber: "EXP-##-######",
-		title: "Title",
+    private Experiment placeholderExp = new Experiment(
+        id: "",
+        experimentNumber: "EXP-##-######",
+        title: "Title",
         author: "Author",
         description: "",
         createdAt: DateTime.Now
-	);
-	
-	private ClinicalTest placeholderCt = new ClinicalTest(
-		id: "",
-		title: "Title",
-		nplicateSize: 3,
+    );
+
+    private ClinicalTest placeholderCt = new ClinicalTest(
+        id: "",
+        title: "Title",
+        nplicateSize: 3,
         description: "",
         createdAt: DateTime.Now
-	);
+    );
 
-	private Experiment? experiment;
-	private ClinicalTest? clinicalTest;
+    private Experiment? experiment;
+    private ClinicalTest? clinicalTest;
     private bool showClinicalTestModal = false;
     private bool showExperimentModal = false;
     private string editModalTitle = "";
@@ -121,8 +121,9 @@ else
             experiment = await ExperimentManager.GetExperimentById(ExperimentId);
             clinicalTest = await ExperimentManager.GetClinicalTestById(ClinicalTestId);
             StateHasChanged();
-	        foreach (string slideId in clinicalTest.SlideIds) {
-                clinicalTest.AddSlide(await clinicalTest.GetSlideById(slideId));
+            foreach (string slideId in clinicalTest.SlideIds) {
+                Slide slide = await clinicalTest.GetSlideById(slideId);
+                clinicalTest.AddSlide(slide);
             }
         }
     }

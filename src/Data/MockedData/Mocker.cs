@@ -56,15 +56,15 @@ static class Mocker
                 ct.SlideDataFiles = slideDataFiles;
                 ct.AddSlide(
                     slide: new Slide(Guid.NewGuid().ToString(),"10000465"),
-                    patientData: new List<string>[21].Select(l => new List<string>()).ToArray()
+                    patientData: new List<string>[21].Select(l => new List<string>() { "1", "2", "3" }).ToArray()
                 );
                 ct.AddSlide(
                     slide: new Slide(Guid.NewGuid().ToString(), "10000466"),
-                    patientData: new List<string>[21].Select(l => new List<string>()).ToArray()
+                    patientData: new List<string>[21].Select(l => new List<string>() { "1", "2", "3" }).ToArray()
                 );
                 ct.AddSlide(
                     slide: new Slide(Guid.NewGuid().ToString(),"10000467"),
-                    patientData: new List<string>[21].Select(l => new List<string>()).ToArray()
+                    patientData: new List<string>[21].Select(l => new List<string>() { "1", "2", "3" }).ToArray()
                 );
                 ct.TableTitles = new List<string>() { "key1", "key2", "key3", "key4", "key5" };
                 ct.ChosenTableTitles = new string[] { "key2", "key1", "key3" };

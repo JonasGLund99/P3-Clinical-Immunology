@@ -1,0 +1,110 @@
+﻿@using src.Data
+@using src.Shared
+
+<div class="result-table-component">
+    <div id="toolbar">
+        <button @onclick='() => SetMode("XYZ")' class="result-buttons @mode==XYZ ? 'result-button-active' : ''">
+            (X-Y)/Z
+            </button>
+        <button @onclick='() => SetMode("Log2")' class="result-buttons @mode==Log2 ? 'result-button-active' : ''">
+            Log
+            <sub>2</sub>
+            </button>
+
+        <div id="export-icon" title="Export overview">
+            <i class="fa-solid fa-file-export"></i>
+        </div>
+    </div>
+
+    <div class="table-view-container">
+        <table id="result-table">
+            <tr>
+                <td class="line-number">Slide</td>
+                @{int j = 1;}
+                @foreach (string chosenTableTitle in ClinicalTest.ChosenTableTitles)
+                {
+                    if (chosenTableTitle != null) {
+                        <td id="key-number-@j">@chosenTableTitle</td>
+                        j++;
+                    }       
+                }
+
+                @if (mode == "Log2") {
+                    <td>Quality control</td>
+                }
+                else if (mode == "XYZ") {
+                    <td>Pos raw</td>
+                    <td>Neg raw</td>
+                }
+
+
+                @foreach (string analyteName in ClinicalTest.AnalyteNames) 
+                {
+                    <td contenteditable="false">@analyteName</td>
+                }
+            </tr>
+            
+            @{int i = 0;}
+            @foreach(Slide slide in slides)
+            {
+                @foreach(Block block in slide.Blocks) {
+                    <tr>
+                        <td class="line-number">@(i + 1)</td>
+                        @{int k = 1;}
+                        @foreach (string chosenTableTitle in ClinicalTest.ChosenTableTitles)
+                        {
+                            if (chosenTableTitle != null)
+                            {
+                                <td class="key-number-@k">@block.PatientData[ClinicalTest.TableTitles.IndexOf(chosenTableTitle)]</td>
+                                k++;
+                            }
+                        }
+
+                        @if (mode == "Log2")
+                        {
+                            <td>@Math.Round(block.QC, 9)</td>
+                            @foreach (Nplicate nplicate in block.Nplicates) 
+                            {
+                                <td contenteditable="false">@Math.Round(nplicate.RI, 2)</td>
+                            }
+                        }
+                        else if (mode == "XYZ")
+                        {
+                            if (block.Nplicates.Find(nplicate => nplicate.AnalyteType == "pos") == null || block.Nplicates.Find(nplicate => nplicate.AnalyteType == "neg") == null) {
+                                <td>Test1</td>
+                                <td>Test2</td>
+                            }
+                            else {
+                                <td>@Math.Round(block.Nplicates.Find(nplicate => nplicate.AnalyteType == "pos").Mean, 2)</td>
+                                <td>@Math.Round(block.Nplicates.Find(nplicate => nplicate.AnalyteType == "neg").Mean, 2)</td>
+                                @foreach (Nplicate nplicate in block.Nplicates) 
+                                {
+                                    <td contenteditable="false">@Math.Round(nplicate.XYZ, 2)</td>
+                                }
+                            }
+                        } 
+                    </tr>    
+                }
+                i++;
+            }
+        </table>
+    </div>
+</div>
+
+@code {
+    private string mode = "XYZ";
+    private List<Slide> slides { 
+        get 
+        {
+            return ClinicalTest.GetSlides();
+        }
+    }
+
+    [Parameter]
+    public ClinicalTest ClinicalTest { get; set; }
+
+
+    public void SetMode(string newmode) {
+        mode = newmode;
+    }
+}

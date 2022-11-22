@@ -1,8 +1,6 @@
 ﻿
 @using src.Data
-@{
-    List<Slide> slides = ClinicalTest.GetSlides();
-}
+
 <div class="file-component">
     @if (displayError) {
         <div class="modal fade show" style="display:block" aria-modal="true" role="dialog" @onclick="@ModalCancel">
@@ -102,6 +100,12 @@
     private string? errorMessage = "File(s) with the name(s): ";
     private static string? errorMessageEnd = " already exists";
     private bool allMatched;
+    private List<Slide> slides {
+        get
+        {
+            return ClinicalTest.GetSlides();
+        }
+    }
 
     [Parameter]
     public ClinicalTest? ClinicalTest { get; set; } = null;
@@ -164,8 +168,8 @@
     {
         if (ClinicalTest == null) return;
 
-        for(int i = 0; i < ClinicalTest.GetSlides().Count; i++) {
-            if (filename.Contains(ClinicalTest.GetSlides()[i].Barcode)){
+        for(int i = 0; i < slides.Count; i++) {
+            if (filename.Contains(slides[i].Barcode)){
                 ClinicalTest.Matches.Add(filename, i);
             }
         }
@@ -175,9 +179,9 @@
 
     public bool AllMatched() 
     {
-        if (ClinicalTest.GetSlides().Count == 0) return false;
+        if (slides.Count == 0) return false;
 
-        for (int i = 0; i < ClinicalTest.GetSlides().Count; i++)
+        for (int i = 0; i < slides.Count; i++)
         {
             if (!ClinicalTest.Matches.ContainsValue(i)) return false;
         }

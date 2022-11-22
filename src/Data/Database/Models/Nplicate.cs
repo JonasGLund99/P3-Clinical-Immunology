@@ -12,7 +12,7 @@ public class Nplicate
     public double RI { get; set; } = default;
     public double XYZ { get; set; } = default;
     public double Mean { get; set; } = default;
-    public string AnalyteType { get; } = "";
+    public string AnalyteType { get; set; } = "";
     public bool IsFlagged { get; set; } = default;
     public Color HeatmapColour { get; set; } = default;
     public List<Spot> Spots = new List<Spot>();

@@ -2,6 +2,7 @@
 table {
     overflow: scroll;
 }
+
 td {
     background-color: white;
     border: 0.5px solid rgb(170, 170, 170);
@@ -40,4 +41,8 @@ td:focus {
     left: 0;
     z-index: 1;
     min-width: 50px;
+}
+
+.stick {
+    position: sticky;
 }

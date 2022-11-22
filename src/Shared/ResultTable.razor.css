@@ -1,0 +1,149 @@
+﻿.result-table-component {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.table-view-container{
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    height: calc(100vh - 170px);
+    overflow: scroll;
+}
+
+/* Toolbar */
+#toolbar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+    background-color: white;
+    border-radius: 10px;
+    height: 50px;
+    width: 300px;
+    justify-content: space-evenly;
+}
+
+#toolbar > * {
+    display: flex;
+    align-items: center;
+    height: inherit;
+}
+
+#export-icon i {
+    font-size: 30px;
+    color: var(--secondary-dark-color);
+    cursor: pointer;
+}
+
+#clear-button {
+    background-color: rgb(72, 117, 151);
+    color: rgb(38, 61, 79);
+    padding: 3px 10px !important;
+}
+
+.result-buttons {
+    border: none;
+    background-color: white;
+}
+
+.result-button-active {
+    color: black;
+}
+
+
+/*TABLE CONTENT BELOW!*/
+table {
+    overflow: scroll;
+}
+
+td {
+    background-color: white;
+    border: 0.5px solid rgb(170, 170, 170);
+    min-width: 100px;
+    height: 20px;
+    padding: 3px 6px;
+    white-space: nowrap;
+    box-sizing: border-box;
+    z-index: 0;
+    text-align: center;
+}
+
+tr:first-child td {
+    height: 40px;
+    font-weight: bold;
+    background-color: rgb(39, 80, 53);
+    outline: 1px solid rgb(37, 62, 39);
+    border-bottom: hidden;
+    color: rgb(244, 244, 244);
+    position: sticky;
+    top: 0;
+    text-align: center;
+}
+
+    tr:first-child td:first-child {
+        z-index: 2;
+    }
+
+#key-number-1 {
+    z-index: 2;
+    min-width: 100px;
+    max-width: 100px;
+    left: 50.5px;
+    white-space: break-spaces;
+}
+
+#key-number-2 {
+    z-index: 2;
+    min-width: 100px;
+    max-width: 100px;
+    left: 150.5px;
+    white-space: break-spaces;
+}
+
+#key-number-3 {
+    z-index: 2;
+    min-width: 100px;
+    max-width: 100px;
+    left: 250.5px;
+    white-space: break-spaces;
+}
+
+.key-number-1 {
+    position: sticky;
+    z-index: 1;
+    left: 50.5px;
+    white-space: break-spaces;
+    outline: 0.5px solid rgb(37, 62, 39);
+}
+
+.key-number-2 {
+    position: sticky;
+    z-index: 1;
+    left: 150.5px;
+    white-space: break-spaces;
+    outline: 0.5px solid rgb(37, 62, 39);
+}
+
+.key-number-3 {
+    position: sticky;
+    z-index: 1;
+    left: 250.5px;
+    white-space: break-spaces;
+    outline: 0.5px solid rgb(37, 62, 39);
+}
+
+.line-number {
+    text-align: center;
+    border-left: none;
+    background-color: white;
+    outline: 0.5px solid rgb(37, 62, 39);
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    min-width: 50px;
+}
+
+/*TABLE CONTENT END!*/
+
