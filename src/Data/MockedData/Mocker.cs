@@ -55,18 +55,11 @@ static class Mocker
                     createdAt: DateTime.Now
                 );
                 ct.SlideDataFiles = slideDataFiles;
-                ct.AddSlide(
-                    slide: new Slide("10000465"),
-                    patientData: new List<string>[21].Select(l => new List<string>()).ToArray()
-                );
-                ct.AddSlide(
-                    slide: new Slide("10000466"),
-                    patientData: new List<string>[21].Select(l => new List<string>()).ToArray()
-                );
-                ct.AddSlide(
-                    slide: new Slide("10000467"),
-                    patientData: new List<string>[21].Select(l => new List<string>()).ToArray()
-                );
+
+                //ct.Slides.Add(new Slide("10000465"));
+                //ct.Slides.Add(new Slide("10000466"));
+                //ct.Slides.Add(new Slide("10000467"));
+                
                 ct.Matches = new Dictionary<string, int>()
                 {
                     { slideDataFiles[0].Filename, 0 },
@@ -75,7 +68,7 @@ static class Mocker
                 };
                 ct.TableTitles = new List<string>() { "key1", "key2", "key3", "key4", "key5" };
                 ct.ChosenTableTitles = new string[] { "key2", "key1", "key3" };
-                ct.CalculateClinicalTestResult();
+                //ct.CalculateClinicalTestResult();
                 await ct.SaveToDatabase();
                 await ExperimentManager.Associate(e, ct);
             }

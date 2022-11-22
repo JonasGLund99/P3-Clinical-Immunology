@@ -26,25 +26,26 @@
                     <div class="block" @onclick="() => toggleBlockType(slideIndex, blockIndex)">
                     @if (i < numSlides)
                     {
-                        @if (Slides[i].Blocks[j].Type != Block.BlockType.Blank) {
+                        @if (Slides[i][j].Type != Block.BlockType.Blank) {
                             @for (int k = 0; k < NumPatientDataPerBlock; k++)
                             {
                                 int index = k;
                                 int patientDataIndex = findTitleIndex(index);
-                                int patientDataCount = Slides[i].Blocks[j].PatientData.Count;
+                                int patientDataCount = Slides[i][j].PatientData.Count;
+
                                 @if (patientDataIndex == -1 || patientDataIndex >= patientDataCount)
                                 {
                                     <div></div>
                                 }
                                 else
                                 {
-                                    <div>@(Slides[i].Blocks[j].PatientData[patientDataIndex])</div>
+                                    <div>@(Slides[i][j].PatientData[patientDataIndex])</div>
                                 }
                             }
                         } 
                         else 
                         {
-                            System.Console.WriteLine(Slides[i].Blocks[j].Type);
+                            System.Console.WriteLine(Slides[i][j].Type);
                             <div></div>
                             <div>Blank</div>
                             <div></div>
@@ -92,7 +93,7 @@
     public int PlateIndex { get; set; }
 
     [Parameter, EditorRequired]
-    public List<Slide> Slides { get; set; } = new();
+    public List<Block[]> Slides { get; set; } = new();
 
     [Parameter, EditorRequired]
     public EventCallback updateOverviewState { get; set; }
@@ -118,7 +119,17 @@
     } *@
 
     private async void toggleBlockType(int slideIndex, int blockIndex) {
-        ClinicalTest.InsertBlankBlock(slideIndex, blockIndex);
+        BlankBlock? blankBlock = ClinicalTest.Slides[slideIndex].BlankBlocks.Find(b => b.BlockIndex == blockIndex);
+
+        if (blankBlock == null)
+        {
+            ClinicalTest.Slides[slideIndex].BlankBlocks.Add(new BlankBlock(slideIndex, blockIndex));
+        }
+        else
+        {
+            ClinicalTest.Slides[slideIndex].BlankBlocks.Remove((BlankBlock)blankBlock);
+        }
+
         await updateOverviewState.InvokeAsync();
     }
 

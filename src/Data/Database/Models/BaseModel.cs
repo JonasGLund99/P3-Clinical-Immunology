@@ -12,7 +12,7 @@ public abstract class BaseModel<T> where T : BaseModel<T>
 
     public string id { get; set; } = "";
 
-    public async Task SaveToDatabase()
+    public virtual async Task SaveToDatabase()
 	{
 		Database? db = DatabaseService.Instance.Database;
 
