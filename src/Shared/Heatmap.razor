@@ -1,0 +1,18 @@
+﻿@using src.Data
+@using src.Shared
+
+
+
+@code {
+
+    private List<Slide> slides { 
+        get 
+        {
+            return ClinicalTest.GetSlides();
+        }
+    }
+
+    [Parameter]
+    public ClinicalTest ClinicalTest { get; set; }
+
+}
