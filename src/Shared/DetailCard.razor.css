@@ -90,6 +90,11 @@ h3 {
     align-items: center;
 }
 
+.pen-header i:hover {
+    color: var(--blue-btn-color);
+    cursor: pointer;
+}
+
 .fa-pen {
   font-size: 24px;
   color: white;

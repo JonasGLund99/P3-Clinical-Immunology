@@ -155,18 +155,18 @@
 } 
 
 @code {
-   private List<Experiment>? experiments;
-   private List<ClinicalTest>? currentClinicalTests;
-   private bool showExperimentModal = false;
-   private bool showClinicalTestModal = false;
-   private string EditorModalTitle = "";
-   private Experiment? selectedExp;
-   private ClinicalTest? selectedCT;
-   private string? experimentSearchValue { get; set; }
-   private bool showCancelConfirmModalDeleteExperiment = false;
-   private bool showCancelConfirmModalDeleteClinicalTest = false;
-   private string cancelConfirmModalTitle = "";
-   private string cancelConfirmModalBody = "";
+    private List<Experiment>? experiments;
+    private List<ClinicalTest>? currentClinicalTests;
+    private bool showExperimentModal = false;
+    private bool showClinicalTestModal = false;
+    private string EditorModalTitle = "";
+    private Experiment? selectedExp;
+    private ClinicalTest? selectedCT;
+    private string experimentSearchValue { get; set; } = "";
+    private bool showCancelConfirmModalDeleteExperiment = false;
+    private bool showCancelConfirmModalDeleteClinicalTest = false;
+    private string cancelConfirmModalTitle = "";
+    private string cancelConfirmModalBody = "";
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -191,13 +191,15 @@
 
     private void openNewExperimentModal<T>(T obj)
 	{
-	    selectedExp = new Experiment(Guid.NewGuid().ToString());
+		selectedExp = new Experiment(Guid.NewGuid().ToString());
         showExperimentModal = true;
-        EditorModalTitle = "Create New Experiment";
+        EditorModalTitle = "Create new experiment";
 	}
     private void openNewClinicalTestModal<T>(T obj)
 	{
         selectedCT = new ClinicalTest(Guid.NewGuid().ToString());
+        selectedCT.ExperimentIds.Add(selectedExp.id);
+        EditorModalTitle = "Create new clinical test";
 		showClinicalTestModal = true;
 	}
 
@@ -217,24 +219,14 @@
         await showClinicalTests(e);
     }
 
-   public async void SaveClinicalTestCallback(ClinicalTest ct)
+   public async void SaveClinicalTestCallback(ClinicalTest SavedClinicalTest)
    {
-      showClinicalTestModal = false;
-      if (selectedCT.ExperimentIds.Contains(selectedExp.id))
-      {
-         ct.EditedAt = DateTime.Now;
-         selectedExp.EditedAt = DateTime.Now;
-         await selectedExp.SaveToDatabase();
-         await ct.SaveToDatabase();
-      }
-      {
-         await ExperimentManager.Associate(selectedExp, selectedCT);
-      }
-      experiments = await ExperimentManager.QueryExperiments("");
-      StateHasChanged();
-      await showClinicalTests(selectedExp);
-
-    }
+        showClinicalTestModal = false;
+        await ExperimentManager.SaveClinicalTestWithAssociate(SavedClinicalTest);
+        experiments = await ExperimentManager.QueryExperiments(experimentSearchValue);
+        StateHasChanged();
+        await showClinicalTests(selectedExp);
+   }
 
    private void setCurrentObject<T>(T obj) 
    {
@@ -305,7 +297,7 @@
       } else if (selectedCT != null)
       {
          cancelConfirmModalTitle = "Delete Clinical Test: " + selectedCT.Title;
-         cancelConfirmModalBody = "The clinical test will be deleted permanently.";
+         cancelConfirmModalBody = "The clinical test will be deleted permanently from all associated experiments.";
          showCancelConfirmModalDeleteClinicalTest = true;
       }
       

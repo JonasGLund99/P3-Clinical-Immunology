@@ -75,3 +75,11 @@
 .card-content i {
     font-size: 18px;
 }
+
+.fa-pencil:hover {
+    color: var(--blue-btn-color);
+}
+
+.fa-trash:hover {
+    color: var(--red-btn-color);
+}
