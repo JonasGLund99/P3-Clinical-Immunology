@@ -71,3 +71,7 @@
 .heatmap-data-cells {
     width: 100%;
 }
+
+.flagged-true {
+    box-shadow: 0px 0px 0px 2px red inset;
+}

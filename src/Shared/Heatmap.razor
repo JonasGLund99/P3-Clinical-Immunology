@@ -40,7 +40,7 @@
                             }
                             @foreach (Nplicate nplicate in block.Nplicates) 
                             {
-                                <td style="background-color: @System.Drawing.ColorTranslator.ToHtml(nplicate.HeatmapColour);"></td>
+                                <td class="flagged-@nplicate.IsFlagged.ToString().ToLower()" style="background-color: @System.Drawing.ColorTranslator.ToHtml(nplicate.HeatmapColour);"></td>
                             }
                         </tr>    
                     }
