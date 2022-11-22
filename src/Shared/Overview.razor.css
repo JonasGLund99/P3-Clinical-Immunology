@@ -1,4 +1,10 @@
-﻿.overview-container {
+﻿.overview-component{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: calc(100vh - 100px);
+}
+.overview-container {
     width: 100%;
     align-items: center;
     justify-content: center;
@@ -6,16 +12,11 @@
     overflow-y: scroll;
     padding-top: 20px;
 }
-.overview-component{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
 .table-view-container{
     width: 100%;
     align-items: center;
     justify-content: center;
-    height: calc(100vh - 170px);
+    height: calc(100vh - 190px);
     overflow: scroll;
 }
 
@@ -24,9 +25,9 @@
     position: relative;
     display: flex;
     align-items: center;
-    padding: 0 10px;
-    margin: 10px 0;
-    background-color: rgb(49, 49, 49);
+    padding: 0 20px;
+    margin: 20px 0;
+    background-color: white;
     border-radius: 10px;
     height: 50px;
 }
@@ -35,17 +36,6 @@
     align-items: center;
     height: inherit;
 }
-/* #mode-icons {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 85px;
-} */
-/* #mode-icons img {
-    height: 35px;
-    cursor: pointer;
-    color: var(--navbar-buton-color);
-} */
 #key-selectors {
     display: flex;
     justify-content: space-between;
@@ -55,6 +45,8 @@
 #key-selectors .key-selector {
     display: flex;
     align-items: center;
+    border-radius: 5px;
+    overflow: hidden;
 }
 #key-selectors .selector-number {
     display: flex;
@@ -63,18 +55,15 @@
     background-color: white;
     width: 25px;
     height: 35px;
-    border-radius: 5px 0 0 5px;
-    background-color: rgb(213, 213, 213);
+/*    border-radius: 5px 0 0 5px;*/
+    background-color: var(--grey);
 }
 #key-selectors select {
-    position: relative;
     display: inline-block;
     width: 150px;
     height: 35px;
-    background-color: white;
-    /* border: 2px solid var(--navbar-button-color); */
+    background-color: var(--light-grey);
     border: none;
-    border-radius: 0 5px 5px 0;
     padding: 5px 5px 5px;
     cursor: pointer;
 }
@@ -83,22 +72,22 @@
 }
 #edit-icon i {
     font-size: 25px;
-    color: var(--main-background-color);
+    color: var(--secondary-dark-color);
     cursor: pointer;
 }
 #export-icon i {
     font-size: 30px;
-    color: var(--main-background-color);
+    color: var(--secondary-dark-color);
     cursor: pointer;
 }
 
 #buttons {
     display: flex;
     justify-content: space-between;
-    width: 170px;
     height: inherit;
 }
 #buttons > span {
+    color: white;
     padding: 3px;
     border-radius: 5px;
     height: 35px;
@@ -107,13 +96,27 @@
     justify-content: center;
     align-items: center;
     cursor: pointer;
+    margin-right: 20px;
 }
+
+#buttons > span:last-child{
+    margin-right: 0;
+}
+
+
 #buttons i {
     font-size: 25px;
+}
+#info-button i {
+    font-size: 25px;
+    color: var(--secondary-dark-color);
+    cursor: pointer;
+    margin-right: 20px;
 }
 #clear-button {
     background-color: rgb(72, 117, 151);
     color: rgb(38, 61, 79);
+    padding: 3px 10px !important;
 }
 #check-button {
     background-color: rgb(57, 135, 53);
@@ -124,12 +127,22 @@
     color: rgb(70, 25, 25);
 }
 
+.plates {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: calc(100vh - 175px);
+    width: 100%;
+    overflow-y: scroll;
+    padding: 0 100px;
+}
+
 /* Plate */
 .plate {
     background-color: white;
     width: 98%;
     height: calc(100vh - 185px);
-    border: 5px solid var(--primary-dark-color);
+/*    border: 5px solid var(--primary-dark-color);*/
     border-radius: 20px;
     margin-bottom: 40px;
     display: flex;
@@ -141,6 +154,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    text-align: center;
 }
 .overview-needs-info p {
     margin: 30px;

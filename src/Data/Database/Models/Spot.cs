@@ -24,5 +24,5 @@ public class Spot
         }
     }
 
-    public bool IsFlagged { get; }
+    public bool IsFlagged { get; set; }
 }

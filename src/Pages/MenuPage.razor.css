@@ -112,7 +112,7 @@ input:focus {
     font-weight: bold;
 }
 
-.all-experiment-cards, 
+.all-experiment-cards,
 .all-clinicaltest-cards {
     height: calc(100vh - 100px - 84px - 44px);
     overflow-y: scroll;

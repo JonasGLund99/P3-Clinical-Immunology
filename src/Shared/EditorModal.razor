@@ -91,13 +91,13 @@
 
 
 @code {
-    [Parameter] 
+    [Parameter, EditorRequired] 
     public string ModalTitle { get; set; } = "";
-    [Parameter] 
+    [Parameter, EditorRequired] 
     public EventCallback<ModalType> CallbackClose {get; set;}
-    [Parameter] 
-    public ModalType ModalObject { get; set; }
-    [Parameter] 
+    [Parameter, EditorRequired] 
+    public ModalType ModalObject { get; set; } = new();
+    [Parameter, EditorRequired] 
     public EventCallback<ModalType> CallbackSave {get; set;}
 
     private List<Experiment> allExperiments = new();

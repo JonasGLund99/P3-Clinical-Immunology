@@ -1,33 +1,39 @@
-﻿@page "/clinicaltest"
-@page "/clinicaltest/{ExperimentId}/{ClinicalTestId}"
+﻿@page "/clinicaltest/{ExperimentId}/{ClinicalTestId}"
 @using src.Data
 @using src.Shared
-@using Microsoft.Azure.Cosmos
 @inject NavigationManager NavManager
 
-@if (experiment != null && clinicalTest != null) {
-	<PageTitle>@clinicalTest.Title</PageTitle>
+@if (experiment != null && clinicalTest != null)
+{
+    <PageTitle>@clinicalTest.Title</PageTitle>
 
-	<Navbar
-		ClinicalTestTitle="@clinicalTest.Title" 
-		ExperimentNumber="@experiment.ExperimentNumber" 
-		setActiveButtonCallback="@SetActiveButton" 
-		ActiveButton="@activeButton">
-	</Navbar>
+    <Navbar ClinicalTestTitle="@clinicalTest.Title"
+        ExperimentNumber="@experiment.ExperimentNumber"
+        setActiveButtonCallback="@SetActiveButton"
+        ActiveButton="@activeButton">
+    </Navbar>
 
 	<div class="component-container">
 		@switch (activeButton)
 		{
 			case 0: <Details Experiment="@experiment" ClinicalTest="@clinicalTest" editCTCallback="editCT" editExpCallback="editExp"></Details> break;
 			case 1: <Overview ClinicalTest="@clinicalTest"></Overview> break;
-			case 2: <h1>File Upload</h1> break;
+			case 2: <FileUpload ClinicalTest="@clinicalTest" ActiveButton="@activeButton" setActiveButtonCallback="@SetActiveButton"></FileUpload> break;
 			case 3: <h1>Result Table</h1> break;
 			case 4: <h1>Heatmap</h1> break;
 		}
 	</div>
-} else 
+} 
+else 
 {
-    <p>Loading.....</p>
+	<Navbar ClinicalTestTitle="@placeholderCt.Title"
+		ExperimentNumber="@placeholderExp.ExperimentNumber"
+		setActiveButtonCallback="@SetActiveButton"
+		ActiveButton="@activeButton">
+	</Navbar>
+	<div class="component-container">
+		<Details Experiment="@placeholderExp" ClinicalTest="@placeholderCt"></Details>
+	</div>
 }
 
 @if (showExperimentModal)
@@ -77,32 +83,53 @@
     </div>
 }
 
-@code{
+@code {
     [Parameter]
     public string ExperimentId { get; set; } = "";
     [Parameter]
     public string ClinicalTestId { get; set; } = "";
 
-    private Experiment? experiment;
-    private ClinicalTest? clinicalTest;
+	private Experiment placeholderExp = new Experiment(
+		id: "",
+		experimentNumber: "EXP-##-######",
+		title: "Title",
+        author: "Author",
+        description: "",
+        createdAt: DateTime.Now
+	);
+	
+	private ClinicalTest placeholderCt = new ClinicalTest(
+		id: "",
+		title: "Title",
+		nplicateSize: 3,
+        description: "",
+        createdAt: DateTime.Now
+	);
+
+	private Experiment? experiment;
+	private ClinicalTest? clinicalTest;
     private bool showClinicalTestModal = false;
     private bool showExperimentModal = false;
-    private string editModalTitle;
+    private string editModalTitle = "";
     private bool showWarningModal = false;
 
     // Get experiment and clincical test from database on the first render
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender) {
+        if (firstRender)
+        {
             experiment = await ExperimentManager.GetExperimentById(ExperimentId);
             clinicalTest = await ExperimentManager.GetClinicalTestById(ClinicalTestId);
-            NavManager.NavigateTo("/clinicaltest");
             StateHasChanged();
+	        foreach (string slideId in clinicalTest.SlideIds) {
+                clinicalTest.AddSlide(await clinicalTest.GetSlideById(slideId));
+            }
         }
     }
 
-    private async void closeEditorModal() 
+    private async void closeEditorModal()
     {
+        if (experiment == null || clinicalTest == null) return;
         showClinicalTestModal = false;
         showExperimentModal = false;
         experiment = await ExperimentManager.GetExperimentById(experiment.id);
@@ -139,19 +166,21 @@
         StateHasChanged();
     }
 
-    private async void editExp () 
+    private void editExp () 
     {
+        if (experiment == null) return;
         showExperimentModal = true;
         editModalTitle = $"Edit Experiment: {experiment.ExperimentNumber}";
     }
 
-    private async void editCT() 
+    private void editCT() 
     {
+        if (clinicalTest == null) return;
         showClinicalTestModal = true;
         editModalTitle = $"Edit test: {clinicalTest.Title}";
-	}
+    }
 
-	private int activeButton { get; set; } = 0;
+    private int activeButton { get; set; } = 0;
 
 	private void SetActiveButton(int buttonId)
 	{
