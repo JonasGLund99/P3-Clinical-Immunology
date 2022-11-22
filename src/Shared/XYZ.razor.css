@@ -1,13 +1,13 @@
 ﻿/* Toolbar */
 
 /*TABLE CONTENT BELOW!*/
-td:hover {
+.data:hover {
     box-shadow: 0px 0px 0px 5px rgb(170, 170, 170) inset;
-    transition-delay: 0.5s;
+    transition-delay: 0.3s;
 }
 
-selected-td {
-    box-shadow: 0px 0px 0px 5px rgb(170, 170, 170) inset;
+.selected-td {
+    box-shadow: 0px 0px 0px 5px rgb(170, 170, 170) inset !important;
 }
 
 td {

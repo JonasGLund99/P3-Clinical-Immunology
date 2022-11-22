@@ -165,7 +165,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
                     nplicate.CalculateMean();
                     nplicate.SetFlag();
 
-                    slides[Matches[filename]].Blocks[j].Nplicates.Add(nplicate);
+                    matchingSlide.Blocks[j].Nplicates.Add(nplicate);
                 }
                 Nplicate? pos = matchingSlide.Blocks[j].Nplicates.Find(nplicate => nplicate.AnalyteType == "pos");
                 Nplicate? neg = matchingSlide.Blocks[j].Nplicates.Find(nplicate => nplicate.AnalyteType == "neg");
@@ -177,7 +177,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
                 }
                 matchingSlide.Blocks[j].CalculateQC(pos, neg);
             }
-
+           
             //Calculate the RI for each Nplicate in each block and update max / min RI
             foreach (Block block in matchingSlide.Blocks)
             {
@@ -192,6 +192,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
                 {
                     updateMaxMinRI(block.Nplicates[j].CalculateRI(matchingSlide.Blocks[matchingSlide.Blocks.Length - 1].Nplicates[j], neg));
                 }
+
             }
         }
         //Set the heatmapcolour of all Nplicates (The RI of all Nplicates in all slides must be calculated before)

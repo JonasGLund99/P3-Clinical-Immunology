@@ -49,21 +49,21 @@
             {
                 if ((nplicate.RI == 0 || nplicate.RI == double.NaN) && nplicate.IsFlagged)
                 {
-                    <td @onclick="@((e) => OpenSpots(e, nplicate))" contenteditable="false" class="flagged-nplicate">-</td>
+                    <td @onclick="@((e) => OpenSpots(e, nplicate))" contenteditable="false" class="data @(nplicate==SelectedNplicate ? "selected-td" : "") flagged-nplicate">-</td>
                 }
                 else if (nplicate.RI == 0 || nplicate.RI == double.NaN)
                 {
-                    <td @onclick="@((e) => OpenSpots(e, nplicate))" contenteditable="false">-</td>
+                    <td class="data @(nplicate==SelectedNplicate ? "selected-td" : "")" @onclick="@((e) => OpenSpots(e, nplicate))" contenteditable="false">-</td>
 
                 }
                 else if (nplicate.IsFlagged)
                 {
-                    <td @onclick="@((e) => OpenSpots(e, nplicate))" contenteditable="false" class="flagged-nplicate">@Math.Round(nplicate.RI, 2)</td>
+                    <td @onclick="@((e) => OpenSpots(e, nplicate))" contenteditable="false" class="data @(nplicate==SelectedNplicate ? "selected-td" : "") flagged-nplicate">@Math.Round(nplicate.RI, 2)</td>
 
                 }
                 else
                 {
-                    <td @onclick="@((e) => OpenSpots(e, nplicate))" contenteditable="false">@Math.Round(nplicate.RI, 2)</td>
+                    <td class="data @(nplicate==SelectedNplicate ? "selected-td" : "")" @onclick="@((e) => OpenSpots(e, nplicate))" contenteditable="false">@Math.Round(nplicate.RI, 2)</td>
                 }
             }
         </tr>    
@@ -72,7 +72,6 @@
 }
 
 @code {
-    private Nplicate selectedNplicate;
     private List<Slide> slides
     {
         get
@@ -81,16 +80,18 @@
         }
     }
 
+    [Parameter]
+    public Nplicate SelectedNplicate { get; set; }
+
     [Parameter, EditorRequired]
     public ClinicalTest ClinicalTest { get; set; }
 
     [Parameter, EditorRequired]
-    public EventCallback<(MouseEventArgs, Nplicate)> ShowSpots { get; set; }
+    public EventCallback<Tuple<MouseEventArgs, Nplicate>> ShowSpots { get; set; }
 
     public async void OpenSpots(MouseEventArgs e, Nplicate selectedTd)
     {
-        selectedNplicate = selectedTd;
-        await ShowSpots.InvokeAsync((e, selectedNplicate));
+        await ShowSpots.InvokeAsync(new Tuple<MouseEventArgs, Nplicate>(e, selectedTd));
     }
 }
 
