@@ -83,7 +83,6 @@ public class ClinicalTest : BaseModel<ClinicalTest>
 
         foreach (Slide slide in slides)
         {
-            Console.WriteLine($"Saved {slide.id} database");
             await db.GetContainer("Slide").UpsertItemAsync<Slide>(
             item: slide
             );
@@ -112,7 +111,8 @@ public class ClinicalTest : BaseModel<ClinicalTest>
         AnalyteNames.Clear();
         int beginningIndex = 0;
         Regex start = new Regex(@"^Block\s*Row\s*Column\s*Name\s*ID", RegexOptions.IgnoreCase);
-        for (int i = 0; i < SlideDataFiles.Count; i++) {
+        for (int i = 0; i < SlideDataFiles.Count; i++) 
+        {
             string filename = SlideDataFiles[i].Filename;
             Slide matchingSlide = slides[Matches[filename]];
             //Read all lines in a file and add each line as an element in a string array
@@ -141,9 +141,9 @@ public class ClinicalTest : BaseModel<ClinicalTest>
                     //Find the index in spotInfo that contains the analyteType (ID) and create an Nplicate with it.
                     Nplicate nplicate = new Nplicate(spotInfo[Array.IndexOf(titles, "ID")].ToLower());
                     // Add analyteNames when looping through the first block
-                    if (i == 0 && j == 0) {
+                    if (i == 0 && j == 0) 
+                    {
                         AnalyteNames.Add(findSingleSpotInfo(spotInfo, titles, "Name"));
-                        Console.WriteLine(spotInfo[Array.IndexOf(titles, "Name")]);
                     }
 
                     for (int l = 0; l < NplicateSize; l++)
@@ -158,6 +158,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
                                 flagged: findSingleSpotInfo(spotInfo, titles, "Flags") != "0"
                             )
                         );
+
                         spotInfo.Clear();
                     }
                     //Calculate the mean and set if the Nplicate are flagged.

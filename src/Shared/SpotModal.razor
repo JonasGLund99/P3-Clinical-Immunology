@@ -1,0 +1,43 @@
+﻿@using src.Shared
+@using src.Data
+
+@*<div class="modal fade show spot-modal" style="display:block;margin:0;" aria-modal="true" role="dialog" @onclick="@CloseModal">
+    <div class="modal-dialog">
+        <div class="modal-content" style="top:@yCoordinate;left:@xCoordinate;">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Confirm action</h4>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                <p>spot data</p>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" @onclick=@CloseModal>Ok</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public EventCallback ModalCancelCallback;
+
+    [Parameter, EditorRequired]
+    private string xCoordinate;
+
+    [Parameter, EditorRequired]
+    private string yCoordinate;
+
+    [Parameter, EditorRequired]
+    public Nplicate ShownNplicate;
+
+    public async void CloseModal()
+    {
+        await ModalCancelCallback.InvokeAsync();
+    }
+}*@
