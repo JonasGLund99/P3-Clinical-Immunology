@@ -28,24 +28,24 @@
 </div>
 
 @code {
-	[Parameter] public MenuCardType obj { get; set; }
-   [Parameter] public EventCallback<MenuCardType> objectOnclickCallback {get; set; }
-   [Parameter] public EventCallback<MenuCardType> objectEditCallback {get; set; }
-   [Parameter] public EventCallback<MenuCardType> objectDeleteCallback {get; set; }
-   [Parameter] public MenuCardType selectedObj {get; set; }
+    [Parameter] public MenuCardType obj { get; set; }
+    [Parameter] public EventCallback<MenuCardType> objectOnclickCallback {get; set; }
+    [Parameter] public EventCallback<MenuCardType> objectEditCallback {get; set; }
+    [Parameter] public EventCallback<MenuCardType> objectDeleteCallback {get; set; }
+    [Parameter] public MenuCardType selectedObj {get; set; }
 
-   private async void deleteObject() 
-   {
-      await objectDeleteCallback.InvokeAsync(obj);
-   }
+    private async void deleteObject() 
+    {
+        await objectDeleteCallback.InvokeAsync(obj);
+    }
 
-   private async void editObject() 
-   {
-      await objectEditCallback.InvokeAsync(obj);
-   }
+    private async void editObject() 
+    {
+        await objectEditCallback.InvokeAsync(obj);
+    }
 
-   private async void objectOnclick() 
-   {
-      await objectOnclickCallback.InvokeAsync(obj);
-   }  
+    private async void objectOnclick() 
+    {
+        await objectOnclickCallback.InvokeAsync(obj);
+    }  
 }
