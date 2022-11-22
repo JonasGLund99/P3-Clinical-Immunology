@@ -1,0 +1,34 @@
+.heatmap-component {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.heatmap-header td {
+    writing-mode: vertical-lr;
+    transform: rotate(180deg);
+}
+
+#toolbar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+    background-color: white;
+    border-radius: 10px;
+    height: 50px;
+    width: 300px;
+    justify-content: space-evenly;
+}
+
+#toolbar>* {
+    display: flex;
+    align-items: center;
+    height: inherit;
+}
+
+#export-icon i {
+    font-size: 30px;
+    color: var(--secondary-dark-color);
+    cursor: pointer;
+}
