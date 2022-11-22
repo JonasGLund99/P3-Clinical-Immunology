@@ -2,6 +2,7 @@
     display: flex;
     padding: 30px;
     flex-direction: column;
+    border-radius: 15px;
 }
 
 .modal-footer {
@@ -9,27 +10,46 @@
 }
 
 .modal-header {
+    display: flex;
+    gap: 15px;
+    justify-content: flex-start;
+    align-items: center;
     padding: 0;
-    font-weight: 900;
+    border: none;
+    padding-bottom: 10px;
 }
-
+.modal-header img {
+    height: 35px;
+}
+.modal-header i {
+    color: var(--grey);
+}
+.modal-title {
+    font-weight: bold;
+}
 .modal-content p {
     margin: 10px 0 0 0;
 }
 
 .modal-content input, 
 .modal-content textarea{
-    margin-bottom: 10px;
+    font-size: 14px;
     width: 100%;
     background-color: var(--light-grey);
     border: 1px solid var(--grey);
-    padding: 4px;
+    padding: 10px;
     border-radius: 5px;
 }
-
-.modal-content textarea {
-    width: 100%;
-    height: 6em;
+.modal-content input:focus, .modal-content textarea:focus {
+    outline-color: var(--dark-grey);
+}
+.input-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+}
+.half {
+    width: 50%;
 }
 
 .associator-titles {
@@ -43,6 +63,7 @@
     border: 1px solid var(--grey);
     border-radius: 5px;
     padding: 5px;
+    resize: both;
 }
 
 .search-experiments,
@@ -74,16 +95,14 @@
 }
 
 .searchbar input {
+    font-size: 12px;
     width: 100%;
+    padding: 5px;
+    margin: 0;
     border-radius: 0 10px 10px 0;
     background-color: transparent;
     border: none;
-    margin: 0;
-    font-size: 12px;
-}
-
-input:focus {
-    outline: none;
+    outline:none;
 }
 
 .experiments-found,

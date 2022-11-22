@@ -39,17 +39,19 @@
                 }
                 @foreach (Slide slide in slides)
                 {
+                    bool matches = ClinicalTest.Matches.ContainsValue(slideNumber - 1);
                     <span>Slide @slideNumber</span>
                     <div class="slide">
-                        <i class="@(ClinicalTest.Matches.ContainsValue(slideNumber - 1) ? "fa-solid fa-circle-check check" : "fa-solid fa-circle-xmark check")"></i>
+                        <i title="@(matches ? "Slide matches a file" : "Slide does not match a file")" class="@(matches ? "fa-solid fa-circle-check check" : "fa-solid fa-circle-xmark check")"></i>
                         <span>@slide.Barcode</span>
+                        <i class="fa-solid fa-pencil" title="Edit barcode in overview" @onclick="() => setActiveButtonCallback.InvokeAsync(1)"></i>
                     </div>
                     slideNumber++;
                 }
             </div>
-            <button @onclick="() => setActiveButtonCallback.InvokeAsync(1)" class="standard-button">
+            <button class="standard-button" @onclick="() => setActiveButtonCallback.InvokeAsync(1)">
                 Edit barcodes in overview
-                <i class="fa-solid"></i>
+                <i class="fa-solid fa-pencil"></i>
             </button>
         </div>
 
@@ -62,20 +64,21 @@
                 }
                 @foreach (SlideDataFile slideDataFile in ClinicalTest.SlideDataFiles)
                 {
+                    bool matches = ClinicalTest.Matches.ContainsKey(slideDataFile.Filename);
                     <span>File @fileNumber</span>
                     <div class="file">
-                        <i class="@(ClinicalTest.Matches.ContainsKey(slideDataFile.Filename) ? "fa-solid fa-circle-check check" : "fa-solid fa-circle-xmark check")"></i>
+                        <i title="@(matches ? "File matches a slide" : "File does not match a slide")" class="@(matches ? "fa-solid fa-circle-check check" : "fa-solid fa-circle-xmark check")"></i>
                         <span>@slideDataFile.Filename</span>
-                        <i @onclick="() => RemoveFile(slideDataFile)" class="fa-solid fa-trash"></i>
+                        <i title="Delete file" class="fa-solid fa-trash" @onclick="() => RemoveFile(slideDataFile)"></i>
                     </div>
                     fileNumber++;
                 }
             </div>
-            <button class="standard-button">
+            <label class="standard-button">
                 Browse files
                 <i class="fa-solid fa-file-lines"></i>
                 <InputFile style="display: none;" accept=".txt" OnChange="@UploadFiles" multiple/>
-            </button>
+            </label>
         </div>
     </div>
     
@@ -97,7 +100,7 @@
     private int maximumAllowedFiles = 16;
     private bool displayError = false;
     private string? errorMessage = "File(s) with the name(s): ";
-    private static string? errorMessageEnd = " already exists";
+    private static string? errorMessageEnd = " already exist(s).";
     private bool allMatched;
 
     [Parameter]

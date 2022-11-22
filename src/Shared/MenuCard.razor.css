@@ -10,7 +10,7 @@
     border-radius: 10px;
     align-items: center;
     height: 38px;
-    grid-template-columns: 16% 18% 28% 18% 13% 4% 3%;
+    grid-template-columns: 16% 18% 28% 16% 15% 4% 3%;
 }
 
 .card-textcontent-clinicaltest {

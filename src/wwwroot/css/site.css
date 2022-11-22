@@ -9,7 +9,7 @@
     --secondary-dark-color: #474747;
     --main-text-color: #e2e2e2;
     --green-btn-color: #5c985c;
-    --green-btn-hover-color: #30572A;
+    --green-btn-hover-color: #4a8541;
     --red-btn-color: #BE5959;
     --leftcard-color: var(--experiment-color);
     --rightcard-color: var(--clinicaltest-color);
@@ -19,9 +19,11 @@
     --secondary-text-color: #ffffff;
     --grey: #d5d5d5;
     --light-grey: #f3f3f3;
-    --Dark-grey: #3a3a3a;
-    --red-btn-color: #BE5959;
+    --dark-grey: #3a3a3a;
+    --red-btn-color: #cb3939;
+    --red-btn-hover-color: #b12f2f;
     --main-button-dark-color: #969696;
+    --main-button-dark-hover-color: #7e7e7e;
     --scrollbar-color: #696969;
     --blue-btn-color: #5199eb;
 }
@@ -112,6 +114,9 @@ a,
     align-items: center;
     justify-content: space-evenly;
 }
+.green-button:hover {
+    background-color: var(--green-btn-hover-color);
+}
 
 .red-button {
     padding: 10px 20px;
@@ -123,6 +128,9 @@ a,
     align-items: center;
     justify-content: space-evenly;
 }
+.red-button:hover {
+    background-color: var(--red-btn-hover-color);
+}
 
 .grey-button {
     padding: 10px 20px;
@@ -133,6 +141,9 @@ a,
     border-radius: 10px;
     align-items: center;
     justify-content: space-evenly;
+}
+.grey-button:hover {
+    background-color: var(--main-button-dark-hover-color);
 }
 
 .standard-button {
@@ -158,7 +169,7 @@ a,
 
 .add-element-button {
     padding: 10px 20px;
-    color: var(--Dark-grey);
+    color: var(--dark-grey);
     display: flex;
     background-color: var(--menu-button-color);
     border: none;
@@ -168,8 +179,13 @@ a,
 }
 .add-element-button:hover {
     color: white;
-/*    background-color: var(--experiment-hover-color);*/
-    background-color: var(--primary-dark-color);
+/*    background-color: var(--primary-dark-color);*/
+}
+.add-element-button.experiment:hover{
+    background-color: var(--experiment-color);
+}
+.add-element-button.clinicaltest:hover{
+    background-color: var(--clinicaltest-color);
 }
 .add-element-button i {
     margin-right: 10px;
@@ -214,4 +230,8 @@ a,
     color: var(--primary-dark-color);
     font-size: 12px;
     white-space: nowrap;
+}
+
+.grid-content.ghost > div > div > span, .grid-content.ghost > div > div > i {
+    display: none;
 }

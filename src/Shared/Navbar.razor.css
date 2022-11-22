@@ -23,13 +23,13 @@
     flex: 1;
 }
 #homeButton {
-    margin-left: 10px;
+    margin: 10px 0 0 20px;
     background-color: var(--experiment-color);
     border: none;
     color: var(--main-background-color);
 }
 i {
-    font-size: 20px;
+    font-size: 30px;
 }
 
 #middlePart {

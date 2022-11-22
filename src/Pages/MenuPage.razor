@@ -12,7 +12,7 @@
             Experiments
         </div>
         <div class="toolbar">
-            <button class="add-element-button" @onclick="openNewExperimentModal">
+            <button class="add-element-button experiment" @onclick="openNewExperimentModal">
                 <i class="fa-solid fa-square-plus"></i>
                 Add experiment
             </button>
@@ -29,9 +29,23 @@
                 <div>Created</div>
                 <div>Edited</div>
             </div>
+
             @if (experiments == null)
             {
-                <span>Loading...</span>
+                @*When loading: Display 10 ghost elements*@
+                <div class="all-experiment-cards">
+                    @for (int i = 0; i < 10; i++)
+                    {
+                        <div class="grid-content ghost">
+                            <MenuCard MenuCardType="@Experiment"
+                                    objectDeleteCallback="MenuCardDeleteCallback"
+                                    objectEditCallback="MenuCardEditCallback"
+                                    objectOnclickCallback="MenuCardOnclickCallback"
+                                    obj="@placeholderExp"
+                                    selectedObj="null" />
+                        </div>
+                    }
+                </div>
             }
             else
             {
@@ -61,7 +75,7 @@
             @if (selectedExp != null && showExperimentModal == false)
             {
                 <div class="toolbar">
-                    <button class="add-element-button" @onclick="openNewClinicalTestModal">
+                    <button class="add-element-button clinicaltest" @onclick="openNewClinicalTestModal">
                         <i class="fa-solid fa-square-plus"></i>
                         Add clinical test
                     </button>
@@ -82,7 +96,7 @@
                             <p>
                                 Experiment contains no clinical tests
                             </p>
-                            <button class="add-element-button" @onclick="openNewClinicalTestModal">
+                            <button class="add-element-button clinicaltest" @onclick="openNewClinicalTestModal">
                                 <i class="fa-solid fa-square-plus"></i>
                                 Add clinical test
                             </button>
@@ -117,7 +131,7 @@
                         <br>
                         or
                     </p>
-                    <button class="add-element-button" @onclick="openNewExperimentModal">
+                    <button class="add-element-button experiment" @onclick="openNewExperimentModal">
                         <i class="fa-solid fa-square-plus"></i>
                         Add experiment
                     </button>
@@ -183,6 +197,23 @@
     private bool showCancelConfirmModalDeleteClinicalTest = false;
     private string cancelConfirmModalTitle = "";
     private string cancelConfirmModalBody = "";
+
+    private Experiment placeholderExp = new Experiment(
+        id: "",
+        experimentNumber: "",
+        title: "",
+        author: "",
+        description: "",
+        createdAt: DateTime.Now
+    );
+
+    private ClinicalTest placeholderCt = new ClinicalTest(
+        id: "",
+        title: "",
+        nplicateSize: 3,
+        description: "",
+        createdAt: DateTime.Now
+    );
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -311,11 +342,11 @@
    {
       setCurrentObject(obj);
       if (selectedCT == null && selectedExp != null) {
-         EditorModalTitle = "Edit " + selectedExp.ExperimentNumber;
+         EditorModalTitle = "Edit: " + selectedExp.ExperimentNumber;
          showExperimentModal = true;
       } else if (selectedCT != null)
       {
-         EditorModalTitle = "Edit " + selectedCT.Title;
+         EditorModalTitle = "Edit: " + selectedCT.Title;
          showClinicalTestModal = true;
       }  
    }
@@ -325,12 +356,12 @@
       setCurrentObject(obj);
       if (selectedCT == null && selectedExp != null)
       {
-         cancelConfirmModalTitle = "Delete Experiment: " + selectedExp.ExperimentNumber;
+         cancelConfirmModalTitle = "Delete: " + selectedExp.ExperimentNumber;
          cancelConfirmModalBody = "The experiment and clinical tests that only relate to this experiment will be deleted.";
          showCancelConfirmModalDeleteExperiment = true;
       } else if (selectedCT != null)
       {
-         cancelConfirmModalTitle = "Delete Clinical Test: " + selectedCT.Title;
+         cancelConfirmModalTitle = "Delete: " + selectedCT.Title;
          cancelConfirmModalBody = "The clinical test will be deleted permanently from all associated experiments.";
          showCancelConfirmModalDeleteClinicalTest = true;
       }
