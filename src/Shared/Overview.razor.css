@@ -8,7 +8,7 @@
     width: 100%;
     align-items: center;
     justify-content: center;
-    height: calc(100vh - 100px);
+    height: 100%;
     overflow-y: scroll;
     padding-top: 20px;
 }
@@ -134,14 +134,14 @@
     height: calc(100vh - 175px);
     width: 100%;
     overflow-y: scroll;
-    padding: 0 100px;
+    padding: 0 20px;
 }
 
 /* Plate */
 .plate {
     background-color: white;
     width: 98%;
-    height: calc(100vh - 185px);
+    height: calc(100vh - 250px);
 /*    border: 5px solid var(--primary-dark-color);*/
     border-radius: 20px;
     margin-bottom: 40px;

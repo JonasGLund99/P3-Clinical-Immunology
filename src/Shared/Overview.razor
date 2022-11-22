@@ -44,7 +44,12 @@
             <div class="plates">
                 @for (int i = 0; i <= (ClinicalTest.Slides.Count - 1) / 4; i++)
                 {
-                    <Plate ClinicalTest="@ClinicalTest" PlateIndex=i Slides="ClinicalTest.Slides.GetRange(i * 4, (i * 4) + 4 <= ClinicalTest.Slides.Count ? 4 : ClinicalTest.Slides.Count % 4)"/>
+                    <Plate 
+                        ClinicalTest="@ClinicalTest" 
+                        PlateIndex=i 
+                        Slides="ClinicalTest.Slides.GetRange(i * 4, (i * 4) + 4 <= ClinicalTest.Slides.Count ? 4 : ClinicalTest.Slides.Count % 4)"
+                        updateOverviewState="@updateOverviewState"
+                    />
                 }
             </div>
         } 
@@ -100,6 +105,11 @@
     public void switchMode(string newMode)
     {
         mode = newMode;
+    }
+    private async void updateOverviewState() {
+        System.Console.WriteLine("state updated");
+        await ClinicalTest.SaveToDatabase();
+        StateHasChanged();
     }
 
     //Update chosen table titles
@@ -165,6 +175,7 @@
         }
 
         // Save to database and switch back to the overview
+
         await ClinicalTest.SaveToDatabase();
         switchMode("Overview");
         StateHasChanged();

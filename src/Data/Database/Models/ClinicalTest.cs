@@ -41,11 +41,11 @@ public class ClinicalTest : BaseModel<ClinicalTest>
         {
             if (patientData[i] != null) 
             {
-                slide.Blocks[i] = new Block(patientData[i]);
+                slide.Blocks[i] = new Block(patientData[i], Block.BlockType.Normal);
             } 
             else 
             {
-                slide.Blocks[i] = new Block(new List<string>() { "" });
+                slide.Blocks[i] = new Block(new List<string>() { "" }, Block.BlockType.Empty);
             }
         }
     }
@@ -55,7 +55,78 @@ public class ClinicalTest : BaseModel<ClinicalTest>
         
     }
 
-    public async void CalculateClinicalTestResult()
+    public void InsertBlankBlock(int slideIndex, int blockIndex)
+    {
+        if (Slides.Count == 0) return;
+
+        List<Block> allBlocks = new List<Block>();
+
+        int numPlates = (Slides.Count - 1) / 4 + 1;
+        int numNonEmptyBlocks = 0;
+
+        for (int i = 0; i < numPlates; i++) 
+        {
+            int numSlides = (i * 4) + 4 <= Slides.Count ? 4 : Slides.Count % 4;
+            for (int j = 0; j < 7; j++) 
+            {
+                for (int k = 0; k < numSlides; k++) 
+                {
+                    for (int l = 0; l < 3; l++) 
+                    {
+                        int si = i * 4 + k;
+                        int bi = j * 3 + l;
+                        if (si == slideIndex && bi == blockIndex) {
+                            Block blankBlock = new Block();
+                            blankBlock.Type = Block.BlockType.Blank;
+                            allBlocks.Add(blankBlock);
+                        }
+
+                        allBlocks.Add(Slides[si].Blocks[bi]);
+
+                        if (Slides[si].Blocks[bi].Type != Block.BlockType.Empty) 
+                        {
+                            numNonEmptyBlocks++;
+                        }
+                    }
+                }
+            }
+        }
+
+        int numPlatesAfterInsert = (numNonEmptyBlocks  - 1) / 84 + 1;
+        int totalSlidesAfterInsert = (numNonEmptyBlocks - 1) / 21 + 1;
+
+        if (Slides[Slides.Count - 1].Blocks[20].Type == Block.BlockType.Normal) {
+            AddSlide(
+                slide: new Slide(""),
+                patientData: new List<string>[21]
+            );
+        }
+        System.Console.WriteLine(allBlocks.Count);
+
+        int currentIndex = 0;
+        for (int i = 0; i < numPlatesAfterInsert; i++) {
+            int numSlides = (i * 4) + 4 <= totalSlidesAfterInsert ? 4 : totalSlidesAfterInsert % 4;
+            System.Console.WriteLine(totalSlidesAfterInsert);
+            for (int j = 0; j < 7; j++) 
+            {
+                for (int k = 0; k < numSlides; k++) 
+                {
+                    for (int l = 0; l < 3; l++) 
+                    {
+                        if (currentIndex == allBlocks.Count) continue;
+
+                        int si = i * 4 + k;
+                        int bi = j * 3 + l;
+                        // System.Console.WriteLine($"{currentIndex}\ti: {i}\tj: {j}\tk: {k}\tl: {l}");
+                        Slides[si].Blocks[bi] = allBlocks[currentIndex];
+                        currentIndex++;
+                    }
+                }
+            }
+        }
+    }
+
+    public void CalculateClinicalTestResult()
     {
         int beginningIndex = 0;
         Regex start = new Regex(@"^Block\s*Row\s*Column\s*Name\s*ID", RegexOptions.IgnoreCase);

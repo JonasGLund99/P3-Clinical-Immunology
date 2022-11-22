@@ -16,26 +16,40 @@
         </div>
         @for (int i = 0; i < MaxSlides; i++)
         {
+            int slideIndex = i;
+
             <div class="Slide-@(i+1)">
                 @for (int j = 0; j < BlocksPerSlide; j++)
                 {
-                <div class="block">
+                    int blockIndex = j;
+
+                    <div class="block" @onclick="() => toggleBlockType(slideIndex, blockIndex)">
                     @if (i < numSlides)
                     {
-                        @for (int k = 0; k < NumPatientDataPerBlock; k++)
+                        @if (Slides[i].Blocks[j].Type != Block.BlockType.Blank) {
+                            @for (int k = 0; k < NumPatientDataPerBlock; k++)
+                            {
+                                int index = k;
+                                int patientDataIndex = findTitleIndex(index);
+                                int patientDataCount = Slides[i].Blocks[j].PatientData.Count;
+                                @if (patientDataIndex == -1 || patientDataIndex >= patientDataCount)
+                                {
+                                    <div></div>
+                                }
+                                else
+                                {
+                                    <div>@(Slides[i].Blocks[j].PatientData[patientDataIndex])</div>
+                                }
+                            }
+                        } 
+                        else 
                         {
-                            int index = k;
-                            int patientDataIndex = findTitleIndex(index);
-                            int patientDataCount = Slides[i].Blocks[j].PatientData.Count;
-                            @if (patientDataIndex == -1 || patientDataIndex >= patientDataCount)
-                            {
-                                <div></div>
-                            }
-                            else
-                            {
-                                <div>@(Slides[i].Blocks[j].PatientData[patientDataIndex])</div>
-                            }
+                            System.Console.WriteLine(Slides[i].Blocks[j].Type);
+                            <div></div>
+                            <div>Blank</div>
+                            <div></div>
                         }
+                        
                     }
                     else
                     {
@@ -74,11 +88,14 @@
     [Parameter, EditorRequired]
     public ClinicalTest ClinicalTest { get; set; } = new();
 
-    [Parameter]
+    [Parameter, EditorRequired]
     public int PlateIndex { get; set; }
 
     [Parameter, EditorRequired]
     public List<Slide> Slides { get; set; } = new();
+
+    [Parameter, EditorRequired]
+    public EventCallback updateOverviewState { get; set; }
 
     private int findTitleIndex(int i)
     {
@@ -99,6 +116,12 @@
         await ClinicalTest.SaveToDatabase();
         System.Console.WriteLine("Blur");
     } *@
+
+    private async void toggleBlockType(int slideIndex, int blockIndex) {
+        ClinicalTest.InsertBlankBlock(slideIndex, blockIndex);
+        await updateOverviewState.InvokeAsync();
+    }
+
     private async void saveBarcode() {
         for(int i = 0; i < ClinicalTest.Slides.Count; i++) {
             System.Console.WriteLine(i.ToString() + "  " + ClinicalTest.Slides[i].Barcode);

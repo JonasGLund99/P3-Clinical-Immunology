@@ -155,18 +155,18 @@
 } 
 
 @code {
-   private List<Experiment>? experiments;
-   private List<ClinicalTest>? currentClinicalTests;
-   private bool showExperimentModal = false;
-   private bool showClinicalTestModal = false;
-   private string EditorModalTitle = "";
-   private Experiment? selectedExp;
-   private ClinicalTest? selectedCT;
-   private string? experimentSearchValue { get; set; }
-   private bool showCancelConfirmModalDeleteExperiment = false;
-   private bool showCancelConfirmModalDeleteClinicalTest = false;
-   private string cancelConfirmModalTitle = "";
-   private string cancelConfirmModalBody = "";
+    private List<Experiment>? experiments;
+    private List<ClinicalTest>? currentClinicalTests;
+    private bool showExperimentModal = false;
+    private bool showClinicalTestModal = false;
+    private string EditorModalTitle = "";
+    private Experiment? selectedExp;
+    private ClinicalTest? selectedCT;
+    private string? experimentSearchValue { get; set; }
+    private bool showCancelConfirmModalDeleteExperiment = false;
+    private bool showCancelConfirmModalDeleteClinicalTest = false;
+    private string cancelConfirmModalTitle = "";
+    private string cancelConfirmModalBody = "";
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
