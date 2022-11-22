@@ -10,42 +10,46 @@
     <div class="heatmap-and-scale">
         <div class="all-heatmap-cells">
             <table class ="heatmap-table">
-                <tr class="heatmap-header">
-                    @{int j = 1;}
-                    @foreach (string chosenTableTitle in ClinicalTest.ChosenTableTitles)
+                <thead>
+                    <tr class="heatmap-header">
+                        @{int j = 1;}
+                        @foreach (string chosenTableTitle in ClinicalTest.ChosenTableTitles)
+                        {
+                            if (chosenTableTitle != null) {
+                                <th id="key-number-@j">@chosenTableTitle</th>
+                                j++;
+                            }       
+                        }
+                        @foreach (string analyteName in ClinicalTest.AnalyteNames) 
+                        {
+                            <th>@analyteName</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @{int i = 0;}
+                    @foreach(Slide slide in slides)
                     {
-                        if (chosenTableTitle != null) {
-                            <td id="key-number-@j">@chosenTableTitle</td>
-                            j++;
-                        }       
-                    }
-                    @foreach (string analyteName in ClinicalTest.AnalyteNames) 
-                    {
-                        <td>@analyteName</td>
-                    }
-                </tr>
-                @{int i = 0;}
-                @foreach(Slide slide in slides)
-                {
-                    @foreach(Block block in slide.Blocks) {
-                        <tr>
-                            @{int k = 1;}
-                            @foreach (string chosenTableTitle in ClinicalTest.ChosenTableTitles)
-                            {
-                                if (chosenTableTitle != null)
+                        @foreach(Block block in slide.Blocks) {
+                            <tr>
+                                @{int k = 1;}
+                                @foreach (string chosenTableTitle in ClinicalTest.ChosenTableTitles)
                                 {
-                                    <td class="key-number-@k">@block.PatientData[ClinicalTest.TableTitles.IndexOf(chosenTableTitle)]</td>
-                                    k++;
+                                    if (chosenTableTitle != null)
+                                    {
+                                        <td class="key-number-@k">@block.PatientData[ClinicalTest.TableTitles.IndexOf(chosenTableTitle)]</td>
+                                        k++;
+                                    }
                                 }
-                            }
-                            @foreach (Nplicate nplicate in block.Nplicates) 
-                            {
-                                <td class="flagged-@nplicate.IsFlagged.ToString().ToLower()" style="background-color: @System.Drawing.ColorTranslator.ToHtml(nplicate.HeatmapColour);"></td>
-                            }
-                        </tr>    
+                                @foreach (Nplicate nplicate in block.Nplicates) 
+                                {
+                                    <td class="flagged-@nplicate.IsFlagged.ToString().ToLower()" style="background-color: @System.Drawing.ColorTranslator.ToHtml(nplicate.HeatmapColour);"></td>
+                                }
+                            </tr>    
+                        }
+                        i++;
                     }
-                    i++;
-                }
+                </tbody>
             </table>
         </div>
         <div class="color-scale-indicator">
@@ -66,7 +70,5 @@
     [Parameter]
     public ClinicalTest ClinicalTest { get; set; }
 
-    private string cellTitleHelper(Nplicate nplicate) {
-        return "";
-    }
+
 }

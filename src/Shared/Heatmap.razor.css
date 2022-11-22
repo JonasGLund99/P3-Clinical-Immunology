@@ -4,11 +4,6 @@
     align-items: center;
 }
 
-.heatmap-header td {
-    writing-mode: vertical-lr;
-    transform: rotate(180deg);
-}
-
 #toolbar {
     position: relative;
     display: flex;
@@ -33,12 +28,6 @@
     cursor: pointer;
 }
 
-.all-heatmap-cells {
-    width: 100%;
-    padding-left: 30px;
-    height: inherit;
-}
-
 .heatmap-and-scale {
     display: grid;
     grid-template-columns: 90% 10%;
@@ -48,28 +37,47 @@
     align-items: center;
 }
 
+.all-heatmap-cells {
+    width: 100%;
+    padding-left: 30px;
+    height: inherit;
+}
+
 .color-scale-indicator * {
     font-size: 60px;
 }
 
-.heatmap-table tr {
+table {
+    display: flex;
+    flex-flow: column;
+    height: 100%;
     width: 100%;
 }
 
-.heatmap-table {
+table thead {
+    flex: 0 0 auto;
+    width: calc(100% - 0.9em);
+}
+
+table tbody {
+    flex: 1 1 auto;
+    display: block;
+    overflow-y: scroll;
+}
+
+table tbody tr {
     width: 100%;
 }
 
-.heatmap-data-cells tr {
-    width: 100%;
+table thead,
+table tbody tr {
+    display: table;
+    table-layout: fixed;
 }
 
-.heatmap-data-cells td {
-    text-align: center;
-}
-
-.heatmap-data-cells {
-    width: 100%;
+thead th {
+    writing-mode: vertical-lr;
+    transform: rotate(180deg);
 }
 
 .flagged-true {
