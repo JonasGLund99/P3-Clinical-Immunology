@@ -120,11 +120,11 @@ else
         {
             experiment = await ExperimentManager.GetExperimentById(ExperimentId);
             clinicalTest = await ExperimentManager.GetClinicalTestById(ClinicalTestId);
-            StateHasChanged();
             foreach (string slideId in clinicalTest.SlideIds) {
                 Slide slide = await clinicalTest.GetSlideById(slideId);
                 clinicalTest.AddSlide(slide);
             }
+            StateHasChanged();
         }
     }
 
