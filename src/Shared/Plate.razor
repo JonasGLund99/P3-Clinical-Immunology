@@ -22,39 +22,38 @@
                 @for (int j = 0; j < BlocksPerSlide; j++)
                 {
                     int blockIndex = j;
+                    <div title="Toggle blank block" class="block" @onclick="() => toggleBlockType(slideIndex, blockIndex)" @oncontextmenu="() => showBlockMenu()" @oncontextmenu:preventDefault>
+                        @if (i < numSlides)
+                        {
+                            @if (Slides[i][j].Type != Block.BlockType.Blank) {
+                                @for (int k = 0; k < NumPatientDataPerBlock; k++)
+                                {
+                                    int index = k;
+                                    int patientDataIndex = findTitleIndex(index);
+                                    int patientDataCount = Slides[i][j].PatientData.Count;
 
-                    <div class="block" @onclick="() => toggleBlockType(slideIndex, blockIndex)" @oncontextmenu="() => showBlockMenu()" @oncontextmenu:preventDefault>
-                    @if (i < numSlides)
-                    {
-                        @if (Slides[i][j].Type != Block.BlockType.Blank) {
-                            @for (int k = 0; k < NumPatientDataPerBlock; k++)
+                                    @if (patientDataIndex == -1 || patientDataIndex >= patientDataCount)
+                                    {
+                                        <div></div>
+                                    }
+                                    else
+                                    {
+                                        <div>@(Slides[i][j].PatientData[patientDataIndex])</div>
+                                    }
+                                }
+                            } 
+                            else 
                             {
-                                int index = k;
-                                int patientDataIndex = findTitleIndex(index);
-                                int patientDataCount = Slides[i][j].PatientData.Count;
-
-                                @if (patientDataIndex == -1 || patientDataIndex >= patientDataCount)
-                                {
-                                    <div></div>
-                                }
-                                else
-                                {
-                                    <div>@(Slides[i][j].PatientData[patientDataIndex])</div>
-                                }
+                                <div></div>
+                                <div>Blank</div>
+                                <div></div>
                             }
-                        } 
-                        else 
+                        }
+                        else
                         {
                             <div></div>
-                            <div>Blank</div>
-                            <div></div>
                         }
-                    }
-                    else
-                    {
-                        <div></div>
-                    }
-                </div>
+                    </div>
                 }
             </div>
         }

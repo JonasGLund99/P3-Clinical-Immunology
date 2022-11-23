@@ -9,8 +9,6 @@
     background-color: var(--plate-background-color);
     width: 100%;
     max-width: 1500px;
-    height: calc(100vh - 200px);
-    min-height: 560px;
     border: 5px solid var(--plate-border-color);
     border-radius: 10px;
     margin-bottom: 30px;
@@ -28,10 +26,12 @@
 
 .block {
     border: 1px solid var(--block-border-color);
+    padding: 5px;
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
     font-size: clamp(12px, 0.8vw, 16px);
+    cursor: pointer;
 }
 .block > div {
     height: 33.33%;
@@ -39,9 +39,6 @@
     align-items: center;
     justify-content: center;
 }
-/* .block > div:last-child {
-    margin-bottom: 0;
-} */
 
 .plate-container {
     width: 100%;
