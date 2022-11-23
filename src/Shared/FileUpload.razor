@@ -1,8 +1,6 @@
 ﻿
 @using src.Data
-@{
-    List<Slide> slides = ClinicalTest.GetSlides();
-}
+
 <div class="file-component">
     @if (displayError) {
         <div class="modal fade show" style="display:block" aria-modal="true" role="dialog" @onclick="@ModalCancel">
@@ -38,7 +36,7 @@
                             int j = 1;
                         }
                         @*@foreach (Slide slide in ClinicalTest.GetSlides())*@
-                        @foreach (Slide slide in slides)
+                        @foreach (Slide slide in ClinicalTest.Slides)
                         {
                             <div class="file-row">
                                 <span class="file-indexer">Slide @j</span>
@@ -164,8 +162,8 @@
     {
         if (ClinicalTest == null) return;
 
-        for(int i = 0; i < ClinicalTest.GetSlides().Count; i++) {
-            if (filename.Contains(ClinicalTest.GetSlides()[i].Barcode)){
+        for(int i = 0; i < ClinicalTest.Slides.Count; i++) {
+            if (filename.Contains(ClinicalTest.Slides[i].Barcode)){
                 ClinicalTest.Matches.Add(filename, i);
             }
         }
@@ -175,9 +173,9 @@
 
     public bool AllMatched() 
     {
-        if (ClinicalTest.GetSlides().Count == 0) return false;
+        if (ClinicalTest.Slides.Count == 0) return false;
 
-        for (int i = 0; i < ClinicalTest.GetSlides().Count; i++)
+        for (int i = 0; i < ClinicalTest.Slides.Count; i++)
         {
             if (!ClinicalTest.Matches.ContainsValue(i)) return false;
         }

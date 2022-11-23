@@ -32,17 +32,15 @@ public static class ExperimentManager
         return experiments;
     }
 
-    public static async Task<Experiment> GetExperimentById(string id)
+    public static async Task<Experiment?> GetExperimentById(string id)
     {
         Experiment? e = await DatabaseService.Instance.GetItemById<Experiment>(id, id);
-        if (e == null) throw new NullReferenceException("Experiment is null");
         return e;
     }
 
-    public static async Task<ClinicalTest> GetClinicalTestById(string id)
+    public static async Task<ClinicalTest?> GetClinicalTestById(string id)
     {
         ClinicalTest? ct = await DatabaseService.Instance.GetItemById<ClinicalTest>(id, id);
-        if (ct == null) throw new NullReferenceException("Clinical test is null");
         return ct;
     }
 
