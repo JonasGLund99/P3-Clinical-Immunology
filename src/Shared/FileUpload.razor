@@ -1,7 +1,8 @@
 ﻿@using src.Data
 
-<Loader></Loader>
-
+@if (loading) {
+    <Loader></Loader>
+}
 <div class="file-component">
     @if (displayError) {
         <div class="modal fade show" style="display:block" aria-modal="true" role="dialog" @onclick="@ModalCancel">
@@ -102,6 +103,7 @@
     private string? errorMessage = "File(s) with the name(s): ";
     private static string? errorMessageEnd = " already exists";
     private bool allMatched;
+    private bool loading = false;
     private List<Slide> slides
     {
         get
@@ -205,9 +207,11 @@
 
     public async void StartCalculation() 
     {
+        loading = true;
         if (ClinicalTest == null) return;
         ClinicalTest.CalculateClinicalTestResult();
         await ClinicalTest.SaveToDatabase();
+        loading = false;
         await setActiveButtonCallback.InvokeAsync(4);
     }
 }

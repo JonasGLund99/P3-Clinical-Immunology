@@ -4,7 +4,8 @@ using src.Data;
 
 static class Mocker
 {
-    static int numExperiments = 8;
+    static int numExperiments = 1;
+    static int numSlides = 16;
 
     static List<string> authors = new List<string>() {
         "Rikke Bæk",
@@ -31,12 +32,14 @@ static class Mocker
 
     static Random r = new Random();
 
-    public static async Task Mock(Database database) {
-        for (int i = 0; i < numExperiments; i++) {
+    public static async Task Mock(Database database)
+    {
+        for (int i = 0; i < numExperiments; i++)
+        {
             Experiment e = new Experiment(
                 id: Guid.NewGuid().ToString(),
                 experimentNumber: $"EXP-{i + 1}",
-                title: $"Experiment {i + 1}",
+                title: $"Experiment 16 slides",
                 author: authors[r.Next(0, 5)],
                 description: "Some description",
                 createdAt: DateTime.Now
@@ -45,7 +48,8 @@ static class Mocker
 
             int numCT = r.Next(1, 3);
             // int numCT = 1;
-            for (int j = 0; j < numCT; j++) {
+            for (int j = 0; j < numCT; j++)
+            {
                 ClinicalTest ct = new ClinicalTest(
                     id: Guid.NewGuid().ToString(),
                     title: $"Test {j + 1} in {e.ExperimentNumber}",
@@ -54,18 +58,13 @@ static class Mocker
                     createdAt: DateTime.Now
                 );
                 ct.SlideDataFiles = slideDataFiles;
-                ct.AddSlide(
-                    slide: new Slide(Guid.NewGuid().ToString(),"10000465"),
+                for (int l = 0; l < numSlides; l++)
+                {
+                    ct.AddSlide(
+                    slide: new Slide(Guid.NewGuid().ToString(), (10000465+l).ToString()),
                     patientData: new List<string>[21].Select(l => new List<string>()).ToArray()
                 );
-                ct.AddSlide(
-                    slide: new Slide(Guid.NewGuid().ToString(), "10000466"),
-                    patientData: new List<string>[21].Select(l => new List<string>()).ToArray()
-                );
-                ct.AddSlide(
-                    slide: new Slide(Guid.NewGuid().ToString(),"10000467"),
-                    patientData: new List<string>[21].Select(l => new List<string>()).ToArray()
-                );
+                }
                 ct.TableTitles = new List<string>() { "key1", "key2", "key3", "key4", "key5" };
                 ct.ChosenTableTitles = new string[] { "key2", "key1", "key3" };
                 //ct.CalculateClinicalTestResult();
