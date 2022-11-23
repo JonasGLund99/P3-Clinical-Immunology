@@ -5,9 +5,7 @@
 <div class="overview-component">
     @if (mode == "Overview") {
         <div class="toolbar-container">
-            <div id="info-button" title="Select which information to show in the overview">
-                <i class="fa fa-info-circle"></i>
-            </div>
+            <i id="info-button" title="Select which information to show in the overview" class="fa fa-info-circle"></i>
             <div id="toolbar">
                 <div id="edit-icon" data-title="Edit overview in table view" @onclick='() => { tableViewIcon = "icons/TableView_icon.svg"; switchMode("Table-view"); }'>
                     <img src="@tableViewIcon" @onmouseover='() => tableViewIcon = "icons/TableView_icon_hover.svg"' @onmouseout='() => tableViewIcon = "icons/TableView_icon.svg"'/>
@@ -70,17 +68,17 @@
     }
     else 
     {
-        <div id="toolbar">
-            <div id="buttons">
-                <span id="info-button" data-title="Editing overview - insert clinical data in the table">
-                    <i class="fa fa-info-circle"></i>
-                </span>
-                <span id="clear-button" data-title="Clear entire table" @onclick='() => { tableViewIcon = "icons/ClearTable_icon.svg"; clearTable(); }' @onmouseover='() => clearTableIcon = "icons/ClearTable_icon_hover.svg"' @onmouseout='() => clearTableIcon = "icons/ClearTable_icon.svg"'>
-                    Clear table
-                    <img src="@clearTableIcon"/>
-                </span>
-                <span id="xmark-button" data-title="Continue without saving" @onclick='() => switchMode("Overview")'><i class="fa-solid fa-xmark"></i></span>
-                <span id="check-button" data-title="Continue and save changes" @onclick=savePatientData><i class="fa-solid fa-check"></i></span>
+        <div class="toolbar-container">
+            <i id="info-button" title="Editing overview - insert clinical data in the table" class="fa fa-info-circle"></i>
+            <div id="toolbar">
+                <div id="buttons">
+                    <span id="clear-button" data-title="Clear entire table" @onclick='() => { clearTableIcon = "icons/ClearTable_icon.svg"; clearTable(); }' @onmouseover='() => clearTableIcon = "icons/ClearTable_icon_hover.svg"' @onmouseout='() => clearTableIcon = "icons/ClearTable_icon.svg"'>
+                        Clear table
+                        <img src="@clearTableIcon"/>
+                    </span>
+                    <span id="xmark-button" data-title="Continue without saving" @onclick='() => switchMode("Overview")'><i class="fa-solid fa-xmark"></i></span>
+                    <span id="check-button" data-title="Continue and save changes" @onclick=savePatientData><i class="fa-solid fa-check"></i></span>
+                </div>
             </div>
         </div>
         <div class="table-view-container">

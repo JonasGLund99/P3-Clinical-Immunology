@@ -78,7 +78,7 @@
     outline: none;
 }
 #edit-icon img {
-    height: 25px;
+    height: 35px;
     color: var(--secondary-dark-color);
     cursor: pointer;
 }
@@ -113,11 +113,9 @@
 #buttons i {
     font-size: 25px;
 }
-#info-button i {
+#info-button {
     font-size: 25px;
     color: var(--secondary-dark-color);
-    cursor: pointer;
-/*    margin-right: 20px;*/
 }
 #clear-button {
     background-color: rgb(72, 117, 151);
