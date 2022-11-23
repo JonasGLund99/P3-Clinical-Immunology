@@ -24,7 +24,9 @@
     --red-btn-hover-color: #b12f2f;
     --main-button-dark-color: #969696;
     --main-button-dark-hover-color: #7e7e7e;
-    --scrollbar-color: #696969;
+    --scrollbar-background-color: #f1f1f1;
+    --scrollbar-color: #8e8e8e;
+    --scrollbar-hover-color: var(--primary-dark-color);
     --blue-btn-color: #5199eb;
 }
 
@@ -103,7 +105,6 @@ a,
 
 
 /*custom*/
-
 .green-button {
     padding: 10px 20px;
     color: white;
@@ -116,6 +117,10 @@ a,
 }
 .green-button:hover {
     background-color: var(--green-btn-hover-color);
+}
+.green-button img {
+    height: 25px;
+    margin-left: 10px;
 }
 
 .red-button {
@@ -199,16 +204,16 @@ a,
 }
 
 ::-webkit-scrollbar-track {
-    background: #f1f1f1;
+    background: var(--scrollbar-background-color);
     border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: var(--secondary-dark-color);
+    background: var(--scrollbar-color);
     border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-    background: var(--primary-dark-color);
+    background: var(--scrollbar-hover-color);
 }
 /*Scrollbar - end*/
 
@@ -234,4 +239,30 @@ a,
 
 .grid-content.ghost > div > div > span, .grid-content.ghost > div > div > i {
     display: none;
+}
+
+.grid-content.ghost > div {
+    animation-duration: 1.8s;
+    animation-fill-mode: forwards;
+    animation-iteration-count: infinite;
+    animation-name: placeHolderShimmer;
+    animation-timing-function: linear;
+    background: #f6f7f8;
+    background: linear-gradient(110deg, var(--light-grey) 8%, var(--grey) 38%, var(--light-grey) 54%);
+    background-size: 1000px 200px;
+    position: relative;
+}
+
+@keyframes placeHolderShimmer {
+    0% {
+        background-position: 0px 0
+    }
+
+    100% {
+        background-position: 1000px 0
+    }
+}
+
+.fa-square-plus {
+    -webkit-font-smoothing: antialiased; 
 }

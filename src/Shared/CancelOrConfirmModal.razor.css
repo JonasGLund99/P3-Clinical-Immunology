@@ -16,6 +16,7 @@
     height: 35px;
 }
 .modal-header i {
+    margin-left: auto;
     color: var(--grey);
 }
 .modal-title {

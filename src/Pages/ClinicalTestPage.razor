@@ -5,7 +5,7 @@
 
 @if (experiment != null && clinicalTest != null)
 {
-    <PageTitle>@clinicalTest.Title</PageTitle>
+    <PageTitle>@clinicalTest.Title | Clinical Immunology</PageTitle>
 
     <Navbar ClinicalTestTitle="@clinicalTest.Title"
         ExperimentNumber="@experiment.ExperimentNumber"
@@ -147,7 +147,7 @@ else
     {
         showClinicalTestModal = false;
         await ExperimentManager.SaveClinicalTestWithAssociate(SavedClinicalTest);
-        if (!clinicalTest.ExperimentIds.Contains(SavedClinicalTest.id))
+        if (!clinicalTest.ExperimentIds.Contains(ExperimentId))
         {
             showWarningModal = true;
             StateHasChanged();

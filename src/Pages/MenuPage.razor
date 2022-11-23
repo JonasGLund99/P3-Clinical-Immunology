@@ -16,7 +16,7 @@
                 <i class="fa-solid fa-square-plus"></i>
                 Add experiment
             </button>
-            <div class="searchbar">
+            <div title="Search for experiment" class="searchbar">
                 <i class="fa-solid fa-magnifying-glass"></i>
                 <input type="text" placeholder="Search by experiment number, title, author or date..." @oninput="@searchExperiments">
             </div>
@@ -30,7 +30,7 @@
                 <div>Edited</div>
             </div>
 
-            @if (experiments == null)
+            @if (loadingExp)
             {
                 @*When loading: Display 10 ghost elements*@
                 <div class="all-experiment-cards">
@@ -47,7 +47,7 @@
                     }
                 </div>
             }
-            else
+            else if (experiments != null)
             {
                 <div class="all-experiment-cards">
                     @foreach (Experiment e in experiments)
@@ -62,6 +62,18 @@
                                 selectedObj="@selectedExp" />
                         </div>
                     }
+                </div>
+            }
+            else
+            {
+                <div class="no-clinical-tests">
+                    <p>
+                        No experiments in the database
+                    </p>
+                    <button class="add-element-button experiment" @onclick="openNewExperimentModal">
+                        <i class="fa-solid fa-square-plus"></i>
+                        Add experiment
+                    </button>
                 </div>
             }
         </div>
@@ -79,31 +91,36 @@
                         <i class="fa-solid fa-square-plus"></i>
                         Add clinical test
                     </button>
-                    <div class="ct-searchbar">
+                    <div title="Search for clinical test" class="ct-searchbar">
                         <i class="fa-solid fa-magnifying-glass"></i>
                         <input type="text" placeholder="Search by title or barcode...">
                     </div>
                 </div>
                 <div id="clinical-test-grid">
-                <div class="grid-header-clinicalTest">
-                    <div>Title</div>
-                    <div>Created</div>
-                    <div>Edited</div>
-                </div>
-                @if (currentClinicalTests == null || currentClinicalTests.Count == 0)
-                    {
-                        <div class="no-clinical-tests">
-                            <p>
-                                Experiment contains no clinical tests
-                            </p>
-                            <button class="add-element-button clinicaltest" @onclick="openNewClinicalTestModal">
-                                <i class="fa-solid fa-square-plus"></i>
-                                Add clinical test
-                            </button>
+                    <div class="grid-header-clinicalTest">
+                        <div>Title</div>
+                        <div>Created</div>
+                        <div>Edited</div>
+                    </div>
 
+                    @if (loadingCt)
+                    {
+                        @*When loading: Display 1 ghost elements*@
+                        <div class="all-experiment-cards">
+                            @for (int i = 0; i < 1; i++)
+                            {
+                                <div class="grid-content ghost">
+                                    <MenuCard MenuCardType="@ClinicalTest"
+                                    objectDeleteCallback="MenuCardDeleteCallback"
+                                    objectEditCallback="MenuCardEditCallback"
+                                    objectOnclickCallback="MenuCardOnclickCallback"
+                                    obj="@placeholderCt"
+                                    selectedObj="null" />
+                                </div>
+                            }
                         </div>
                     }
-                    else
+                    else if (currentClinicalTests.Count() != 0)
                     {
                         <div class="all-clinicaltest-cards">
                             @foreach (ClinicalTest ct in currentClinicalTests)
@@ -118,6 +135,19 @@
                                         selectedObj="@selectedCT" />
                                 </div>
                             }
+                        </div> 
+                    }
+                    else
+                    {
+                        <div class="no-clinical-tests">
+                            <p>
+                                Experiment contains no clinical tests
+                            </p>
+                            <button class="add-element-button clinicaltest" @onclick="openNewClinicalTestModal">
+                                <i class="fa-solid fa-square-plus"></i>
+                                Add clinical test
+                            </button>
+
                         </div>
                     }
                 </div>
@@ -165,23 +195,25 @@
 
 @if (showCancelConfirmModalDeleteExperiment)
 {
-   <CancelOrConfirmModal
-      Title="@cancelConfirmModalTitle"
-      Body="@cancelConfirmModalBody"
-      CallbackCancel="@(() => showCancelConfirmModalDeleteExperiment = false)"
-      CallbackConfirm="deleteExperiment"
-   />
+    <CancelOrConfirmModal
+        ModalType="@Experiment"
+        Title="@cancelConfirmModalTitle"
+        Body="@cancelConfirmModalBody"
+        CallbackCancel="@(() => showCancelConfirmModalDeleteExperiment = false)"
+        CallbackConfirm="deleteExperiment"
+    />
 } 
 
 
 @if (showCancelConfirmModalDeleteClinicalTest)
 {
-   <CancelOrConfirmModal
-      Title="@cancelConfirmModalTitle"
-      Body="@cancelConfirmModalBody"
-      CallbackCancel="@(() => showCancelConfirmModalDeleteClinicalTest = false)"
-      CallbackConfirm="@deleteClinicalTest"
-   />
+    <CancelOrConfirmModal
+        ModalType="@ClinicalTest"
+        Title="@cancelConfirmModalTitle"
+        Body="@cancelConfirmModalBody"
+        CallbackCancel="@(() => showCancelConfirmModalDeleteClinicalTest = false)"
+        CallbackConfirm="@deleteClinicalTest"
+    />
 } 
 
 @code {
@@ -197,6 +229,8 @@
     private bool showCancelConfirmModalDeleteClinicalTest = false;
     private string cancelConfirmModalTitle = "";
     private string cancelConfirmModalBody = "";
+    private bool loadingExp = true;
+    private bool loadingCt = true;
 
     private Experiment placeholderExp = new Experiment(
         id: "",
@@ -219,7 +253,9 @@
     {
         if (firstRender)
         {
+            loadingExp = true;
             experiments = await ExperimentManager.QueryExperiments("");
+            loadingExp = false;
             StateHasChanged();
         }
     }
@@ -234,7 +270,9 @@
 
     private async Task showClinicalTests(Experiment exp)
     {
+        loadingCt = true;
         currentClinicalTests = await exp.QueryClinicalTests("");
+        loadingCt = false;
         StateHasChanged();
     }
 
@@ -255,11 +293,11 @@
 
     private async void closeEditorModal<T>(T? obj)
     {
-        selectedExp = null;
         showExperimentModal = false;
         showClinicalTestModal = false;
         if (obj is Experiment)
         {
+            selectedExp = null;
             Experiment exp = (Experiment)(object)obj;
             List<Experiment> expList = await ExperimentManager.QueryExperiments("");
             foreach (Experiment item in expList)

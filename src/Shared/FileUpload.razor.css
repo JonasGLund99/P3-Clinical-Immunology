@@ -1,4 +1,4 @@
-﻿.file-component {
+.file-component {
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -117,4 +117,8 @@ i {
     opacity: 1;
     cursor: default;
     background-color: var(--green-btn-hover-color);
+}
+
+.red-button:hover {
+    background-color: var(--red-btn-color);
 }
