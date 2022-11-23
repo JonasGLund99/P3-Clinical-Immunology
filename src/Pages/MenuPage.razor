@@ -30,7 +30,7 @@
                 <div>Edited</div>
             </div>
 
-            @if (experiments == null)
+            @if (loadingExp)
             {
                 @*When loading: Display 10 ghost elements*@
                 <div class="all-experiment-cards">
@@ -47,7 +47,7 @@
                     }
                 </div>
             }
-            else
+            else if (experiments != null)
             {
                 <div class="all-experiment-cards">
                     @foreach (Experiment e in experiments)
@@ -62,6 +62,18 @@
                                 selectedObj="@selectedExp" />
                         </div>
                     }
+                </div>
+            }
+            else
+            {
+                <div class="no-clinical-tests">
+                    <p>
+                        No experiments in the database
+                    </p>
+                    <button class="add-element-button experiment" @onclick="openNewExperimentModal">
+                        <i class="fa-solid fa-square-plus"></i>
+                        Add experiment
+                    </button>
                 </div>
             }
         </div>
@@ -85,25 +97,30 @@
                     </div>
                 </div>
                 <div id="clinical-test-grid">
-                <div class="grid-header-clinicalTest">
-                    <div>Title</div>
-                    <div>Created</div>
-                    <div>Edited</div>
-                </div>
-                @if (currentClinicalTests == null || currentClinicalTests.Count == 0)
-                    {
-                        <div class="no-clinical-tests">
-                            <p>
-                                Experiment contains no clinical tests
-                            </p>
-                            <button class="add-element-button clinicaltest" @onclick="openNewClinicalTestModal">
-                                <i class="fa-solid fa-square-plus"></i>
-                                Add clinical test
-                            </button>
+                    <div class="grid-header-clinicalTest">
+                        <div>Title</div>
+                        <div>Created</div>
+                        <div>Edited</div>
+                    </div>
 
+                    @if (loadingCt)
+                    {
+                        @*When loading: Display 1 ghost elements*@
+                        <div class="all-experiment-cards">
+                            @for (int i = 0; i < 1; i++)
+                            {
+                                <div class="grid-content ghost">
+                                    <MenuCard MenuCardType="@ClinicalTest"
+                                    objectDeleteCallback="MenuCardDeleteCallback"
+                                    objectEditCallback="MenuCardEditCallback"
+                                    objectOnclickCallback="MenuCardOnclickCallback"
+                                    obj="@placeholderCt"
+                                    selectedObj="null" />
+                                </div>
+                            }
                         </div>
                     }
-                    else
+                    else if (currentClinicalTests.Count() != 0)
                     {
                         <div class="all-clinicaltest-cards">
                             @foreach (ClinicalTest ct in currentClinicalTests)
@@ -118,6 +135,19 @@
                                         selectedObj="@selectedCT" />
                                 </div>
                             }
+                        </div> 
+                    }
+                    else
+                    {
+                        <div class="no-clinical-tests">
+                            <p>
+                                Experiment contains no clinical tests
+                            </p>
+                            <button class="add-element-button clinicaltest" @onclick="openNewClinicalTestModal">
+                                <i class="fa-solid fa-square-plus"></i>
+                                Add clinical test
+                            </button>
+
                         </div>
                     }
                 </div>
@@ -199,6 +229,8 @@
     private bool showCancelConfirmModalDeleteClinicalTest = false;
     private string cancelConfirmModalTitle = "";
     private string cancelConfirmModalBody = "";
+    private bool loadingExp = true;
+    private bool loadingCt = true;
 
     private Experiment placeholderExp = new Experiment(
         id: "",
@@ -221,7 +253,9 @@
     {
         if (firstRender)
         {
+            loadingExp = true;
             experiments = await ExperimentManager.QueryExperiments("");
+            loadingExp = false;
             StateHasChanged();
         }
     }
@@ -236,7 +270,9 @@
 
     private async Task showClinicalTests(Experiment exp)
     {
+        loadingCt = true;
         currentClinicalTests = await exp.QueryClinicalTests("");
+        loadingCt = false;
         StateHasChanged();
     }
 
