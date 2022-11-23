@@ -1,5 +1,5 @@
-﻿
-@using src.Data
+﻿@using src.Data
+@inject IJSRuntime JS
 
 <div class="file-component">
     @if (displayError) {
@@ -100,6 +100,7 @@
     private string? errorMessage = "File(s) with the name(s): ";
     private static string? errorMessageEnd = " already exists";
     private bool allMatched;
+    private bool savingToDatabase = false;
     private List<Slide> slides {
         get
         {
@@ -107,8 +108,11 @@
         }
     }
 
-    [Parameter]
+    [Parameter, EditorRequired]
     public ClinicalTest? ClinicalTest { get; set; } = null;
+
+    [Parameter, EditorRequired]
+    public Experiment? Experiment {  get; set; } = null;
 
     [Parameter]
     public int ActiveButton { get; set; }
@@ -143,17 +147,25 @@
                 displayError = true;
             }
         }
+        ClinicalTest.EditedAt = DateTime.Now;
+        Experiment.EditedAt = DateTime.Now;
         StateHasChanged();
         await ClinicalTest.SaveToDatabase();
+        await Experiment.SaveToDatabase();
     }
 
     public async Task RemoveFile(SlideDataFile slideDataFile) 
     {
+        if(ClinicalTest == null) return;
+
         ClinicalTest.SlideDataFiles.Remove(slideDataFile);
         ClinicalTest.Matches.Remove(slideDataFile.Filename);
 
         allMatched = AllMatched();
+        ClinicalTest.EditedAt = DateTime.Now;
+        Experiment.EditedAt = DateTime.Now;
         await ClinicalTest.SaveToDatabase();
+        await Experiment.SaveToDatabase();
     }
 
     public bool FileExists(string Filename) 
@@ -192,19 +204,22 @@
         return true;
     }
 
-    protected override void OnAfterRender(bool firstrender) {
-        if (firstrender) {
+    protected override async Task OnAfterRenderAsync(bool firstRender) {
+        if (firstRender) {
+            await JS.InvokeVoidAsync("listenForClose");
             allMatched = AllMatched();
             StateHasChanged();
         }
     }
 
-
     public async void StartCalculation() 
     {
         if (ClinicalTest == null) return;
         ClinicalTest.CalculateClinicalTestResult();
+        ClinicalTest.EditedAt = DateTime.Now;
+        Experiment.EditedAt = DateTime.Now;
         await ClinicalTest.SaveToDatabase();
+        await Experiment.SaveToDatabase();
         await setActiveButtonCallback.InvokeAsync(4);
     }
 }

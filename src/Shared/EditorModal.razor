@@ -64,7 +64,11 @@
    public EventCallback<ModalType> CallbackSave {get; set;}
    private async void saveEdits()
    {
-      await CallbackSave.InvokeAsync(ModalObject);
+       if (ModalObject is ClinicalTest)
+       {
+            ((ClinicalTest)(object)ModalObject).EditedAt = DateTime.Now;
+       }
+       await CallbackSave.InvokeAsync(ModalObject);
    }
 
    private async void cancelEdits()

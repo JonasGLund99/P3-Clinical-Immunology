@@ -89,6 +89,9 @@
 @code {
     [Parameter, EditorRequired]
     public ClinicalTest ClinicalTest { get; set; } = new();
+
+    [Parameter, EditorRequired]
+    public Experiment Experiment { get; set; }
    
     private List<Slide> slides { 
         get 
@@ -116,7 +119,10 @@
         if (selectedTableTitle == null) return;
 
         ClinicalTest.ChosenTableTitles[tableTitleNumber] = selectedTableTitle;
+        ClinicalTest.EditedAt = DateTime.Now;
+        Experiment.EditedAt = DateTime.Now;
         await ClinicalTest.SaveToDatabase();
+        await Experiment.SaveToDatabase();
     }
 
     private async void savePatientData() {
@@ -172,7 +178,10 @@
         }
 
         // Save to database and switch back to the overview
+        ClinicalTest.EditedAt = DateTime.Now;
+        Experiment.EditedAt = DateTime.Now;
         await ClinicalTest.SaveToDatabase();
+        await Experiment.SaveToDatabase();
         switchMode("Overview");
         StateHasChanged();
     }

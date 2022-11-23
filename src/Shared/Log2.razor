@@ -6,7 +6,7 @@
     @{int j = 1;}
     @foreach (string chosenTableTitle in ClinicalTest.ChosenTableTitles)
     {
-        if (chosenTableTitle != null) {
+        if (chosenTableTitle != "") {
             <td id="key-number-@j">@chosenTableTitle</td>
             j++;
         }       
@@ -27,7 +27,7 @@
             @{int k = 1;}
             @foreach (string chosenTableTitle in ClinicalTest.ChosenTableTitles)
             {
-                if (chosenTableTitle != null)
+                if (chosenTableTitle != "")
                 {
                     <td class="key-number-@k">@block.PatientData[ClinicalTest.TableTitles.IndexOf(chosenTableTitle)]</td>
                     k++;

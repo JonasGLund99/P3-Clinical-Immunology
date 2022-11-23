@@ -94,6 +94,12 @@
             return cells.slice(0, lastDataIndex + 1).map(row => row.filter((cell, index) => registeredColumns.includes(index)));
         }
 
+        function listenForClose() {
+            window.addEventListener("beforeunload", function (event) {
+                event.returnValue = "Write something clever here...";
+            });
+        }
+
         function clearTable() {
             for (const row of document.querySelectorAll('tr')) {
                 for (const [i, cell] of [...row.querySelectorAll('td')].entries()) {

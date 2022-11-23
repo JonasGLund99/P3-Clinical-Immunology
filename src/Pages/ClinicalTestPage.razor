@@ -17,8 +17,8 @@
 		@switch (activeButton)
 		{
 			case 0: <Details Experiment="@experiment" ClinicalTest="@clinicalTest" editCTCallback="editCT" editExpCallback="editExp"></Details> break;
-			case 1: <Overview ClinicalTest="@clinicalTest"></Overview> break;
-			case 2: <FileUpload ClinicalTest="@clinicalTest" ActiveButton="@activeButton" setActiveButtonCallback="@SetActiveButton"></FileUpload> break;
+			case 1: <Overview Experiment="@experiment" ClinicalTest="@clinicalTest"></Overview> break;
+			case 2: <FileUpload Experiment="@experiment" ClinicalTest="@clinicalTest" ActiveButton="@activeButton" setActiveButtonCallback="@SetActiveButton"></FileUpload> break;
 		    case 3: <ResultTable ClinicalTest="@clinicalTest"></ResultTable> break;
 			case 4: <h1>Heatmap</h1> break;
 		}
@@ -113,6 +113,7 @@ else
         if (experiment == null || clinicalTest == null) return;
         showClinicalTestModal = false;
         showExperimentModal = false;
+        experiment.EditedAt = DateTime.Now;
         await experiment.SaveToDatabase();
         await clinicalTest.SaveToDatabase();
         StateHasChanged();
