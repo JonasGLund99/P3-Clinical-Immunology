@@ -32,7 +32,6 @@ public class ClinicalTest : BaseModel<ClinicalTest>
     public List<SlideDataFile> SlideDataFiles { get; set; } = new List<SlideDataFile>();
     public List<string> TableTitles { get; set; } = new List<string>();
     public string[] ChosenTableTitles { get; set; } = new string[3];
-    public List<string> SlideIds { get; set; } = new List<string>();
     public List<string> ExperimentIds { get; set; } = new List<string>();
     public List<string> NormalBlockIds { get; set; } = new List<string>();
     public List<Slide> Slides { get; set; } = new List<Slide>();
