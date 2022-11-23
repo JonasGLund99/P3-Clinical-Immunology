@@ -67,6 +67,7 @@ table tbody {
 
 table tbody tr {
     width: 100%;
+    height: 1em;
 }
 
 table thead,

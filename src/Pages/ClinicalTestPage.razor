@@ -148,7 +148,7 @@ else
     {
         showClinicalTestModal = false;
         await ExperimentManager.SaveClinicalTestWithAssociate(SavedClinicalTest);
-        if (!clinicalTest.ExperimentIds.Contains(SavedClinicalTest.id))
+        if (!clinicalTest.ExperimentIds.Contains(ExperimentId))
         {
             showWarningModal = true;
             StateHasChanged();
