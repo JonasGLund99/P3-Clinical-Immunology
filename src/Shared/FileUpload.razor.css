@@ -1,4 +1,4 @@
-﻿.file-component {
+.file-component {
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -107,6 +107,16 @@ i {
     margin-top: 20px;
     opacity: 0.6;
     cursor: default;
+}
+
+.calculating-button {
+    width: 250px;
+    height: 45px;
+    font-weight: 600;
+    margin-top: 20px;
+    opacity: 1;
+    cursor: default;
+    background-color: var(--green-btn-hover-color);
 }
 
 .red-button:hover {
