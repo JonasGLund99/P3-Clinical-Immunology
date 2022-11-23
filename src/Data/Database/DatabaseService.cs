@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq.Expressions;
 using Microsoft.Azure.Cosmos;
 namespace src.Data;
 
@@ -29,11 +30,21 @@ public class DatabaseService
         await Database.CreateContainerIfNotExistsAsync("Block", "/PartitionKey");
     }
 
-    public async Task<T> GetItemById<T>(string id, string partitionKey)
+    public async Task<T?> GetItemById<T>(string id, string partitionKey)
     {
         if (Database == null)
             throw new NullReferenceException("Database is null");
 
-        return await Database.GetContainer(typeof(T).Name).ReadItemAsync<T>(id, new PartitionKey(partitionKey));
-    }
+        T? res;
+        try
+        {
+            res = await Database.GetContainer(typeof(T).Name).ReadItemAsync<T>(id, new PartitionKey(partitionKey));
+        }
+        catch
+        {
+      
+            res = default;
+        }
+        return res;
+    } 
 }

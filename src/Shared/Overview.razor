@@ -144,6 +144,7 @@
         if (ClinicalTest == null) throw new NullReferenceException("ClinicalTest object is null");
         
         string[][] tableData = await JS.InvokeAsync<string[][]>("getTableData");
+        
         if (tableData.Length == 0)
         {
             ClinicalTest.IsEmpty = true;

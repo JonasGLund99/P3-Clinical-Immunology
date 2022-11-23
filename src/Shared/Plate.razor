@@ -71,6 +71,7 @@
             <div class="Barcode-@(i+1)">
                 @if (i < numSlides)
                 {
+                    // Check barcode
                     <input type="text" placeholder="Enter barcode..." @bind="@ClinicalTest.Slides[slideIndex].Barcode" @bind:event="onchange" @onblur="() => saveBarcode()">
                 }
             </div>
@@ -126,9 +127,6 @@
     }
 
     private async void saveBarcode() {
-        for(int i = 0; i < ClinicalTest.Slides.Count; i++) {
-            System.Console.WriteLine(i.ToString() + "  " + ClinicalTest.Slides[i].Barcode);
-        }
         await ClinicalTest.SaveToDatabase();
     }
     private string[] headingLetters = { "A", "B", "C", "D", "E", "F", "G", "H" };

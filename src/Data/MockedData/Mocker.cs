@@ -55,10 +55,6 @@ static class Mocker
                     createdAt: DateTime.Now
                 );
                 ct.SlideDataFiles = slideDataFiles;
-
-                //ct.Slides.Add(new Slide("10000465"));
-                //ct.Slides.Add(new Slide("10000466"));
-                //ct.Slides.Add(new Slide("10000467"));
                 
                 ct.Matches = new Dictionary<string, int>()
                 {

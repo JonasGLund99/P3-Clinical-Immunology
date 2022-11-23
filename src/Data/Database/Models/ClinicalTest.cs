@@ -1,9 +1,12 @@
 ﻿using System.Text.RegularExpressions;
+using Microsoft.Azure.Cosmos;
+
 
 namespace src.Data;
 
 public class ClinicalTest : BaseModel<ClinicalTest>
 {
+    private List<Slide> slides { get; set; } = new List<Slide>();
     private int nplicatesInBlock { get; set; }
     private int numOfBlocks { get; } = 21;
     private List<Block>? normalBlocks { get; set; } = null;
@@ -29,6 +32,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
     public List<SlideDataFile> SlideDataFiles { get; set; } = new List<SlideDataFile>();
     public List<string> TableTitles { get; set; } = new List<string>();
     public string[] ChosenTableTitles { get; set; } = new string[3];
+    public List<string> SlideIds { get; set; } = new List<string>();
     public List<string> ExperimentIds { get; set; } = new List<string>();
     public List<string> NormalBlockIds { get; set; } = new List<string>();
     public List<Slide> Slides { get; set; } = new List<Slide>();
@@ -50,7 +54,8 @@ public class ClinicalTest : BaseModel<ClinicalTest>
 
             foreach (string id in NormalBlockIds)
             {
-                Block b = await DatabaseService.Instance.GetItemById<Block>(id, this.PartitionKey);
+                Block? b = await DatabaseService.Instance.GetItemById<Block>(id, this.PartitionKey);
+                if (b == null) throw new NullReferenceException("Block is null");
                 result.Add(b);
             }
             normalBlocks = result;
