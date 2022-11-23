@@ -83,10 +83,10 @@
     </div>
     
     @if (allMatched) {
-        <button @onclick="StartCalculation" class="green-button start-calc-button">
-            Start calculations
-            <i class="fa-sharp fa-solid fa-calculator"></i>
-        </button>
+        <button @onclick="StartCalculation" class="green-button @(loading ? "calculating-button" : "start-calc-button")">
+            @(loading ? "Calculating . . ." : "Start calculations")
+            <i class="fa-sharp fa-solid @(loading ? "fa-gears" : "fa-calculator")"></i>
+            </button>
     }
     else {
         <button class="red-button wait-calc-button">
@@ -102,6 +102,7 @@
     private string? errorMessage = "File(s) with the name(s): ";
     private static string? errorMessageEnd = " already exist(s).";
     private bool allMatched;
+    private bool loading = false;
 
     [Parameter]
     public ClinicalTest? ClinicalTest { get; set; } = null;
@@ -198,9 +199,11 @@
 
     public async void StartCalculation() 
     {
+        loading = true;
         if (ClinicalTest == null) return;
         ClinicalTest.CalculateClinicalTestResult();
         await ClinicalTest.SaveToDatabase();
+        loading = false;
         await setActiveButtonCallback.InvokeAsync(4);
     }
 }
