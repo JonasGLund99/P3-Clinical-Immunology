@@ -4,6 +4,12 @@
     align-items: center;
     height: calc(100vh - 100px);
 }
+.toolbar-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
 .overview-container {
     width: 100%;
     align-items: center;
@@ -30,6 +36,7 @@
     background-color: white;
     border-radius: 10px;
     height: 50px;
+    gap: 20px;
 }
 #toolbar > * {
     display: flex;
@@ -70,8 +77,8 @@
 #key-selectors select:focus {
     outline: none;
 }
-#edit-icon i {
-    font-size: 25px;
+#edit-icon img {
+    height: 25px;
     color: var(--secondary-dark-color);
     cursor: pointer;
 }
@@ -85,6 +92,7 @@
     display: flex;
     justify-content: space-between;
     height: inherit;
+    gap: 20px;
 }
 #buttons > span {
     color: white;
@@ -96,13 +104,11 @@
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    margin-right: 20px;
+    gap: 10px;
 }
-
-#buttons > span:last-child{
-    margin-right: 0;
+#buttons > span img {
+    height: 20px;
 }
-
 
 #buttons i {
     font-size: 25px;
@@ -111,7 +117,7 @@
     font-size: 25px;
     color: var(--secondary-dark-color);
     cursor: pointer;
-    margin-right: 20px;
+/*    margin-right: 20px;*/
 }
 #clear-button {
     background-color: rgb(72, 117, 151);

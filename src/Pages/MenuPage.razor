@@ -16,7 +16,7 @@
                 <i class="fa-solid fa-square-plus"></i>
                 Add experiment
             </button>
-            <div class="searchbar">
+            <div title="Search for experiment" class="searchbar">
                 <i class="fa-solid fa-magnifying-glass"></i>
                 <input type="text" placeholder="Search by experiment number, title, author or date..." @oninput="@searchExperiments">
             </div>
@@ -79,7 +79,7 @@
                         <i class="fa-solid fa-square-plus"></i>
                         Add clinical test
                     </button>
-                    <div class="ct-searchbar">
+                    <div title="Search for clinical test" class="ct-searchbar">
                         <i class="fa-solid fa-magnifying-glass"></i>
                         <input type="text" placeholder="Search by title or barcode...">
                     </div>
@@ -165,23 +165,25 @@
 
 @if (showCancelConfirmModalDeleteExperiment)
 {
-   <CancelOrConfirmModal
-      Title="@cancelConfirmModalTitle"
-      Body="@cancelConfirmModalBody"
-      CallbackCancel="@(() => showCancelConfirmModalDeleteExperiment = false)"
-      CallbackConfirm="deleteExperiment"
-   />
+    <CancelOrConfirmModal
+        ModalType="@Experiment"
+        Title="@cancelConfirmModalTitle"
+        Body="@cancelConfirmModalBody"
+        CallbackCancel="@(() => showCancelConfirmModalDeleteExperiment = false)"
+        CallbackConfirm="deleteExperiment"
+    />
 } 
 
 
 @if (showCancelConfirmModalDeleteClinicalTest)
 {
-   <CancelOrConfirmModal
-      Title="@cancelConfirmModalTitle"
-      Body="@cancelConfirmModalBody"
-      CallbackCancel="@(() => showCancelConfirmModalDeleteClinicalTest = false)"
-      CallbackConfirm="@deleteClinicalTest"
-   />
+    <CancelOrConfirmModal
+        ModalType="@ClinicalTest"
+        Title="@cancelConfirmModalTitle"
+        Body="@cancelConfirmModalBody"
+        CallbackCancel="@(() => showCancelConfirmModalDeleteClinicalTest = false)"
+        CallbackConfirm="@deleteClinicalTest"
+    />
 } 
 
 @code {
@@ -255,11 +257,11 @@
 
     private async void closeEditorModal<T>(T? obj)
     {
-        selectedExp = null;
         showExperimentModal = false;
         showClinicalTestModal = false;
         if (obj is Experiment)
         {
+            selectedExp = null;
             Experiment exp = (Experiment)(object)obj;
             List<Experiment> expList = await ExperimentManager.QueryExperiments("");
             foreach (Experiment item in expList)

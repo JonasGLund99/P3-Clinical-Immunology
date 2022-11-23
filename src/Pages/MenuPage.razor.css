@@ -96,6 +96,7 @@ input:focus {
 }*/
 
 .searchbar i, .ct-searchbar i {
+    color: var(--primary-dark-color);
     margin-left: 20px;
 }
 

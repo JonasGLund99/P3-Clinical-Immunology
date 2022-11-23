@@ -1,4 +1,5 @@
 .modal-content {
+
     display: flex;
     padding: 30px;
     flex-direction: column;
@@ -13,6 +14,7 @@
     display: flex;
     gap: 15px;
     justify-content: flex-start;
+    width: 100%;
     align-items: center;
     padding: 0;
     border: none;
@@ -22,6 +24,7 @@
     height: 35px;
 }
 .modal-header i {
+    margin-left: auto;
     color: var(--grey);
 }
 .modal-title {
