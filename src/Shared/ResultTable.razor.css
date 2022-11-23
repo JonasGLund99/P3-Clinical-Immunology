@@ -2,9 +2,11 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin-left: 15px;
+    margin-right: 15px;
 }
 
-.table-view-container{
+.table-view-container {
     width: 100%;
     align-items: center;
     justify-content: center;
