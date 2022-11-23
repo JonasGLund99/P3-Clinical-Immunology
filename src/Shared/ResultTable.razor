@@ -19,9 +19,7 @@
     @if (displaySpots)
     {
         <SpotModal 
-            ShownNplicate="@selectedNplicate"
-            xCoordinate="@xCoordinate" 
-            yCoordinate="@yCoordinate" 
+            ShownNplicate="@selectedNplicate" 
             ModalCancelCallback="ModalCancel"/>
     }
 
@@ -39,8 +37,6 @@
 @code {
     private string mode = "XYZ";
     private bool displaySpots = false;
-    private string yCoordinate = "";
-    private string xCoordinate = "";
     private Nplicate? selectedNplicate = default;
 
     [Parameter, EditorRequired]
@@ -52,8 +48,6 @@
 
     public void ShowSpots(Tuple<MouseEventArgs, Nplicate> args)
     {
-        xCoordinate = (args.Item1.ClientX - args.Item1.OffsetX - 500/2 + 50).ToString() + "px";
-        yCoordinate = (args.Item1.ClientY - args.Item1.OffsetY - 213).ToString() + "px";
         selectedNplicate = args.Item2;
         displaySpots = true;
     }   
