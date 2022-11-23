@@ -240,7 +240,3 @@ a,
 .grid-content.ghost > div > div > span, .grid-content.ghost > div > div > i {
     display: none;
 }
-
-.fa-square-plus {
-    -webkit-font-smoothing: antialiased; 
-}

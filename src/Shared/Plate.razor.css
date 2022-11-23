@@ -165,14 +165,13 @@
 .Barcode-1, .Barcode-2, .Barcode-3, .Barcode-4 {
     border-left: 1px solid var(--block-border-color);
     border-top: 1px solid var(--block-border-color);
-/*    padding: 5px 5px;*/
+    padding: 8px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     text-align: center;
 }
 .Barcode-1, .Barcode-2, .Barcode-3 {
-/*    padding: 10px;*/
     border-right: 4px solid var(--block-border-color);
 }
 .Barcode-4 {
@@ -181,15 +180,13 @@
 input {
     background-color: var(--light-grey);
     border: 2px solid var(--grey);
-/*    padding: 2px;*/
     width: 100%;
     height: 100%;
-/*    border-radius: 5px;*/
+    border-radius: 5px;
     text-align: center;
 }
 input:focus {
-    outline: none;
-    border-color: var(--clinicaltest-color);
+    outline-color: var(--primary-dark-color);
 }
 .Barcode-1 {
     grid-area: Barcode-1;
