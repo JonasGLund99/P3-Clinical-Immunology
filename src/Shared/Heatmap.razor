@@ -2,11 +2,6 @@
 @using src.Shared
 
 <div class="heatmap-component">
-    <div id="toolbar">
-        <div id="export-icon" title="Export overview">
-            <i class="fa-solid fa-file-export"></i>
-        </div>
-    </div>
     <div class="heatmap-and-scale">
         <div class="all-heatmap-cells">
             <table class ="heatmap-table">
@@ -16,7 +11,7 @@
                         @foreach (string chosenTableTitle in ClinicalTest.ChosenTableTitles)
                         {
                             if (chosenTableTitle != null) {
-                                <th id="key-number-@j">@chosenTableTitle</th>
+                                <th class="key-header" id="key-number-@j">@chosenTableTitle</th>
                                 j++;
                             }       
                         }
@@ -37,7 +32,7 @@
                                 {
                                     if (chosenTableTitle != null)
                                     {
-                                        <td class="key-number-@k">@block.PatientData[ClinicalTest.TableTitles.IndexOf(chosenTableTitle)]</td>
+                                        <td class="key-data key-number-@k">@block.PatientData[ClinicalTest.TableTitles.IndexOf(chosenTableTitle)]</td>
                                         k++;
                                     }
                                 }
@@ -54,27 +49,35 @@
                 </tbody>
             </table>
         </div>
-        <div class="color-scale-container">
-            <div class="color-scale">
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
+        <div class="export-and-color-scale">
+            <div id="export-icon" title="Export overview">
+                <i class="fa-solid fa-file-export"></i>
             </div>
-            <div class="color-scale-index">
-                <p>@Math.Round(ClinicalTest.MaxRI,1)</p>
-                <p>@(Math.Round((ClinicalTest.MinRI + (ClinicalTest.MaxRI - ClinicalTest.MinRI)*0.75),1))</p>
-                <p>@(Math.Round((ClinicalTest.MinRI + (ClinicalTest.MaxRI - ClinicalTest.MinRI)*0.50),1))</p>
-                <p>@(Math.Round((ClinicalTest.MinRI + (ClinicalTest.MaxRI - ClinicalTest.MinRI)*0.25),1))</p>
-                <p>@(Math.Round(ClinicalTest.MinRI,1)) </p>
+            <div class="flag-example">
+                Flag
+            </div>
+            <div class="color-scale-container">
+                <div class="color-scale">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+                <div class="color-scale-index">
+                    <p>@Math.Round(ClinicalTest.MaxRI,1)</p>
+                    <p>@(Math.Round((ClinicalTest.MinRI + (ClinicalTest.MaxRI - ClinicalTest.MinRI)*0.75),1))</p>
+                    <p>@(Math.Round((ClinicalTest.MinRI + (ClinicalTest.MaxRI - ClinicalTest.MinRI)*0.50),1))</p>
+                    <p>@(Math.Round((ClinicalTest.MinRI + (ClinicalTest.MaxRI - ClinicalTest.MinRI)*0.25),1))</p>
+                    <p>@(Math.Round(ClinicalTest.MinRI,1)) </p>
+                </div>
             </div>
         </div>
     </div>
