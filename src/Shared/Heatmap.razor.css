@@ -7,7 +7,7 @@
 }
 
 #export-icon i {
-    font-size: 30px;
+    font-size: 40px;
     color: var(--secondary-dark-color);
     cursor: pointer;
 }

@@ -17,7 +17,7 @@
                         }
                         @foreach (string analyteName in ClinicalTest.AnalyteNames) 
                         {
-                            <th>@analyteName</th>
+                            <th title="@analyteName">@analyteName</th>
                         }
                     </tr>
                 </thead>
@@ -38,7 +38,8 @@
                                 }
                                 @foreach (Nplicate nplicate in block.Nplicates) 
                                 {
-                                    <td class="flagged-@nplicate.IsFlagged.ToString().ToLower() selected-@((nplicate == clickedNplicate).ToString().ToLower() )" 
+                                    <td title="@nplicateTitleHelper(nplicate)"
+                                        class="flagged-@nplicate.IsFlagged.ToString().ToLower() selected-@((nplicate == clickedNplicate).ToString().ToLower() )" 
                                         style="background-color: @System.Drawing.ColorTranslator.ToHtml(nplicate.HeatmapColour);"
                                         @onclick="() => nplicateClicked(nplicate)"></td>
                                 }
@@ -50,7 +51,7 @@
             </table>
         </div>
         <div class="export-and-color-scale">
-            <div id="export-icon" title="Export overview">
+            <div id="export-icon" title="Export heatmap">
                 <i class="fa-solid fa-file-export"></i>
             </div>
             <div class="flag-example">
@@ -116,5 +117,10 @@
         showSpotModal = false;
         clickedNplicate = null;
         StateHasChanged();
+    }
+
+    private string nplicateTitleHelper(Nplicate n) 
+    {
+        return "RI: " + Math.Round(n.RI,3) + "\nXYZ: " + Math.Round(n.XYZ,3) + "\nMean intensity: " + Math.Round(n.Mean,3) + "\nAnalyte: " + n.AnalyteType;
     }
 }
