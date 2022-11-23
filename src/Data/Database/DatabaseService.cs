@@ -23,17 +23,17 @@ public class DatabaseService
     
     public async Task SetupDatabase()
     {
-        Database = await client.CreateDatabaseIfNotExistsAsync("ClinicalImmunology", 1000);
-        await Database.CreateContainerIfNotExistsAsync("Experiment", "/id");
-        await Database.CreateContainerIfNotExistsAsync("ClinicalTest", "/id");
-        await Database.CreateContainerIfNotExistsAsync("Block", "/id");
+        Database = await client.CreateDatabaseIfNotExistsAsync("ClinicalImmunology2", 500);
+        await Database.CreateContainerIfNotExistsAsync("Experiment", "/PartitionKey");
+        await Database.CreateContainerIfNotExistsAsync("ClinicalTest", "/PartitionKey");
+        await Database.CreateContainerIfNotExistsAsync("Block", "/PartitionKey");
     }
 
-    public async Task<T> GetItemById<T>(string id)
+    public async Task<T> GetItemById<T>(string id, string partitionKey)
     {
         if (Database == null)
             throw new NullReferenceException("Database is null");
 
-        return await Database.GetContainer(typeof(T).Name).ReadItemAsync<T>(id, new PartitionKey(id));
-    } 
+        return await Database.GetContainer(typeof(T).Name).ReadItemAsync<T>(id, new PartitionKey(partitionKey));
+    }
 }

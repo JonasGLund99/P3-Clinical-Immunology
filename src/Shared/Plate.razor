@@ -16,14 +16,14 @@
         </div>
         @for (int i = 0; i < MaxSlides; i++)
         {
-            int slideIndex = i;
+            int slideIndex = PlateIndex * 4 + i;
 
             <div class="Slide-@(i+1)">
                 @for (int j = 0; j < BlocksPerSlide; j++)
                 {
                     int blockIndex = j;
 
-                    <div class="block" @onclick="() => toggleBlockType(slideIndex, blockIndex)">
+                    <div class="block" @onclick="() => toggleBlockType(slideIndex, blockIndex)" @oncontextmenu="() => showBlockMenu()" @oncontextmenu:preventDefault>
                     @if (i < numSlides)
                     {
                         @if (Slides[i][j].Type != Block.BlockType.Blank) {
@@ -45,12 +45,10 @@
                         } 
                         else 
                         {
-                            System.Console.WriteLine(Slides[i][j].Type);
                             <div></div>
                             <div>Blank</div>
                             <div></div>
                         }
-                        
                     }
                     else
                     {
@@ -73,7 +71,7 @@
             <div class="Barcode-@(i+1)">
                 @if (i < numSlides)
                 {
-                    <input type="text" placeholder="Enter barcode..." @bind="@(ClinicalTest.Slides[slideIndex].Barcode)" @bind:event="onchange" @onblur="() => saveBarcode()">
+                    <input type="text" placeholder="Enter barcode..." @bind="@ClinicalTest.Slides[slideIndex].Barcode" @bind:event="onchange" @onblur="() => saveBarcode()">
                 }
             </div>
         }
@@ -107,27 +105,21 @@
         return ClinicalTest.TableTitles.IndexOf(title);
     }
 
-    //Update barcode for a slide
-    @* async void enterBarcode(FocusEventArgs e, int slideIndex)
+    private void showBlockMenu() 
     {
-        string? enteredBarcode = e.Value?.ToString();
-        if (enteredBarcode == null) return;
-
-        ClinicalTest.Slides[slideIndex].Barcode = enteredBarcode;
-        await ClinicalTest.SaveToDatabase();
-        System.Console.WriteLine("Blur");
-    } *@
+        System.Console.WriteLine("test");
+    }
 
     private async void toggleBlockType(int slideIndex, int blockIndex) {
-        BlankBlock? blankBlock = ClinicalTest.Slides[slideIndex].BlankBlocks.Find(b => b.BlockIndex == blockIndex);
+        bool blankBlockExists = ClinicalTest.Slides[slideIndex].BlankBlockIndicies.Contains(blockIndex);
 
-        if (blankBlock == null)
+        if (!blankBlockExists)
         {
-            ClinicalTest.Slides[slideIndex].BlankBlocks.Add(new BlankBlock(slideIndex, blockIndex));
+            ClinicalTest.Slides[slideIndex].BlankBlockIndicies.Add(blockIndex);
         }
         else
         {
-            ClinicalTest.Slides[slideIndex].BlankBlocks.Remove((BlankBlock)blankBlock);
+            ClinicalTest.Slides[slideIndex].BlankBlockIndicies.RemoveAll(b => b == blockIndex);
         }
 
         await updateOverviewState.InvokeAsync();

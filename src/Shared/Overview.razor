@@ -39,7 +39,7 @@
             </div>
         </div>
         
-        @if (overview.Count != 0)
+        @if (!ClinicalTest.IsEmpty && overview.Count > 0 && overviewLoaded)
         {
             <div class="plates">
                 @for (int i = 0; i < overview.Count; i++)
@@ -52,7 +52,11 @@
                     />
                 }
             </div>
-        } 
+        }
+        else if (!ClinicalTest.IsEmpty)
+        {
+            <div>Loading...</div>
+        }
         else
         {
             <div class="plate">
@@ -101,16 +105,16 @@
     private const int BlocksInPlate = 84;
 
     private List<List<Block[]>> overview = new List<List<Block[]>>();
+    private bool overviewLoaded = false;
 
     //Switch viewmode (Overview or Table-view)
     public string mode { get; set; } = "Overview";
 
-    protected override async Task OnAfterRenderAsync(bool firstRender) 
+    protected override void OnAfterRender(bool firstRender) 
     {
         if (firstRender)
         {
-            overview = await ClinicalTest.GenerateOverview();
-            StateHasChanged();
+            updateOverviewState();
         }
     }
 
@@ -119,9 +123,9 @@
         mode = newMode;
     }
     private async void updateOverviewState() {
-        System.Console.WriteLine("state updated");
-        overview = await ClinicalTest.GenerateOverview();
         await ClinicalTest.SaveToDatabase();
+        overview = await ClinicalTest.GenerateOverview();
+        overviewLoaded = true;
         StateHasChanged();
     }
 
@@ -140,6 +144,14 @@
         if (ClinicalTest == null) throw new NullReferenceException("ClinicalTest object is null");
         
         string[][] tableData = await JS.InvokeAsync<string[][]>("getTableData");
+        if (tableData.Length == 0)
+        {
+            ClinicalTest.IsEmpty = true;
+        }
+        else
+        {
+            ClinicalTest.IsEmpty = false;
+        }
 
         List<Block> blockList = new List<Block>();
 
@@ -159,73 +171,16 @@
 
         foreach (string[] block in tableData) 
         {
-            blockList.Add(new Block(Guid.NewGuid().ToString(), block.ToList(), Block.BlockType.Normal, 0, 0));
+            blockList.Add(new Block(Guid.NewGuid().ToString(), block.ToList(), Block.BlockType.Normal, 0, 0, ClinicalTest.id));
         }
         ClinicalTest.SetNormalBlocks(blockList);
 
-        await ClinicalTest.SaveToDatabase(true);
+        overviewLoaded = false;
         switchMode("Overview");
         StateHasChanged();
+        await ClinicalTest.SaveToDatabase(true);
+        updateOverviewState();
     }
-
-    //private async void savePatientData() {
-    //    if (ClinicalTest == null) throw new NullReferenceException("ClinicalTest object is null");
-
-    //    // Remove existing slides
-    //    // ClinicalTest.Slides = new List<Slide>();
-    //    ClinicalTest.Slides.Clear();
-
-    //    // Get table data from DOM
-    //    string[][] tableData = await JS.InvokeAsync<string[][]>("getTableData");
-
-    //    // Create list of table titles
-    //    List<string> tableTitles;
-    //    if (tableData.Length > 0 && tableData[0].Length > 0) {
-    //        tableTitles = tableData[0].ToList();
-    //    } else {
-    //        tableTitles = new List<string>();
-    //    }
-    //    ClinicalTest.TableTitles = tableTitles;
-
-    //    // Remove first line from table data
-    //    tableData = tableData.Skip(1).ToArray();
-
-    //    // Add slides to the clinical test
-    //    var numPlatesTotal = tableData.Length / BlocksInPlate + (tableData.Length % BlocksInPlate == 0 ? 0 : 1);
-    //    var numSlidesTotal = tableData.Length / BlocksInSlide + (tableData.Length % BlocksInSlide == 0 ? 0 : 1);
-
-    //    // Plates loop
-    //    for (int i = 0; i < numPlatesTotal; i++) {
-    //        int numSlides = (i * 4) + 4 <= numSlidesTotal ? 4 : numSlidesTotal % 4;
-    //        List<string>[][] plate = new string[numSlides][][].Select(blocks => new List<string>[BlocksInSlide]).ToArray();
-
-    //        // Slides loop
-    //        for (int j = 0; j < numSlides; j++) {
-    //            int numBlocks = (i * BlocksInPlate + j * BlocksInSlide) + BlocksInSlide <= tableData.Length ? BlocksInSlide : tableData.Length % BlocksInSlide;
-
-    //            // Blocks loop
-    //            for (int k = 0; k < numBlocks; k++) {
-    //                int index = i * 84 + j * 21 + k;
-    //                int slideIndex = index % 84 / 3 % numSlides;
-    //                int blockIndex = (index % 3) + (index % 84 / (numSlides * 3) * 3);
-    //                plate[slideIndex][blockIndex] = tableData[index].ToList();
-    //            }
-    //        }
-
-    //        for (int j = 0; j < numSlides; j++) {
-    //            ClinicalTest.AddSlide(
-    //                slide: new Slide(""),
-    //                patientData: plate[j]
-    //            );
-    //        }
-    //    }
-
-    //    // Save to database and switch back to the overview
-
-    //    await ClinicalTest.SaveToDatabase();
-    //    switchMode("Overview");
-    //    StateHasChanged();
-    //}
 
     private async void clearTable() {
         await JS.InvokeVoidAsync("clearTable");

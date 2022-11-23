@@ -34,13 +34,13 @@ public static class ExperimentManager
 
     public static async Task<Experiment> GetExperimentById(string id)
     {
-        Experiment e = await DatabaseService.Instance.GetItemById<Experiment>(id);
+        Experiment e = await DatabaseService.Instance.GetItemById<Experiment>(id, id);
         return e;
     }
 
     public static async Task<ClinicalTest> GetClinicalTestById(string id)
     {
-        ClinicalTest ct = await DatabaseService.Instance.GetItemById<ClinicalTest>(id);
+        ClinicalTest ct = await DatabaseService.Instance.GetItemById<ClinicalTest>(id, id);
         return ct;
     }
 

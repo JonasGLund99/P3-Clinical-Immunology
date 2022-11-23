@@ -6,17 +6,23 @@ public class ClinicalTest : BaseModel<ClinicalTest>
 {
     private int nplicatesInBlock { get; set; }
     private int numOfBlocks { get; } = 21;
-    private List<Block> normalBlocks { get; set; } = new List<Block>();
+    private List<Block>? normalBlocks { get; set; } = null;
 
     public ClinicalTest(string id, string title, int nplicateSize, string description, DateTime createdAt) : base(id)
     {
+        PartitionKey = id;
         Title = title;
         NplicateSize = nplicateSize;
         Description = description;
         CreatedAt = createdAt;
     }
-    public ClinicalTest(string id) : base(id) { }
+    public ClinicalTest(string id) : base(id) 
+    {
+        PartitionKey = id;
+    }
     public ClinicalTest() : base() { }
+
+    public override string PartitionKey { get; set; } = "";
 
     //Dictionary conisting of a filename and its matching slide
     public Dictionary<string, int> Matches = new Dictionary<string, int>();
@@ -34,16 +40,17 @@ public class ClinicalTest : BaseModel<ClinicalTest>
     public double MinRI { get; set; } = 0;
     public DateTime? CreatedAt { get; set; } = DateTime.Now;
     public DateTime EditedAt { get; set; } = DateTime.Now;
+    public bool IsEmpty { get; set; } = true;
 
     public async Task<List<Block>> GetNormalBlocks()
     {
-        if (normalBlocks.Count == 0)
+        if (normalBlocks == null)
         {
             List<Block> result = new List<Block>();
 
             foreach (string id in NormalBlockIds)
             {
-                Block b = await DatabaseService.Instance.GetItemById<Block>(id);
+                Block b = await DatabaseService.Instance.GetItemById<Block>(id, this.PartitionKey);
                 result.Add(b);
             }
             normalBlocks = result;
@@ -59,28 +66,56 @@ public class ClinicalTest : BaseModel<ClinicalTest>
     {
         if (saveBlocks)
         {
-            foreach (Block block in normalBlocks) 
+            List<Block> normBlocks = await GetNormalBlocks();
+            NormalBlockIds.Clear();
+            foreach (Block block in normBlocks) 
             {
                 await block.SaveToDatabase();
+                NormalBlockIds.Add(block.id);
             }
         }
 
         await base.SaveToDatabase();
     }
 
+    public override async Task RemoveFromDatabase() 
+    {
+        List<Block> normBlocks = await GetNormalBlocks();
+        foreach (Block block in normBlocks) 
+        {
+            await block.RemoveFromDatabase();
+        }
+        await base.RemoveFromDatabase();
+    }
+
     public async Task<List<List<Block[]>>> GenerateOverview() 
     {
-        int numBlankBlocks = Slides.Select(s => s.BlankBlocks.Count).Sum();
-        int totalBlocks = (await GetNormalBlocks()).Count + numBlankBlocks;
+        List<Block> normBlocks = await GetNormalBlocks();
+        int numBlankBlocks = Slides.Select(s => s.BlankBlockIndicies.Count).Sum();
+        int totalBlocks = normBlocks.Count + numBlankBlocks;
         int numPlates = (totalBlocks - 1) / 84 + 1;
         int totalSlides = (totalBlocks - 1) / 21 + 1;
-        int totalIndex = 0;
+        int normalBlockIndex = 0;
 
         if (totalBlocks == 0) return new List<List<Block[]>>();
 
         List<List<Block[]>> overview = new List<List<Block[]>>();
 
-        Slides.Clear();
+        if (totalSlides > Slides.Count)
+        {
+            while (totalSlides > Slides.Count)
+            {
+                Slides.Add(new Slide());
+            }
+        } 
+        else if (Slides.Count > totalSlides)
+        {
+            while(Slides.Count > totalSlides)
+            {
+                Slides.RemoveAt(Slides.Count - 1);
+            }
+        }
+        
 
         for (int i = 0; i < numPlates; i++)
         {
@@ -90,7 +125,6 @@ public class ClinicalTest : BaseModel<ClinicalTest>
 
             for (int j = 0; j < numSlides; j++) 
             {
-                Slides.Add(new Slide());
                 overview[i].Add(new Block[21]);
             }
             for (int j = 0; j < 7; j++)
@@ -101,23 +135,23 @@ public class ClinicalTest : BaseModel<ClinicalTest>
                     {
                         int slideIndex = k;
                         int blockIndex = j * 3 + l;
-                        if (totalIndex >= totalBlocks)
+                        if (Slides[i * 4 + k].BlankBlockIndicies.Contains(blockIndex))
                         {
-                            Block emptyBlock = new Block("Will not be saved", new List<string>(), Block.BlockType.Empty, i, slideIndex);
-                            overview[i][slideIndex][blockIndex] = emptyBlock;
-                        }
-                        else if (Slides[i * 4 + k].BlankBlocks.Exists(b => b.SlideIndex == slideIndex && b.BlockIndex == blockIndex))
-                        {
-                            Block blankBlock = new Block("Will not be saved", new List<string>(), Block.BlockType.Blank, i, slideIndex);
+                            Block blankBlock = new Block("Will not be saved", new List<string>(), Block.BlockType.Blank, i, slideIndex, this.id);
                             overview[i][slideIndex][blockIndex] = blankBlock;
                         }
-                        else
+                        else if (normalBlockIndex < normBlocks.Count)
                         {
-                            Block normalBlock = new Block(Guid.NewGuid().ToString(), new List<string>(), Block.BlockType.Normal, i, slideIndex);
+                            Block normalBlock = normBlocks[normalBlockIndex];
                             NormalBlockIds.Append(normalBlock.id);
                             overview[i][slideIndex][blockIndex] = normalBlock;
+                            normalBlockIndex++; 
                         }
-                        totalIndex++;
+                        else 
+                        {
+                            Block emptyBlock = new Block("Will not be saved", new List<string>(), Block.BlockType.Empty, i, slideIndex, this.id);
+                            overview[i][slideIndex][blockIndex] = emptyBlock;
+                        }
                     }
                 }
             }
@@ -125,101 +159,11 @@ public class ClinicalTest : BaseModel<ClinicalTest>
         await SaveToDatabase();
         return overview;
     }
-    
-    //public void AddSlide(Slide slide, List<string>[] patientData)
-    //{
-    //    Slides.Add(slide);
-    //    for (int i = 0; i < numOfBlocks; i++)
-    //    {
-    //        if (patientData[i] != null)
-    //        {
-    //            slide.Blocks[i] = new Block(patientData[i], Block.BlockType.Normal);
-    //        }
-    //        else
-    //        {
-    //            slide.Blocks[i] = new Block(new List<string>() { "" }, Block.BlockType.Empty);
-    //        }
-    //    }
-    //}
 
     public void ExportClinicalTest(string exportType)
     {
 
     }
-
-    //public void InsertBlankBlock(int slideIndex, int blockIndex)
-    //{
-    //    if (Slides.Count == 0) return;
-
-    //    List<Block> allBlocks = new List<Block>();
-
-    //    int numPlates = (Slides.Count - 1) / 4 + 1;
-    //    int numNonEmptyBlocks = 0;
-
-    //    for (int i = 0; i < numPlates; i++)
-    //    {
-    //        int numSlides = (i * 4) + 4 <= Slides.Count ? 4 : Slides.Count % 4;
-    //        for (int j = 0; j < 7; j++)
-    //        {
-    //            for (int k = 0; k < numSlides; k++)
-    //            {
-    //                for (int l = 0; l < 3; l++)
-    //                {
-    //                    int si = i * 4 + k;
-    //                    int bi = j * 3 + l;
-    //                    if (si == slideIndex && bi == blockIndex)
-    //                    {
-    //                        Block blankBlock = new Block();
-    //                        blankBlock.Type = Block.BlockType.Blank;
-    //                        allBlocks.Add(blankBlock);
-    //                    }
-
-    //                    allBlocks.Add(Slides[si].Blocks[bi]);
-
-    //                    if (Slides[si].Blocks[bi].Type != Block.BlockType.Empty)
-    //                    {
-    //                        numNonEmptyBlocks++;
-    //                    }
-    //                }
-    //            }
-    //        }
-    //    }
-
-    //    int numPlatesAfterInsert = (numNonEmptyBlocks - 1) / 84 + 1;
-    //    int totalSlidesAfterInsert = (numNonEmptyBlocks - 1) / 21 + 1;
-
-    //    if (Slides[Slides.Count - 1].Blocks[20].Type == Block.BlockType.Normal)
-    //    {
-    //        AddSlide(
-    //            slide: new Slide(""),
-    //            patientData: new List<string>[21]
-    //        );
-    //    }
-    //    System.Console.WriteLine(allBlocks.Count);
-
-    //    int currentIndex = 0;
-    //    for (int i = 0; i < numPlatesAfterInsert; i++)
-    //    {
-    //        int numSlides = (i * 4) + 4 <= totalSlidesAfterInsert ? 4 : totalSlidesAfterInsert % 4;
-    //        System.Console.WriteLine(totalSlidesAfterInsert);
-    //        for (int j = 0; j < 7; j++)
-    //        {
-    //            for (int k = 0; k < numSlides; k++)
-    //            {
-    //                for (int l = 0; l < 3; l++)
-    //                {
-    //                    if (currentIndex == allBlocks.Count) continue;
-
-    //                    int si = i * 4 + k;
-    //                    int bi = j * 3 + l;
-    //                    // System.Console.WriteLine($"{currentIndex}\ti: {i}\tj: {j}\tk: {k}\tl: {l}");
-    //                    Slides[si].Blocks[bi] = allBlocks[currentIndex];
-    //                    currentIndex++;
-    //                }
-    //            }
-    //        }
-    //    }
-    //}
 
     //public void CalculateClinicalTestResult()
     //{
