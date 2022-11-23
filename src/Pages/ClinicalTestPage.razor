@@ -2,6 +2,7 @@
 @using src.Data
 @using src.Shared
 @inject NavigationManager NavManager
+@inject IJSRuntime JS
 
 @if (experiment != null && clinicalTest != null)
 {
@@ -18,7 +19,7 @@
 		{
 			case 0: <Details Experiment="@experiment" ClinicalTest="@clinicalTest" editCTCallback="editCT" editExpCallback="editExp"></Details> break;
 			case 1: <Overview Experiment="@experiment" ClinicalTest="@clinicalTest"></Overview> break;
-			case 2: <FileUpload Experiment="@experiment" ClinicalTest="@clinicalTest" ActiveButton="@activeButton" setActiveButtonCallback="@SetActiveButton"></FileUpload> break;
+			case 2: <FileUpload Experiment="@experiment" ClinicalTest="@clinicalTest" ActiveButton="@activeButton" setActiveButtonCallback="@SetActiveButton" StopReloadCallback="@stopReload"></FileUpload> break;
 		    case 3: <ResultTable ClinicalTest="@clinicalTest"></ResultTable> break;
 			case 4: <h1>Heatmap</h1> break;
 		}
@@ -135,8 +136,21 @@ else
 
     private int activeButton { get; set; } = 0;
 
-	private void SetActiveButton(int buttonId)
-	{
-		activeButton = buttonId;
-	}
+    private void SetActiveButton(int buttonId)
+    {
+        activeButton = buttonId;
+    }
+    private async void stopReload() 
+    {
+        await JS.InvokeVoidAsync("addBeforeUnload");
+
+        clinicalTest.SaveToDatabase().ContinueWith((task) =>
+        {
+            experiment.SaveToDatabase().ContinueWith(async (secondTask) =>
+            {
+                await JS.InvokeVoidAsync("removeBeforeUnload");
+            });
+        });
+
+    }
 }

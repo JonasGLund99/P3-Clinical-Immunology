@@ -1,5 +1,4 @@
 ﻿@using src.Data
-@inject IJSRuntime JS
 
 <div class="file-component">
     @if (displayError) {
@@ -100,7 +99,6 @@
     private string? errorMessage = "File(s) with the name(s): ";
     private static string? errorMessageEnd = " already exists";
     private bool allMatched;
-    private bool savingToDatabase = false;
     private List<Slide> slides {
         get
         {
@@ -116,6 +114,9 @@
 
     [Parameter]
     public int ActiveButton { get; set; }
+
+    [Parameter]
+    public EventCallback StopReloadCallback { get; set; }
 
     [Parameter]
     public EventCallback<int> setActiveButtonCallback { get; set; }
@@ -204,9 +205,8 @@
         return true;
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender) {
+    protected override void OnAfterRender(bool firstRender) {
         if (firstRender) {
-            await JS.InvokeVoidAsync("listenForClose");
             allMatched = AllMatched();
             StateHasChanged();
         }
@@ -215,11 +215,11 @@
     public async void StartCalculation() 
     {
         if (ClinicalTest == null) return;
+
         ClinicalTest.CalculateClinicalTestResult();
         ClinicalTest.EditedAt = DateTime.Now;
         Experiment.EditedAt = DateTime.Now;
-        await ClinicalTest.SaveToDatabase();
-        await Experiment.SaveToDatabase();
+        await StopReloadCallback.InvokeAsync();
         await setActiveButtonCallback.InvokeAsync(4);
     }
 }
