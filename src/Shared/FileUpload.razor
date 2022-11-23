@@ -1,8 +1,6 @@
 ﻿
 @using src.Data
-@{
-    List<Slide> slides = ClinicalTest.GetSlides();
-}
+
 <div class="file-component">
     @if (displayError) {
         <div class="modal fade show" style="display:block" aria-modal="true" role="dialog" @onclick="@ModalCancel">
@@ -165,8 +163,8 @@
     {
         if (ClinicalTest == null) return;
 
-        for(int i = 0; i < ClinicalTest.GetSlides().Count; i++) {
-            if (filename.Contains(ClinicalTest.GetSlides()[i].Barcode)){
+        for(int i = 0; i < ClinicalTest.Slides.Count; i++) {
+            if (filename.Contains(ClinicalTest.Slides[i].Barcode)){
                 ClinicalTest.Matches.Add(filename, i);
             }
         }
@@ -176,9 +174,9 @@
 
     public bool AllMatched() 
     {
-        if (ClinicalTest.GetSlides().Count == 0) return false;
+        if (ClinicalTest.Slides.Count == 0) return false;
 
-        for (int i = 0; i < ClinicalTest.GetSlides().Count; i++)
+        for (int i = 0; i < ClinicalTest.Slides.Count; i++)
         {
             if (!ClinicalTest.Matches.ContainsValue(i)) return false;
         }
@@ -201,7 +199,7 @@
     {
         loading = true;
         if (ClinicalTest == null) return;
-        ClinicalTest.CalculateClinicalTestResult();
+        //ClinicalTest.CalculateClinicalTestResult();
         await ClinicalTest.SaveToDatabase();
         loading = false;
         await setActiveButtonCallback.InvokeAsync(4);
