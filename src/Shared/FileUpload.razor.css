@@ -108,3 +108,7 @@ i {
     opacity: 0.6;
     cursor: default;
 }
+
+.red-button:hover {
+    background-color: var(--red-btn-color);
+}
