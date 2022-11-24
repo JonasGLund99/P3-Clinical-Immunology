@@ -118,7 +118,7 @@
         blocks = await ClinicalTest.GetNormalBlocks();
         blocks.Sort(delegate(Block x, Block y)
             {
-                if (x.PlateIndex != y.PlateIndex)
+                if (x.PlateIndex == y.PlateIndex)
                 {
                     return y.PlateIndex - x.PlateIndex;
                 }
