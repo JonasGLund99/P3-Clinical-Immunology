@@ -5,7 +5,7 @@
 
 @if (experiment != null && clinicalTest != null)
 {
-    <PageTitle>@clinicalTest.Title</PageTitle>
+    <PageTitle>@clinicalTest.Title | Clinical Immunology</PageTitle>
 
     <Navbar ClinicalTestTitle="@clinicalTest.Title"
         ExperimentNumber="@experiment.ExperimentNumber"
@@ -91,16 +91,16 @@ else
 
 	private Experiment placeholderExp = new Experiment(
 		id: "",
-		experimentNumber: "EXP-##-######",
-		title: "Title",
-        author: "Author",
+		experimentNumber: "EXP",
+		title: "Exp",
+        author: "A",
         description: "",
         createdAt: DateTime.Now
 	);
 	
 	private ClinicalTest placeholderCt = new ClinicalTest(
 		id: "",
-		title: "Title",
+		title: "Ct",
 		nplicateSize: 3,
         description: "",
         createdAt: DateTime.Now
@@ -144,7 +144,7 @@ else
     {
         showClinicalTestModal = false;
         await ExperimentManager.SaveClinicalTestWithAssociate(SavedClinicalTest);
-        if (!clinicalTest.ExperimentIds.Contains(SavedClinicalTest.id))
+        if (!clinicalTest.ExperimentIds.Contains(ExperimentId))
         {
             showWarningModal = true;
             StateHasChanged();
@@ -167,14 +167,14 @@ else
     {
         if (experiment == null) return;
         showExperimentModal = true;
-        editModalTitle = $"Edit Experiment: {experiment.ExperimentNumber}";
+        editModalTitle = $"Edit: {experiment.ExperimentNumber}";
     }
 
     private void editCT() 
     {
         if (clinicalTest == null) return;
         showClinicalTestModal = true;
-        editModalTitle = $"Edit test: {clinicalTest.Title}";
+        editModalTitle = $"Edit: {clinicalTest.Title}";
     }
 
     private int activeButton { get; set; } = 0;
