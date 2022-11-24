@@ -124,7 +124,7 @@
                             }
                         </div>
                     }
-                    else if (currentClinicalTests.Count() != 0)
+                    else if (currentClinicalTests != null)
                     {
                         <div class="all-clinicaltest-cards">
                             @foreach (ClinicalTest ct in currentClinicalTests)
@@ -374,48 +374,48 @@
         loader = false;
         currentClinicalTests = await selectedExp.QueryClinicalTests("");
         StateHasChanged();
-   }
+    }
 
-   private async void MenuCardOnclickCallback<T>(T obj) 
-   {
-      setCurrentObject(obj);
-      if (selectedExp == null) return;
-      if (selectedCT == null) 
-      {
-         await showClinicalTests(selectedExp);
-      } else
-      {
-         NavManager.NavigateTo($"/clinicaltest/{selectedExp.id}/{selectedCT.id}");
-      }
-   }
+    private async void MenuCardOnclickCallback<T>(T obj) 
+    {
+        setCurrentObject(obj);
+        if (selectedExp == null) return;
+        if (selectedCT == null) 
+        {
+            await showClinicalTests(selectedExp);
+        } else
+        {
+            NavManager.NavigateTo($"/clinicaltest/{selectedExp.id}/{selectedCT.id}");
+        }
+    }
 
-   private void MenuCardEditCallback<T>(T obj)
-   {
-      setCurrentObject(obj);
-      if (selectedCT == null && selectedExp != null) {
-         EditorModalTitle = "Edit: " + selectedExp.ExperimentNumber;
-         showExperimentModal = true;
-      } else if (selectedCT != null)
-      {
-         EditorModalTitle = "Edit: " + selectedCT.Title;
-         showClinicalTestModal = true;
-      }  
-   }
+    private void MenuCardEditCallback<T>(T obj)
+    {
+        setCurrentObject(obj);
+        if (selectedCT == null && selectedExp != null) {
+            EditorModalTitle = "Edit: " + selectedExp.ExperimentNumber;
+            showExperimentModal = true;
+        } else if (selectedCT != null)
+        {
+            EditorModalTitle = "Edit: " + selectedCT.Title;
+            showClinicalTestModal = true;
+        }  
+    }
 
-   private async void MenuCardDeleteCallback<T>(T obj)
-   {
-      setCurrentObject(obj);
-      if (selectedCT == null && selectedExp != null)
-      {
-         cancelConfirmModalTitle = "Delete: " + selectedExp.ExperimentNumber;
-         cancelConfirmModalBody = "The experiment and clinical tests that only relate to this experiment will be deleted.";
-         showCancelConfirmModalDeleteExperiment = true;
-      } else if (selectedCT != null)
-      {
-         cancelConfirmModalTitle = "Delete: " + selectedCT.Title;
-         cancelConfirmModalBody = "The clinical test will be deleted permanently from all associated experiments.";
-         showCancelConfirmModalDeleteClinicalTest = true;
-      }
-      
-   }
+    private async void MenuCardDeleteCallback<T>(T obj)
+    {
+        setCurrentObject(obj);
+        if (selectedCT == null && selectedExp != null)
+        {
+            cancelConfirmModalTitle = "Delete: " + selectedExp.ExperimentNumber;
+            cancelConfirmModalBody = "The experiment and clinical tests that only relate to this experiment will be deleted.";
+            showCancelConfirmModalDeleteExperiment = true;
+        } else if (selectedCT != null)
+        {
+            cancelConfirmModalTitle = "Delete: " + selectedCT.Title;
+            cancelConfirmModalBody = "The clinical test will be deleted permanently from all associated experiments.";
+            showCancelConfirmModalDeleteClinicalTest = true;
+        }
+
+    }
 }
