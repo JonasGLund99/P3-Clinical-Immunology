@@ -22,29 +22,26 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @{
-                        getSortedBlocks();
-                    }
-                        @foreach(Block block in allBlocks) {
-                            <tr>
-                                @{int k = 1;}
-                                @foreach (string chosenTableTitle in ClinicalTest.ChosenTableTitles)
+                    @foreach(Block block in ClinicalTest.GetSortedBlocks()) {
+                        <tr>
+                            @{int k = 1;}
+                            @foreach (string chosenTableTitle in ClinicalTest.ChosenTableTitles)
+                            {
+                                if (chosenTableTitle != null)
                                 {
-                                    if (chosenTableTitle != null)
-                                    {
-                                        <td class="key-data key-number-@k">@block.PatientData[ClinicalTest.TableTitles.IndexOf(chosenTableTitle)]</td>
-                                        k++;
-                                    }
+                                    <td class="key-data key-number-@k">@block.PatientData[ClinicalTest.TableTitles.IndexOf(chosenTableTitle)]</td>
+                                    k++;
                                 }
-                                @foreach (Nplicate nplicate in block.Nplicates) 
-                                {
-                                    <td title="@nplicateTitleHelper(nplicate)"
-                                        class="flagged-@nplicate.IsFlagged.ToString().ToLower() selected-@((nplicate == clickedNplicate).ToString().ToLower() )" 
-                                        style="background-color: @System.Drawing.ColorTranslator.ToHtml(nplicate.HeatmapColour);"
-                                        @onclick="() => nplicateClicked(nplicate)"></td>
-                                }
-                            </tr>    
-                        }                    
+                            }
+                            @foreach (Nplicate nplicate in block.Nplicates) 
+                            {
+                                <td title="@nplicateTitleHelper(nplicate)"
+                                    class="flagged-@nplicate.IsFlagged.ToString().ToLower() selected-@((nplicate == clickedNplicate).ToString().ToLower() )" 
+                                    style="background-color: @System.Drawing.ColorTranslator.ToHtml(nplicate.HeatmapColour);"
+                                    @onclick="() => nplicateClicked(nplicate)"></td>
+                            }
+                        </tr>    
+                    }                    
                 </tbody>
             </table>
         </div>
@@ -112,23 +109,6 @@
         StateHasChanged();
     }
 
-    private async void getSortedBlocks() 
-    {
-        List<Block> blocks = new();
-        blocks = await ClinicalTest.GetNormalBlocks();
-        blocks.Sort(delegate(Block x, Block y)
-            {
-                if (x.PlateIndex == y.PlateIndex)
-                {
-                    return y.PlateIndex - x.PlateIndex;
-                }
-                else
-                {
-                    return y.SlideIndex - x.SlideIndex;
-                }
-            });
-        allBlocks = blocks;
-    }
     private string nplicateTitleHelper(Nplicate n) 
     {
         return "RI: " + Math.Round(n.RI,3) + "\nXYZ: " + Math.Round(n.XYZ,3) + "\nMean intensity: " + Math.Round(n.Mean,3) + "\nAnalyte: " + n.AnalyteType;

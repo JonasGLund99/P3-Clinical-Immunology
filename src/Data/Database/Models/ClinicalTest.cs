@@ -147,7 +147,6 @@ public class ClinicalTest : BaseModel<ClinicalTest>
                         else if (normalBlockIndex < normBlocks.Count)
                         {
                             Block normalBlock = normBlocks[normalBlockIndex];
-                            NormalBlockIds.Append(normalBlock.id);
                             overview[i][slideIndex][blockIndex] = normalBlock;
                             normalBlockIndex++; 
                         }
