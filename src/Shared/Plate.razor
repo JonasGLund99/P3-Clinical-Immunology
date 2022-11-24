@@ -24,26 +24,31 @@
                     int blockIndex = j;
                     @if (i < numSlides)
                     {
-                        <div title="Toggle blank block" class="block" @onclick="() => toggleBlockType(slideIndex, blockIndex)" @oncontextmenu="() => showBlockMenu()" @oncontextmenu:preventDefault>
+                        <div title="Toggle blank block" class="block" @onclick="() => toggleBlockType(slideIndex, blockIndex)" @oncontextmenu="() => toggleTextColour(Slides[slideIndex][blockIndex])" @oncontextmenu:preventDefault>
                             @if (Slides[i][j].Type != Block.BlockType.Blank) {
+                                @*Loop through patient data*@
                                 @for (int k = 0; k < NumPatientDataPerBlock; k++)
                                 {
                                     int index = k;
                                     int patientDataIndex = findTitleIndex(index);
                                     int patientDataCount = Slides[i][j].PatientData.Count;
 
+                                    @*Checks whether a patient has data or not*@
                                     @if (patientDataIndex == -1 || patientDataIndex >= patientDataCount)
                                     {
                                         <div></div>
                                     }
                                     else
                                     {
-                                        <div>@(Slides[i][j].PatientData[patientDataIndex])</div>
+                                        <div style="color: @(Slides[i][j].TextColour) !important;">
+                                            @(Slides[i][j].PatientData[patientDataIndex])
+                                        </div>
                                     }
                                 }
                             } 
                             else 
                             {
+                                @*Show blank block*@
                                 <div></div>
                                 <div>Blank</div>
                                 <div></div>
@@ -110,9 +115,9 @@
         return ClinicalTest.TableTitles.IndexOf(title);
     }
 
-    private void showBlockMenu() 
+    private void toggleTextColour(Block block)
     {
-        System.Console.WriteLine("test");
+        Console.WriteLine(block.TextColour);
     }
 
     private async void toggleBlockType(int slideIndex, int blockIndex) {

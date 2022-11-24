@@ -146,7 +146,6 @@
     background-color: white;
     width: 98%;
     height: calc(100vh - 250px);
-/*    border: 5px solid var(--primary-dark-color);*/
     border-radius: 20px;
     margin-bottom: 40px;
     display: flex;

@@ -83,6 +83,7 @@ input:focus {
     display: flex;
     justify-content: left;
     align-items: center;
+    text-overflow: ellipsis;
 }
 .searchbar {
     width: 70%;
@@ -119,6 +120,7 @@ input:focus {
 }
 .grid-header div,
 .grid-header-clinicalTest div {
+    white-space: nowrap;
     padding-bottom: 2px;
     border-bottom: 2px solid var(--primary-dark-color);
 }

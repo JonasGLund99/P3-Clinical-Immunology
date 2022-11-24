@@ -176,21 +176,21 @@
 @if (showExperimentModal)
 {
     <EditorModal 
-             CallbackClose="closeEditorModal"
-             CallbackSave="SaveExperimentCallback"
-             ModalObject="@selectedExp"
-             ModalType="@Experiment"
-             ModalTitle="@EditorModalTitle" />
+        CallbackClose="closeEditorModal"
+        CallbackSave="SaveExperimentCallback"
+        ModalObject="@selectedExp"
+        ModalType="@Experiment"
+        ModalTitle="@EditorModalTitle" />
 }
 
 @if (showClinicalTestModal)
 {
     <EditorModal 
-             CallbackClose="closeEditorModal"
-             CallbackSave="SaveClinicalTestCallback"
-             ModalObject="@selectedCT"
-             ModalType="@ClinicalTest"
-             ModalTitle="@EditorModalTitle" />
+        CallbackClose="closeEditorModal"
+        CallbackSave="SaveClinicalTestCallback"
+        ModalObject="@selectedCT"
+        ModalType="@ClinicalTest"
+        ModalTitle="@EditorModalTitle" />
 }
 
 @if (showCancelConfirmModalDeleteExperiment)

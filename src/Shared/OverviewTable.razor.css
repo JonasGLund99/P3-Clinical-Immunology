@@ -2,7 +2,27 @@
 table {
     overflow: scroll;
 }
-td {
+thead td {
+    height: 20px;
+    padding: 10px;
+    font-weight: bold;
+    white-space: nowrap;
+    background-color: var(--overviewtable-head-background-color);
+    outline: 1px solid var(--experiment-color);
+    border-top: none;
+    color: rgb(244, 244, 244);
+    position: sticky;
+    top: 0;
+    text-align: left;
+}
+thead:first-child {
+    z-index: 2;
+}
+thead tr td:first-child{
+    z-index: 2;
+    left: 0;
+}
+tbody td {
     background-color: white;
     border: 0.5px solid rgb(170, 170, 170);
     min-width: 100px;
@@ -13,21 +33,7 @@ td {
     z-index: 0;
     text-align: right;
 }
-tr:first-child td {
-    height: 40px;
-    font-weight: bold;
-    background-color: rgb(39, 80, 53);
-    outline: 1px solid rgb(37, 62, 39);
-    border-top: none;
-    color: rgb(244, 244, 244);
-    position: sticky;
-    top: 0;
-    text-align: left;
-}
-tr:first-child td:first-child {
-    z-index: 2;
-}
-td:focus {
+tbody td:focus {
     outline: 3px solid rgb(19, 96, 25);
     outline-offset: -2px;
 }
@@ -40,4 +46,5 @@ td:focus {
     left: 0;
     z-index: 1;
     min-width: 50px;
+    white-space: nowrap;
 }
