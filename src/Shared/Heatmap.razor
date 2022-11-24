@@ -13,7 +13,7 @@
                             if (chosenTableTitle != null) {
                                 <th class="key-header" id="key-number-@j">@chosenTableTitle</th>
                                 j++;
-                            }       
+                            }
                         }
                         @foreach (string analyteName in ClinicalTest.AnalyteNames) 
                         {
@@ -22,10 +22,10 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @{int i = 0;}
-                    @foreach(Slide slide in slides)
-                    {
-                        @foreach(Block block in slide.Blocks) {
+                    @{
+                        getSortedBlocks();
+                    }
+                        @foreach(Block block in allBlocks) {
                             <tr>
                                 @{int k = 1;}
                                 @foreach (string chosenTableTitle in ClinicalTest.ChosenTableTitles)
@@ -44,9 +44,7 @@
                                         @onclick="() => nplicateClicked(nplicate)"></td>
                                 }
                             </tr>    
-                        }
-                        i++;
-                    }
+                        }                    
                 </tbody>
             </table>
         </div>
@@ -94,13 +92,8 @@
 @code {
 
     private bool showSpotModal = false;
+    private List<Block> allBlocks = new();
     private Nplicate clickedNplicate = new();
-    private List<Slide> slides { 
-        get 
-        {
-            return ClinicalTest.GetSlides();
-        }
-    }
 
     [Parameter]
     public ClinicalTest ClinicalTest { get; set; } = new();
@@ -119,6 +112,23 @@
         StateHasChanged();
     }
 
+    private async void getSortedBlocks() 
+    {
+        List<Block> blocks = new();
+        blocks = await ClinicalTest.GetNormalBlocks();
+        blocks.Sort(delegate(Block x, Block y)
+            {
+                if (x.PlateIndex != y.PlateIndex)
+                {
+                    return y.PlateIndex - x.PlateIndex;
+                }
+                else
+                {
+                    return y.SlideIndex - x.SlideIndex;
+                }
+            });
+        allBlocks = blocks;
+    }
     private string nplicateTitleHelper(Nplicate n) 
     {
         return "RI: " + Math.Round(n.RI,3) + "\nXYZ: " + Math.Round(n.XYZ,3) + "\nMean intensity: " + Math.Round(n.Mean,3) + "\nAnalyte: " + n.AnalyteType;
