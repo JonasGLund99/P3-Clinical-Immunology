@@ -40,7 +40,7 @@
                     <span>Slide @slideNumber</span>
                     <div class="slide">
                         <i title="@(matches ? "Slide matches a file" : "Slide does not match a file")" class="@(matches ? "fa-solid fa-circle-check check" : "fa-solid fa-circle-xmark check")"></i>
-                        <span>@slide.Barcode</span>
+                        <span>@(slide.Barcode == "" ? "Missing Barcode" : @slide.Barcode)</span>
                         <i class="fa-solid fa-pencil" title="Edit barcode in overview" @onclick="() => setActiveButtonCallback.InvokeAsync(1)"></i>
                     </div>
                     slideNumber++;
@@ -212,7 +212,7 @@
         loading = true;
         if (ClinicalTest == null) return;
 
-        ClinicalTest.CalculateClinicalTestResult();
+        //ClinicalTest.CalculateClinicalTestResult();
         ClinicalTest.EditedAt = DateTime.Now;
         Experiment.EditedAt = DateTime.Now;
         await StopReloadCallback.InvokeAsync();

@@ -161,7 +161,7 @@ else
         showExperimentModal = false;
         savedExperiment.EditedAt = DateTime.Now;
         await savedExperiment.SaveToDatabase();
-        experiment = SavedExperiment;
+        experiment = savedExperiment;
         StateHasChanged();
     }
 
