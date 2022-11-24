@@ -1,4 +1,5 @@
 ﻿using Microsoft.Azure.Cosmos;
+using Newtonsoft.Json.Linq;
 using System.ComponentModel.DataAnnotations;
 
 namespace src.Data;
@@ -35,10 +36,20 @@ public class Experiment : BaseModel<Experiment>
         {
             throw new NullReferenceException("No database");
         }
+        //string queryString = @"SELECT * FROM ClinicalTest
+        //                    WHERE CONTAINS(ClinicalTest.Title, @searchParameter, true) 
+        //                    AND ARRAY_CONTAINS(ClinicalTest.ExperimentIds, @expId)
+        //                    ORDER BY ClinicalTest.EditedAt DESC";
+
         string queryString = @"SELECT * FROM ClinicalTest
-                            WHERE CONTAINS(ClinicalTest.Title, @searchParameter, true) 
-                            AND ARRAY_CONTAINS(ClinicalTest.ExperimentIds, @expId)
                             ORDER BY ClinicalTest.EditedAt DESC";
+
+
+
+//        string queryString = @"SELECT ClinicalTest,
+//                               ARRAY(SELECT Slide.Barcode FROM Slide IN ClinicalTest.Slides) as Barcodes
+//FROM Experiment.ClinicalTests";
+
 
         FeedIterator<ClinicalTest> feed = DatabaseService.Instance.Database.GetContainer("ClinicalTest")
                                         .GetItemQueryIterator<ClinicalTest>(
@@ -46,12 +57,34 @@ public class Experiment : BaseModel<Experiment>
                                             .WithParameter("@searchParameter", searchParameter)
                                             .WithParameter("@expId", this.id)
                                         );
+
+        List<ClinicalTest> matchingResponse = new List<ClinicalTest>();
         while (feed.HasMoreResults)
         {
             FeedResponse<ClinicalTest> response = await feed.ReadNextAsync();
-            clinicalTests.AddRange(response);
+            foreach(ClinicalTest ct in response)
+            {
+                if(!ct.Title.Contains(searchParameter))
+                {
+                    foreach (Slide slide in ct.Slides)
+                    {
+                        if (slide.Barcode.Contains(searchParameter))
+                        {
+                            matchingResponse.Add(ct);
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    matchingResponse.Add(ct);
+                }
 
+            }
         }
-        return clinicalTests;
+
+
+
+        return matchingResponse;
     }
 }
