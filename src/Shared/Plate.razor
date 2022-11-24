@@ -22,9 +22,9 @@
                 @for (int j = 0; j < BlocksPerSlide; j++)
                 {
                     int blockIndex = j;
-                    <div title="Toggle blank block" class="block" @onclick="() => toggleBlockType(slideIndex, blockIndex)" @oncontextmenu="() => showBlockMenu()" @oncontextmenu:preventDefault>
-                        @if (i < numSlides)
-                        {
+                    @if (i < numSlides)
+                    {
+                        <div title="Toggle blank block" class="block" @onclick="() => toggleBlockType(slideIndex, blockIndex)" @oncontextmenu="() => showBlockMenu()" @oncontextmenu:preventDefault>
                             @if (Slides[i][j].Type != Block.BlockType.Blank) {
                                 @for (int k = 0; k < NumPatientDataPerBlock; k++)
                                 {
@@ -48,12 +48,12 @@
                                 <div>Blank</div>
                                 <div></div>
                             }
-                        }
-                        else
-                        {
-                            <div></div>
-                        }
-                    </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="empty-block"></div>
+                    }
                 }
             </div>
         }

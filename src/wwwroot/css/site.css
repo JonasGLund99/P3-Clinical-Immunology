@@ -28,6 +28,12 @@
     --scrollbar-color: #8e8e8e;
     --scrollbar-hover-color: var(--primary-dark-color);
     --blue-btn-color: #5199eb;
+
+    /*Plate specific colours*/
+    --plate-border-color: var(--primary-dark-color);
+    --block-border-color: grey;
+    --heading-background-color: var(--secondary-dark-color);
+    --plate-background-color: white;
 }
 
 * {

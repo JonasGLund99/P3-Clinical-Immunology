@@ -1,11 +1,11 @@
 @using src.Data
-@typeparam ModalType where ModalType : new();
+@typeparam ModalType
 
 <div class="modal fade show" id="myModal" style="display:block; background-color: rgba(10,10,10,.8);" aria-modal="true" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                @if (modalType is Experiment)
+                @if (typeof(ModalType).Name == "Experiment")
                 {
                     <img src="icons/expIcon_blue.svg"/>
                 }
@@ -31,7 +31,6 @@
 </div>
 
 @code {
-    [Parameter, EditorRequired] public ModalType modalType { get; set; } = new();
     [Parameter, EditorRequired] public string Title { get; set; } = "";
     [Parameter, EditorRequired] public string Body { get; set; } = "";
     [Parameter, EditorRequired] public EventCallback CallbackCancel {get; set;}
