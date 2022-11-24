@@ -37,8 +37,8 @@ public class Experiment : BaseModel<Experiment>
         }
         string queryString = @"SELECT DISTINCT VALUE CT FROM ClinicalTest CT
                             JOIN s IN CT.Slides
-                            WHERE CONTAINS(CT.Title, @searchParameter, true)
-                            OR CONTAINS(s.Barcode, @searchParameter, true)
+                            WHERE (CONTAINS(CT.Title, @searchParameter, true)
+                            OR CONTAINS(s.Barcode, @searchParameter, true))
                             AND ARRAY_CONTAINS(CT.ExperimentIds, @expId)
                             ORDER BY CT.EditedAt DESC";
 
