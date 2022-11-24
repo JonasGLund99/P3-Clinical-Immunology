@@ -10,7 +10,6 @@ public class ClinicalTest : BaseModel<ClinicalTest>
     private int nplicatesInBlock { get; set; }
     private int numOfBlocks { get; } = 21;
     private List<Block>? normalBlocks { get; set; } = null;
-
     public ClinicalTest(string id, string title, int nplicateSize, string description, DateTime createdAt) : base(id)
     {
         PartitionKey = id;
