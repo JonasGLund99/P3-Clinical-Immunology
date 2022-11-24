@@ -6,6 +6,7 @@
     border: 5px solid var(--plate-border-color);
     border-radius: 10px;
     margin-bottom: 30px;
+    box-shadow: 0px 2px 10px 2px var(--grey);
 }
 
 .heading {

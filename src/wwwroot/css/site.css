@@ -248,29 +248,66 @@ a,
     white-space: nowrap;
 }
 
-.grid-content.ghost > div > div > span, .grid-content.ghost > div > div > i {
+/*Ghosting css*/
+.expGhost, .ctGhost {
+    pointer-events: none;
+}
+
+.grid-content.expGhost > div > div > span, .grid-content.expGhost > div > div > i {
     display: none;
 }
 
-.grid-content.ghost > div {
-    animation-duration: 1.8s;
-    animation-fill-mode: forwards;
-    animation-iteration-count: infinite;
-    animation-name: placeHolderShimmer;
-    animation-timing-function: linear;
-    background: #f6f7f8;
-    background: linear-gradient(110deg, var(--light-grey) 8%, var(--grey) 38%, var(--light-grey) 54%);
-    background-size: 1000px 200px;
+.grid-content.ctGhost > div > div > span, .grid-content.ctGhost > div > div > i {
+    display: none;
+}
+
+.grid-content.expGhost > div, .grid-content.ctGhost > div, .ghostPlate {
+    background-size: 100vw 1000vh;
     position: relative;
 }
 
-@keyframes placeHolderShimmer {
+.grid-content.expGhost > div {
+    animation: 1.8s forwards infinite expGhosting linear;
+    background: linear-gradient(110deg, var(--light-grey) 8%, var(--grey) 38%, var(--light-grey) 54%);
+}
+
+.grid-content.ctGhost > div {
+    animation: 1.8s forwards infinite ctGhosting linear;
+    background: linear-gradient(110deg, var(--light-grey) 8%, var(--grey) 38%, var(--light-grey) 54%);
+}
+
+.ghostPlate {
+    animation: 1.8s forwards infinite plateGhosting linear;
+    background: linear-gradient(110deg, white 35%, var(--grey) 48%, var(--grey) 52%, white 65%);
+}
+
+@keyframes plateGhosting {
     0% {
-        background-position: 0px 0
+        background-position: -750px
     }
 
     100% {
-        background-position: 1000px 0
+        background-position: 750px
+    }
+}
+
+@keyframes expGhosting {
+    0% {
+        background-position: -400px
+    }
+
+    100% {
+        background-position: 722px
+    }
+}
+
+@keyframes ctGhosting {
+    0% {
+        background-position: -280px
+    }
+
+    100% {
+        background-position: 458px
     }
 }
 
