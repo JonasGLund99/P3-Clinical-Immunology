@@ -1,5 +1,4 @@
 ﻿using Microsoft.Azure.Cosmos;
-using Newtonsoft.Json.Linq;
 using System.ComponentModel.DataAnnotations;
 
 namespace src.Data;
@@ -55,7 +54,6 @@ public class Experiment : BaseModel<Experiment>
             clinicalTests.AddRange(response);
 
         }
-
 
         return clinicalTests;
     }
