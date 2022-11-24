@@ -1,0 +1,29 @@
+﻿@using src.Data
+
+<div id="text-colour-menu">
+    <h3>Choose text colour in block</h3>
+    <select style="color: white; background-color: @(Block.TextColour);" @bind="Block.TextColour">
+        <option selected style="color: #212529" value="">Select a colour</option>
+        <option style="color: red" value="red">Red</option>
+        <option style="color: blue" value="blue">Blue</option>
+    </select>
+    or choose your own
+    <input type="color" @bind="Block.TextColour"/>
+
+    <button class="standard-button" @onclick="saveTextColour">
+        Ok
+    </button>
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public Block Block { get; set; } = new();
+    [Parameter, EditorRequired]
+    public EventCallback ChangeTextColourCallback { get; set; }
+
+    async void saveTextColour()
+    {
+        await Block.SaveToDatabase();
+        ChangeTextColourCallback.InvokeAsync();
+    }
+}

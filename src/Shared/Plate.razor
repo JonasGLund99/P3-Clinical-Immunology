@@ -24,7 +24,8 @@
                     int blockIndex = j;
                     @if (i < numSlides)
                     {
-                        <div title="Toggle blank block" class="block" @onclick="() => toggleBlockType(slideIndex, blockIndex)" @oncontextmenu="() => toggleTextColour(Slides[slideIndex][blockIndex])" @oncontextmenu:preventDefault>
+                        <div title="Toggle blank block" class="block" @onclick="() => toggleBlockType(slideIndex, blockIndex)" @oncontextmenu="() => openTextColourMenu(Slides[slideIndex][blockIndex])" @oncontextmenu:preventDefault>
+                            
                             @if (Slides[i][j].Type != Block.BlockType.Blank) {
                                 @*Loop through patient data*@
                                 @for (int k = 0; k < NumPatientDataPerBlock; k++)
@@ -40,7 +41,8 @@
                                     }
                                     else
                                     {
-                                        <div style="color: @(Slides[i][j].TextColour) !important;">
+                                        @*Console.WriteLine(Slides[i][j].TextColour + Slides[i][j].Type);*@
+                                        <div style="color: @(Slides[i][j].TextColour)">
                                             @(Slides[i][j].PatientData[patientDataIndex])
                                         </div>
                                     }
@@ -50,7 +52,7 @@
                             {
                                 @*Show blank block*@
                                 <div></div>
-                                <div>Blank</div>
+                                <div style="color: @(Slides[i][j].TextColour)">Blank</div>
                                 <div></div>
                             }
                         </div>
@@ -91,6 +93,12 @@
     </div>
 </div>
 
+@if (textColourMenuVisible) {
+    <TextColourMenu
+        Block="selectedBlock"
+        ChangeTextColourCallback="updateTextColour"
+    />
+}
 
 @code
 {
@@ -106,6 +114,9 @@
     [Parameter, EditorRequired]
     public EventCallback updateOverviewState { get; set; }
 
+    private bool textColourMenuVisible { get; set; } = false;
+    private Block? selectedBlock { get; set; } = null;
+
     private int findTitleIndex(int i)
     {
         string? title = ClinicalTest.TableTitles.Find((title) => title == ClinicalTest.ChosenTableTitles[i]);
@@ -115,9 +126,10 @@
         return ClinicalTest.TableTitles.IndexOf(title);
     }
 
-    private void toggleTextColour(Block block)
+    private void openTextColourMenu(Block block)
     {
-        Console.WriteLine(block.TextColour);
+        selectedBlock = block;
+        textColourMenuVisible = true;
     }
 
     private async void toggleBlockType(int slideIndex, int blockIndex) {
@@ -133,6 +145,12 @@
         }
 
         await updateOverviewState.InvokeAsync();
+    }
+
+    private void updateTextColour()
+    {
+        textColourMenuVisible = false;
+        StateHasChanged();
     }
 
     private async void saveBarcode() {

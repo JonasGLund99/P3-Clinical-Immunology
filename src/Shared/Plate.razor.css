@@ -26,6 +26,7 @@
     flex-direction: column;
     justify-content: space-evenly;
     font-size: clamp(12px, 0.8vw, 16px);
+    font-weight: bold;
 }
 .block {
     cursor: pointer;
