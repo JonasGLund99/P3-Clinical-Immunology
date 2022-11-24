@@ -6,6 +6,7 @@
     @if (loadingResultTable)
     {
         <td class="line-number ghost"></td>
+
         int j = 1;
         for (int i = 0; i < 9; i++)
         {
@@ -16,6 +17,7 @@
         {
             <td class="ghost" contenteditable="false"></td>
         }
+        <Loader></Loader>
     }
     else
     {
@@ -38,7 +40,6 @@
             <td>@analyteName</td>
         }
     }
-
 </tr>
 
 @if (loadingResultTable)
