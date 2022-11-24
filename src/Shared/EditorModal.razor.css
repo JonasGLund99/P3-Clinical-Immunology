@@ -1,22 +1,58 @@
 .modal-content {
+
     display: flex;
     padding: 30px;
     flex-direction: column;
+    border-radius: 15px;
 }
 
+.modal-footer {
+    border: none;
+}
+
+.modal-header {
+    display: flex;
+    gap: 15px;
+    justify-content: flex-start;
+    width: 100%;
+    align-items: center;
+    padding: 0;
+    border: none;
+    padding-bottom: 10px;
+}
+.modal-header img {
+    height: 35px;
+}
+.modal-header i {
+    margin-left: auto;
+    color: var(--grey);
+}
+.modal-title {
+    font-weight: bold;
+}
 .modal-content p {
-    margin: 0;
+    margin: 10px 0 0 0;
 }
 
 .modal-content input, 
 .modal-content textarea{
-    margin-bottom: 15px;
+    font-size: 14px;
     width: 100%;
+    background-color: var(--light-grey);
+    border: 1px solid var(--grey);
+    padding: 10px;
+    border-radius: 5px;
 }
-
-.modal-content textarea {
-    width: 100%;
-    height: 6em;
+.modal-content input:focus, .modal-content textarea:focus {
+    outline-color: var(--dark-grey);
+}
+.input-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+}
+.half {
+    width: 50%;
 }
 
 .associator-titles {
@@ -24,10 +60,13 @@
     grid-template-columns: 50% 50%;
 }
 .associator {
+    background-color: var(--menu-button-color);
     display: flex;
     justify-content: space-between;
-    border: 1px solid #666666;
-    border-radius: 2px;
+    border: 1px solid var(--grey);
+    border-radius: 5px;
+    padding: 5px;
+    resize: both;
 }
 
 .search-experiments,
@@ -36,82 +75,80 @@
     height: 14rem;
 }
 
+.associated-experiments p {
+    font-size: 0.9em;
+    margin-top: 5px;
+    padding-left: 10px;
+}
+
 .searchbar {
-    width: calc(100% - 20px);
-    height: 25px;
+    width: calc(100% - 15px);
+    padding: 2px;
     border-radius: 10px;
     text-align: center;
-    background-color: var(--menu-button-color);
+    background-color: white;
     display: flex;
     justify-content: left;
     align-items: center;
-    margin-top: 5px;
-    margin-right: 10px;
-    margin: 5px 15px 0 5px;
-    filter: drop-shadow(0px 2px 1px var(--primary-dark-color));
+    border: 1px solid var(--grey);
 }
 
 .searchbar i {
-    margin-left: 10px;
+    margin: 0 2px 0 5px;
 }
 
 .searchbar input {
+    font-size: 12px;
     width: 100%;
-    height: 25px;
+    padding: 5px;
+    margin: 0;
     border-radius: 0 10px 10px 0;
     background-color: transparent;
     border: none;
-    margin: 0;
-    font-size: 12px;
-}
-
-input:focus {
-    outline: none;
+    outline:none;
 }
 
 .experiments-found,
 .related-experiments {
+    margin-top: 5px;
     overflow-y: scroll;
     overflow-x: visible;
-    height: calc(100% - 30px);
+    height: calc(100% - 40px);
 }
 
 .related-experiments {
-    height: 100%
+    padding-left: 10px;
+    height: calc(100% - 35px)
 }
 
-.experiments-found p,
-.related-experiments p {
-    width: calc(100% - 20px);
-    border: 3px solid var(--menu-button-color);
-    background-color: var(--menu-button-color);
+.experiments-found div,
+.related-experiments div {
+    width: calc(100% - 5px);
+    padding: 4px;
+    background-color: white;
     color: var(--secondary-dark-color);
     border-radius: 10px;
     align-items: center;
-    margin: 5px 10px 0 10px;
+    margin-top: 5px;
     font-size: 12px;
     padding-left: 10px;
 }
 
-.experiments-found p:hover {
-    border: 3px solid var(--secondary-dark-color);
+.experiments-found div:hover {
     background-color: var(--secondary-dark-color);
     color: var(--menu-button-color);
     cursor: pointer;
 }
 
 .experiment-is-added,
-.related-experiments p
+.related-experiments div
 {
     background-color: var(--green-btn-color) !important;
-    border-color: var(--green-btn-color) !important;
     color: white !important;
-
 }
 
 .experiment-is-added:hover,
-.related-experiments p:hover {
-    border: 3px solid var(--red-btn-color) !important;
+.related-experiments div:hover {
     background-color: var(--red-btn-color) !important;
     color: var(--menu-button-color) !important;
     cursor: pointer;

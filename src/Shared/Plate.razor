@@ -16,32 +16,44 @@
         </div>
         @for (int i = 0; i < MaxSlides; i++)
         {
+            int slideIndex = PlateIndex * 4 + i;
+
             <div class="Slide-@(i+1)">
                 @for (int j = 0; j < BlocksPerSlide; j++)
                 {
-                <div class="block">
+                    int blockIndex = j;
                     @if (i < numSlides)
                     {
-                        @for (int k = 0; k < NumPatientDataPerBlock; k++)
-                        {
-                            int index = k;
-                            int patientDataIndex = findTitleIndex(index);
-                            int patientDataCount = Slides[i].Blocks[j].PatientData.Count;
-                            @if (patientDataIndex == -1 || patientDataIndex >= patientDataCount)
+                        <div title="Toggle blank block" class="block" @onclick="() => toggleBlockType(slideIndex, blockIndex)" @oncontextmenu="() => showBlockMenu()" @oncontextmenu:preventDefault>
+                            @if (Slides[i][j].Type != Block.BlockType.Blank) {
+                                @for (int k = 0; k < NumPatientDataPerBlock; k++)
+                                {
+                                    int index = k;
+                                    int patientDataIndex = findTitleIndex(index);
+                                    int patientDataCount = Slides[i][j].PatientData.Count;
+
+                                    @if (patientDataIndex == -1 || patientDataIndex >= patientDataCount)
+                                    {
+                                        <div></div>
+                                    }
+                                    else
+                                    {
+                                        <div>@(Slides[i][j].PatientData[patientDataIndex])</div>
+                                    }
+                                }
+                            } 
+                            else 
                             {
                                 <div></div>
+                                <div>Blank</div>
+                                <div></div>
                             }
-                            else
-                            {
-                                <div>@(Slides[i].Blocks[j].PatientData[patientDataIndex])</div>
-                            }
-                        }
+                        </div>
                     }
                     else
                     {
-                        <div></div>
+                        <div class="empty-block"></div>
                     }
-                </div>
                 }
             </div>
         }
@@ -58,12 +70,18 @@
             <div class="Barcode-@(i+1)">
                 @if (i < numSlides)
                 {
-                    <input type="text" placeholder="Enter barcode..." @bind="@(slides[slideIndex].Barcode)" @bind:event="onchange" @onblur="() => saveBarcode()">
+                    // Check barcode
+                    <input type="text" placeholder="Enter barcode..." @bind="@ClinicalTest.Slides[slideIndex].Barcode" @bind:event="onchange" @onblur="() => saveBarcode()">
                 }
             </div>
         }
         <div class="Empty">
-            <div>Plate<br>@(PlateIndex + 1) of @((slides.Count - 1) / 4 + 1)</div>
+            <div>
+                Plate
+                <div>
+                    <b>@(PlateIndex + 1)</b> of @((ClinicalTest.Slides.Count - 1) / 4 + 1)
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -74,18 +92,14 @@
     [Parameter, EditorRequired]
     public ClinicalTest ClinicalTest { get; set; } = new();
 
-    [Parameter]
+    [Parameter, EditorRequired]
     public int PlateIndex { get; set; }
 
     [Parameter, EditorRequired]
-    public List<Slide> Slides { get; set; } = new();
+    public List<Block[]> Slides { get; set; } = new();
 
-    private List<Slide> slides { 
-        get 
-        {
-            return ClinicalTest.GetSlides();
-        }
-    }
+    [Parameter, EditorRequired]
+    public EventCallback updateOverviewState { get; set; }
 
     private int findTitleIndex(int i)
     {
@@ -96,20 +110,27 @@
         return ClinicalTest.TableTitles.IndexOf(title);
     }
 
-    //Update barcode for a slide
-    @* async void enterBarcode(FocusEventArgs e, int slideIndex)
+    private void showBlockMenu() 
     {
-        string? enteredBarcode = e.Value?.ToString();
-        if (enteredBarcode == null) return;
+        System.Console.WriteLine("test");
+    }
 
-        ClinicalTest.Slides[slideIndex].Barcode = enteredBarcode;
-        await ClinicalTest.SaveToDatabase();
-        System.Console.WriteLine("Blur");
-    } *@
-    private async void saveBarcode() {
-        for(int i = 0; i < slides.Count; i++) {
-            System.Console.WriteLine(i.ToString() + "  " + slides[i].Barcode);
+    private async void toggleBlockType(int slideIndex, int blockIndex) {
+        bool blankBlockExists = ClinicalTest.Slides[slideIndex].BlankBlockIndicies.Contains(blockIndex);
+
+        if (!blankBlockExists)
+        {
+            ClinicalTest.Slides[slideIndex].BlankBlockIndicies.Add(blockIndex);
         }
+        else
+        {
+            ClinicalTest.Slides[slideIndex].BlankBlockIndicies.RemoveAll(b => b == blockIndex);
+        }
+
+        await updateOverviewState.InvokeAsync();
+    }
+
+    private async void saveBarcode() {
         await ClinicalTest.SaveToDatabase();
     }
     private string[] headingLetters = { "A", "B", "C", "D", "E", "F", "G", "H" };

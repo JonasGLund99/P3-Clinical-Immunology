@@ -17,15 +17,15 @@ static class Mocker
 
     static List<SlideDataFile> slideDataFiles = new List<SlideDataFile> {
         new SlideDataFile(
-            filename: "file1",
+            filename: "10000465_0016_flag.txt",
             content: File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), "Data/MockedData/10000465_0016_flag.txt"))
         ),
         new SlideDataFile(
-            filename: "file2",
+            filename: "10000466_0014_flag.txt",
             content: File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), "Data/MockedData/10000466_0014_flag.txt"))
         ),
         new SlideDataFile(
-            filename: "file3",
+            filename: "10000467_0005_flag.txt",
             content: File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), "Data/MockedData/10000467_0005_flag.txt"))
         )
     };
