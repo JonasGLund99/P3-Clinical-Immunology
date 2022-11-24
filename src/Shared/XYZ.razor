@@ -3,90 +3,139 @@
 
 
 <tr>
-    <td class="line-number">Slide</td>
-    @{int j = 1;}
-    @foreach (string chosenTableTitle in ClinicalTest.ChosenTableTitles)
+    @if (loadingResultTable)
     {
-        if (chosenTableTitle != "")
+        <td class="line-number ghost"></td>
+        int j = 1;
+        for (int i = 0; i < 9; i++)
         {
-            <td id="key-number-@j">@chosenTableTitle</td>
+            <td class="ghost" id="key-number-@j"></td>
             j++;
         }
-    }
-
-    <td>Pos raw</td>
-    <td>Neg raw</td>
-
-    @foreach (string analyteName in ClinicalTest.AnalyteNames)
-    {
-        <td>@analyteName</td>
-    }
-</tr>
-
-@foreach (Block block in blocks)
-{
-    <tr>
-        <td class="line-number">@((block.SlideIndex + 1))</td>
-        @{
-            int k = 1;
+        for (int i = 0; i < 9; i++)
+        {
+            <td class="ghost" contenteditable="false"></td>
         }
+    }
+    else
+    {
+        <td class="line-number">Slide</td>
+        int j = 1;
         @foreach (string chosenTableTitle in ClinicalTest.ChosenTableTitles)
         {
             if (chosenTableTitle != "")
             {
-                <td class="key-number-@k">@block.PatientData[ClinicalTest.TableTitles.IndexOf(chosenTableTitle)]</td>
+                <td id="key-number-@j">@chosenTableTitle</td>
+                j++;
+            }
+        }
+
+        <td>Pos raw</td>
+        <td>Neg raw</td>
+
+        @foreach (string analyteName in ClinicalTest.AnalyteNames)
+        {
+            <td>@analyteName</td>
+        }
+    }
+
+</tr>
+
+@if (loadingResultTable)
+{
+    @for (int l = 0; l < 35; l++)
+    {
+        <tr>
+            @{
+                int k = 1;
+            }
+            @for (int i = 0; i < 3; i++)
+            {
+                <td class="data ghost"></td>
                 k++;
             }
-        }
-        @{
-            Nplicate? pos = block.Nplicates.Find(nplicate => nplicate.AnalyteType == "pos");
+
+            @for (int i = 0; i < 16; i++)
+            {
+                <td class="data ghost" contenteditable="false"></td>
             }
 
-        @if (pos != null)
-        {
-            <td>@Math.Round(pos.Mean, 2)</td>
-        }
-        else
-        {
-            <td>-</td>
-        }
-        @{Nplicate? neg = block.Nplicates.Find(nplicate => nplicate.AnalyteType == "neg");}
-        @if (neg != null)
-        {
-            <td>@Math.Round(neg.Mean, 2)</td>
-        }
-        else
-        {
-            <td>-</td>
-        }
-        @foreach (Nplicate nplicate in block.Nplicates)
-        {
-            if (nplicate.XYZ == double.NaN && nplicate.IsFlagged)
-            {
-                <td @onclick="@((e) => OpenSpots(e, nplicate))" class="data @(nplicate==SelectedNplicate ? "selected-td" : "") flagged-nplicate">-</td>
-            }
-            else if (nplicate.XYZ == double.NaN)
-            {
-                <td class="@(nplicate==SelectedNplicate ? "selected-td" : "")" @onclick="@((e) => OpenSpots(e, nplicate))">-</td>
+        </tr>
+    }
+}
+else
+{
+    @foreach (Block block in blocks)
+    {
 
-            }
-            else if (nplicate.IsFlagged)
-            {
-                <td @onclick="@((e) => OpenSpots(e, nplicate))" class="data @(nplicate==SelectedNplicate ? "selected-td" : "") flagged-nplicate">@Math.Round(nplicate.XYZ, 2)</td>
 
+        <tr>
+            <td class="line-number">@((block.SlideIndex + 1))</td>
+            @{
+                int k = 1;
+            }
+            @foreach (string chosenTableTitle in ClinicalTest.ChosenTableTitles)
+            {
+                if (chosenTableTitle != "")
+                {
+                    <td class="key-number-@k">@block.PatientData[ClinicalTest.TableTitles.IndexOf(chosenTableTitle)]</td>
+                    k++;
+                }
+            }
+            @{
+                Nplicate? pos = block.Nplicates.Find(nplicate => nplicate.AnalyteType == "pos");
+            }
+
+            @if (pos != null)
+            {
+                <td>@Math.Round(pos.Mean, 2)</td>
             }
             else
             {
-                <td class="data @(nplicate==SelectedNplicate ? "selected-td" : "")" @onclick="@((e) => OpenSpots(e, nplicate))">@Math.Round(nplicate.XYZ, 2)</td>
+                <td>-</td>
             }
-        }
-    </tr>
+            @{
+                Nplicate? neg = block.Nplicates.Find(nplicate => nplicate.AnalyteType == "neg");
+            }
+            @if (neg != null)
+            {
+                <td>@Math.Round(neg.Mean, 2)</td>
+            }
+            else
+            {
+                <td>-</td>
+            }
+            @foreach (Nplicate nplicate in block.Nplicates)
+            {
+                if (nplicate.XYZ == double.NaN && nplicate.IsFlagged)
+                {
+                    <td @onclick="@((e) => OpenSpots(e, nplicate))" class="data @(nplicate==SelectedNplicate ? "selected-td" : "") flagged-nplicate">-</td>
+                }
+                else if (nplicate.XYZ == double.NaN)
+                {
+                    <td class="@(nplicate==SelectedNplicate ? "selected-td" : "")" @onclick="@((e) => OpenSpots(e, nplicate))">-</td>
+
+                }
+                else if (nplicate.IsFlagged)
+                {
+                    <td @onclick="@((e) => OpenSpots(e, nplicate))" class="data @(nplicate==SelectedNplicate ? "selected-td" : "") flagged-nplicate">@Math.Round(nplicate.XYZ, 2)</td>
+
+                }
+                else
+                {
+                    <td class="data @(nplicate==SelectedNplicate ? "selected-td" : "")" @onclick="@((e) => OpenSpots(e, nplicate))">@Math.Round(nplicate.XYZ, 2)</td>
+                }
+            }
+        </tr>
+    }
+
 }
 
 
 @code {
     private string mode = "XYZ";
     private List<Block> blocks { get; set; } = new List<Block>();
+    private bool loadingResultTable = true;
 
     [Parameter]
     public Nplicate SelectedNplicate { get; set; }
@@ -106,7 +155,10 @@
     {
         if (firstRender)
         {
+            Console.WriteLine("Getting sorted Blocks");
             blocks = await ClinicalTest.GetSortedBlocks();
+            Console.WriteLine("Sorted blocks");
+            loadingResultTable = false;
             StateHasChanged();
         }
     }

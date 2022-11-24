@@ -1,4 +1,14 @@
-﻿td {
+﻿.ghost {
+    animation-duration: 10s;
+    animation-fill-mode: forwards;
+    animation-iteration-count: infinite;
+    animation-name: placeHolderShimmer;
+    animation-timing-function: linear;
+    background: #f6f7f8;
+    background: linear-gradient(110deg, var(--light-grey) 8%, var(--grey) 38%, var(--light-grey) 54%);
+}
+
+td {
     background-color: white;
     border: 0.5px solid rgb(170, 170, 170);
     min-width: 100px;

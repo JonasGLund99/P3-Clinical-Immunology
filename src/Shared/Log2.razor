@@ -2,72 +2,120 @@
 @using src.Shared
 
 <tr>
-    <td class="line-number">Slide</td>
-    @{int j = 1;}
-    @foreach (string chosenTableTitle in ClinicalTest.ChosenTableTitles)
+    @if (loadingResultTable)
     {
-        if (chosenTableTitle != "") {
-            <td id="key-number-@j">@chosenTableTitle</td>
+        <td class="line-number ghost"></td>
+        int j = 1;
+        for (int i = 0; i < 9; i++)
+        {
+            <td class="ghost" id="key-number-@j"></td>
             j++;
-        }       
+        }
+        for (int i = 0; i < 9; i++)
+        {
+            <td class="ghost" contenteditable="false"></td>
+        }
     }
-    <td>Quality control</td>
-    @foreach (string analyteName in ClinicalTest.AnalyteNames) 
+    else
     {
-        <td contenteditable="false">@analyteName</td>
-    }
-</tr>
-@foreach(Block block in blocks)
-{
-    <tr>
-        <td class="line-number">@((block.SlideIndex + 1))</td>
-        @{int k = 1;}
-        @foreach (string chosenTableTitle in ClinicalTest.ChosenTableTitles)
+        <td class="line-number">Slide</td>
+        int j = 1;
+        foreach (string chosenTableTitle in ClinicalTest.ChosenTableTitles)
         {
             if (chosenTableTitle != "")
             {
-                <td class="key-number-@k">@block.PatientData[ClinicalTest.TableTitles.IndexOf(chosenTableTitle)]</td>
-                k++;
+                <td id="key-number-@j">@chosenTableTitle</td>
+                j++;
             }
         }
-        @if (block.QC == double.NaN)
+        <td>Quality control</td>
+        foreach (string analyteName in ClinicalTest.AnalyteNames)
         {
-            <td class="invalid-block">-</td>
+            <td contenteditable="false">@analyteName</td>
         }
-        else if (block.QC < 0.97)
-        {
-            <td class="invalid-block">@Math.Round(block.QC, 9)</td>
-        }
-        else
-        {
-            <td>@Math.Round(block.QC, 9)</td>
-        }
-        @foreach (Nplicate nplicate in block.Nplicates)
-        {
-            if ((nplicate.RI == 0 || nplicate.RI == double.NaN) && nplicate.IsFlagged)
-            {
-                <td @onclick="@((e) => OpenSpots(e, nplicate))" contenteditable="false" class="data @(nplicate==SelectedNplicate ? "selected-td" : "") flagged-nplicate">-</td>
-            }
-            else if (nplicate.RI == 0 || nplicate.RI == double.NaN)
-            {
-                <td class="data @(nplicate==SelectedNplicate ? "selected-td" : "")" @onclick="@((e) => OpenSpots(e, nplicate))" contenteditable="false">-</td>
+    }
+</tr>
+@if (loadingResultTable)
+{
+    @for (int l = 0; l < 35; l++)
+    {
+        <tr>
+                @{
+                    int k = 1;
+                }
+                @for (int i = 0; i < 3; i++)
+                {
+                    <td class="data ghost"></td>
+                    k++;
+                }
 
-            }
-            else if (nplicate.IsFlagged)
-            {
-                <td @onclick="@((e) => OpenSpots(e, nplicate))" contenteditable="false" class="data @(nplicate==SelectedNplicate ? "selected-td" : "") flagged-nplicate">@Math.Round(nplicate.RI, 2)</td>
+                @for (int i = 0; i < 16 ; i++)
+                {
+                <td class="data ghost" contenteditable="false"></td>
+                }
 
+        </tr>
+    }
+}
+else
+{
+    foreach (Block block in blocks)
+    {
+        <tr>
+            <td class="line-number">@((block.SlideIndex + 1))</td>
+            @{
+                int k = 1;
+            }
+            @foreach (string chosenTableTitle in ClinicalTest.ChosenTableTitles)
+            {
+                if (chosenTableTitle != "")
+                {
+                    <td class="key-number-@k">@block.PatientData[ClinicalTest.TableTitles.IndexOf(chosenTableTitle)]</td>
+                    k++;
+                }
+            }
+            @if (block.QC == double.NaN)
+            {
+                <td class="invalid-block">-</td>
+            }
+            else if (block.QC < 0.97)
+            {
+                <td class="invalid-block">@Math.Round(block.QC, 9)</td>
             }
             else
             {
-                <td class="data @(nplicate==SelectedNplicate ? "selected-td" : "")" @onclick="@((e) => OpenSpots(e, nplicate))" contenteditable="false">@Math.Round(nplicate.RI, 2)</td>
+                <td>@Math.Round(block.QC, 9)</td>
             }
-        }
-    </tr>
+            @foreach (Nplicate nplicate in block.Nplicates)
+            {
+                if ((nplicate.RI == 0 || nplicate.RI == double.NaN) && nplicate.IsFlagged)
+                {
+                    <td @onclick="@((e) => OpenSpots(e, nplicate))" contenteditable="false" class="data @(nplicate==SelectedNplicate ? "selected-td" : "") flagged-nplicate">-</td>
+                }
+                else if (nplicate.RI == 0 || nplicate.RI == double.NaN)
+                {
+                    <td class="data @(nplicate==SelectedNplicate ? "selected-td" : "")" @onclick="@((e) => OpenSpots(e, nplicate))" contenteditable="false">-</td>
+
+                }
+                else if (nplicate.IsFlagged)
+                {
+                    <td @onclick="@((e) => OpenSpots(e, nplicate))" contenteditable="false" class="data @(nplicate==SelectedNplicate ? "selected-td" : "") flagged-nplicate">@Math.Round(nplicate.RI, 2)</td>
+
+                }
+                else
+                {
+                    <td class="data @(nplicate==SelectedNplicate ? "selected-td" : "")" @onclick="@((e) => OpenSpots(e, nplicate))" contenteditable="false">@Math.Round(nplicate.RI, 2)</td>
+                }
+            }
+        </tr>
+    }
 }
+
 
 @code {
     private List<Block> blocks { get; set; } = new List<Block>();
+    private bool loadingResultTable = true;
+
 
     [Parameter]
     public Nplicate SelectedNplicate { get; set; }
@@ -87,7 +135,10 @@
     {
         if (firstRender)
         {
+            Console.WriteLine("Getting sortedBlocks");
             blocks = await ClinicalTest.GetSortedBlocks();
+            loadingResultTable = false; 
+            Console.WriteLine("SortedBlocks");
             StateHasChanged();
         }
     }
