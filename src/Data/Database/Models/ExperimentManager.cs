@@ -32,15 +32,15 @@ public static class ExperimentManager
         return experiments;
     }
 
-    public static async Task<Experiment> GetExperimentById(string id)
+    public static async Task<Experiment?> GetExperimentById(string id)
     {
-        Experiment? e = await DatabaseService.Instance.GetItemById<Experiment>(id);
+        Experiment? e = await DatabaseService.Instance.GetItemById<Experiment>(id, id);
         return e;
     }
 
-    public static async Task<ClinicalTest> GetClinicalTestById(string id)
+    public static async Task<ClinicalTest?> GetClinicalTestById(string id)
     {
-        ClinicalTest? ct = await DatabaseService.Instance.GetItemById<ClinicalTest>(id);
+        ClinicalTest? ct = await DatabaseService.Instance.GetItemById<ClinicalTest>(id, id);
         return ct;
     }
 
@@ -131,7 +131,7 @@ public static class ExperimentManager
                 Experiment e = await ExperimentManager.GetExperimentById(ExpId);
                 await ExperimentManager.Disassociate(e, ClinicalTestFromDB);
             }
-            SavedClinicalTest.SaveToDatabase();
+            await SavedClinicalTest.SaveToDatabase();
         }
     }
 }

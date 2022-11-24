@@ -21,58 +21,28 @@
 
     @*Data rows*@
     @for (int i = 0; i < numRows; i++) 
-    {
-        int numFilledPlates = slides.Count / 4;
-        int numSlides = i / 84 < numFilledPlates ? 4 : slides.Count % 4;
-        
-        @if (numSlides != 0) {
-
-            int slideIndex = (i % 84 / 3) % numSlides + i / 84 * 4;
-            int blockIndex = i % 3 + (i % 84) / (numSlides * 3) * 3;
-            <tr>
-                <td class="line-number">@(i + 1)</td>
-                @for (int j = 0; j < numCols - 1; j++) 
+    { 
+        <tr>
+            <td class="line-number">@(i + 1)</td>
+            @for (int j = 0; j < numCols; j++)
+            {
+                @if (i < normalBlocks.Count && j < normalBlocks[i].PatientData.Count)
                 {
-                    @if (numSlides > 0) 
-                    {
-                        @if (slideIndex < slides.Count && blockIndex < slides[slideIndex].Blocks.Length && j < slides[slideIndex].Blocks[blockIndex].PatientData.Count) 
-                        {
-                            <td contenteditable>@slides[slideIndex].Blocks[blockIndex].PatientData[j]</td>
-                        } 
-                        else 
-                        {
-                            <td contenteditable></td>
-                        }
-                    } 
-                    else 
-                    {
-                        <td contenteditable></td>
-                    }   
-                }
-            </tr>
-        }
-        else 
-        {
-            <tr>
-                <td class="line-number">@(i + 1)</td>
-                @for (int j = 0; j < numCols - 1; j++) {
+                    <td contenteditable>@normalBlocks[i].PatientData[j]</td>
+                } 
+                else 
+                {
                     <td contenteditable></td>
                 }
-            </tr>
-        }
+            }
+        </tr>
     }
 </table>
 
 @code {
     private int numRows { get; set; } = 320;
     private int numCols { get; set; } = 40;
-    
-    private List<Slide> slides { 
-        get 
-        {
-            return ClinicalTest.GetSlides();
-        }
-    }
+    private List<Block> normalBlocks { get; set; } = new List<Block>();
 
     [Parameter, EditorRequired]
     public ClinicalTest ClinicalTest { get; set; } = new();
@@ -82,6 +52,8 @@
         if (firstRender)
         {
             await JS.InvokeVoidAsync("listenForPaste");
+            normalBlocks = await ClinicalTest.GetNormalBlocks();
+            StateHasChanged();
         }
     }
 }

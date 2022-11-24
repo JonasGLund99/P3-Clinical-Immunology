@@ -2,91 +2,115 @@
 @typeparam ModalType where ModalType : new() 
 
 <div class="modal fade show" id="myModal" style="display:block; background-color: rgba(10,10,10,.8);" aria-modal="true" role="dialog">
-   <div class="modal-dialog">
-      <div class="modal-content">
-         <div class="modal-header">
-            <h4 class="modal-title">@ModalTitle</h4>
-         </div>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                @if (ModalObject is Experiment)
+                {
+                    <img src="icons/expIcon_blue.svg"/>
+                }
+                else
+                {
+                    <img src="icons/ctIcon_blue.svg"/>
+                }
+                <h4 class="modal-title">@(ModalTitle.Contains(":") ? ModalTitle.Split(": ")[1] : ModalTitle)</h4>
+                @if (ModalTitle.Contains("Edit"))
+                {
+                    <i class="fa-solid fa-pencil"></i>
+                }
+            </div>
 
-         <form onsubmit="@(() => saveEdits())">
-            <div class="modalContent">
-               @if(ModalObject is Experiment)
-               {
-                  <p>Experiment Number</p>
-                  <input type="text" required @bind="((Experiment)((object)ModalObject)).ExperimentNumber"/>
+            <form onsubmit="@(() => saveEdits())">
+                <div class="modalContent">
+                    @if (ModalObject is Experiment)
+                    {
+                        @*Experiment Modal*@
+                        <p>Experiment number</p>
+                        <input type="text" placeholder="Enter experiment number" required @bind="((Experiment)((object)ModalObject)).ExperimentNumber"/>
                   
-                  <p>Title</p>
-                  <input type="text" required @bind="((Experiment)((object)ModalObject)).Title" />
-                  
-                  <p>Author</p>
-                  <input type="text" required @bind="((Experiment)((object)ModalObject)).Author"/>
-                  
-                  <p>Created At</p>
-                  <input type="date" required @bind="((Experiment)((object)ModalObject)).CreatedAt" />
-                  
-                  <p>Description</p>
-                  <textarea @bind="((Experiment)((object)ModalObject)).Description"/>
-               } else
-               {
-                  <p>Title</p>
-                  <input type="text" required @bind="((ClinicalTest)((object)ModalObject)).Title"/>
-                  
-                  <p>Created At</p>
-                  <input type="date" required @bind="((ClinicalTest)((object)ModalObject)).CreatedAt"/>
-
-                  <p>N-plicate size</p>
-                  <input type="number" required min="1" @bind="((ClinicalTest)((object)ModalObject)).NplicateSize"/>
-
-                  <p>Description</p>
-                  <textarea @bind="((ClinicalTest)((object)ModalObject)).Description"/>
-                  <div class="associator-titles">
-                     <div>All Experiments</div>
-                     <div>Associated Experiments</div>
-                  </div>
-                  <div class="associator">
-                     <div class="search-experiments">
-                        <div class="searchbar">
-                           <i class="fa-solid fa-magnifying-glass"></i>
-                           <input type="text" placeholder="Search experiment..." @oninput="@searchExperiments">
+                        <p>Title</p>
+                        <input type="text" placeholder="Enter title of experiment" required @bind="((Experiment)((object)ModalObject)).Title" />
+                        
+                        <div class="input-container">
+                            <div class="half">
+                                <p>Author</p>
+                                <input type="text" placeholder="Name of author" required @bind="((Experiment)((object)ModalObject)).Author" />
+                            </div>
+                            <div class="half">
+                                <p>Created</p>
+                                <input type="date" required @bind="((Experiment)((object)ModalObject)).CreatedAt" />
+                            </div>
                         </div>
-                        <div class="experiments-found">
-                        @foreach (Experiment e in searchedExperiments)
-                        {
-                           if (((ClinicalTest)((object)ModalObject)).ExperimentIds.Contains(e.id))
-                           {
-                              <p class="experiment-is-added" @onclick="@(() => clickedRelatedExperiment(e.id))" title="@titleHelper(e)" >@e.ExperimentNumber</p>
-                           } else 
-                           {
-                              <p title="@titleHelper(e)" @onclick="@(() => clickedExperimentToRelate(e.id))">@e.ExperimentNumber</p>
-                           }
-                        }
+
+                  
+                        <p>Description</p>
+                        <textarea placeholder="Write a short description.." @bind="((Experiment)((object)ModalObject)).Description"/>
+                    } 
+                    else
+                    {
+                        @*ClinicalTest Modal*@
+                        <p>Title</p>
+                        <input type="text" placeholder="Enter title of clinical test" required @bind="((ClinicalTest)((object)ModalObject)).Title" />
+                        
+                        <div class="input-container">
+                            <div class="half">
+                                <p>n-plicate size</p>
+                                <input type="number" placeholder="3" required min="1" @bind="((ClinicalTest)((object)ModalObject)).NplicateSize" />
+                            </div>
+                            <div class="half">
+                                <p>Created</p>
+                                <input type="date" required @bind="((ClinicalTest)((object)ModalObject)).CreatedAt"/>
+                            </div>
                         </div>
-                     </div>
-                     <div class="associated-experiments">
-                        <div class="related-experiments">
-                            @foreach (string id in ((ClinicalTest)((object)ModalObject)).ExperimentIds)
+                        <p>Description</p>
+                        <textarea placeholder="Write a short description.." @bind="((ClinicalTest)((object)ModalObject)).Description" />
+                        
+                        <p>Associate experiments</p>
+                        <div class="associator">
+                            <div class="search-experiments">
+                            <div class="searchbar">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                                <input type="text" placeholder="Search experiment..." @oninput="@searchExperiments">
+                            </div>
+                            <div class="experiments-found">
+                            @foreach (Experiment e in searchedExperiments)
                             {
-                                <p title="@titleHelperRelatedExperiments(id)" @onclick="@(() => clickedRelatedExperiment(id))">@(getRelatedExperimentNumber(id))</p>
+                                if (((ClinicalTest)((object)ModalObject)).ExperimentIds.Contains(e.id))
+                                {
+                                    <div class="experiment-is-added" @onclick="@(() => clickedRelatedExperiment(e.id))" title="@titleHelper(e)" >@e.ExperimentNumber</div>
+                                } 
+                                else 
+                                {
+                                    <div title="@titleHelper(e)" @onclick="@(() => clickedExperimentToRelate(e.id))">@e.ExperimentNumber</div>
+                                }
                             }
+                            </div>
+                            </div>
+                            <div class="associated-experiments">
+                            <p>Associated experiments</p>
+                            <div class="related-experiments">
+                                @foreach (string id in ((ClinicalTest)((object)ModalObject)).ExperimentIds)
+                                {
+                                    <div title="@titleHelperRelatedExperiments(id)" @onclick="@(() => clickedRelatedExperiment(id))">@(getRelatedExperimentNumber(id))</div>
+                                }
+                            </div>
+                            </div>
                         </div>
-                     </div>
-                  </div>
-               }
-            </div>
+                    }
+                </div>
                   
-            <div class="modal-footer">
-               <button type="button" class="grey-button" @onclick="cancelEdits">Cancel</button>
-                    @if (ModalObject is ClinicalTest && ((ClinicalTest)((object)ModalObject)).ExperimentIds.Count <= 0){
-                        <button type="button" class="green-button" style="opacity: 0.5"disabled>No associated experiments</button>
-                    }
-                    else{
-                        <button type="submit" class="green-button">Save</button>
-                    }
-            </div>
-
-         </form>
-      </div>
-   </div>
+                <div class="modal-footer">
+                    <button type="button" class="grey-button" @onclick="cancelEdits">Cancel</button>
+                        @if (ModalObject is ClinicalTest && ((ClinicalTest)((object)ModalObject)).ExperimentIds.Count <= 0){
+                            <button type="button" class="green-button" style="opacity: 0.5"disabled>No associated experiments</button>
+                        }
+                        else{
+                            <button type="submit" class="green-button">Save</button>
+                        }
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 
 

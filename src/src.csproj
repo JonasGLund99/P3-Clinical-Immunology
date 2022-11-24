@@ -7,10 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Shared\CancelOrConfirmModal.razor.css" />
     <None Remove="Shared\Overview.razor.css" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Shared\CancelOrConfirmModal.razor.css" />
     <Content Include="Shared\Overview.razor.css" />
   </ItemGroup>
 
