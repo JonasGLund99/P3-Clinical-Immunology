@@ -64,10 +64,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
     public async Task<List<Block>> GetSortedBlocks()
     {
         List<Block> blocks = new();
-        foreach (Block block in await GetNormalBlocks())
-        {
-            blocks.Add(block);
-        }
+        blocks.AddRange(await GetNormalBlocks());
 
         blocks.Sort(delegate (Block x, Block y)
         {
@@ -173,9 +170,9 @@ public class ClinicalTest : BaseModel<ClinicalTest>
                         {
                             Block normalBlock = normBlocks[normalBlockIndex];
                             NormalBlockIds.Append(normalBlock.id);
-                            normalBlock.Index = blockIndex;
-                            normalBlock.SlideIndex = slideIndex;
                             normalBlock.PlateIndex = i;
+                            normalBlock.SlideIndex = slideIndex;
+                            normalBlock.Index = blockIndex;
                             overview[i][slideIndex][blockIndex] = normalBlock;
                             normalBlockIndex++; 
                         }

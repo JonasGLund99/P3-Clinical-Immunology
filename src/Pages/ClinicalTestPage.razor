@@ -122,6 +122,7 @@ else
             experiment = await ExperimentManager.GetExperimentById(ExperimentId);
             clinicalTest = await ExperimentManager.GetClinicalTestById(ClinicalTestId);
             StateHasChanged();
+            await clinicalTest.GetNormalBlocks();
         }
     }
 
