@@ -170,7 +170,6 @@ public class ClinicalTest : BaseModel<ClinicalTest>
                         {
                             Block normalBlock = normBlocks[normalBlockIndex];
                             NormalBlockIds.Append(normalBlock.id);
-                            normalBlock.PlateIndex = i;
                             normalBlock.SlideIndex = slideIndex;
                             normalBlock.Index = blockIndex;
                             overview[i][slideIndex][blockIndex] = normalBlock;
