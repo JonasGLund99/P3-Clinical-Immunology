@@ -22,7 +22,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach(Block block in ClinicalTest.GetSortedBlocks()) {
+                    @foreach(Block block in allBlocks) {
                         <tr>
                             @{int k = 1;}
                             @foreach (string chosenTableTitle in ClinicalTest.ChosenTableTitles)
@@ -94,6 +94,15 @@
 
     [Parameter]
     public ClinicalTest ClinicalTest { get; set; } = new();
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)  
+    {
+        if (firstRender) {
+            allBlocks = await ClinicalTest.GetSortedBlocks();
+            StateHasChanged();
+        }
+    }
 
     private void nplicateClicked(Nplicate nplicate) 
     {
