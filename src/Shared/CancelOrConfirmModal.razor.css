@@ -1,0 +1,35 @@
+.modal-content {
+    display: flex;
+    padding: 30px;
+    flex-direction: column;
+    border-radius: 15px;
+}
+.modal-header {
+    display: flex;
+    gap: 15px;
+    justify-content: left;
+    padding: 0;
+    border: none;
+    padding-bottom: 10px;
+}
+.modal-header img {
+    height: 35px;
+}
+.modal-header i {
+    margin-left: auto;
+    color: var(--grey);
+}
+.modal-title {
+    font-weight: bold;
+}
+.modal-body {
+    margin: 0;
+    padding: 10px 0;
+}
+.modal-body p {
+    margin: 10px 0 0 0;
+}
+.modal-footer {
+    padding: 10px 0 0 0;
+    border: none;
+}

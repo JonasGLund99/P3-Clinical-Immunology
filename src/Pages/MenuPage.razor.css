@@ -38,20 +38,24 @@ main {
     margin-right: 20px;
 }
 
+#experiment-header img, #clinical-test-header img {
+    height: 60px;
+}
+
 #experiment-header {
-    background-color: var(--primary-dark-color);
+    background-color: var(--experiment-color);
 }
 
 #clinical-test-header {
-    background-color: var(--leftcard-color);
+    background-color: var(--clinicaltest-color);
 }
 
 .toolbar {
     display: flex;
-    justify-content: space-around;
-    margin: 20px 0;
+/*    justify-content: space-between;*/
+    gap: 20px;
+    padding: 20px 20px 20px 10px;
     width: 100%;
-    align-items: center;
 }
 
 .toolbar i {
@@ -71,9 +75,8 @@ input:focus {
     outline: none;
 }
 
-.searchbar {
-    width: 50%;
-    height: 40px;
+.searchbar, .ct-searchbar {
+    padding-right: 15px;
     border-radius: 15px;
     text-align: center;
     background-color: var(--menu-button-color);
@@ -81,8 +84,19 @@ input:focus {
     justify-content: left;
     align-items: center;
 }
+.searchbar {
+    width: 70%;
+}
+.ct-searchbar {
+    width: 55%;
+}
 
-.searchbar i {
+/*.searchbar:focus {
+    border: 2px solid var(--grey); 
+}*/
+
+.searchbar i, .ct-searchbar i {
+    color: var(--primary-dark-color);
     margin-left: 20px;
 }
 
@@ -91,61 +105,50 @@ input:focus {
     width: 100%;
 }
 
-.grid-header {
+.grid-header, .grid-header-clinicalTest {
     display: grid;
-    width: calc(100% - 30px);
-    padding: 10px 10px 0 20px;
-    grid-template-columns: 15% 20% 32% 13% 20%;
+    width: calc(100% - 15px);
+    padding: 0 15px 0 15px;
     font-weight: bold;
 }
-
+.grid-header {
+    grid-template-columns: 16% 18% 28% 16% 22%;
+}
+.grid-header-clinicalTest {
+    grid-template-columns: 48% 20% 32%;
+}
 .grid-header div,
 .grid-header-clinicalTest div {
+    padding-bottom: 2px;
     border-bottom: 2px solid var(--primary-dark-color);
-}
-
-.grid-header-clinicalTest {
-    display: grid;
-    width: calc(100% - 30px);
-    padding: 10px 10px 0 20px;
-    grid-template-columns: 51% 20% 29%;
-    font-weight: bold;
 }
 
 .all-experiment-cards,
 .all-clinicaltest-cards {
-    height: calc(100vh - 100px - 84px - 44px);
+    height: calc(100vh - 215px);
     overflow-y: scroll;
-    margin-right: 10px;
 }
 
-.no-experiment-selected-placeholder {
+.clinicaltest-content-empty-true, .no-clinical-tests {
     display: flex;
-    justify-content: center;
-}
-
-.clinicaltest-content-empty-true {
-    width: 100%;
-    height: calc(100% - 100px);
-    display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    font-weight: bold;
-    color: var(--rightcard-color);
-    font-size: 30px;
+    text-align: center;
+}
+.clinicaltest-content-empty-true {
+    height: calc(100% - 100px);
+    width: 100%;
+}
+.clinicaltest-content-empty-true p, .no-clinical-tests p {
+    font-size: 18px;
+    margin-bottom: 5px;
+}
+.no-clinical-tests {
+    margin-top: 30vh;
 }
 
 .clinicaltest-content-empty-false {
     width: 100%;
     height: calc(100% - 100px);
-}
-
-
-.no-clinical-tests {
-    display: flex;
-    justify-content: center;
-    margin-top: 30vh;
-    font-weight: bold;
-    color: var(--rightcard-color);
-    font-size: 30px;
 }

@@ -1,35 +1,30 @@
 ﻿@using src.Data
 @typeparam MenuCardType where MenuCardType : new()
 
-
 <div class="card-content">
     @if (obj is Experiment)
     {
-        <div class="card-textcontent-experiment active-experiment-@(((((Experiment)(object)obj)).id == ((Experiment)(object)selectedObj)?.id).ToString().ToLower())"
-        @onclick="objectOnclick">
-            <span>@(((Experiment)((object)obj)).ExperimentNumber)</span>
-            <span>@(((Experiment)((object)obj)).Author)</span>
-            <span>@(((Experiment)((object)obj)).Title)</span>
-            <span>@(((Experiment)((object)obj)).CreatedAt?.ToShortDateString())</span>
-            <span>@(((Experiment)((object)obj)).EditedAt.ToString("dd/MM/yyyy hh:mm"))</span>
-            <i class="fa-solid fa-pencil" @onclick="editObject" @onclick:stopPropagation="true"
-            @onclick:preventDefault="true"></i>
-            <i class="fa-solid fa-trash" @onclick="deleteObject" @onclick:stopPropagation="true"
-            @onclick:preventDefault="true"></i>
+        Experiment experiment = (Experiment)(object)obj;
+        <div class="card-textcontent-experiment active-experiment-@(((experiment.id) == ((Experiment)(object)selectedObj)?.id).ToString().ToLower())" @onclick="objectOnclick">
+            <span>@(experiment.ExperimentNumber)</span>
+            <span>@(experiment.Author)</span>
+            <span>@(experiment.Title)</span>
+            <span>@(experiment.CreatedAt?.ToShortDateString())</span>
+            <span>@(experiment.EditedAt.ToString("dd/MM/yyyy HH:mm"))</span>
+            <i title="Edit @(experiment.ExperimentNumber)" class="fa-solid fa-pencil" @onclick="editObject" @onclick:stopPropagation="true" @onclick:preventDefault="true"></i>
+            <i title="Delete @(experiment.ExperimentNumber)" class="fa-solid fa-trash" @onclick="deleteObject" @onclick:stopPropagation="true" @onclick:preventDefault="true"></i>
         </div>
 
-    }
+    } 
     else
     {
-        <div class="card-textcontent-clinicaltest active-clinicaltest-@((((ClinicalTest)(object)obj) == (ClinicalTest)(object)selectedObj).ToString().ToLower())"
-        @onclick="objectOnclick">
-            <span>@(((ClinicalTest)((object)obj)).Title)</span>
-            <span>@(((ClinicalTest)((object)obj)).CreatedAt?.ToShortDateString())</span>
-            <span>@(((ClinicalTest)((object)obj)).EditedAt.ToString("dd/MM/yyyy hh:mm"))</span>
-            <i class="fa-solid fa-pencil" @onclick="editObject" @onclick:stopPropagation="true"
-            @onclick:preventDefault="true"></i>
-            <i class="fa-solid fa-trash" @onclick="deleteObject" @onclick:stopPropagation="true"
-            @onclick:preventDefault="true"></i>
+        ClinicalTest clinicalTest = (ClinicalTest)(object)obj;
+        <div class="card-textcontent-clinicaltest" @onclick="objectOnclick">
+            <span>@(clinicalTest.Title)</span>
+            <span>@(clinicalTest.CreatedAt?.ToShortDateString())</span>
+            <span>@(clinicalTest.EditedAt.ToString("dd/MM/yyyy HH:mm"))</span>
+            <i title="Edit @(clinicalTest.Title)" class="fa-solid fa-pencil" @onclick="editObject" @onclick:stopPropagation="true" @onclick:preventDefault="true"></i>
+            <i title="Delete @(clinicalTest.Title)" class="fa-solid fa-trash" @onclick="deleteObject" @onclick:stopPropagation="true" @onclick:preventDefault="true"></i>
         </div>
     }
 </div>

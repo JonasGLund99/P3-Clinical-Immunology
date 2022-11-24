@@ -1,25 +1,39 @@
 @import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 :root {
-    --main-background-color: #d9d9d9;
-    --navbar-button-color: #808080;
+    --main-background-color: #e0e0e0;
+    /*    --navbar-button-color: #808080;*/
+    --navbar-button-color: #0075C4;
     --navbar-button-hover-color: #B9B9B9;
     --menu-button-color: #ebebeb;
     --primary-dark-color: #383838;
     --secondary-dark-color: #474747;
     --main-text-color: #e2e2e2;
-    --green-btn-color: #66985E;
-    --green-btn-hover-color: #30572A;
+    --green-btn-color: #5c985c;
+    --green-btn-hover-color: #4a8541;
     --red-btn-color: #BE5959;
-    --rightcard-color: #9e9e9e;
-    --leftcard-color: #7d7d7d;
+    --leftcard-color: var(--experiment-color);
+    --rightcard-color: var(--clinicaltest-color);
+    --experiment-color: #004385;
+    --experiment-hover-color: #0056ab;
+    --clinicaltest-color: #006fba;
     --secondary-text-color: #ffffff;
     --grey: #d5d5d5;
     --light-grey: #f3f3f3;
-    --Dark-grey: #3a3a3a;
-    --red-btn-color: #BE5959;
-    --main-button-dark-color: #b3b3b3;
-    --scrollbar-color: #696969;
+    --dark-grey: #3a3a3a;
+    --red-btn-color: #cb3939;
+    --red-btn-hover-color: #b12f2f;
+    --main-button-dark-color: #969696;
+    --main-button-dark-hover-color: #7e7e7e;
+    --scrollbar-background-color: #f1f1f1;
+    --scrollbar-color: #8e8e8e;
+    --scrollbar-hover-color: var(--primary-dark-color);
     --blue-btn-color: #5199eb;
+
+    /*Plate specific colours*/
+    --plate-border-color: var(--primary-dark-color);
+    --block-border-color: grey;
+    --heading-background-color: var(--secondary-dark-color);
+    --plate-background-color: white;
 }
 
 * {
@@ -97,7 +111,6 @@ a,
 
 
 /*custom*/
-
 .green-button {
     padding: 10px 20px;
     color: white;
@@ -107,6 +120,13 @@ a,
     border-radius: 10px;
     align-items: center;
     justify-content: space-evenly;
+}
+.green-button:hover {
+    background-color: var(--green-btn-hover-color);
+}
+.green-button img {
+    height: 25px;
+    margin-left: 10px;
 }
 
 .red-button {
@@ -119,6 +139,9 @@ a,
     align-items: center;
     justify-content: space-evenly;
 }
+.red-button:hover {
+    background-color: var(--red-btn-hover-color);
+}
 
 .grey-button {
     padding: 10px 20px;
@@ -130,10 +153,34 @@ a,
     align-items: center;
     justify-content: space-evenly;
 }
+.grey-button:hover {
+    background-color: var(--main-button-dark-hover-color);
+}
+
+.standard-button {
+    display: flex;
+    gap: 10px;
+    width: fit-content;
+    background-color: var(--light-grey);
+    color: var(--primary-dark-color);
+    border: 2px solid var(--grey);
+    padding: 10px 25px;
+    border-radius: 10px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.standard-button:hover {
+    color: white;
+    background-color: var(--clinicaltest-color);
+    border-color: var(--clinicaltest-color);
+}
 
 .add-element-button {
     padding: 10px 20px;
-    color: var(--Dark-grey);
+    color: var(--dark-grey);
     display: flex;
     background-color: var(--menu-button-color);
     border: none;
@@ -141,10 +188,18 @@ a,
     justify-content: center;
     align-items: center;
 }
-
 .add-element-button:hover {
-    color: var(--menu-button-color);
-    background-color: var(--Dark-grey);
+    color: white;
+/*    background-color: var(--primary-dark-color);*/
+}
+.add-element-button.experiment:hover{
+    background-color: var(--experiment-color);
+}
+.add-element-button.clinicaltest:hover{
+    background-color: var(--clinicaltest-color);
+}
+.add-element-button i {
+    margin-right: 10px;
 }
 
 /* Custom scrollbar */
@@ -155,16 +210,16 @@ a,
 }
 
 ::-webkit-scrollbar-track {
-    background: #f1f1f1;
+    background: var(--scrollbar-background-color);
     border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: var(--secondary-dark-color);
+    background: var(--scrollbar-color);
     border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-    background: var(--primary-dark-color);
+    background: var(--scrollbar-hover-color);
 }
 /*Scrollbar - end*/
 
@@ -186,4 +241,34 @@ a,
     color: var(--primary-dark-color);
     font-size: 12px;
     white-space: nowrap;
+}
+
+.grid-content.ghost > div > div > span, .grid-content.ghost > div > div > i {
+    display: none;
+}
+
+.grid-content.ghost > div {
+    animation-duration: 1.8s;
+    animation-fill-mode: forwards;
+    animation-iteration-count: infinite;
+    animation-name: placeHolderShimmer;
+    animation-timing-function: linear;
+    background: #f6f7f8;
+    background: linear-gradient(110deg, var(--light-grey) 8%, var(--grey) 38%, var(--light-grey) 54%);
+    background-size: 1000px 200px;
+    position: relative;
+}
+
+@keyframes placeHolderShimmer {
+    0% {
+        background-position: 0px 0
+    }
+
+    100% {
+        background-position: 1000px 0
+    }
+}
+
+.fa-square-plus {
+    -webkit-font-smoothing: antialiased; 
 }

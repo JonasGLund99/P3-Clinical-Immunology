@@ -7,6 +7,7 @@ public class Experiment : BaseModel<Experiment>
 {
     public Experiment(string id, string experimentNumber, string title, string author, string description, DateTime createdAt) : base(id)
     {
+        PartitionKey = id;
         ExperimentNumber = experimentNumber;
         Title = title;
         Author = author;
@@ -15,16 +16,12 @@ public class Experiment : BaseModel<Experiment>
     }
     public Experiment(string id) : base(id) 
     {
-
+        PartitionKey = id;
     }
-    public Experiment() : base() 
-    {
+    public Experiment() : base() { }
 
-    }
-    [Required]
-    [StringLength(10, ErrorMessage = "Name is too long.")]
+    public override string PartitionKey { get; set; } = "";
     public string ExperimentNumber { get; set; } = "";
-
     public string Title { get; set; } = "";
     public string Author { get; set; } = "";
     public string Description { get; set; } = "";

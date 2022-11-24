@@ -6,7 +6,7 @@
 
 @if (experiment != null && clinicalTest != null)
 {
-    <PageTitle>@clinicalTest.Title</PageTitle>
+    <PageTitle>@clinicalTest.Title | Clinical Immunology</PageTitle>
 
     <Navbar ClinicalTestTitle="@clinicalTest.Title"
         ExperimentNumber="@experiment.ExperimentNumber"
@@ -39,20 +39,49 @@ else
 
 @if (showExperimentModal)
 {
-    <EditorModal CallbackClose="closeEditorModal"
-             CallbackSave="saveEditorModal"
-             ModalObject="@experiment"
-             ModalType="@Experiment"
-             ModalTitle='@editModalTitle' />
+   <EditorModal 
+        CallbackClose="closeEditorModal"
+        CallbackSave="saveExperimentCallback"
+        ModalObject="@experiment"
+        ModalType="@Experiment"
+        ModalTitle='@editModalTitle'
+   />
 }
 
 @if (showClinicalTestModal)
 {
-    <EditorModal CallbackClose="closeEditorModal"
-             CallbackSave="saveEditorModal"
-             ModalObject="@clinicalTest"
-             ModalType="@ClinicalTest"
-             ModalTitle="@editModalTitle" />
+   <EditorModal 
+        CallbackClose="closeEditorModal"
+        CallbackSave="saveClinicalTestCallback"
+        ModalObject="@clinicalTest"
+        ModalType="@ClinicalTest"
+        ModalTitle="@editModalTitle"
+   />
+} 
+@if (showWarningModal)
+{
+    <div class="modal fade show" style="display:block" aria-modal="true" role="dialog" @onclick="@ModalCancel">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">Clinical test disassociated</h4>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <p>The clinical test is no longer related to the selected experiment. You will be redirected to the menu page</p>
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" @onclick=@ModalCancel>Ok</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
 }
 
 @code {
@@ -61,19 +90,19 @@ else
     [Parameter]
     public string ClinicalTestId { get; set; } = "";
 
-    private Experiment placeholderExp = new Experiment(
-        id: "",
-        experimentNumber: "EXP-##-######",
-        title: "Title",
-        author: "Author",
+	private Experiment placeholderExp = new Experiment(
+		id: "",
+		experimentNumber: "EXP",
+		title: "Exp",
+        author: "A",
         description: "",
         createdAt: DateTime.Now
-    );
-
-    private ClinicalTest placeholderCt = new ClinicalTest(
-        id: "",
-        title: "Title",
-        nplicateSize: 3,
+	);
+	
+	private ClinicalTest placeholderCt = new ClinicalTest(
+		id: "",
+		title: "Ct",
+		nplicateSize: 3,
         description: "",
         createdAt: DateTime.Now
     );
@@ -83,6 +112,7 @@ else
     private bool showClinicalTestModal = false;
     private bool showExperimentModal = false;
     private string editModalTitle = "";
+    private bool showWarningModal = false;
 
     // Get experiment and clincical test from database on the first render
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -92,10 +122,6 @@ else
             experiment = await ExperimentManager.GetExperimentById(ExperimentId);
             clinicalTest = await ExperimentManager.GetClinicalTestById(ClinicalTestId);
             StateHasChanged();
-            foreach (string slideId in clinicalTest.SlideIds) {
-                Slide slide = await clinicalTest.GetSlideById(slideId);
-                clinicalTest.AddSlide(slide);
-            }
         }
     }
 
@@ -109,14 +135,33 @@ else
         StateHasChanged();
     }
 
-    private async void saveEditorModal()
+    private void ModalCancel() 
     {
-        if (experiment == null || clinicalTest == null) return;
+        showWarningModal = false;
+        NavManager.NavigateTo("/");
+    }
+
+    private async void saveClinicalTestCallback(ClinicalTest SavedClinicalTest) 
+    {
         showClinicalTestModal = false;
+        await ExperimentManager.SaveClinicalTestWithAssociate(SavedClinicalTest);
+        if (!clinicalTest.ExperimentIds.Contains(ExperimentId))
+        {
+            showWarningModal = true;
+            StateHasChanged();
+        }
+        else
+        {
+            StateHasChanged();
+        }
+    }
+
+    private async void saveExperimentCallback(Experiment savedExperiment)
+    {
         showExperimentModal = false;
-        experiment.EditedAt = DateTime.Now;
-        await experiment.SaveToDatabase();
-        await clinicalTest.SaveToDatabase();
+        savedExperiment.EditedAt = DateTime.Now;
+        await savedExperiment.SaveToDatabase();
+        experiment = SavedExperiment;
         StateHasChanged();
     }
 
@@ -124,14 +169,14 @@ else
     {
         if (experiment == null) return;
         showExperimentModal = true;
-        editModalTitle = $"Edit Experiment: {experiment.ExperimentNumber}";
+        editModalTitle = $"Edit: {experiment.ExperimentNumber}";
     }
 
     private void editCT() 
     {
         if (clinicalTest == null) return;
         showClinicalTestModal = true;
-        editModalTitle = $"Edit test: {clinicalTest.Title}";
+        editModalTitle = $"Edit: {clinicalTest.Title}";
     }
 
     private int activeButton { get; set; } = 0;
