@@ -20,7 +20,7 @@
 @foreach(Block block in blocks)
 {
     <tr>
-        <td class="line-number">@((block.SlideIndex + 1) + (block.PlateIndex * 4))</td>
+        <td class="line-number">@((block.SlideIndex + 1))</td>
         @{int k = 1;}
         @foreach (string chosenTableTitle in ClinicalTest.ChosenTableTitles)
         {
