@@ -36,20 +36,12 @@ public class Experiment : BaseModel<Experiment>
         {
             throw new NullReferenceException("No database");
         }
-        //string queryString = @"SELECT * FROM ClinicalTest
-        //                    WHERE CONTAINS(ClinicalTest.Title, @searchParameter, true) 
-        //                    AND ARRAY_CONTAINS(ClinicalTest.ExperimentIds, @expId)
-        //                    ORDER BY ClinicalTest.EditedAt DESC";
-
-        string queryString = @"SELECT * FROM ClinicalTest
-                            ORDER BY ClinicalTest.EditedAt DESC";
-
-
-
-//        string queryString = @"SELECT ClinicalTest,
-//                               ARRAY(SELECT Slide.Barcode FROM Slide IN ClinicalTest.Slides) as Barcodes
-//FROM Experiment.ClinicalTests";
-
+        string queryString = @"SELECT DISTINCT VALUE CT FROM ClinicalTest CT
+                            JOIN s IN CT.Slides
+                            WHERE CONTAINS(CT.Title, @searchParameter, true)
+                            OR CONTAINS(s.Barcode, @searchParameter, true)
+                            AND ARRAY_CONTAINS(CT.ExperimentIds, @expId)
+                            ORDER BY CT.EditedAt DESC";
 
         FeedIterator<ClinicalTest> feed = DatabaseService.Instance.Database.GetContainer("ClinicalTest")
                                         .GetItemQueryIterator<ClinicalTest>(
@@ -57,34 +49,14 @@ public class Experiment : BaseModel<Experiment>
                                             .WithParameter("@searchParameter", searchParameter)
                                             .WithParameter("@expId", this.id)
                                         );
-
-        List<ClinicalTest> matchingResponse = new List<ClinicalTest>();
         while (feed.HasMoreResults)
         {
             FeedResponse<ClinicalTest> response = await feed.ReadNextAsync();
-            foreach(ClinicalTest ct in response)
-            {
-                if(!ct.Title.Contains(searchParameter))
-                {
-                    foreach (Slide slide in ct.Slides)
-                    {
-                        if (slide.Barcode.Contains(searchParameter))
-                        {
-                            matchingResponse.Add(ct);
-                            break;
-                        }
-                    }
-                }
-                else
-                {
-                    matchingResponse.Add(ct);
-                }
+            clinicalTests.AddRange(response);
 
-            }
         }
 
 
-
-        return matchingResponse;
+        return clinicalTests;
     }
 }
