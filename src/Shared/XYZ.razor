@@ -1,6 +1,7 @@
 ﻿@using src.Data
 @using src.Shared
 
+
 <tr>
     <td class="line-number">Slide</td>
     @{int j = 1;}
@@ -23,9 +24,9 @@
 </tr>
 
 @{int i = 0;}
-@foreach (Slide slide in slides)
+@foreach (Slide slide in ClinicalTest.Slides)
 {
-    @foreach (Block block in slide.Blocks)
+    @foreach (Block block in blocks)
     {
         <tr>
             <td class="line-number">@(i + 1)</td>
@@ -90,13 +91,7 @@
 
 @code {
     private string mode = "XYZ";
-    private List<Slide> slides
-    {
-        get
-        {
-            return ClinicalTest.GetSlides();
-        }
-    }
+    private List<Block> blocks { get; set; } = new List<Block>();
 
     [Parameter]
     public Nplicate SelectedNplicate { get; set; }
@@ -110,6 +105,14 @@
     public async void OpenSpots(MouseEventArgs e, Nplicate selectedTd)
     {
         await ShowSpots.InvokeAsync(new Tuple<MouseEventArgs, Nplicate>(e, selectedTd));
+    }
+
+    protected override async OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            blocks = await ClinicalTest.GetNormalBlocks();
+        }
     }
 
     //[Parameter, EditorRequired]
