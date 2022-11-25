@@ -6,6 +6,10 @@
 <PageTitle>Clinical Immunology | Manage experiments and clinical tests</PageTitle>
 
 <main>
+    @if (loader)
+    {
+        <Loader></Loader>
+    }
     <div id="experiments-container">
         <div id="experiment-header" class="menu-header">
             <img src="icons/expIcon_white.svg"/>
@@ -36,7 +40,7 @@
                 <div class="all-experiment-cards">
                     @for (int i = 0; i < 10; i++)
                     {
-                        <div class="grid-content ghost">
+                        <div class="grid-content expGhost">
                             <MenuCard MenuCardType="@Experiment"
                                     objectDeleteCallback="MenuCardDeleteCallback"
                                     objectEditCallback="MenuCardEditCallback"
@@ -93,7 +97,7 @@
                     </button>
                     <div title="Search for clinical test" class="ct-searchbar">
                         <i class="fa-solid fa-magnifying-glass"></i>
-                        <input type="text" placeholder="Search by title or barcode...">
+                        <input type="text" placeholder="Search by title or barcode..." @oninput="(input) => showClinicalTests(selectedExp, input.Value.ToString())">
                     </div>
                 </div>
                 <div id="clinical-test-grid">
@@ -109,7 +113,7 @@
                         <div class="all-experiment-cards">
                             @for (int i = 0; i < 3; i++)
                             {
-                                <div class="grid-content ghost">
+                                <div class="grid-content ctGhost">
                                     <MenuCard MenuCardType="@ClinicalTest"
                                     objectDeleteCallback="MenuCardDeleteCallback"
                                     objectEditCallback="MenuCardEditCallback"
@@ -120,7 +124,7 @@
                             }
                         </div>
                     }
-                    else if (currentClinicalTests.Count() != 0)
+                    else if (currentClinicalTests != null)
                     {
                         <div class="all-clinicaltest-cards">
                             @foreach (ClinicalTest ct in currentClinicalTests)
@@ -231,6 +235,7 @@
     private string cancelConfirmModalBody = "";
     private bool loadingExp = true;
     private bool loadingCt = true;
+    private bool loader = false;
 
     private Experiment placeholderExp = new Experiment(
         id: "",
@@ -268,13 +273,14 @@
         StateHasChanged();
     }
 
-    private async Task showClinicalTests(Experiment exp)
+    private async Task showClinicalTests(Experiment exp, string input="")
     {
         loadingCt = true;
-        currentClinicalTests = await exp.QueryClinicalTests("");
+        currentClinicalTests = await exp.QueryClinicalTests(input);
         loadingCt = false;
         StateHasChanged();
     }
+
 
     private void openNewExperimentModal<T>(T obj)
     {
@@ -316,51 +322,59 @@
     {
         showExperimentModal = false;
         e.EditedAt = DateTime.Now;
+        loader = true;
         await e.SaveToDatabase();
+        loader = false;
         experiments = await ExperimentManager.QueryExperiments("");
         StateHasChanged();
         await showClinicalTests(e);
     }
 
-   public async void SaveClinicalTestCallback(ClinicalTest SavedClinicalTest)
-   {
+    public async void SaveClinicalTestCallback(ClinicalTest SavedClinicalTest)
+    {
         showClinicalTestModal = false;
+        loader = true;
         await ExperimentManager.SaveClinicalTestWithAssociate(SavedClinicalTest);
+        loader = false;
         experiments = await ExperimentManager.QueryExperiments(experimentSearchValue);
         StateHasChanged();
         await showClinicalTests(selectedExp);
-   }
-
-   private void setCurrentObject<T>(T obj) 
-   {
-      if (obj is Experiment)
-      {
-         selectedExp = ((Experiment)(object)obj);
-         selectedCT = null;
-      } else if (obj is ClinicalTest)
-      {
-         selectedCT = ((ClinicalTest)(object)obj);
-      }
-   }
-   
-   private async void deleteExperiment()
-   {
-      if (selectedExp == null) return;
-      showCancelConfirmModalDeleteExperiment = false;
-      await ExperimentManager.DeleteExperiment(selectedExp);
-      experiments = await ExperimentManager.QueryExperiments("");
-      currentClinicalTests = null;
-      selectedExp = null;
-      StateHasChanged();
     }
 
-   private async void deleteClinicalTest()
-   {
-      if (selectedCT == null || selectedExp == null) return;
-      showCancelConfirmModalDeleteClinicalTest = false;
-      await ExperimentManager.DeleteClinicalTest(selectedCT);
-      currentClinicalTests = await selectedExp.QueryClinicalTests("");
-      StateHasChanged();
+    private void setCurrentObject<T>(T obj) 
+    {
+        if (obj is Experiment)
+        {
+            selectedExp = ((Experiment)(object)obj);
+            selectedCT = null;
+        } else if (obj is ClinicalTest)
+        {
+            selectedCT = ((ClinicalTest)(object)obj);
+        }
+    }
+
+    private async void deleteExperiment()
+    {
+        if (selectedExp == null) return;
+        showCancelConfirmModalDeleteExperiment = false;
+        loader = true;
+        await ExperimentManager.DeleteExperiment(selectedExp);
+        loader = false;
+        experiments = await ExperimentManager.QueryExperiments("");
+        currentClinicalTests = null;
+        selectedExp = null;
+        StateHasChanged();
+    }
+
+    private async void deleteClinicalTest()
+    {
+        if (selectedCT == null || selectedExp == null) return;
+        showCancelConfirmModalDeleteClinicalTest = false;
+        loader = true;
+        await ExperimentManager.DeleteClinicalTest(selectedCT);
+        loader = false;
+        currentClinicalTests = await selectedExp.QueryClinicalTests("");
+        StateHasChanged();
    }
 
    private async void MenuCardOnclickCallback<T>(T obj) 

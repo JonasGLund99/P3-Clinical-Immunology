@@ -88,4 +88,5 @@ span {
 #navButtonContainer button.active {
     color: var(--primary-dark-color);
     background-color: var(--main-background-color);
+    cursor: default;
 }

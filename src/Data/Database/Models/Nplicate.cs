@@ -29,6 +29,15 @@ public class Nplicate
         }
     }
 
+    public int GetFlagCount() {
+        int res = 0;
+        foreach (Spot spot in Spots)
+        {
+            if (spot.IsFlagged)
+                res++;
+        }
+        return res;
+    }
     public void CalculateMean()
     {
         double summedIntensity = 0;
