@@ -46,7 +46,7 @@
 
     [Parameter, EditorRequired]
     public ClinicalTest? ClinicalTest { get; set; } = default;
-    private bool loading { get; set; } = false;
+    private bool loading { get; set; } = true;
 
     public void SetMode(string newmode) {
         mode = newmode;
@@ -67,6 +67,5 @@
     public void UpdateLoadingStatus(bool isLoading) 
     {
         loading = isLoading;
-
     }
 }
