@@ -212,9 +212,12 @@
             {
                 for (int blNr = 0; blNr < overview[ovNr][slNr].Length; blNr++)
                 {
-                    overview[ovNr][slNr][blNr].TextColour = "red";
-                    /*No await here*/
-                    overview[ovNr][slNr][blNr].SaveToDatabase();
+                    if (overview[ovNr][slNr][blNr].TextColour != "#212529" && overview[ovNr][slNr][blNr].TextColour != "")
+                    {
+                        overview[ovNr][slNr][blNr].TextColour = "#212529";
+                        /*No await, may cause problems*/
+                        overview[ovNr][slNr][blNr].SaveToDatabase();
+                    }
                 }
             }
         }
