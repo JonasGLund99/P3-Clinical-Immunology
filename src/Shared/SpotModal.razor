@@ -1,0 +1,59 @@
+@using src.Shared
+@using src.Data
+
+<div class="modal fade show spot-modal" style="display:block;" aria-modal="true" role="dialog" @onclick="@CloseModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">The spots related to <b>@ShownNplicate.AnalyteType</b></h4>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                <table class="table table-striped">
+                    @{
+                        int i = 1;
+                    }
+                    <thead> 
+                        <tr>
+                            <th scope="col">Spot</th>
+                            <th scope="col">Intensity</th>
+                            <th scope="col">Flagged</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (Spot spot in ShownNplicate.Spots)
+                    {
+                        <tr>
+                            <th scope="row">@i</th>
+                            <td>@spot.Intensity</td>
+                            <td>@spot.IsFlagged</td>
+                        </tr>
+                        i++;
+                    }
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" @onclick=@CloseModal>Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public EventCallback ModalCancelCallback { get; set; }
+
+    [Parameter, EditorRequired]
+    public Nplicate ShownNplicate { get; set; }
+
+    public async void CloseModal()
+    {
+        await ModalCancelCallback.InvokeAsync();
+    }
+}

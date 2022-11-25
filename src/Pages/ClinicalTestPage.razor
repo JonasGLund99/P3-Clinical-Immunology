@@ -2,6 +2,7 @@
 @using src.Data
 @using src.Shared
 @inject NavigationManager NavManager
+@inject IJSRuntime JS
 
 @if (experiment != null && clinicalTest != null)
 {
@@ -17,10 +18,10 @@
 		@switch (activeButton)
 		{
 			case 0: <Details Experiment="@experiment" ClinicalTest="@clinicalTest" editCTCallback="editCT" editExpCallback="editExp"></Details> break;
-			case 1: <Overview ClinicalTest="@clinicalTest"></Overview> break;
-			case 2: <FileUpload ClinicalTest="@clinicalTest" ActiveButton="@activeButton" setActiveButtonCallback="@SetActiveButton"></FileUpload> break;
-			case 3: <h1>Result Table</h1> break;
-			case 4: <h1>Heatmap</h1> break;
+			case 1: <Overview Experiment="@experiment" ClinicalTest="@clinicalTest"></Overview> break;
+			case 2: <FileUpload Experiment="@experiment" ClinicalTest="@clinicalTest" ActiveButton="@activeButton" setActiveButtonCallback="@SetActiveButton" StopReloadCallback="@stopReload"></FileUpload> break;
+		    case 3: <ResultTable ClinicalTest="@clinicalTest"></ResultTable> break;
+			case 4: <Heatmap ClinicalTest="@clinicalTest"></Heatmap> break;
 		}
 	</div>
 } 
@@ -104,10 +105,10 @@ else
 		nplicateSize: 3,
         description: "",
         createdAt: DateTime.Now
-	);
+    );
 
-	private Experiment? experiment;
-	private ClinicalTest? clinicalTest;
+    private Experiment? experiment;
+    private ClinicalTest? clinicalTest;
     private bool showClinicalTestModal = false;
     private bool showExperimentModal = false;
     private string editModalTitle = "";
@@ -121,6 +122,7 @@ else
             experiment = await ExperimentManager.GetExperimentById(ExperimentId);
             clinicalTest = await ExperimentManager.GetClinicalTestById(ClinicalTestId);
             StateHasChanged();
+            await clinicalTest.GetNormalBlocks();
         }
     }
 
@@ -155,11 +157,12 @@ else
         }
     }
 
-    private async void saveExperimentCallback(Experiment SavedExperiment)
+    private async void saveExperimentCallback(Experiment savedExperiment)
     {
         showExperimentModal = false;
-        await SavedExperiment.SaveToDatabase();
-        experiment = SavedExperiment;
+        savedExperiment.EditedAt = DateTime.Now;
+        await savedExperiment.SaveToDatabase();
+        experiment = savedExperiment;
         StateHasChanged();
     }
 
@@ -179,8 +182,21 @@ else
 
     private int activeButton { get; set; } = 0;
 
-	private void SetActiveButton(int buttonId)
-	{
-		activeButton = buttonId;
-	}
+    private void SetActiveButton(int buttonId)
+    {
+        activeButton = buttonId;
+    }
+    private async void stopReload() 
+    {
+        await JS.InvokeVoidAsync("addBeforeUnload");
+
+        clinicalTest.SaveToDatabase().ContinueWith((task) =>
+        {
+            experiment.SaveToDatabase().ContinueWith(async (secondTask) =>
+            {
+                await JS.InvokeVoidAsync("removeBeforeUnload");
+            });
+        });
+
+    }
 }

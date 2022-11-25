@@ -10,7 +10,6 @@ public class ClinicalTest : BaseModel<ClinicalTest>
     private int nplicatesInBlock { get; set; }
     private int numOfBlocks { get; } = 21;
     private List<Block>? normalBlocks { get; set; } = null;
-
     public ClinicalTest(string id, string title, int nplicateSize, string description, DateTime createdAt) : base(id)
     {
         PartitionKey = id;
@@ -60,6 +59,21 @@ public class ClinicalTest : BaseModel<ClinicalTest>
             normalBlocks = result;
         }
         return normalBlocks;
+    }
+    public async Task<List<Block>> GetSortedBlocks()
+    {
+        List<Block> blocks = new();
+        blocks.AddRange(await GetNormalBlocks());
+
+        blocks.Sort(delegate (Block x, Block y)
+        {
+            if (x.SlideIndex == y.SlideIndex)
+            {
+                return x.BlockIndex - y.BlockIndex;
+            }
+            return x.SlideIndex - y.SlideIndex;
+        });
+        return blocks;
     }
     public void SetNormalBlocks(List<Block> blocks) 
     {
@@ -148,6 +162,8 @@ public class ClinicalTest : BaseModel<ClinicalTest>
                         {
                             Block normalBlock = normBlocks[normalBlockIndex];
                             NormalBlockIds.Append(normalBlock.id);
+                            normalBlock.SlideIndex = slideIndex;
+                            normalBlock.BlockIndex = blockIndex;
                             overview[i][slideIndex][blockIndex] = normalBlock;
                             normalBlockIndex++; 
                         }

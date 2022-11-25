@@ -97,7 +97,7 @@
                     </button>
                     <div title="Search for clinical test" class="ct-searchbar">
                         <i class="fa-solid fa-magnifying-glass"></i>
-                        <input type="text" placeholder="Search by title or barcode...">
+                        <input type="text" placeholder="Search by title or barcode..." @oninput="(input) => showClinicalTests(selectedExp, input.Value.ToString())">
                     </div>
                 </div>
                 <div id="clinical-test-grid">
@@ -124,7 +124,7 @@
                             }
                         </div>
                     }
-                    else if (currentClinicalTests.Count() != 0)
+                    else if (currentClinicalTests != null)
                     {
                         <div class="all-clinicaltest-cards">
                             @foreach (ClinicalTest ct in currentClinicalTests)
@@ -273,13 +273,14 @@
         StateHasChanged();
     }
 
-    private async Task showClinicalTests(Experiment exp)
+    private async Task showClinicalTests(Experiment exp, string input="")
     {
         loadingCt = true;
-        currentClinicalTests = await exp.QueryClinicalTests("");
+        currentClinicalTests = await exp.QueryClinicalTests(input);
         loadingCt = false;
         StateHasChanged();
     }
+
 
     private void openNewExperimentModal<T>(T obj)
     {
