@@ -3,12 +3,13 @@ namespace src.Data;
 
 public class Block : BaseModel<Block>
 {
-    public Block(string id, List<string> patientData, BlockType type, int plateIndex, int slideIndex, string partitionKey) : base(id)
+    public Block(string id, List<string> patientData, BlockType type, int slideIndex, int blockIndex, string partitionKey) : base(id)
     {
         PartitionKey = partitionKey;
         PatientData = patientData;
         Type = type;
         SlideIndex = slideIndex;
+        BlockIndex = blockIndex;
     }
     public Block() : base() { }
 
