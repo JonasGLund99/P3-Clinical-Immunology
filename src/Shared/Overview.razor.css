@@ -170,6 +170,15 @@
     margin-left: 12px;
 }
 
+.fa-droplet-slash {
+    font-size: 28px;
+    color: var(--secondary-dark-color);
+}
+
+.fa-droplet-slash:hover {
+    cursor: pointer;
+}
+
 /*Ghosting*/
 .ghostPlate {
     width: 100%;
