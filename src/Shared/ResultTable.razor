@@ -1,5 +1,8 @@
 ﻿@using src.Data
 @using src.Shared
+@using OfficeOpenXml
+
+@inject IJSRuntime JS
 
 <div class="result-table-component">
     <div id="toolbar">
@@ -12,7 +15,7 @@
             </button>
 
         <div id="export-icon" title="Export result table">
-            <i class="fa-solid fa-file-export"></i>
+            <i class="fa-solid fa-file-export" @onclick="Export"></i>
         </div>
     </div>
 
@@ -57,5 +60,12 @@
     {
         selectedNplicate = default;
         displaySpots = false;
+    }
+
+    public async void Export()
+    {
+        if (ClinicalTest == null) return;
+        FileInfo file = await ClinicalTest.ExportResultTable();
+        await JS.InvokeVoidAsync("triggerFileDownload", $"{ClinicalTest.Title}.xlsx", $"http://localhost:5110/exports/{ClinicalTest.id}.xlsx");
     }
 }
