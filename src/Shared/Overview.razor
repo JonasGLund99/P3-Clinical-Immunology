@@ -39,7 +39,7 @@
             </div>
             <div id="save-blocks-animation" class='@(isSavingOverview ? "saving" : "")'>
                 @* disable button if saving *@
-                <i id="save-blocks-btn" class="fa-solid fa-circle-check" @onclick="() => saveOverview()"></i>
+                @* <i id="save-blocks-btn" class="fa-solid fa-circle-check" @onclick="() => saveOverview()"></i> *@
             </div>
         </div>
         
@@ -134,7 +134,7 @@
         mode = newMode;
     }
     private async void updateOverviewState() {
-        await ClinicalTest.SaveToDatabase();
+        @* ClinicalTest.SaveToDatabase(); *@
         overview = await ClinicalTest.GenerateOverview();
         overviewLoaded = true;
         StateHasChanged();
@@ -147,7 +147,7 @@
         if (selectedTableTitle == null) return;
 
         ClinicalTest.ChosenTableTitles[tableTitleNumber] = selectedTableTitle;
-        await ClinicalTest.SaveToDatabase();
+        ClinicalTest.SaveToDatabase();
         StateHasChanged();
     }
 
@@ -190,18 +190,18 @@
         overviewLoaded = false;
         switchMode("Overview");
         StateHasChanged();
-        await ClinicalTest.SaveToDatabase(true);
+        ClinicalTest.SaveToDatabase(true);
         updateOverviewState();
     }
     
-    private async void saveOverview()
+    @* private async void saveOverview()
     {
         isSavingOverview = true;
         StateHasChanged();
-        await ClinicalTest.SaveToDatabase(true);
+        ClinicalTest.SaveToDatabase(true);
         isSavingOverview = false;
         StateHasChanged();
-    }
+    } *@
 
     private async void clearTable() {
         await JS.InvokeVoidAsync("clearTable");

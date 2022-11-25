@@ -139,7 +139,7 @@
             }
         }
         StateHasChanged();
-        await ClinicalTest.SaveToDatabase();
+        ClinicalTest.SaveToDatabase();
     }
 
     public async Task RemoveFile(SlideDataFile slideDataFile) 
@@ -148,7 +148,7 @@
         ClinicalTest.Matches.Remove(slideDataFile.Filename);
 
         allMatched = AllMatched();
-        await ClinicalTest.SaveToDatabase();
+        ClinicalTest.SaveToDatabase();
     }
 
     public bool FileExists(string Filename) 
@@ -200,7 +200,7 @@
         loading = true;
         if (ClinicalTest == null) return;
         ClinicalTest.CalculateClinicalTestResult();
-        await ClinicalTest.SaveToDatabase(true);
+        ClinicalTest.SaveToDatabase(true);
         loading = false;
         await setActiveButtonCallback.InvokeAsync(4);
     }

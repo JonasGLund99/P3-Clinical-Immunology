@@ -95,7 +95,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
         (await GetBlankBlocks()).Remove(block);
     }
 
-    public async Task SaveToDatabase(bool saveBlocks)
+    public async void SaveToDatabase(bool saveBlocks)
     {
         if (saveBlocks)
         {
@@ -105,17 +105,17 @@ public class ClinicalTest : BaseModel<ClinicalTest>
             BlankBlockIds.Clear();
             foreach (Block block in normBlocks)
             {
-                await block.SaveToDatabase();
+                block.SaveToDatabase();
                 NormalBlockIds.Add(block.id);
             }
             foreach (Block block in bBlocks)
             {
-                await block.SaveToDatabase();
+                block.SaveToDatabase();
                 BlankBlockIds.Add(block.id);
             }
         }
 
-        await base.SaveToDatabase();
+        base.SaveToDatabase();
     }
 
     public override async Task RemoveFromDatabase()
@@ -203,7 +203,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
                 }
             }
         }
-        // await SaveToDatabase(true);
+        SaveToDatabase(true);
         return overview;
     }
 

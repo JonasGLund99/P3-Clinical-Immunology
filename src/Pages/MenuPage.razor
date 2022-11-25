@@ -316,7 +316,7 @@
     {
         showExperimentModal = false;
         e.EditedAt = DateTime.Now;
-        await e.SaveToDatabase();
+        e.SaveToDatabase();
         experiments = await ExperimentManager.QueryExperiments("");
         StateHasChanged();
         await showClinicalTests(e);

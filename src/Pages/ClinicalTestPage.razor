@@ -8,6 +8,7 @@
     <PageTitle>@clinicalTest.Title | Clinical Immunology</PageTitle>
 
     <Navbar ClinicalTestTitle="@clinicalTest.Title"
+        ClinicalTestId="@clinicalTest.id"
         ExperimentNumber="@experiment.ExperimentNumber"
         setActiveButtonCallback="@SetActiveButton"
         ActiveButton="@activeButton">
@@ -27,6 +28,7 @@
 else 
 {
 	<Navbar ClinicalTestTitle="@placeholderCt.Title"
+        ClinicalTestId="@placeholderCt.id"
 		ExperimentNumber="@placeholderExp.ExperimentNumber"
 		setActiveButtonCallback="@SetActiveButton"
 		ActiveButton="@activeButton">
@@ -158,7 +160,7 @@ else
     private async void saveExperimentCallback(Experiment SavedExperiment)
     {
         showExperimentModal = false;
-        await SavedExperiment.SaveToDatabase();
+        SavedExperiment.SaveToDatabase();
         experiment = SavedExperiment;
         StateHasChanged();
     }
