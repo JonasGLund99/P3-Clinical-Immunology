@@ -38,15 +38,16 @@ public class Experiment : BaseModel<Experiment>
 
         string queryString = @"SELECT VALUE CT
                                 FROM ClinicalTest CT
-                                WHERE (
+                                WHERE 
+                                (
                                     EXISTS (
                                         SELECT VALUE s
                                         FROM s IN CT.Slides
                                         WHERE CONTAINS(s.Barcode, @searchParameter, true)
                                         )
                                     OR CONTAINS(CT.Title, @searchParameter, true)
-                                    )
-                                    AND ARRAY_CONTAINS(CT.ExperimentIds, @expId)
+                                )
+                                AND ARRAY_CONTAINS(CT.ExperimentIds, @expId)
                                 ORDER BY CT.EditedAt DESC ";
 
         FeedIterator<ClinicalTest> feed = DatabaseService.Instance.Database.GetContainer("ClinicalTest")
