@@ -1,0 +1,139 @@
+.heatmap-component {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    background-color: white;
+}
+
+#export-icon i {
+    font-size: 40px;
+    color: var(--secondary-dark-color);
+    cursor: pointer;
+}
+
+.export-and-color-scale {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.flag-example {
+    margin-top: 10px;
+    text-align: center;
+    box-shadow: 0px 0px 0px 2px red inset;
+    width: 100%;
+}
+
+.heatmap-and-scale {
+    display: grid;
+    grid-template-columns: 92% 8%;
+    width: 100%;
+    height: calc(100vh - 115px);
+    justify-items: center;
+    align-items: flex-end;
+    background-color: white;
+    padding-top: 15px;
+}
+
+.all-heatmap-cells {
+    width: 100%;
+    padding-left: 15px;
+    height: inherit;
+    padding-bottom: 15px;
+}
+
+.color-scale-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: calc(100% - 85px);
+    width: 100%;
+}
+
+table {
+    display: flex;
+    flex-flow: column;
+    height: 100%;
+    width: 100%;
+}
+
+table thead {
+    flex: 0 0 auto;
+    width: calc(100% - 10px);
+}
+
+table tbody {
+    flex: 1 1 auto;
+    display: block;
+    overflow-y: scroll;
+}
+
+table tbody tr {
+    width: 100%;
+    height: 1em;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.199);
+}
+
+table thead,
+table tbody tr {
+    display: table;
+    table-layout: fixed;
+}
+
+thead th {
+    height: 100px;
+    writing-mode: vertical-lr;
+    transform: rotate(180deg);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    padding-top: 5px;
+}
+
+.flagged-true {
+    box-shadow: 0px 0px 0px 2px red inset;
+}
+
+.selected-true {
+    box-shadow: 0px 0px 0px 3px rgb(173, 173, 173) inset;
+}
+
+tbody td:hover {
+    box-shadow: 0px 0px 0px 1px white inset;
+}
+
+.color-scale {
+    height: 95%;
+    width: 30px;
+    background: linear-gradient( #f9eb2e 0%, rgb(76, 194, 108) 25%, rgb(32, 140, 141) 50%, rgb(62, 78, 138) 75%, rgb(68, 1, 88) 100%);
+    border: 2px solid var(--primary-dark-color);
+    border-radius: 5px;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.color-scale-index {
+    height: calc(95% + 1rem);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-left: 5px;
+}
+
+.color-scale-index p {
+    margin: 0;
+}
+
+.color-scale div {
+    height: 25%;
+    width: 20%;
+    border-bottom: 2px solid var(--primary-dark-color);
+}
+
+.color-scale div:nth-child(3n+2) {
+    width: 60%;
+    border-bottom: 0px;
+}
