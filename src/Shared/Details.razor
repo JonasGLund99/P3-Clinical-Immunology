@@ -1,0 +1,27 @@
+﻿@using src.Shared
+@using src.Data
+
+<div class ="card-box">
+    <DetailCard Experiment="@Experiment" EditCTCallback="executeCtCallback" EditExpCallback="executeExpCallback"></DetailCard>
+    <DetailCard ClinicalTest="@ClinicalTest" Experiment="@Experiment" EditCTCallback="executeCtCallback" EditExpCallback="executeExpCallback"></DetailCard>
+</div>
+
+@code {
+    [Parameter]
+    public Experiment? Experiment { get; set; }
+    [Parameter]
+    public ClinicalTest? ClinicalTest { get; set; }
+    [Parameter]
+    public EventCallback editCTCallback {get; set; }
+    [Parameter] 
+    public EventCallback editExpCallback {get; set; }
+
+    public async void executeCtCallback ()
+    {
+        await editCTCallback.InvokeAsync(); 
+    }
+    public async void executeExpCallback ()
+    {
+        await editExpCallback.InvokeAsync(); 
+    }
+}

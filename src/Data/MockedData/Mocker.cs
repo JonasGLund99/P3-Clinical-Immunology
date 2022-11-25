@@ -4,7 +4,7 @@ using src.Data;
 
 static class Mocker
 {
-    static int numExperiments = 1;
+    static int numExperiments = 8;
 
     static List<string> authors = new List<string>() {
         "Rikke Bæk",
@@ -36,14 +36,15 @@ static class Mocker
             Experiment e = new Experiment(
                 id: Guid.NewGuid().ToString(),
                 experimentNumber: $"EXP-{i + 1}",
-                title: $"Experiment {i + 1}",
+                // title: $"Experiment {i + 1}",
+                title: "HERE",
                 author: authors[r.Next(0, 5)],
                 description: "Some description",
                 createdAt: DateTime.Now
             );
             await e.SaveToDatabase();
 
-            // int numCT = r.Next(1, 6);
+            // int numCT = r.Next(1, 3);
             int numCT = 1;
             for (int j = 0; j < numCT; j++) {
                 ClinicalTest ct = new ClinicalTest(
@@ -54,21 +55,16 @@ static class Mocker
                     createdAt: DateTime.Now
                 );
                 ct.SlideDataFiles = slideDataFiles;
-                ct.AddSlide(
-                    slide: new Slide("10000465"),
-                    patientData: new Dictionary<string, string>[21].ToList()
-                );
-                ct.AddSlide(
-                    slide: new Slide("10000466"),
-                    patientData: new Dictionary<string, string>[21].ToList()
-                );
-                ct.AddSlide(
-                    slide: new Slide("10000467"),
-                    patientData: new Dictionary<string, string>[21].ToList()
-                );
-                ct.CreatePatientKeys(new List<string>() { "key1", "key2", "key3", "key4", "key5" }, "key1", "key3", "key4");
-                ct.CalculateClinicalTestResult();
-                ct.ExportResultTable();
+                
+                ct.Matches = new Dictionary<string, int>()
+                {
+                    { slideDataFiles[0].Filename, 0 },
+                    { slideDataFiles[1].Filename, 1 },
+                    { slideDataFiles[2].Filename, 2 }
+                };
+                ct.TableTitles = new List<string>() { "key1", "key2", "key3", "key4", "key5" };
+                ct.ChosenTableTitles = new string[] { "key2", "key1", "key3" };
+                //ct.CalculateClinicalTestResult();
                 await ct.SaveToDatabase();
                 await ExperimentManager.Associate(e, ct);
             }

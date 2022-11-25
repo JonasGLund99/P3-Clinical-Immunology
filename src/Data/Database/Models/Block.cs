@@ -1,29 +1,37 @@
 ﻿using System.Drawing;
-
 namespace src.Data;
 
-public class Block
+public class Block : BaseModel<Block>
 {
-    public Block(Dictionary<string, string> patientData, List<Nplicate> nplicates, Color textColour, double qc)
+    public Block(string id, List<string> patientData, BlockType type, int slideIndex, int blockIndex, string partitionKey) : base(id)
     {
+        PartitionKey = partitionKey;
         PatientData = patientData;
-        Nplicates = nplicates;
-        TextColour = textColour;
-        QC = qc;
+        Type = type;
+        SlideIndex = slideIndex;
+        BlockIndex = blockIndex;
     }
-    public Block(Dictionary<string, string> patientData)
-    {
-        PatientData = patientData;
-    }
-    public Block() { }
+    public Block() : base() { }
 
+    public override string PartitionKey { get; set; } = "";
+    public int SlideIndex { get; set; } = 0;
+    public BlockType Type { get; set; } = Block.BlockType.Empty;
     public List<Nplicate> Nplicates { get; set; } = new List<Nplicate>();
-    public Dictionary<string, string> PatientData { get; set; } = new Dictionary<string, string>();
+    public List<string> PatientData { get; set; } = new List<string>();
     public Color TextColour { get; set; } = new Color();
-    public double QC { get; private set; } = 0;
+    public double QC { get; set; } = 0;
+    public int BlockIndex { get; set; } = 0;
+
 
     public void CalculateQC(Nplicate pos, Nplicate neg)
     {
         QC = pos.Mean == 0 ? double.NaN : (pos.Mean - neg.Mean) / pos.Mean;
     }
+
+    // public override async Task SaveToDatabase() 
+    // {
+    //     await base.SaveToDatabase();
+    // }
+
+    public enum BlockType { Normal, Blank, Empty }
 }

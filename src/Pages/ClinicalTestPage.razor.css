@@ -1,0 +1,7 @@
+.component-container {
+    height: calc(100vh - 100px);
+    width: 100vw;
+    overflow: hidden;
+    margin-top: 100px;
+    background-color: var(--main-background-color);
+}

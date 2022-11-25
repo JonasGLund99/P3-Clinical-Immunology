@@ -1,53 +1,77 @@
-﻿#navButtonContainer {
-    margin-top: 0.7em;
+﻿#topnavContainer {
+    background-color: var(--experiment-color);
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100px;
+    width: 100vw;
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-}
-
-#navButtonContainer button {
-    padding: 0.5vw 4vw;
-    font-weight: 600;
-    font-size: 1.2vw;
-    margin-left: 0.6vw;
-    margin-right: 0.6vw;
-    border-radius: 20px 20px 0px 0px;
-    border: 0;
-    background-color: var(--navbar-button-color);
-    width: 15vw;
-    white-space: nowrap;
+    flex-direction: column;
     align-items: center;
+    justify-content: space-between;
+    padding-top: 10px;
 }
 
 #topPart {
     display: flex;
-    flex-direction: row;
     align-items: center;
     width: 100%;
     justify-content: space-between;
 }
 
-i {
-    font-size: 1.5vw;
-}
-
 #leftPart {
     flex: 1;
 }
+#homeButton {
+    margin: 10px 0 0 20px;
+    background-color: var(--experiment-color);
+    border: none;
+    color: var(--main-background-color);
+}
+i {
+    font-size: 30px;
+}
 
 #middlePart {
-    flex: 1;
+    flex: 10;
 }
 
 #rightPart {
     flex: 1;
 }
 
+.ct-title {
+    font-weight: 600;
+}
+
+
+#navButtonContainer {
+    display: flex;
+    justify-content: space-between;
+}
+
+#navButtonContainer button {
+    color: var(--main-background-color);
+    background-color: #005bb3;
+    padding: 5px;
+    font-weight: 600;
+    font-size: 16px;
+    border-radius: 20px 20px 0 0;
+    border: 0;
+    width: 15vw;
+    align-items: center;
+    margin-right: 15px;
+}
+
+#navButtonContainer button:last-child {
+    margin-right: 0;
+}
+
 h1 {
-    font-size: 2vw;
+    font-size: 30px;
     color: var(--main-text-color);
     line-height: 1;
-    margin: 0px 0px 0px 0px;
+    margin: 0;
     text-align: center;
 }
 
@@ -57,28 +81,12 @@ span {
 }
 
 #navButtonContainer button:hover {
-    background-color: var(--main-background-color)
+    /*    color: var(--primary-dark-color);*/
+    background-color: var(--clinicaltest-color);
 }
 
 #navButtonContainer button.active {
-    background-color: var(--main-background-color)
-}
-
-#topnavContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    background-color: var(--primary-dark-color);
-    padding-top: 0.6em;
-}
-
-.ct-title {
-    font-weight: 600;
-}
-
-#homeButton {
-    margin-left: 1vw;
-    background-color: var(--primary-dark-color);
-    border: none;
+    color: var(--primary-dark-color);
+    background-color: var(--main-background-color);
+    cursor: default;
 }

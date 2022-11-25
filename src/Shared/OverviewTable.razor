@@ -1,0 +1,59 @@
+@using src.Data
+
+@inject IJSRuntime JS
+
+<table id="overview-table">
+    @*Title row*@
+    <tr>
+        <td class="line-number"></td>
+        @for (int i = 0; i < numCols - 1; i++) 
+        {
+            @if (i < ClinicalTest.TableTitles.Count) 
+            {
+                <td contenteditable>@ClinicalTest.TableTitles[i]</td>
+            }
+            else 
+            {
+                <td contenteditable></td>
+            }
+        }
+    </tr>
+
+    @*Data rows*@
+    @for (int i = 0; i < numRows; i++) 
+    { 
+        <tr>
+            <td class="line-number">@(i + 1)</td>
+            @for (int j = 0; j < numCols; j++)
+            {
+                @if (i < normalBlocks.Count && j < normalBlocks[i].PatientData.Count)
+                {
+                    <td contenteditable>@normalBlocks[i].PatientData[j]</td>
+                } 
+                else 
+                {
+                    <td contenteditable></td>
+                }
+            }
+        </tr>
+    }
+</table>
+
+@code {
+    private int numRows { get; set; } = 320;
+    private int numCols { get; set; } = 40;
+    private List<Block> normalBlocks { get; set; } = new List<Block>();
+
+    [Parameter, EditorRequired]
+    public ClinicalTest ClinicalTest { get; set; } = new();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("listenForPaste");
+            normalBlocks = await ClinicalTest.GetNormalBlocks();
+            StateHasChanged();
+        }
+    }
+}

@@ -3,13 +3,13 @@
 <header id="topnavContainer">
     <div id="topPart">
         <div id="leftPart">
-            <button id="homeButton">
-                <i @onclick="NavigateToHomepage" class="fa-solid fa-house" style="color:#D9D9D9"></i>
+            <button id="homeButton" title="Go back to list of experiments and clinical tests">
+                <i @onclick="NavigateToHomepage" class="fa-solid fa-house"></i>
             </button>
         </div>
-            <h1 id="middlePart">
-                <span class="ct-title">@ClinicalTestTitle</span> in @ExperimentTitle
-            </h1>
+        <h1 id="middlePart">
+            <span class="ct-title">@ClinicalTestTitle</span> in @ExperimentNumber
+        </h1>
         <div id="rightPart">
         </div>
     </div>
@@ -30,23 +30,28 @@
         <button id="heatmap" @onclick="() => SetActiveButton(4)" class="@((ActiveButton == 4 ? "active" : ""))">
             Heatmap
         </button>
-
     </div>
 </header>
 
 @code {
-    public int ActiveButton { get; set; } = 0;
     [Parameter]
     public string ClinicalTestTitle { get; set; } = "";
     [Parameter]
-    public string ExperimentTitle { get; set; } = "";
+    public string ExperimentNumber { get; set; } = "";
 
+    [Parameter]
+    public int ActiveButton { get; set; }
 
-    public void SetActiveButton(int buttonId) {
-        ActiveButton = buttonId;
-    }
+    [Parameter]
+    public EventCallback<int> setActiveButtonCallback { get; set; }
+
 
     public void NavigateToHomepage() {
         NavManager.NavigateTo("/");
+    }
+
+    public async void SetActiveButton(int buttonID)
+    {
+        await setActiveButtonCallback.InvokeAsync(buttonID);
     }
 }

@@ -17,6 +17,7 @@
     <component type="typeof(HeadOutlet)" render-mode="ServerPrerendered" />
     <link href="~/lib/font-awesome/css/all.css" rel="stylesheet" />
     <link href="~/lib/font-awesome/css/all.min.css" rel="stylesheet" />
+    <link rel="icon" href="Icons/favicon_darkblue.png" type="image/x-icon">
 </head>
 <body>
     @RenderBody()
@@ -33,7 +34,94 @@
     </div>
 
     <script src="_framework/blazor.server.js"></script>
+
     <script>
+        function listenForPaste() {
+            const overviewTable = document.querySelector('#overview-table');
+            if (!overviewTable) return;
+            const cells = overviewTable.querySelectorAll('td');
+
+            cells.forEach(c => {
+                c.addEventListener('paste', event => {
+
+                    event.preventDefault();
+
+                    const clipboard = event.clipboardData.getData('text');
+
+                    const formatedClipboard = clipboard.split('\n').map(line => line.split('\t').map(elm => elm.trim()));
+
+                    const rowIndex = event.target.parentElement.rowIndex;
+                    const cellIndex = event.target.cellIndex;
+
+                    const cells = [...document.querySelectorAll('tr')].map(row => row.querySelectorAll('td'));
+
+                    for (const [i, line] of formatedClipboard.entries()) {
+                        for (const [j, value] of line.entries()) {
+                            if (cells[i + rowIndex]?.[j + cellIndex]) {
+                                cells[i + rowIndex][j + cellIndex].innerHTML = value;
+                            }
+                        }
+                    }
+                })
+            })
+        }
+
+        //function addFocusEventListener() {
+        //    const searchBar = document.querySelector('.searchbar');
+
+        //}
+
+        //Returns a 2D string array
+        function getTableData() {
+            const cells = [...document.querySelectorAll('tr')].map(row => [...row.querySelectorAll('td')].slice(1).map(cell => cell.innerText.trim()));
+            
+            // Filter by columns containing a value in the header
+            const registeredColumns = [];
+            let lastDataIndex;
+
+            // Find registered columns
+            for (const [i, row] of cells.entries()) {
+                for (const [j, cell] of row.entries()) {
+                    if (i === 0 && cell !== '') {
+                        registeredColumns.push(j);
+                    }
+                }
+            }
+
+            // Find index of last data
+            for (let i = cells.length - 1; i >= 0; i--) {
+                const rowAsString = cells[i].join('');
+                if (rowAsString !== '') {
+                    lastDataIndex = i;
+                    break;
+                }
+            }
+
+            return cells.slice(0, lastDataIndex + 1).map(row => row.filter((cell, index) => registeredColumns.includes(index)));
+        }
+
+        
+        function addBeforeUnload() {
+            window.addEventListener("beforeunload", closeText);
+        }
+        
+        function removeBeforeUnload() {
+            window.removeEventListener("beforeunload", closeText);
+        }
+
+        function closeText(event) {
+            event.returnValue = "Write something clever here..";
+        }
+
+        function clearTable() {
+            for (const row of document.querySelectorAll('tr')) {
+                for (const [i, cell] of [...row.querySelectorAll('td')].entries()) {
+                    if (i === 0) continue;
+                    cell.innerText = '';
+                }
+            }
+        }
+
         window.triggerFileDownload = (fileName, url) => {
             const anchorElement = document.createElement('a');
             anchorElement.href = url;
@@ -41,6 +129,7 @@
             anchorElement.click();
             anchorElement.remove();
         }
-</script>
+    </script>
+
 </body>
 </html>

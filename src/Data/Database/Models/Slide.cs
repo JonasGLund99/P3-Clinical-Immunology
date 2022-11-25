@@ -2,11 +2,10 @@
 
 public class Slide
 {
-    public Slide(string barcode)
-    {
-        Barcode = barcode;
-    }
-    public Slide(){ }
-    public List<Block> Blocks = new List<Block>();
-    public string Barcode { get; private set; } = "";
+    public Slide() { }
+
+    public List<int> BlankBlockIndicies { get; set; } = new List<int>();
+
+    public string Barcode { get; set; } = "";    
 }
+

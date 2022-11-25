@@ -11,19 +11,21 @@ public abstract class BaseModel<T> where T : BaseModel<T>
     public BaseModel() { }
 
     public string id { get; set; } = "";
+    public abstract string PartitionKey { get; set; }
 
-    public async Task SaveToDatabase()
+    public virtual async Task SaveToDatabase()
 	{
 		Database? db = DatabaseService.Instance.Database;
 
 		if (db == null) throw new NullReferenceException("There was no reference to the database");
 
 		await db.GetContainer(typeof(T).Name).UpsertItemAsync<T>(
-			item: (T) this
+			item: (T) this,
+            partitionKey: new PartitionKey(this.PartitionKey)
         );
     }
 
-	public async Task RemoveFromDatabase()
+	public virtual async Task RemoveFromDatabase()
 	{
         Database? db = DatabaseService.Instance.Database;
 
@@ -31,7 +33,7 @@ public abstract class BaseModel<T> where T : BaseModel<T>
 
         await db.GetContainer(typeof(T).Name).DeleteItemAsync<T>(
             id: this.id, 
-			partitionKey: new PartitionKey(this.id)
+			partitionKey: new PartitionKey(this.PartitionKey)
         );
     }
 }

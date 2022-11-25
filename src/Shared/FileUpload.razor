@@ -1,0 +1,222 @@
+﻿@using src.Data
+
+<div class="file-component">
+    @if (displayError) {
+        <div class="modal fade show" style="display:block" aria-modal="true" role="dialog" @onclick="@ModalCancel">
+            <div class="modal-dialog">
+                <div class="modal-content">
+
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h4 class="modal-title">Confirm action</h4>
+                    </div>
+
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        <p>@errorMessage @errorMessageEnd</p>
+                    </div>
+
+                    <!-- Modal footer -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" @onclick=@ModalCancel>Ok</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="cards-container">
+        @*Slides*@
+        <div id="slides-card">
+            <h2>Slides</h2>
+            <div class="slides-container">
+                @{
+                    int slideNumber = 1;
+                }
+                @foreach (Slide slide in ClinicalTest.Slides)
+                {
+                    bool matches = ClinicalTest.Matches.ContainsValue(slideNumber - 1);
+                    <span>Slide @slideNumber</span>
+                    <div class="slide">
+                        <i title="@(matches ? "Slide matches a file" : "Slide does not match a file")" class="@(matches ? "fa-solid fa-circle-check check" : "fa-solid fa-circle-xmark check")"></i>
+                        <span>@(slide.Barcode == "" ? "Missing Barcode" : @slide.Barcode)</span>
+                        <i class="fa-solid fa-pencil" title="Edit barcode in overview" @onclick="() => setActiveButtonCallback.InvokeAsync(1)"></i>
+                    </div>
+                    slideNumber++;
+                }
+            </div>
+            <button class="standard-button" @onclick="() => setActiveButtonCallback.InvokeAsync(1)">
+                Edit barcodes in overview
+                <i class="fa-solid fa-pencil"></i>
+            </button>
+        </div>
+
+        @*Files*@
+        <div id="files-card">
+            <h2>Uploaded files</h2>
+            <div class="files-container">
+                @{
+                    int fileNumber = 1;
+                }
+                @foreach (SlideDataFile slideDataFile in ClinicalTest.SlideDataFiles)
+                {
+                    bool matches = ClinicalTest.Matches.ContainsKey(slideDataFile.Filename);
+                    <span>File @fileNumber</span>
+                    <div class="file">
+                        <i title="@(matches ? "File matches a slide" : "File does not match a slide")" class="@(matches ? "fa-solid fa-circle-check check" : "fa-solid fa-circle-xmark check")"></i>
+                        <span>@slideDataFile.Filename</span>
+                        <i title="Delete file" class="fa-solid fa-trash" @onclick="() => RemoveFile(slideDataFile)"></i>
+                    </div>
+                    fileNumber++;
+                }
+            </div>
+            <label class="standard-button">
+                Browse files
+                <i class="fa-solid fa-file-lines"></i>
+                <InputFile style="display: none;" accept=".txt" OnChange="@UploadFiles" multiple/>
+            </label>
+        </div>
+    </div>
+    
+    @if (allMatched) {
+        <button @onclick="StartCalculation" class="green-button @(loading ? "calculating-button" : "start-calc-button")">
+            @(loading ? "Calculating . . ." : "Start calculations")
+            <i class="fa-sharp fa-solid @(loading ? "fa-gears" : "fa-calculator")"></i>
+            </button>
+    }
+    else {
+        <button class="red-button wait-calc-button">
+            Files not matching
+            <i class="fa-sharp fa-solid fa-file-circle-exclamation"></i>
+        </button>
+    }
+</div>
+
+@code {
+    private int maximumAllowedFiles = 16;
+    private bool displayError = false;
+    private string? errorMessage = "File(s) with the name(s): ";
+    private static string? errorMessageEnd = " already exist(s).";
+    private bool allMatched;
+    private bool loading = false;
+
+    [Parameter, EditorRequired]
+    public ClinicalTest? ClinicalTest { get; set; } = null;
+
+    [Parameter, EditorRequired]
+    public Experiment? Experiment {  get; set; } = null;
+
+    [Parameter]
+    public int ActiveButton { get; set; }
+
+    [Parameter]
+    public EventCallback StopReloadCallback { get; set; }
+
+    [Parameter]
+    public EventCallback<int> setActiveButtonCallback { get; set; }
+
+    void ModalCancel() 
+    {
+        displayError = false;
+        errorMessage = "File(s) with the name(s): ";
+    }
+
+    public async Task UploadFiles(InputFileChangeEventArgs e)
+    {
+        if (ClinicalTest == null) return;
+
+        foreach (var file in e.GetMultipleFiles(maximumAllowedFiles))
+        {
+            try {
+                var fileContent = new StreamContent(file.OpenReadStream());
+                SlideDataFile slideDataFile = new SlideDataFile(file.Name, await fileContent.ReadAsStringAsync());
+                if(FileExists(slideDataFile.Filename)) {
+                    throw new Exception();
+                }
+                ClinicalTest.SlideDataFiles.Add(slideDataFile);
+                MatchBarcodes(slideDataFile.Filename);
+
+            }
+            catch {
+                errorMessage += $"'{file.Name}'\n";
+                displayError = true;
+            }
+        }
+        ClinicalTest.EditedAt = DateTime.Now;
+        Experiment.EditedAt = DateTime.Now;
+        StateHasChanged();
+        await ClinicalTest.SaveToDatabase();
+        await Experiment.SaveToDatabase();
+    }
+
+    public async Task RemoveFile(SlideDataFile slideDataFile) 
+    {
+        if(ClinicalTest == null) return;
+
+        ClinicalTest.SlideDataFiles.Remove(slideDataFile);
+        ClinicalTest.Matches.Remove(slideDataFile.Filename);
+
+        allMatched = AllMatched();
+        ClinicalTest.EditedAt = DateTime.Now;
+        Experiment.EditedAt = DateTime.Now;
+        await ClinicalTest.SaveToDatabase();
+        await Experiment.SaveToDatabase();
+    }
+
+    public bool FileExists(string Filename) 
+    {
+        if (ClinicalTest.SlideDataFiles.Where((file) => file.Filename == Filename).Count() > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public void MatchBarcodes(string filename)
+    {
+        if (ClinicalTest == null) return;
+
+        for(int i = 0; i < ClinicalTest.Slides.Count; i++) {
+            if (filename.Contains(ClinicalTest.Slides[i].Barcode)){
+                ClinicalTest.Matches.Add(filename, i);
+            }
+        }
+        allMatched = AllMatched();
+    }
+
+
+    public bool AllMatched() 
+    {
+        if (ClinicalTest.Slides.Count == 0) return false;
+
+        for (int i = 0; i < ClinicalTest.Slides.Count; i++)
+        {
+            if (!ClinicalTest.Matches.ContainsValue(i)) return false;
+        }
+
+        foreach (SlideDataFile slideDataFile in ClinicalTest.SlideDataFiles) {
+            if (!ClinicalTest.Matches.ContainsKey(slideDataFile.Filename)) return false;
+        }
+        return true;
+    }
+
+    protected override void OnAfterRender(bool firstRender) {
+        if (firstRender) {
+            allMatched = AllMatched();
+            StateHasChanged();
+        }
+    }
+
+    public async void StartCalculation() 
+    {
+        loading = true;
+        if (ClinicalTest == null) return;
+
+        //ClinicalTest.CalculateClinicalTestResult();
+        ClinicalTest.EditedAt = DateTime.Now;
+        Experiment.EditedAt = DateTime.Now;
+        await StopReloadCallback.InvokeAsync();
+        loading = false;
+        await setActiveButtonCallback.InvokeAsync(4);
+    }
+}

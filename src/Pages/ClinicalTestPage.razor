@@ -1,0 +1,202 @@
+﻿@page "/clinicaltest/{ExperimentId}/{ClinicalTestId}"
+@using src.Data
+@using src.Shared
+@inject NavigationManager NavManager
+@inject IJSRuntime JS
+
+@if (experiment != null && clinicalTest != null)
+{
+    <PageTitle>@clinicalTest.Title | Clinical Immunology</PageTitle>
+
+    <Navbar ClinicalTestTitle="@clinicalTest.Title"
+        ExperimentNumber="@experiment.ExperimentNumber"
+        setActiveButtonCallback="@SetActiveButton"
+        ActiveButton="@activeButton">
+    </Navbar>
+
+	<div class="component-container">
+		@switch (activeButton)
+		{
+			case 0: <Details Experiment="@experiment" ClinicalTest="@clinicalTest" editCTCallback="editCT" editExpCallback="editExp"></Details> break;
+			case 1: <Overview Experiment="@experiment" ClinicalTest="@clinicalTest"></Overview> break;
+			case 2: <FileUpload Experiment="@experiment" ClinicalTest="@clinicalTest" ActiveButton="@activeButton" setActiveButtonCallback="@SetActiveButton" StopReloadCallback="@stopReload"></FileUpload> break;
+		    case 3: <ResultTable ClinicalTest="@clinicalTest"></ResultTable> break;
+			case 4: <Heatmap ClinicalTest="@clinicalTest"></Heatmap> break;
+		}
+	</div>
+} 
+else 
+{
+	<Navbar ClinicalTestTitle="@placeholderCt.Title"
+		ExperimentNumber="@placeholderExp.ExperimentNumber"
+		setActiveButtonCallback="@SetActiveButton"
+		ActiveButton="@activeButton">
+	</Navbar>
+	<div class="component-container">
+		<Details Experiment="@placeholderExp" ClinicalTest="@placeholderCt"></Details>
+	</div>
+}
+
+@if (showExperimentModal)
+{
+   <EditorModal 
+        CallbackClose="closeEditorModal"
+        CallbackSave="saveExperimentCallback"
+        ModalObject="@experiment"
+        ModalType="@Experiment"
+        ModalTitle='@editModalTitle'
+   />
+}
+
+@if (showClinicalTestModal)
+{
+   <EditorModal 
+        CallbackClose="closeEditorModal"
+        CallbackSave="saveClinicalTestCallback"
+        ModalObject="@clinicalTest"
+        ModalType="@ClinicalTest"
+        ModalTitle="@editModalTitle"
+   />
+} 
+@if (showWarningModal)
+{
+    <div class="modal fade show" style="display:block" aria-modal="true" role="dialog" @onclick="@ModalCancel">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">Clinical test disassociated</h4>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <p>The clinical test is no longer related to the selected experiment. You will be redirected to the menu page</p>
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" @onclick=@ModalCancel>Ok</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public string ExperimentId { get; set; } = "";
+    [Parameter]
+    public string ClinicalTestId { get; set; } = "";
+
+	private Experiment placeholderExp = new Experiment(
+		id: "",
+		experimentNumber: "EXP",
+		title: "Exp",
+        author: "A",
+        description: "",
+        createdAt: DateTime.Now
+	);
+	
+	private ClinicalTest placeholderCt = new ClinicalTest(
+		id: "",
+		title: "Ct",
+		nplicateSize: 3,
+        description: "",
+        createdAt: DateTime.Now
+    );
+
+    private Experiment? experiment;
+    private ClinicalTest? clinicalTest;
+    private bool showClinicalTestModal = false;
+    private bool showExperimentModal = false;
+    private string editModalTitle = "";
+    private bool showWarningModal = false;
+
+    // Get experiment and clincical test from database on the first render
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            experiment = await ExperimentManager.GetExperimentById(ExperimentId);
+            clinicalTest = await ExperimentManager.GetClinicalTestById(ClinicalTestId);
+            StateHasChanged();
+            await clinicalTest.GetNormalBlocks();
+        }
+    }
+
+    private async void closeEditorModal()
+    {
+        if (experiment == null || clinicalTest == null) return;
+        showClinicalTestModal = false;
+        showExperimentModal = false;
+        experiment = await ExperimentManager.GetExperimentById(experiment.id);
+        clinicalTest = await ExperimentManager.GetClinicalTestById(clinicalTest.id);
+        StateHasChanged();
+    }
+
+    private void ModalCancel() 
+    {
+        showWarningModal = false;
+        NavManager.NavigateTo("/");
+    }
+
+    private async void saveClinicalTestCallback(ClinicalTest SavedClinicalTest) 
+    {
+        showClinicalTestModal = false;
+        await ExperimentManager.SaveClinicalTestWithAssociate(SavedClinicalTest);
+        if (!clinicalTest.ExperimentIds.Contains(ExperimentId))
+        {
+            showWarningModal = true;
+            StateHasChanged();
+        }
+        else
+        {
+            StateHasChanged();
+        }
+    }
+
+    private async void saveExperimentCallback(Experiment savedExperiment)
+    {
+        showExperimentModal = false;
+        savedExperiment.EditedAt = DateTime.Now;
+        await savedExperiment.SaveToDatabase();
+        experiment = savedExperiment;
+        StateHasChanged();
+    }
+
+    private void editExp () 
+    {
+        if (experiment == null) return;
+        showExperimentModal = true;
+        editModalTitle = $"Edit: {experiment.ExperimentNumber}";
+    }
+
+    private void editCT() 
+    {
+        if (clinicalTest == null) return;
+        showClinicalTestModal = true;
+        editModalTitle = $"Edit: {clinicalTest.Title}";
+    }
+
+    private int activeButton { get; set; } = 0;
+
+    private void SetActiveButton(int buttonId)
+    {
+        activeButton = buttonId;
+    }
+    private async void stopReload() 
+    {
+        await JS.InvokeVoidAsync("addBeforeUnload");
+
+        clinicalTest.SaveToDatabase().ContinueWith((task) =>
+        {
+            experiment.SaveToDatabase().ContinueWith(async (secondTask) =>
+            {
+                await JS.InvokeVoidAsync("removeBeforeUnload");
+            });
+        });
+
+    }
+}

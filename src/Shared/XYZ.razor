@@ -1,0 +1,115 @@
+﻿@using src.Data
+@using src.Shared
+
+
+<tr>
+    <td class="line-number">Slide</td>
+    @{int j = 1;}
+    @foreach (string chosenTableTitle in ClinicalTest.ChosenTableTitles)
+    {
+        if (chosenTableTitle != "")
+        {
+            <td id="key-number-@j">@chosenTableTitle</td>
+            j++;
+        }
+    }
+
+    <td>Pos raw</td>
+    <td>Neg raw</td>
+
+    @foreach (string analyteName in ClinicalTest.AnalyteNames)
+    {
+        <td>@analyteName</td>
+    }
+</tr>
+
+@foreach (Block block in blocks)
+{
+    <tr>
+        <td class="line-number">@((block.SlideIndex + 1))</td>
+        @{
+            int k = 1;
+        }
+        @foreach (string chosenTableTitle in ClinicalTest.ChosenTableTitles)
+        {
+            if (chosenTableTitle != "")
+            {
+                <td class="key-number-@k">@block.PatientData[ClinicalTest.TableTitles.IndexOf(chosenTableTitle)]</td>
+                k++;
+            }
+        }
+        @{
+            Nplicate? pos = block.Nplicates.Find(nplicate => nplicate.AnalyteType == "pos");
+            }
+
+        @if (pos != null)
+        {
+            <td>@Math.Round(pos.Mean, 2)</td>
+        }
+        else
+        {
+            <td>-</td>
+        }
+        @{Nplicate? neg = block.Nplicates.Find(nplicate => nplicate.AnalyteType == "neg");}
+        @if (neg != null)
+        {
+            <td>@Math.Round(neg.Mean, 2)</td>
+        }
+        else
+        {
+            <td>-</td>
+        }
+        @foreach (Nplicate nplicate in block.Nplicates)
+        {
+            if (nplicate.XYZ == double.NaN && nplicate.IsFlagged)
+            {
+                <td @onclick="@((e) => OpenSpots(e, nplicate))" class="data @(nplicate==SelectedNplicate ? "selected-td" : "") flagged-nplicate">-</td>
+            }
+            else if (nplicate.XYZ == double.NaN)
+            {
+                <td class="@(nplicate==SelectedNplicate ? "selected-td" : "")" @onclick="@((e) => OpenSpots(e, nplicate))">-</td>
+
+            }
+            else if (nplicate.IsFlagged)
+            {
+                <td @onclick="@((e) => OpenSpots(e, nplicate))" class="data @(nplicate==SelectedNplicate ? "selected-td" : "") flagged-nplicate">@Math.Round(nplicate.XYZ, 2)</td>
+
+            }
+            else
+            {
+                <td class="data @(nplicate==SelectedNplicate ? "selected-td" : "")" @onclick="@((e) => OpenSpots(e, nplicate))">@Math.Round(nplicate.XYZ, 2)</td>
+            }
+        }
+    </tr>
+}
+
+
+@code {
+    private string mode = "XYZ";
+    private List<Block> blocks { get; set; } = new List<Block>();
+
+    [Parameter]
+    public Nplicate SelectedNplicate { get; set; }
+
+    [Parameter, EditorRequired]
+    public ClinicalTest ClinicalTest { get; set; }
+
+    [Parameter, EditorRequired]
+    public EventCallback<Tuple<MouseEventArgs, Nplicate>> ShowSpots { get; set; }
+
+    public async void OpenSpots(MouseEventArgs e, Nplicate selectedTd)
+    {
+        await ShowSpots.InvokeAsync(new Tuple<MouseEventArgs, Nplicate>(e, selectedTd));
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            blocks = await ClinicalTest.GetSortedBlocks();
+            StateHasChanged();
+        }
+    }
+
+
+}

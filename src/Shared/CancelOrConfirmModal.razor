@@ -1,0 +1,49 @@
+@using src.Data
+@typeparam ModalType
+
+<div class="modal fade show" id="myModal" style="display:block; background-color: rgba(10,10,10,.8);" aria-modal="true" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                @if (typeof(ModalType).Name == "Experiment")
+                {
+                    <img src="icons/expIcon_blue.svg"/>
+                }
+                else
+                {
+                    <img src="icons/ctIcon_blue.svg"/>
+                }
+                <h4 class="modal-title">@(Title.Contains(":") ? Title.Split(": ")[1] : Title)</h4>
+                @if (Title.Contains("Delete"))
+                {
+                    <i class="fa-solid fa-trash"></i>
+                }
+            </div>
+            <div class="modal-body">
+                <p>@Body</p>
+            </div>
+            <div class="modal-footer">
+                    <button type="button" class="grey-button" @onclick="cancel">Cancel</button>
+                    <button type="button" class="red-button" @onclick="confirm">Delete</button>
+            </div>
+            </div>
+        </div>
+</div>
+
+@code {
+    [Parameter, EditorRequired] public string Title { get; set; } = "";
+    [Parameter, EditorRequired] public string Body { get; set; } = "";
+    [Parameter, EditorRequired] public EventCallback CallbackCancel {get; set;}
+    [Parameter, EditorRequired] public EventCallback CallbackConfirm {get; set;}
+
+    private async void confirm()
+    {
+        await CallbackConfirm.InvokeAsync();
+    }
+
+    private async void cancel()
+    {
+        await CallbackCancel.InvokeAsync();
+    }
+   
+}

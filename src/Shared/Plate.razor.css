@@ -1,0 +1,216 @@
+.plate {
+    background-color: var(--plate-background-color);
+    width: 100%;
+    max-width: 1500px;
+    border: 5px solid var(--plate-border-color);
+    border-radius: 10px;
+    margin-bottom: 30px;
+    box-shadow: 0px 2px 10px 2px var(--grey);
+}
+
+.heading {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--heading-background-color);
+/*    border: 1px solid var(--block-border-color);*/
+    color: white;
+    justify-content: center;
+    font-size: 18px;
+}
+
+.block, .empty-block {
+    border: 1px solid var(--block-border-color);
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    font-size: clamp(12px, 0.8vw, 16px);
+}
+.block {
+    cursor: pointer;
+}
+.block > div {
+    height: 33.33%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.plate-container {
+    width: 100%;
+    height: 100%;
+    border: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr 3fr 3fr 3fr 3fr;
+    grid-template-rows: 2fr 14fr 1.5fr;
+    gap: 0px 0px;
+    grid-auto-flow: row;
+    grid-template-areas:
+        "Empty Numbers Numbers Numbers Numbers"
+        "Letters Slide-1 Slide-2 Slide-3 Slide-4"
+        "Letters Barcode-1 Barcode-2 Barcode-3 Barcode-4";
+}
+.plate-container > div {
+    text-align: center;
+}
+
+.Letters {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 2fr 2fr 2fr 2fr 2fr 2fr 2fr 1.5fr;
+    grid-auto-columns: 1fr;
+    gap: 0px 0px;
+    grid-auto-flow: row;
+    grid-template-areas:
+        "."
+        "."
+        "."
+        "."
+        "."
+        "."
+        "."
+        ".";
+    grid-area: Letters;
+}
+
+.Slide-1, .Slide-2, .Slide-3 {
+    border-right: 3px solid var(--block-border-color);
+}
+.Slide-4 {
+    border-right: 1px solid var(--block-border-color);
+}
+.Slide-1 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    gap: 0px 0px;
+    grid-auto-flow: row;
+    grid-template-areas:
+        ". . ."
+        ". . ."
+        ". . ."
+        ". . ."
+        ". . ."
+        ". . ."
+        ". . .";
+    grid-area: Slide-1;
+}
+.Slide-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    gap: 0px 0px;
+    grid-auto-flow: row;
+    grid-template-areas:
+        ". . ."
+        ". . ."
+        ". . ."
+        ". . ."
+        ". . ."
+        ". . ."
+        ". . .";
+    grid-area: Slide-2;
+}
+.Slide-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    gap: 0px 0px;
+    grid-auto-flow: row;
+    grid-template-areas:
+        ". . ."
+        ". . ."
+        ". . ."
+        ". . ."
+        ". . ."
+        ". . ."
+        ". . .";
+    grid-area: Slide-3;
+}
+.Slide-4 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    gap: 0px 0px;
+    grid-auto-flow: row;
+    grid-template-areas:
+        ". . ."
+        ". . ."
+        ". . ."
+        ". . ."
+        ". . ."
+        ". . ."
+        ". . .";
+    grid-area: Slide-4;
+}
+
+.Numbers {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr;
+    gap: 0px 0px;
+    grid-auto-flow: row;
+    grid-template-areas:
+        ". . . . . . . . . . . .";
+    grid-area: Numbers;
+}
+
+.Barcode-1, .Barcode-2, .Barcode-3, .Barcode-4 {
+    border-left: 1px solid var(--block-border-color);
+    border-top: 1px solid var(--block-border-color);
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+}
+.Barcode-1, .Barcode-2, .Barcode-3 {
+    border-right: 4px solid var(--block-border-color);
+}
+.Barcode-4 {
+    border-right: 1px solid var(--block-border-color);
+}
+input {
+    background-color: var(--light-grey);
+    border: 2px solid var(--grey);
+    width: 100%;
+    height: 100%;
+    border-radius: 5px;
+    text-align: center;
+}
+input:focus {
+    outline-color: var(--primary-dark-color);
+}
+.Barcode-1 {
+    grid-area: Barcode-1;
+}
+.Barcode-2 {
+    grid-area: Barcode-2;
+}
+.Barcode-3 {
+    grid-area: Barcode-3;
+}
+.Barcode-4 {
+    grid-area: Barcode-4;
+}
+
+.Empty {
+    grid-area: Empty;
+    background-color: var(--heading-background-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.Empty > div {
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    font-size: 14px;
+    background-color: var(--plate-background-color);
+    color: var(--primary-dark-color);
+    justify-content: center;
+    align-items: center;
+    aspect-ratio: 1/1;
+    border-radius: 50%;
+}
