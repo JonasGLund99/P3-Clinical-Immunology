@@ -24,7 +24,7 @@
                     int blockIndex = j;
                     @if (i < numSlides)
                     {
-                        <div title="Toggle blank block" class="block" @onclick="() => toggleBlockType(slideIndex, blockIndex)" @oncontextmenu="() => openTextColourMenu(Slides[slideIndex][blockIndex])" @oncontextmenu:preventDefault>
+                        <div class="block" @onclick="() => toggleBlockType(slideIndex, blockIndex)" @oncontextmenu="(e) => openTextColourMenu(Slides[slideIndex][blockIndex], e)" @oncontextmenu:preventDefault>
                             
                             @if (Slides[i][j].Type != Block.BlockType.Blank) {
                                 @*Loop through patient data*@
@@ -94,10 +94,14 @@
 </div>
 
 @if (textColourMenuVisible) {
-    <TextColourMenu
-        Block="selectedBlock"
-        ChangeTextColourCallback="updateTextColour"
-    />
+    <div class="remove-colorpick" @onclick="closeTextColour">
+        <TextColourMenu 
+            MouseX="xCoor"
+            MouseY="yCoor"
+            Block="selectedBlock"
+            ChangeTextColourCallback="updateTextColour"
+        />
+    </div>
 }
 
 @code
@@ -116,6 +120,8 @@
 
     private bool textColourMenuVisible { get; set; } = false;
     private Block? selectedBlock { get; set; } = null;
+    private double xCoor { get; set; }
+    private double yCoor { get; set; }
 
     private int findTitleIndex(int i)
     {
@@ -126,8 +132,10 @@
         return ClinicalTest.TableTitles.IndexOf(title);
     }
 
-    private void openTextColourMenu(Block block)
+    private void openTextColourMenu(Block block, MouseEventArgs e)
     {
+        xCoor = e.ClientX;
+        yCoor = e.ClientY;
         selectedBlock = block;
         textColourMenuVisible = true;
     }
@@ -151,6 +159,11 @@
     {
         textColourMenuVisible = false;
         StateHasChanged();
+    }
+
+    private void closeTextColour()
+    {
+        textColourMenuVisible = false;
     }
 
     private async void saveBarcode() {

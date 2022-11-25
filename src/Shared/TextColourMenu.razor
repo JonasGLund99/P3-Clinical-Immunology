@@ -1,18 +1,12 @@
 ﻿@using src.Data
 
-<div id="text-colour-menu">
-    <h3>Choose text colour in block</h3>
-    <select style="color: white; background-color: @(Block.TextColour);" @bind="Block.TextColour">
-        <option selected style="color: #212529" value="">Select a colour</option>
-        <option style="color: red" value="red">Red</option>
-        <option style="color: blue" value="blue">Blue</option>
-    </select>
-    or choose your own
-    <input type="color" @bind="Block.TextColour"/>
-
-    <button class="standard-button" @onclick="saveTextColour">
-        Ok
-    </button>
+<div id="text-color-menu" style="top: @(MouseY)px; left: @(MouseX)px;">
+    <div class="color-picker">
+        @foreach (string colour in textColours)
+        {
+            <div class="color-option @(Block.TextColour == colour ? "chosen" : "")" style="background-color: @(colour)" @onclick="() => saveTextColour(colour)"></div>
+        }
+    </div>
 </div>
 
 @code {
@@ -20,9 +14,16 @@
     public Block Block { get; set; } = new();
     [Parameter, EditorRequired]
     public EventCallback ChangeTextColourCallback { get; set; }
+    [Parameter, EditorRequired]
+    public double MouseX { get; set; }
+    [Parameter, EditorRequired]
+    public double MouseY { get; set; }
 
-    async void saveTextColour()
+    private string[] textColours = { "#212529", "#8064a2", "#ff0000", "#00b050", "#9bbb59", "#4bacc6", "#f46036", "#064789" };
+
+    async void saveTextColour(string chosenColour)
     {
+        Block.TextColour = chosenColour;
         await Block.SaveToDatabase();
         ChangeTextColourCallback.InvokeAsync();
     }

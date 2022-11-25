@@ -1,11 +1,31 @@
-﻿#text-colour-menu {
+﻿#text-color-menu {
     display: flex;
-    flex-direction: column;
     background-color: white;
+    padding: 20px;
     border-radius: 15px;
-    box-shadow: 0px 2px 10px 2px var(--grey);
-    width: 30vw;
+    box-shadow: 0px 2px 10px 5px var(--grey);
     z-index: 10;
-    position: absolute;
-    top: 50%;
+    position: fixed;
+}
+
+.color-picker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.color-picker > * {
+    flex: 1 1 40px;
+}
+
+.color-option {
+    width: 18px;
+    aspect-ratio: 1/1;
+    border-radius: 50%;
+    cursor: pointer;
+}
+.color-option:hover {
+    box-shadow: 0px 2px 10px 2px var(--grey);
+}
+.color-option.chosen {
+    border: 2px solid var(--primary-dark-color);
 }
