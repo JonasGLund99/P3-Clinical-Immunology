@@ -161,7 +161,7 @@ else
             Console.WriteLine("Getting sorted Blocks");
             blocks = await ClinicalTest.GetSortedBlocks();
             Console.WriteLine("Sorted blocks");
-            loadingResultTable = false;
+            //loadingResultTable = false;
             await UpdateLoadingStatus.InvokeAsync(loadingResultTable);
             StateHasChanged();
         }

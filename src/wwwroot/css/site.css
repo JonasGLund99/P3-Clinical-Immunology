@@ -296,6 +296,16 @@ a,
     }
 }
 
+@keyframes resultTableGhosting {
+    0% {
+        background-position: calc(-28.6458333vw) 0
+    }
+
+    100% {
+        background-position: calc(69.7916667vw) 0
+    }
+}
+
 @keyframes ctGhosting {
     0% {
         background-position: -280px
