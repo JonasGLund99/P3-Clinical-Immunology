@@ -29,7 +29,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    transition: 0.5s;
 }
 #saving-status .fa-check {
     background-color: #349244;
