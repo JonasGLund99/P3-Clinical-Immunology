@@ -1,15 +1,6 @@
 ﻿/* Toolbar */
 
 /*TABLE CONTENT BELOW!*/
-.ghost {
-    animation-duration: 10s;
-    animation-fill-mode: forwards;
-    animation-iteration-count: infinite;
-    animation-name: placeHolderShimmer;
-    animation-timing-function: linear;
-    background: #f6f7f8;
-    background: linear-gradient(110deg, var(--light-grey) 8%, var(--grey) 38%, var(--light-grey) 54%);
-}
 
 .data:hover {
     box-shadow: 0px 0px 0px 5px rgb(170, 170, 170) inset;

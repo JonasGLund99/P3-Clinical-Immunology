@@ -23,12 +23,16 @@
             ModalCancelCallback="ModalCancel"/>
     }
 
-    <div class="table-view-container">
-        <table id="result-table">
+    <div class="table-view-container @(loading ? "ghost" : "")">
+        <table id="result-table" style ="@(loading ? "opacity:0.3" : "")">
             @switch(mode) 
             {
-                case "XYZ": <XYZ ClinicalTest="@ClinicalTest" ShowSpots="@((args) => ShowSpots(args))" SelectedNplicate="@selectedNplicate"></XYZ> break;
-                case "Log2": <Log2 ClinicalTest="@ClinicalTest" ShowSpots="@((args) => ShowSpots(args))" SelectedNplicate="@selectedNplicate"></Log2> break;
+                case "XYZ":
+                    <XYZ ClinicalTest="@ClinicalTest" ShowSpots="@((args) => ShowSpots(args))" SelectedNplicate="@selectedNplicate" UpdateLoadingStatus=@UpdateLoadingStatus></XYZ>
+                    break;
+                case "Log2":
+                    <Log2 ClinicalTest="@ClinicalTest" ShowSpots="@((args) => ShowSpots(args))" SelectedNplicate="@selectedNplicate" UpdateLoadingStatus=@UpdateLoadingStatus></Log2>
+                    break;
             }
         </table>
     </div>
@@ -41,6 +45,7 @@
 
     [Parameter, EditorRequired]
     public ClinicalTest? ClinicalTest { get; set; } = default;
+    private bool loading { get; set; } = true;
 
     public void SetMode(string newmode) {
         mode = newmode;
@@ -56,5 +61,11 @@
     {
         selectedNplicate = default;
         displaySpots = false;
+    }
+
+    public void UpdateLoadingStatus(bool isLoading) 
+    {
+        loading = isLoading;
+
     }
 }

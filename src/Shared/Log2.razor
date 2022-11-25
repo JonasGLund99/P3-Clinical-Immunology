@@ -4,18 +4,17 @@
 <tr>
     @if (loadingResultTable)
     {
-        <td class="line-number ghost"></td>
+        <td class="line-number"></td>
         int j = 1;
         for (int i = 0; i < 9; i++)
         {
-            <td class="ghost" id="key-number-@j"></td>
+            <td id="key-number-@j"></td>
             j++;
         }
         for (int i = 0; i < 9; i++)
         {
-            <td class="ghost" contenteditable="false"></td>
+            <td contenteditable="false"></td>
         }
-        <Loader></Loader>
 
     }
     else
@@ -48,13 +47,13 @@
                 }
                 @for (int i = 0; i < 3; i++)
                 {
-                    <td class="data ghost"></td>
+                    <td class="data"></td>
                     k++;
                 }
 
                 @for (int i = 0; i < 16 ; i++)
                 {
-                <td class="data ghost" contenteditable="false"></td>
+                <td class="data" contenteditable="false"></td>
                 }
 
         </tr>
@@ -119,6 +118,8 @@ else
     private List<Block> blocks { get; set; } = new List<Block>();
     private bool loadingResultTable = true;
 
+    [Parameter, EditorRequired]
+    public EventCallback<bool> UpdateLoadingStatus { get; set; }
 
     [Parameter]
     public Nplicate SelectedNplicate { get; set; }
@@ -140,7 +141,8 @@ else
         {
             Console.WriteLine("Getting sortedBlocks");
             blocks = await ClinicalTest.GetSortedBlocks();
-            loadingResultTable = false; 
+            loadingResultTable = false;
+            await UpdateLoadingStatus.InvokeAsync(loadingResultTable);
             Console.WriteLine("SortedBlocks");
             StateHasChanged();
         }

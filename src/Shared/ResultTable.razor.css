@@ -1,4 +1,13 @@
-﻿.result-table-component {
+﻿.ghost {
+    animation-duration: 3s;
+    animation-fill-mode: forwards;
+    animation-iteration-count: infinite;
+    animation-name: placeHolderShimmer;
+    animation-timing-function: linear;
+    background: #f6f7f8;
+    background: linear-gradient(110deg, var(--light-grey) 8%, var(--grey) 38%, var(--light-grey) 54%);
+}
+.result-table-component {
     display: flex;
     flex-direction: column;
     align-items: center;
