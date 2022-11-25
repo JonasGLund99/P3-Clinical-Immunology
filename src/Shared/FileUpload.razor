@@ -199,8 +199,8 @@
     {
         loading = true;
         if (ClinicalTest == null) return;
-        //ClinicalTest.CalculateClinicalTestResult();
-        await ClinicalTest.SaveToDatabase();
+        ClinicalTest.CalculateClinicalTestResult();
+        await ClinicalTest.SaveToDatabase(true);
         loading = false;
         await setActiveButtonCallback.InvokeAsync(4);
     }

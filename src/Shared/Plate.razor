@@ -116,15 +116,18 @@
     }
 
     private async void toggleBlockType(int slideIndex, int blockIndex) {
-        bool blankBlockExists = ClinicalTest.Slides[slideIndex].BlankBlockIndicies.Contains(blockIndex);
+        List<Block> blankBlocks = await ClinicalTest.GetBlankBlocks();
+        bool blankBlockExists = blankBlocks.Exists(b => b.SlideIndex == slideIndex && b.BlockIndex == blockIndex);
 
         if (!blankBlockExists)
         {
-            ClinicalTest.Slides[slideIndex].BlankBlockIndicies.Add(blockIndex);
+            Block blankBlock = new Block(Guid.NewGuid().ToString(), new List<string>(), Block.BlockType.Blank, slideIndex, blockIndex, ClinicalTest.id);
+            await ClinicalTest.AddBlankBlock(blankBlock);
         }
         else
         {
-            ClinicalTest.Slides[slideIndex].BlankBlockIndicies.RemoveAll(b => b == blockIndex);
+            Block blankBlock = blankBlocks.Find(b => b.SlideIndex == slideIndex && b.BlockIndex == blockIndex);
+            await ClinicalTest.RemoveBlankBlock(blankBlock);
         }
 
         await updateOverviewState.InvokeAsync();

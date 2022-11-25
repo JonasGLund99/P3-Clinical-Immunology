@@ -51,9 +51,9 @@
     {
         if (firstRender)
         {
-            await JS.InvokeVoidAsync("listenForPaste");
             normalBlocks = await ClinicalTest.GetNormalBlocks();
             StateHasChanged();
         }
+        await JS.InvokeVoidAsync("listenForPaste");
     }
 }

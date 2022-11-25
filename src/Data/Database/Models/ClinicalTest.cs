@@ -10,6 +10,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
     private int nplicatesInBlock { get; set; }
     private int numOfBlocks { get; } = 21;
     private List<Block>? normalBlocks { get; set; } = null;
+    private List<Block>? blankBlocks { get; set; } = null;
 
     public ClinicalTest(string id, string title, int nplicateSize, string description, DateTime createdAt) : base(id)
     {
@@ -19,7 +20,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
         Description = description;
         CreatedAt = createdAt;
     }
-    public ClinicalTest(string id) : base(id) 
+    public ClinicalTest(string id) : base(id)
     {
         PartitionKey = id;
     }
@@ -34,6 +35,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
     public string[] ChosenTableTitles { get; set; } = new string[3];
     public List<string> ExperimentIds { get; set; } = new List<string>();
     public List<string> NormalBlockIds { get; set; } = new List<string>();
+    public List<string> BlankBlockIds { get; set; } = new List<string>();
     public List<Slide> Slides { get; set; } = new List<Slide>();
     public List<string> AnalyteNames { get; set; } = new List<string>();
     public string Title { get; set; } = "";
@@ -45,6 +47,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
     public DateTime EditedAt { get; set; } = DateTime.Now;
     public bool IsEmpty { get; set; } = true;
 
+    // Normal blocks
     public async Task<List<Block>> GetNormalBlocks()
     {
         if (normalBlocks == null)
@@ -61,9 +64,35 @@ public class ClinicalTest : BaseModel<ClinicalTest>
         }
         return normalBlocks;
     }
-    public void SetNormalBlocks(List<Block> blocks) 
+    public void SetNormalBlocks(List<Block> blocks)
     {
         normalBlocks = blocks;
+    }
+
+    // Blank blocks
+    public async Task<List<Block>> GetBlankBlocks()
+    {
+        if (blankBlocks == null)
+        {
+            List<Block> result = new List<Block>();
+
+            foreach (string id in BlankBlockIds)
+            {
+                Block? b = await DatabaseService.Instance.GetItemById<Block>(id, this.PartitionKey);
+                if (b == null) throw new NullReferenceException("Block is null");
+                result.Add(b);
+            }
+            blankBlocks = result;
+        }
+        return blankBlocks;
+    }
+    public async Task AddBlankBlock(Block block)
+    {
+        (await GetBlankBlocks()).Add(block);
+    }
+    public async Task RemoveBlankBlock(Block block)
+    {
+        (await GetBlankBlocks()).Remove(block);
     }
 
     public async Task SaveToDatabase(bool saveBlocks)
@@ -71,31 +100,40 @@ public class ClinicalTest : BaseModel<ClinicalTest>
         if (saveBlocks)
         {
             List<Block> normBlocks = await GetNormalBlocks();
+            List<Block> bBlocks = await GetBlankBlocks();
             NormalBlockIds.Clear();
-            foreach (Block block in normBlocks) 
+            BlankBlockIds.Clear();
+            foreach (Block block in normBlocks)
             {
                 await block.SaveToDatabase();
                 NormalBlockIds.Add(block.id);
+            }
+            foreach (Block block in bBlocks)
+            {
+                await block.SaveToDatabase();
+                BlankBlockIds.Add(block.id);
             }
         }
 
         await base.SaveToDatabase();
     }
 
-    public override async Task RemoveFromDatabase() 
+    public override async Task RemoveFromDatabase()
     {
         List<Block> normBlocks = await GetNormalBlocks();
-        foreach (Block block in normBlocks) 
+        foreach (Block block in normBlocks)
         {
             await block.RemoveFromDatabase();
         }
         await base.RemoveFromDatabase();
     }
 
-    public async Task<List<List<Block[]>>> GenerateOverview() 
+    public async Task<List<List<Block[]>>> GenerateOverview()
     {
         List<Block> normBlocks = await GetNormalBlocks();
-        int numBlankBlocks = Slides.Select(s => s.BlankBlockIndicies.Count).Sum();
+        List<Block> bBlocks = await GetBlankBlocks();
+
+        int numBlankBlocks = bBlocks.Count;
         int totalBlocks = normBlocks.Count + numBlankBlocks;
         int numPlates = (totalBlocks - 1) / 84 + 1;
         int totalSlides = (totalBlocks - 1) / 21 + 1;
@@ -111,56 +149,61 @@ public class ClinicalTest : BaseModel<ClinicalTest>
             {
                 Slides.Add(new Slide());
             }
-        } 
+        }
         else if (Slides.Count > totalSlides)
         {
-            while(Slides.Count > totalSlides)
+            while (Slides.Count > totalSlides)
             {
                 Slides.RemoveAt(Slides.Count - 1);
             }
         }
-        
+
 
         for (int i = 0; i < numPlates; i++)
         {
+            int plateIndex = i;
+
             overview.Add(new List<Block[]>());
 
             int numSlides = (i * 4) + 4 <= totalSlides ? 4 : totalSlides % 4;
 
-            for (int j = 0; j < numSlides; j++) 
+            for (int j = 0; j < numSlides; j++)
             {
                 overview[i].Add(new Block[21]);
             }
             for (int j = 0; j < 7; j++)
             {
-                for (int k = 0; k < numSlides; k++) 
+                for (int k = 0; k < numSlides; k++)
                 {
                     for (int l = 0; l < 3; l++)
                     {
                         int slideIndex = k;
+                        int totalSlideIndex = plateIndex * 4 + slideIndex;
                         int blockIndex = j * 3 + l;
-                        if (Slides[i * 4 + k].BlankBlockIndicies.Contains(blockIndex))
+
+                        if (bBlocks.Exists(b => b.SlideIndex == totalSlideIndex && b.BlockIndex == blockIndex))
                         {
-                            Block blankBlock = new Block("Will not be saved", new List<string>(), Block.BlockType.Blank, i, slideIndex, this.id);
-                            overview[i][slideIndex][blockIndex] = blankBlock;
+                            Block blankBlock = bBlocks.Find(b => b.SlideIndex == totalSlideIndex && b.BlockIndex == blockIndex);
+                            overview[plateIndex][slideIndex][blockIndex] = blankBlock;
                         }
                         else if (normalBlockIndex < normBlocks.Count)
                         {
                             Block normalBlock = normBlocks[normalBlockIndex];
-                            NormalBlockIds.Append(normalBlock.id);
-                            overview[i][slideIndex][blockIndex] = normalBlock;
-                            normalBlockIndex++; 
+                            normalBlock.SlideIndex = totalSlideIndex;
+                            normalBlock.BlockIndex = blockIndex;
+                            overview[plateIndex][slideIndex][blockIndex] = normalBlock;
+                            normalBlockIndex++;
                         }
-                        else 
+                        else
                         {
-                            Block emptyBlock = new Block("Will not be saved", new List<string>(), Block.BlockType.Empty, i, slideIndex, this.id);
+                            Block emptyBlock = new Block("Will not be saved", new List<string>(), Block.BlockType.Empty, totalSlideIndex, blockIndex, this.id);
                             overview[i][slideIndex][blockIndex] = emptyBlock;
                         }
                     }
                 }
             }
         }
-        await SaveToDatabase();
+        // await SaveToDatabase(true);
         return overview;
     }
 
@@ -169,102 +212,119 @@ public class ClinicalTest : BaseModel<ClinicalTest>
 
     }
 
-    //public void CalculateClinicalTestResult()
-    //{
-    //    int beginningIndex = 0;
-    //    Regex start = new Regex(@"^Block\s*Row\s*Column\s*Name\s*ID", RegexOptions.IgnoreCase);
-    //    foreach (SlideDataFile slideDataFile in SlideDataFiles)
-    //    {
-    //        //Read all lines in a file and add each line as an element in a string array
-    //        string[] allLines = slideDataFile.Content.Split("\n");
+    public async void CalculateClinicalTestResult()
+    {
+        int beginningIndex = 0;
+        Regex start = new Regex(@"^Block\s*Row\s*Column", RegexOptions.IgnoreCase);
 
-    //        //Find the line in which the information about spots begin
-    //        beginningIndex = Array.FindIndex(allLines, line => start.Match(line).Success);
+        List<Block> normBlocks = await GetNormalBlocks();
+        List<Block> bBlocks = await GetBlankBlocks();
 
-    //        //Create string array with only spot information
-    //        string[] spotLines = new ArraySegment<string>(allLines, beginningIndex + 1, allLines.Length - beginningIndex - 2).ToArray();
+        AnalyteNames.Clear();
 
-    //        //Create array where each entry is a title for spot information
-    //        string[] titles = allLines[beginningIndex].Split("\t");
+        foreach (SlideDataFile slideDataFile in SlideDataFiles)
+        {
+            //Read all lines in a file and add each line as an element in a string array
+            string[] allLines = slideDataFile.Content.Split("\n");
 
-    //        List<string> spotInfo = new List<string>();
-    //        nplicatesInBlock = spotLines.Length / numOfBlocks / NplicateSize;
+            //Find the line in which the information about spots begin
+            beginningIndex = Array.FindIndex(allLines, line => start.Match(line).Success);
 
-    //        for (int j = 0; j < Slides[Matches[slideDataFile.Filename]].Blocks.Length; j++)
-    //        {
-    //            for (int k = 0; k < nplicatesInBlock; k++)
-    //            {
-    //                //Split the line with spotinformation, add the information elements to spotinfo.
-    //                spotInfo.AddRange(spotLines[k * NplicateSize + (j * nplicatesInBlock * NplicateSize)].Split("\t"));
+            //Create string array with only spot information
+            string[] spotLines = new ArraySegment<string>(allLines, beginningIndex + 1, allLines.Length - beginningIndex - 2).ToArray();
 
-    //                //Find the index in spotInfo that contains the analyteType (ID) and create an Nplicate with it.
-    //                Nplicate nplicate = new Nplicate(spotInfo[Array.IndexOf(titles, "ID")].ToLower());
+            //Create array where each entry is a title for spot information
+            string[] titles = allLines[beginningIndex].Split("\t");
 
-    //                // Add analyteNames when looping through the first block
-    //                if (j == 0)
-    //                {
-    //                    AnalyteNames.Add(findSingleSpotInfo(spotInfo, titles, "Name"));
-    //                }
+            List<string> spotInfo = new List<string>();
+            nplicatesInBlock = spotLines.Length / numOfBlocks / NplicateSize;
 
-    //                for (int l = 0; l < NplicateSize; l++)
-    //                {
-    //                    if (l != 0)
-    //                    {
-    //                        spotInfo.AddRange(spotLines[l + (k * NplicateSize) + (j * nplicatesInBlock * NplicateSize)].Split("\t"));
-    //                    }
-    //                    nplicate.Spots.Add(
-    //                        new Spot(
-    //                            intensity: double.Parse(findSingleSpotInfo(spotInfo, titles, "Intensity")),
-    //                            flagged: findSingleSpotInfo(spotInfo, titles, "Flags") != "0"
-    //                        )
-    //                    );
-    //                    spotInfo.Clear();
-    //                }
-    //                //Calculate the mean and set if the Nplicate are flagged.
-    //                nplicate.CalculateMean();
-    //                nplicate.SetFlag();
+            Slide slide = Slides[Matches[slideDataFile.Filename]];
 
-    //                Slides[Matches[slideDataFile.Filename]].Blocks[j].Nplicates.Add(nplicate);
-    //            }
-    //            Nplicate? pos = Slides[Matches[slideDataFile.Filename]].Blocks[j].Nplicates.Find(nplicate => nplicate.AnalyteType == "pos");
-    //            Nplicate? neg = Slides[Matches[slideDataFile.Filename]].Blocks[j].Nplicates.Find(nplicate => nplicate.AnalyteType == "neg");
+            List<Block> normBlocksInSlide = normBlocks.Where(b => b.SlideIndex == Slides.IndexOf(slide)).ToList();
+            List<Block> bBlocksInSlide = bBlocks.Where(b => b.SlideIndex == Slides.IndexOf(slide)).ToList();
 
-    //            //Calculate the Quality control if the positive and negative control exist
-    //            if (pos == null || neg == null)
-    //            {
-    //                throw new NullReferenceException("Either the positive or negative control is missing");
-    //            }
-    //            Slides[Matches[slideDataFile.Filename]].Blocks[j].CalculateQC(pos, neg);
-    //        }
+            List<Block> allBlocksInSlide = normBlocksInSlide.Concat(bBlocksInSlide).ToList();
+            allBlocksInSlide.Sort((b1, b2) => b1.BlockIndex - b2.BlockIndex);
 
-    //        //Calculate the RI for each Nplicate in each block and update max / min RI
-    //        foreach (Block block in Slides[Matches[slideDataFile.Filename]].Blocks)
-    //        {
-    //            Nplicate? neg = block.Nplicates.Find(element => element.AnalyteType == "neg");
+            for (int j = 0; j < allBlocksInSlide.Count; j++)
+            {
+                for (int k = 0; k < nplicatesInBlock; k++)
+                {
+                    //Split the line with spotinformation, add the information elements to spotinfo.
+                    spotInfo.AddRange(spotLines[k * NplicateSize + (j * nplicatesInBlock * NplicateSize)].Split("\t"));
 
-    //            if (neg == null)
-    //            {
-    //                throw new NullReferenceException("The negative control is missing");
-    //            }
+                    //Find the index in spotInfo that contains the analyteType (ID) and create an Nplicate with it.
+                    Nplicate nplicate = new Nplicate(spotInfo[Array.IndexOf(titles, "ID")].ToLower());
 
-    //            for (int j = 0; j < block.Nplicates.Count; j++)
-    //            {
-    //                updateMaxMinRI(block.Nplicates[j].CalculateRI(Slides[Matches[slideDataFile.Filename]].Blocks[Slides[Matches[slideDataFile.Filename]].Blocks.Length - 1].Nplicates[j], neg));
-    //            }
-    //        }
-    //    }
-    //    //Set the heatmapcolour of all Nplicates (The RI of all Nplicates in all slides must be calculated before)
-    //    foreach (Slide slide in Slides)
-    //    {
-    //        foreach (Block block in slide.Blocks)
-    //        {
-    //            foreach (Nplicate nplicate in block.Nplicates)
-    //            {
-    //                nplicate.SetHeatMapColour(MaxRI, MinRI);
-    //            }
-    //        }
-    //    }
-    //}
+                    // Add analyteNames when looping through the first block
+                    if (j == 0)
+                    {
+                        AnalyteNames.Add(findSingleSpotInfo(spotInfo, titles, "Name"));
+                    }
+
+                    for (int l = 0; l < NplicateSize; l++)
+                    {
+                        if (l != 0)
+                        {
+                            spotInfo.AddRange(spotLines[l + (k * NplicateSize) + (j * nplicatesInBlock * NplicateSize)].Split("\t"));
+                        }
+                        nplicate.Spots.Add(
+                            new Spot(
+                                intensity: double.Parse(findSingleSpotInfo(spotInfo, titles, "Intensity")),
+                                flagged: findSingleSpotInfo(spotInfo, titles, "Flags") != "0"
+                            )
+                        );
+                        spotInfo.Clear();
+                    }
+                    //Calculate the mean and set if the Nplicate are flagged.
+                    nplicate.CalculateMean();
+                    nplicate.SetFlag();
+
+                    allBlocksInSlide[j].Nplicates.Add(nplicate);
+                }
+                Nplicate? pos = allBlocksInSlide[j].Nplicates.Find(nplicate => nplicate.AnalyteType == "pos");
+                Nplicate? neg = allBlocksInSlide[j].Nplicates.Find(nplicate => nplicate.AnalyteType == "neg");
+
+                //Calculate the Quality control if the positive and negative control exist
+                if (pos == null || neg == null)
+                {
+                    throw new NullReferenceException("Either the positive or negative control is missing");
+                }
+                allBlocksInSlide[j].CalculateQC(pos, neg);
+            }
+
+            //Calculate the RI for each Nplicate in each block and update max / min RI
+            foreach (Block block in allBlocksInSlide)
+            {
+                Nplicate? neg = block.Nplicates.Find(element => element.AnalyteType == "neg");
+
+                if (neg == null)
+                {
+                    throw new NullReferenceException("The negative control is missing");
+                }
+
+                for (int j = 0; j < block.Nplicates.Count; j++)
+                {
+                    Block firstBlankBlock = bBlocksInSlide[0];
+                    updateMaxMinRI(block.Nplicates[j].CalculateRI(firstBlankBlock.Nplicates[j], neg));
+                }
+            }
+        }
+
+        //Set the heatmapcolour of all Nplicates (The RI of all Nplicates in all slides must be calculated before)
+        foreach (Block block in normBlocks)
+        {
+            foreach (Nplicate nplicate in block.Nplicates)
+            {
+                nplicate.SetHeatMapColour(MaxRI, MinRI);
+
+                if (block.Nplicates.IndexOf(nplicate) == 2) {
+                    System.Console.WriteLine($"{nplicate.RI}");
+                }
+            }
+        }
+    }
 
     private string findSingleSpotInfo(List<string> spotInfo, string[] titles, string key)
     {

@@ -37,6 +37,10 @@
                     <i class="fa-solid fa-file-export"></i>
                 </div>
             </div>
+            <div id="save-blocks-animation" class='@(isSavingOverview ? "saving" : "")'>
+                @* disable button if saving *@
+                <i id="save-blocks-btn" class="fa-solid fa-circle-check" @onclick="() => saveOverview()"></i>
+            </div>
         </div>
         
         @if (!ClinicalTest.IsEmpty && overview.Count > 0 && overviewLoaded)
@@ -112,6 +116,7 @@
 
     private List<List<Block[]>> overview = new List<List<Block[]>>();
     private bool overviewLoaded = false;
+    private bool isSavingOverview = false;
 
     //Switch viewmode (Overview or Table-view)
     public string mode { get; set; } = "Overview";
@@ -187,6 +192,15 @@
         StateHasChanged();
         await ClinicalTest.SaveToDatabase(true);
         updateOverviewState();
+    }
+    
+    private async void saveOverview()
+    {
+        isSavingOverview = true;
+        StateHasChanged();
+        await ClinicalTest.SaveToDatabase(true);
+        isSavingOverview = false;
+        StateHasChanged();
     }
 
     private async void clearTable() {
