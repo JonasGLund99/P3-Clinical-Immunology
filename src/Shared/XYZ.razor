@@ -158,7 +158,6 @@ else
     {
         if (firstRender)
         {
-            loadingResultTable = true;
             blocks = await ClinicalTest.GetSortedBlocks();
             loadingResultTable = false;
             await UpdateLoadingStatus.InvokeAsync(loadingResultTable);
