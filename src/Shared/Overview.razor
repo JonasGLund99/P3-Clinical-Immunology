@@ -113,6 +113,8 @@
     private List<List<Block[]>> overview = new List<List<Block[]>>();
     private bool overviewLoaded = false;
 
+    [Parameter, EditorRequired]
+    public Experiment Experiment { get; set; }
     //Switch viewmode (Overview or Table-view)
     public string mode { get; set; } = "Overview";
 
@@ -142,7 +144,10 @@
         if (selectedTableTitle == null) return;
 
         ClinicalTest.ChosenTableTitles[tableTitleNumber] = selectedTableTitle;
+        ClinicalTest.EditedAt = DateTime.Now;
+        Experiment.EditedAt = DateTime.Now;
         await ClinicalTest.SaveToDatabase();
+        await Experiment.SaveToDatabase();
         StateHasChanged();
     }
 
@@ -185,7 +190,10 @@
         overviewLoaded = false;
         switchMode("Overview");
         StateHasChanged();
+        ClinicalTest.EditedAt = DateTime.Now;
+        Experiment.EditedAt = DateTime.Now;
         await ClinicalTest.SaveToDatabase(true);
+        await Experiment.SaveToDatabase();
         updateOverviewState();
     }
 

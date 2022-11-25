@@ -1,0 +1,60 @@
+﻿@using src.Data
+@using src.Shared
+
+<div class="result-table-component">
+    <div id="toolbar">
+        <button @onclick='() => SetMode("XYZ")' class="result-buttons @(mode=="XYZ" ? "result-button-active" : "")">
+                (x-y)/z
+            </button>
+        <button @onclick='() => SetMode("Log2")' class="result-buttons @(mode=="Log2" ? "result-button-active" : "")">
+            Log
+            <sub>2</sub>
+            </button>
+
+        <div id="export-icon" title="Export overview">
+            <i class="fa-solid fa-file-export"></i>
+        </div>
+    </div>
+
+    @if (displaySpots)
+    {
+        <SpotModal 
+            ShownNplicate="@selectedNplicate" 
+            ModalCancelCallback="ModalCancel"/>
+    }
+
+    <div class="table-view-container">
+        <table id="result-table">
+            @switch(mode) 
+            {
+                case "XYZ": <XYZ ClinicalTest="@ClinicalTest" ShowSpots="@((args) => ShowSpots(args))" SelectedNplicate="@selectedNplicate"></XYZ> break;
+                case "Log2": <Log2 ClinicalTest="@ClinicalTest" ShowSpots="@((args) => ShowSpots(args))" SelectedNplicate="@selectedNplicate"></Log2> break;
+            }
+        </table>
+    </div>
+</div>
+
+@code {
+    private string mode = "XYZ";
+    private bool displaySpots = false;
+    private Nplicate? selectedNplicate = default;
+
+    [Parameter, EditorRequired]
+    public ClinicalTest? ClinicalTest { get; set; } = default;
+
+    public void SetMode(string newmode) {
+        mode = newmode;
+    }
+
+    public void ShowSpots(Tuple<MouseEventArgs, Nplicate> args)
+    {
+        selectedNplicate = args.Item2;
+        displaySpots = true;
+    }   
+
+    public void ModalCancel() 
+    {
+        selectedNplicate = default;
+        displaySpots = false;
+    }
+}
