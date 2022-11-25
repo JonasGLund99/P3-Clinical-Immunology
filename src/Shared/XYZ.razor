@@ -158,10 +158,9 @@ else
     {
         if (firstRender)
         {
-            Console.WriteLine("Getting sorted Blocks");
+            loadingResultTable = true;
             blocks = await ClinicalTest.GetSortedBlocks();
-            Console.WriteLine("Sorted blocks");
-            //loadingResultTable = false;
+            loadingResultTable = false;
             await UpdateLoadingStatus.InvokeAsync(loadingResultTable);
             StateHasChanged();
         }

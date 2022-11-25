@@ -116,7 +116,7 @@ else
 
 @code {
     private List<Block> blocks { get; set; } = new List<Block>();
-    private bool loadingResultTable = true;
+    private bool loadingResultTable = false;
 
     [Parameter, EditorRequired]
     public EventCallback<bool> UpdateLoadingStatus { get; set; }
@@ -139,11 +139,10 @@ else
     {
         if (firstRender)
         {
-            Console.WriteLine("Getting sortedBlocks");
+            loadingResultTable = true;
             blocks = await ClinicalTest.GetSortedBlocks();
             loadingResultTable = false;
             await UpdateLoadingStatus.InvokeAsync(loadingResultTable);
-            Console.WriteLine("SortedBlocks");
             StateHasChanged();
         }
     }

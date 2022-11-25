@@ -24,7 +24,7 @@
     }
 
     <div class="table-view-container @(loading ? "ghost" : "")">
-        <table id="result-table" style ="@(loading ? "opacity:0.3" : "")">
+        <table id="result-table" style ="@(loading ? "opacity:0.4" : "")">
             @switch(mode) 
             {
                 case "XYZ":
@@ -46,7 +46,7 @@
 
     [Parameter, EditorRequired]
     public ClinicalTest? ClinicalTest { get; set; } = default;
-    private bool loading { get; set; } = true;
+    private bool loading { get; set; } = false;
 
     public void SetMode(string newmode) {
         mode = newmode;
