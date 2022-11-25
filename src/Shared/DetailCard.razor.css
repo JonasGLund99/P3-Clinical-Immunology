@@ -8,6 +8,7 @@
     height: 100%;
     margin-right: 4vw;
     padding: 40px;
+    box-shadow: 0px 2px 10px 2px var(--grey);
 }
 
 .right-card {
@@ -20,6 +21,7 @@
     height: 100%;
     margin-left: 4vw;
     padding: 40px;
+    box-shadow: 0px 2px 10px 2px var(--grey);
 }
 
 .hr-line {
