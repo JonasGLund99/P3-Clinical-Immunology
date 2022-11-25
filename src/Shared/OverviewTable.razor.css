@@ -42,7 +42,3 @@ td:focus {
     z-index: 1;
     min-width: 50px;
 }
-
-.stick {
-    position: sticky;
-}

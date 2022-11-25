@@ -67,18 +67,11 @@ public class ClinicalTest : BaseModel<ClinicalTest>
 
         blocks.Sort(delegate (Block x, Block y)
         {
-            if (x.PlateIndex != y.PlateIndex)
+            if (x.SlideIndex == y.SlideIndex)
             {
-                return x.PlateIndex - y.PlateIndex;
+                return x.BlockIndex - y.BlockIndex;
             }
-            else
-            {
-                if (x.SlideIndex == y.SlideIndex)
-                {
-                    return x.Index - y.Index;
-                }
-                return x.SlideIndex - y.SlideIndex;
-            }
+            return x.SlideIndex - y.SlideIndex;
         });
         return blocks;
     }
@@ -168,6 +161,9 @@ public class ClinicalTest : BaseModel<ClinicalTest>
                         else if (normalBlockIndex < normBlocks.Count)
                         {
                             Block normalBlock = normBlocks[normalBlockIndex];
+                            NormalBlockIds.Append(normalBlock.id);
+                            normalBlock.SlideIndex = slideIndex;
+                            normalBlock.BlockIndex = blockIndex;
                             overview[i][slideIndex][blockIndex] = normalBlock;
                             normalBlockIndex++; 
                         }
