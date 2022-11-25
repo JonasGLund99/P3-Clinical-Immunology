@@ -36,11 +36,11 @@
         }
         else if (block.QC < 0.97)
         {
-            <td class="invalid-block">@Math.Round(block.QC, 9)</td>
+            <td class="invalid-block">@Math.Round(block.QC, 9).ToString("0.000000000")</td>
         }
         else
         {
-            <td>@Math.Round(block.QC, 9)</td>
+            <td class="qc">@Math.Round(block.QC, 9).ToString("0.000000000")</td>
         }
         @foreach (Nplicate nplicate in block.Nplicates)
         {
@@ -55,12 +55,12 @@
             }
             else if (nplicate.IsFlagged)
             {
-                <td @onclick="@((e) => OpenSpots(e, nplicate, block))" contenteditable="false" class="data @(nplicate==SelectedNplicate ? "selected-td" : "") flagged-nplicate">@Math.Round(nplicate.RI, 2)</td>
+                <td @onclick="@((e) => OpenSpots(e, nplicate, block))" contenteditable="false" class="data @(nplicate==SelectedNplicate ? "selected-td" : "") flagged-nplicate">@Math.Round(nplicate.RI, 2).ToString("0.00")</td>
 
             }
             else
             {
-                <td class="data @(nplicate==SelectedNplicate ? "selected-td" : "")" @onclick="@((e) => OpenSpots(e, nplicate, block))" contenteditable="false">@Math.Round(nplicate.RI, 2)</td>
+                <td class="data @(nplicate==SelectedNplicate ? "selected-td" : "")" @onclick="@((e) => OpenSpots(e, nplicate, block))" contenteditable="false">@Math.Round(nplicate.RI, 2).ToString("0.00")</td>
             }
         }
     </tr>
