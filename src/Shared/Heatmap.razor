@@ -38,7 +38,7 @@
                                 <td title="@nplicateTitleHelper(nplicate)"
                                     class="flagged-@nplicate.IsFlagged.ToString().ToLower() selected-@((nplicate == clickedNplicate).ToString().ToLower() )" 
                                     style="background-color: @System.Drawing.ColorTranslator.ToHtml(nplicate.HeatmapColour);"
-                                    @onclick="() => nplicateClicked(nplicate)"></td>
+                                    @onclick="() => nplicateClicked(nplicate, block)"></td>
                             }
                         </tr>    
                     }                    
@@ -83,7 +83,8 @@
 {
     <SpotModal 
         ModalCancelCallback="closeSpotModal"
-        ShownNplicate="@clickedNplicate"/>
+        ShownNplicate="@clickedNplicate"
+        Block="@clickedBlock"/>
 }
 
 @code {
@@ -91,7 +92,7 @@
     private bool showSpotModal = false;
     private List<Block> allBlocks = new();
     private Nplicate clickedNplicate = new();
-
+    private Block clickedBlock = new();
     [Parameter]
     public ClinicalTest ClinicalTest { get; set; } = new();
 
@@ -104,9 +105,10 @@
         }
     }
 
-    private void nplicateClicked(Nplicate nplicate) 
+    private void nplicateClicked(Nplicate nplicate, Block block) 
     {
         clickedNplicate = nplicate;
+        clickedBlock = block;
         showSpotModal = true;
         StateHasChanged();
     }

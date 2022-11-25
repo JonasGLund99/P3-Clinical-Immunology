@@ -51,7 +51,8 @@
 
     [Parameter, EditorRequired]
     public Nplicate ShownNplicate { get; set; }
-
+    [Parameter, EditorRequired]
+    public Block Block {get; set;}
     public async void CloseModal()
     {
         await ModalCancelCallback.InvokeAsync();
