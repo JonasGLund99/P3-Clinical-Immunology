@@ -97,7 +97,7 @@
     <div class="remove-colorpick" @onclick="closeTextColour">
         <TextColourMenu 
             MouseX="xCoor"
-            MouseY="yCoor"
+            MouseY="@(yCoor < 790 ? yCoor : yCoor - 140)"
             Block="selectedBlock"
             ChangeTextColourCallback="updateTextColour"
         />
