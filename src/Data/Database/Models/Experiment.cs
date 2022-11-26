@@ -35,12 +35,16 @@ public class Experiment : BaseModel<Experiment>
         {
             throw new NullReferenceException("No database");
         }
-        string queryString = @"SELECT DISTINCT VALUE CT FROM ClinicalTest CT
-                            JOIN s IN CT.Slides
-                            WHERE (CONTAINS(CT.Title, @searchParameter, true)
-                            OR CONTAINS(s.Barcode, @searchParameter, true))
-                            AND ARRAY_CONTAINS(CT.ExperimentIds, @expId)
-                            ORDER BY CT.EditedAt DESC";
+        string queryString = @"SELECT * FROM ClinicalTest
+                            WHERE CONTAINS(ClinicalTest.Title, @searchParameter, true)
+                            AND ARRAY_CONTAINS(ClinicalTest.ExperimentIds, @expId)
+                            ORDER BY ClinicalTest.EditedAt DESC";
+        // string queryString = @"SELECT DISTINCT VALUE CT FROM ClinicalTest CT
+        //                     JOIN s IN CT.Slides
+        //                     WHERE (CONTAINS(CT.Title, @searchParameter, true)
+        //                     OR CONTAINS(s.Barcode, @searchParameter, true))
+        //                     AND ARRAY_CONTAINS(CT.ExperimentIds, @expId)
+        //                     ORDER BY CT.EditedAt DESC";
 
         FeedIterator<ClinicalTest> feed = DatabaseService.Instance.Database.GetContainer("ClinicalTest")
                                         .GetItemQueryIterator<ClinicalTest>(

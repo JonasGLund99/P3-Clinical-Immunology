@@ -21,8 +21,6 @@ public class Block : BaseModel<Block>
     public List<string> PatientData { get; set; } = new List<string>();
     public Color TextColour { get; set; } = new Color();
     public double QC { get; set; } = 0;
-    public int BlockIndex { get; set; } = 0;
-
 
     public void CalculateQC(Nplicate pos, Nplicate neg)
     {

@@ -23,6 +23,7 @@ public abstract class BaseModel<T> where T : BaseModel<T>
                 item: (T) this,
                 partitionKey: new PartitionKey(this.PartitionKey)
             );
+            System.Console.WriteLine("Saved: " + typeof(T).Name);
             return result;
         };
 

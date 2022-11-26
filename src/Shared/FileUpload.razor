@@ -146,8 +146,8 @@
         ClinicalTest.EditedAt = DateTime.Now;
         Experiment.EditedAt = DateTime.Now;
         StateHasChanged();
-        await ClinicalTest.SaveToDatabase();
-        await Experiment.SaveToDatabase();
+        ClinicalTest.SaveToDatabase();
+        Experiment.SaveToDatabase();
     }
 
     public async Task RemoveFile(SlideDataFile slideDataFile) 
@@ -160,8 +160,8 @@
         allMatched = AllMatched();
         ClinicalTest.EditedAt = DateTime.Now;
         Experiment.EditedAt = DateTime.Now;
-        await ClinicalTest.SaveToDatabase();
-        await Experiment.SaveToDatabase();
+        ClinicalTest.SaveToDatabase();
+        Experiment.SaveToDatabase();
     }
 
     public bool FileExists(string Filename) 

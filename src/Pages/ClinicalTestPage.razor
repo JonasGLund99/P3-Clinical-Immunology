@@ -190,7 +190,7 @@ else
     }
     private async void stopReload() 
     {
-        await JS.InvokeVoidAsync("addBeforeUnload");
+        @* await JS.InvokeVoidAsync("addBeforeUnload");
 
         clinicalTest.SaveToDatabase().ContinueWith((task) =>
         {
@@ -198,7 +198,6 @@ else
             {
                 await JS.InvokeVoidAsync("removeBeforeUnload");
             });
-        });
-
+        }); *@
     }
 }

@@ -153,8 +153,8 @@
         ClinicalTest.ChosenTableTitles[tableTitleNumber] = selectedTableTitle;
         ClinicalTest.EditedAt = DateTime.Now;
         Experiment.EditedAt = DateTime.Now;
-        await ClinicalTest.SaveToDatabase();
-        await Experiment.SaveToDatabase();
+        ClinicalTest.SaveToDatabase();
+        Experiment.SaveToDatabase();
         StateHasChanged();
     }
 
@@ -199,8 +199,8 @@
         StateHasChanged();
         ClinicalTest.EditedAt = DateTime.Now;
         Experiment.EditedAt = DateTime.Now;
-        await ClinicalTest.SaveToDatabase(true);
-        await Experiment.SaveToDatabase();
+        ClinicalTest.SaveToDatabase(true);
+        Experiment.SaveToDatabase();
         updateOverviewState();
     }
     
