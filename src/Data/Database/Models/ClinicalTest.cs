@@ -64,7 +64,22 @@ public class ClinicalTest : BaseModel<ClinicalTest>
         }
         return normalBlocks;
     }
-    public void SetNormalBlocks(List<Block> blocks)
+    public async Task<List<Block>> GetSortedBlocks()
+    {
+        List<Block> blocks = new();
+        blocks.AddRange(await GetNormalBlocks());
+
+        blocks.Sort(delegate (Block x, Block y)
+        {
+            if (x.SlideIndex == y.SlideIndex)
+            {
+                return x.BlockIndex - y.BlockIndex;
+            }
+            return x.SlideIndex - y.SlideIndex;
+        });
+        return blocks;
+    }
+    public void SetNormalBlocks(List<Block> blocks) 
     {
         normalBlocks = blocks;
     }

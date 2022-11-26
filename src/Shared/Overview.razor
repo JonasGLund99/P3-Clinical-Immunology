@@ -59,7 +59,9 @@
         }
         else if (!ClinicalTest.IsEmpty)
         {
-            <div>Loading...</div>
+            <div class="ghostPlate plate">
+                <p id="loading-text">Loading overview . . .</p>
+            </div>
         }
         else
         {
@@ -118,6 +120,8 @@
     private bool overviewLoaded = false;
     private bool isSavingOverview = false;
 
+    [Parameter, EditorRequired]
+    public Experiment Experiment { get; set; }
     //Switch viewmode (Overview or Table-view)
     public string mode { get; set; } = "Overview";
 
@@ -147,7 +151,10 @@
         if (selectedTableTitle == null) return;
 
         ClinicalTest.ChosenTableTitles[tableTitleNumber] = selectedTableTitle;
-        ClinicalTest.SaveToDatabase();
+        ClinicalTest.EditedAt = DateTime.Now;
+        Experiment.EditedAt = DateTime.Now;
+        await ClinicalTest.SaveToDatabase();
+        await Experiment.SaveToDatabase();
         StateHasChanged();
     }
 
@@ -190,7 +197,10 @@
         overviewLoaded = false;
         switchMode("Overview");
         StateHasChanged();
-        ClinicalTest.SaveToDatabase(true);
+        ClinicalTest.EditedAt = DateTime.Now;
+        Experiment.EditedAt = DateTime.Now;
+        await ClinicalTest.SaveToDatabase(true);
+        await Experiment.SaveToDatabase();
         updateOverviewState();
     }
     

@@ -37,6 +37,7 @@
     border-radius: 10px;
     height: 50px;
     gap: 20px;
+    box-shadow: 0px 2px 10px 2px var(--grey);
 }
 #toolbar > * {
     display: flex;
@@ -116,6 +117,7 @@
 #info-button {
     font-size: 35px;
     color: var(--secondary-dark-color);
+    filter: drop-shadow(0px 2px 4px var(--grey));
 }
 #clear-button {
     background-color: rgb(72, 117, 151);
@@ -146,7 +148,8 @@
     background-color: white;
     width: 98%;
     height: calc(100vh - 250px);
-/*    border: 5px solid var(--primary-dark-color);*/
+    /*    border: 5px solid var(--primary-dark-color);*/
+    box-shadow: 0px 2px 10px 2px var(--grey);
     border-radius: 20px;
     margin-bottom: 40px;
     display: flex;
@@ -167,7 +170,7 @@
     font-size: 14px;
     margin-left: 12px;
 }
-#save-blocks-btn {
+/* #save-blocks-btn {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -180,7 +183,7 @@
 }
 #save-blocks-btn:hover {
     color: var(--green-btn-hover-color);
-    /* animation: color-change 1.5s linear infinite; */
+    animation: color-change 1.5s linear infinite;
 }
 #save-blocks-animation {
     display: flex;
@@ -215,7 +218,7 @@
     to {
         transform: rotate(-360deg);
     }
-}
+} */
 /* @keyframes color-change {
     0% {
         color: rgb(10, 127, 230);
@@ -238,3 +241,18 @@
         transform: scale(1.2) rotate(0.5turn);
     }
 } */
+
+/*Ghosting*/
+.ghostPlate {
+    width: 100%;
+    max-width: 1500px;
+    /*border: 5px solid var(--grey);*/
+    box-shadow: 0px 2px 10px 2px var(--grey);
+    border-radius: 10px;
+    margin-bottom: 30px;
+}
+
+#loading-text {
+    font-weight: 600;
+    font-size: 2rem;
+}

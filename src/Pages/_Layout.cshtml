@@ -98,6 +98,19 @@
             return cells.slice(0, lastDataIndex + 1).map(row => row.filter((cell, index) => registeredColumns.includes(index)));
         }
 
+        
+        function addBeforeUnload() {
+            window.addEventListener("beforeunload", closeText);
+        }
+        
+        function removeBeforeUnload() {
+            window.removeEventListener("beforeunload", closeText);
+        }
+
+        function closeText(event) {
+            event.returnValue = "Write something clever here..";
+        }
+
         function clearTable() {
             for (const row of document.querySelectorAll('tr')) {
                 for (const [i, cell] of [...row.querySelectorAll('td')].entries()) {

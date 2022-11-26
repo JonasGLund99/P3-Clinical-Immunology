@@ -1,5 +1,4 @@
-﻿
-@using src.Data
+﻿@using src.Data
 
 <div class="file-component">
     @if (displayError) {
@@ -41,7 +40,7 @@
                     <span>Slide @slideNumber</span>
                     <div class="slide">
                         <i title="@(matches ? "Slide matches a file" : "Slide does not match a file")" class="@(matches ? "fa-solid fa-circle-check check" : "fa-solid fa-circle-xmark check")"></i>
-                        <span>@slide.Barcode</span>
+                        <span>@(slide.Barcode == "" ? "Missing Barcode" : @slide.Barcode)</span>
                         <i class="fa-solid fa-pencil" title="Edit barcode in overview" @onclick="() => setActiveButtonCallback.InvokeAsync(1)"></i>
                     </div>
                     slideNumber++;
@@ -102,11 +101,17 @@
     private bool allMatched;
     private bool loading = false;
 
-    [Parameter]
+    [Parameter, EditorRequired]
     public ClinicalTest? ClinicalTest { get; set; } = null;
+
+    [Parameter, EditorRequired]
+    public Experiment? Experiment {  get; set; } = null;
 
     [Parameter]
     public int ActiveButton { get; set; }
+
+    [Parameter]
+    public EventCallback StopReloadCallback { get; set; }
 
     [Parameter]
     public EventCallback<int> setActiveButtonCallback { get; set; }
@@ -138,17 +143,25 @@
                 displayError = true;
             }
         }
+        ClinicalTest.EditedAt = DateTime.Now;
+        Experiment.EditedAt = DateTime.Now;
         StateHasChanged();
-        ClinicalTest.SaveToDatabase();
+        await ClinicalTest.SaveToDatabase();
+        await Experiment.SaveToDatabase();
     }
 
     public async Task RemoveFile(SlideDataFile slideDataFile) 
     {
+        if(ClinicalTest == null) return;
+
         ClinicalTest.SlideDataFiles.Remove(slideDataFile);
         ClinicalTest.Matches.Remove(slideDataFile.Filename);
 
         allMatched = AllMatched();
-        ClinicalTest.SaveToDatabase();
+        ClinicalTest.EditedAt = DateTime.Now;
+        Experiment.EditedAt = DateTime.Now;
+        await ClinicalTest.SaveToDatabase();
+        await Experiment.SaveToDatabase();
     }
 
     public bool FileExists(string Filename) 
@@ -187,20 +200,23 @@
         return true;
     }
 
-    protected override void OnAfterRender(bool firstrender) {
-        if (firstrender) {
+    protected override void OnAfterRender(bool firstRender) {
+        if (firstRender) {
             allMatched = AllMatched();
             StateHasChanged();
         }
     }
 
-
     public async void StartCalculation() 
     {
         loading = true;
         if (ClinicalTest == null) return;
-        ClinicalTest.CalculateClinicalTestResult();
-        ClinicalTest.SaveToDatabase(true);
+
+        //ClinicalTest.CalculateClinicalTestResult();
+        @* ClinicalTest.SaveToDatabase(true); ??? *@
+        ClinicalTest.EditedAt = DateTime.Now;
+        Experiment.EditedAt = DateTime.Now;
+        await StopReloadCallback.InvokeAsync();
         loading = false;
         await setActiveButtonCallback.InvokeAsync(4);
     }
