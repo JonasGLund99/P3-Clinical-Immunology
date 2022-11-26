@@ -6,6 +6,8 @@ class ProcessQueue
     private static readonly ProcessQueue instance = new ProcessQueue();
     private Dictionary<string, Queue<Func<Task>>> queues = new Dictionary<string, Queue<Func<Task>>>();
     private Dictionary<string, int> queueCounts = new Dictionary<string, int>();
+    public Dictionary<string, bool> isRunning = new Dictionary<string, bool>();
+
 
     private ProcessQueue() { }
 
@@ -17,9 +19,6 @@ class ProcessQueue
         }
     }
 
-    public bool IsRunning = false;
-
-
     public void Enqueue(Func<Task> process, string queueId)
     {
         if (!queues.ContainsKey(queueId))
@@ -30,16 +29,15 @@ class ProcessQueue
         queues[queueId].Enqueue(process);
         queueCounts[queueId]++;
 
-        if (!IsRunning)
+        if (!isRunning.ContainsKey(queueId) || !isRunning[queueId])
         {
             queueCounts[queueId] = 1;
             Execute(queueId);
         }
-
     }
     private async void Execute(string queueId)
     {
-        IsRunning = true;
+        isRunning[queueId] = true;
 
         Func<Task> currentProcess;
 
@@ -50,11 +48,12 @@ class ProcessQueue
         }
         while (queues[queueId].Count > 0);
 
-        IsRunning = false;
+        isRunning[queueId] = false;
     }
 
     public double GetProgress(string queueId)
     {
+        if (!isRunning.ContainsKey(queueId) || !isRunning[queueId]) return 1;
         return 1 - (double)queues[queueId].Count / (double)queueCounts[queueId];
     }
 }

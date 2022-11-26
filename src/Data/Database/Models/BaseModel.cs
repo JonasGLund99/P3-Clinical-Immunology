@@ -13,17 +13,6 @@ public abstract class BaseModel<T> where T : BaseModel<T>
     public string id { get; set; } = "";
     public abstract string PartitionKey { get; set; }
 
-    // public virtual async Task SaveToDatabase()
-	// {
-	// 	Database? db = DatabaseService.Instance.Database;
-
-	// 	if (db == null) throw new NullReferenceException("There was no reference to the database");
-
-	// 	await db.GetContainer(typeof(T).Name).UpsertItemAsync<T>(
-	// 		item: (T) this,
-    //         partitionKey: new PartitionKey(this.PartitionKey)
-    //     );
-    // }
     public void SaveToDatabase()
     {
         Database? db = DatabaseService.Instance.Database;
@@ -34,7 +23,6 @@ public abstract class BaseModel<T> where T : BaseModel<T>
                 item: (T) this,
                 partitionKey: new PartitionKey(this.PartitionKey)
             );
-            System.Console.WriteLine("Saved: " + typeof(T).Name + "  " + this.id);
             return result;
         };
 

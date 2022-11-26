@@ -67,7 +67,7 @@ public static class ExperimentManager
     
     public static void Associate(Experiment experiment, ClinicalTest clinicalTest)
     {
-        if ( !experiment.ClinicalTestIds.Contains(clinicalTest.id))
+        if (!experiment.ClinicalTestIds.Contains(clinicalTest.id))
         {
             if (!experiment.ClinicalTestIds.Contains(clinicalTest.id))
             {
