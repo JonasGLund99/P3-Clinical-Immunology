@@ -24,8 +24,12 @@ class ProcessQueue
         if (!queues.ContainsKey(queueId))
         {
             queues[queueId] = new Queue<Func<Task>>();
+        }
+        if (!queueCounts.ContainsKey(queueId))
+        {
             queueCounts[queueId] = 1;
         }
+        
         queues[queueId].Enqueue(process);
         queueCounts[queueId]++;
 

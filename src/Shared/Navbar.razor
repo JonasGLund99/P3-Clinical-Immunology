@@ -77,7 +77,7 @@
 
     private void startTimer()
     {
-        databaseTimer = new Timer(300);
+        databaseTimer = new Timer(50);
         databaseTimer.Elapsed += TimerHandler;
         databaseTimer.AutoReset = true;
         databaseTimer.Enabled = true;
