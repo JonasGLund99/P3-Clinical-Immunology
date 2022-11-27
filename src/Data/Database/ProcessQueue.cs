@@ -53,7 +53,19 @@ class ProcessQueue
 
     public double GetProgress(string queueId)
     {
-        if (!isRunning.ContainsKey(queueId) || !isRunning[queueId]) return 1;
+        if (!isRunning.ContainsKey(queueId) || !isRunning[queueId] || queueCounts[queueId] == 0) return 1;
         return 1 - (double)queues[queueId].Count / (double)queueCounts[queueId];
+    }
+    public void Clear(string queueId)
+    {
+        if (!queues.ContainsKey(queueId))
+        {
+            queues[queueId] = new Queue<Func<Task>>();
+        }
+        else
+        {
+            queues[queueId].Clear();
+            queueCounts[queueId] = 0;
+        }
     }
 }
