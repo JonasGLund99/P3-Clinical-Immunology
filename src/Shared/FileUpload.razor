@@ -144,6 +144,7 @@
             }
         }
         ClinicalTest.EditedAt = DateTime.Now;
+        ClinicalTest.CalculationNecessary = true;
         Experiment.EditedAt = DateTime.Now;
         StateHasChanged();
         ClinicalTest.SaveToDatabase();
@@ -159,6 +160,7 @@
 
         allMatched = AllMatched();
         ClinicalTest.EditedAt = DateTime.Now;
+        ClinicalTest.CalculationNecessary = true;
         Experiment.EditedAt = DateTime.Now;
         ClinicalTest.SaveToDatabase();
         Experiment.SaveToDatabase();
@@ -176,11 +178,14 @@
     {
         if (ClinicalTest == null) return;
 
-        for(int i = 0; i < ClinicalTest.Slides.Count; i++) {
-            if (filename.Contains(ClinicalTest.Slides[i].Barcode)){
-                ClinicalTest.Matches.Add(filename, i);
+        foreach(Slide s in ClinicalTest.Slides)
+        {
+            if (filename.Contains(s.Barcode) && s.Barcode != "")
+            {
+                ClinicalTest.Matches[filename] = ClinicalTest.Slides.IndexOf(s);
             }
         }
+        ClinicalTest.SaveToDatabase();
         allMatched = AllMatched();
     }
 
@@ -191,7 +196,8 @@
 
         for (int i = 0; i < ClinicalTest.Slides.Count; i++)
         {
-            if (!ClinicalTest.Matches.ContainsValue(i)) return false;
+            int j = i;
+            if (!ClinicalTest.Matches.ContainsValue(j)) return false;
         }
 
         foreach (SlideDataFile slideDataFile in ClinicalTest.SlideDataFiles) {
@@ -200,13 +206,23 @@
         return true;
     }
 
-    protected override void OnAfterRender(bool firstRender) {
-        if (firstRender) {
-            allMatched = AllMatched();
-            StateHasChanged();
+    @* protected override void OnAfterRender(bool firstRender) {
+        ClinicalTest.Matches.Clear();
+        foreach (SlideDataFile f in ClinicalTest.SlideDataFiles) 
+        {
+            MatchBarcodes(f.Filename);
         }
-    }
+    } *@
 
+    protected override void OnInitialized()
+    {
+        ClinicalTest.Matches.Clear();
+        foreach (SlideDataFile f in ClinicalTest.SlideDataFiles) 
+        {
+            MatchBarcodes(f.Filename);
+        }
+        StateHasChanged();
+    }
     public async void StartCalculation() 
     {
         loading = true;

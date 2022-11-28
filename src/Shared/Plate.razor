@@ -170,6 +170,7 @@
     }
 
     private async void saveBarcode() {
+        ClinicalTest.CalculationNecessary = true;
         ClinicalTest.SaveToDatabase();
     }
     private string[] headingLetters = { "A", "B", "C", "D", "E", "F", "G", "H" };

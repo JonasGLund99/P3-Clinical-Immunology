@@ -126,13 +126,11 @@
     //Switch viewmode (Overview or Table-view)
     public string mode { get; set; } = "Overview";
 
-    protected override async void OnAfterRender(bool firstRender) 
+    protected override void OnAfterRender(bool firstRender) 
     {
         if (firstRender)
         {
-            overview = await ClinicalTest.GenerateOverview();
-            overviewLoaded = true;
-            StateHasChanged();
+            updateOverviewState();
         }
     }
 
@@ -142,7 +140,6 @@
     }
     private async void updateOverviewState() {
         @* ClinicalTest.SaveToDatabase(); *@
-        ClinicalTest.CalculationNecessary = true;
         overview = await ClinicalTest.GenerateOverview();
         overviewLoaded = true;
         StateHasChanged();
@@ -166,6 +163,7 @@
         if (ClinicalTest == null) throw new NullReferenceException("ClinicalTest object is null");
 
         string[][] tableData = await JS.InvokeAsync<string[][]>("getTableData");
+        ClinicalTest.Slides.Clear();
 
         if (tableData.Length == 0)
         {
