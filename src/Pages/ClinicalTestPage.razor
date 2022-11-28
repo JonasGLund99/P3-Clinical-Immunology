@@ -21,8 +21,8 @@
 			case 0: <Details Experiment="@experiment" ClinicalTest="@clinicalTest" editCTCallback="editCT" editExpCallback="editExp"></Details> break;
 			case 1: <Overview Experiment="@experiment" ClinicalTest="@clinicalTest"></Overview> break;
 			case 2: <FileUpload Experiment="@experiment" ClinicalTest="@clinicalTest" ActiveButton="@activeButton" setActiveButtonCallback="@SetActiveButton" StopReloadCallback="@stopReload"></FileUpload> break;
-		    case 3: <ResultTable ClinicalTest="@clinicalTest"></ResultTable> break;
-			case 4: <Heatmap ClinicalTest="@clinicalTest"></Heatmap> break;
+		    case 3: <ResultTable ClinicalTest="@clinicalTest" setActiveButtonCallback="@SetActiveButton"></ResultTable> break;
+			case 4: <Heatmap ClinicalTest="@clinicalTest" setActiveButtonCallback="@SetActiveButton"></Heatmap> break;
 		}
 	</div>
 } 

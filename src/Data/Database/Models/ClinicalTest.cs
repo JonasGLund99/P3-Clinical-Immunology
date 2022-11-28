@@ -229,7 +229,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
 
     }
 
-    public async void CalculateClinicalTestResult()
+    public async Task CalculateClinicalTestResult()
     {
         int beginningIndex = 0;
         Regex start = new Regex(@"^Block\s*Row\s*Column", RegexOptions.IgnoreCase);

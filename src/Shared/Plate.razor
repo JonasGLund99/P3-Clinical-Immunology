@@ -154,7 +154,7 @@
             Block blankBlock = blankBlocks.Find(b => b.SlideIndex == slideIndex && b.BlockIndex == blockIndex);
             await ClinicalTest.RemoveBlankBlock(blankBlock);
         }
-
+        ClinicalTest.CalculationNecessary = true;
         await updateOverviewState.InvokeAsync();
     }
 
