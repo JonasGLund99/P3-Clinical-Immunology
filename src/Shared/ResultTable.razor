@@ -1,6 +1,5 @@
 ﻿@using src.Data
 @using src.Shared
-@using OfficeOpenXml
 
 @inject IJSRuntime JS
 
@@ -28,7 +27,7 @@
     @if (showExportModal)
     {
         <ExportModal
-            ModalCancelCallback="ModalCancel"
+            ModalCancelCallback="CloseExportModal"
             ExportCallback="Export"/>
     }
 
@@ -67,21 +66,23 @@
     {
         selectedNplicate = default;
         displaySpots = false;
-        showExportModal = false;
     }
 
     public async void Export(string withFlags)
     {
         if (ClinicalTest == null) return;
         FileInfo file = await ClinicalTest.ExportResultTable(withFlags);
-        await JS.InvokeVoidAsync("triggerFileDownload", withFlags == "withFlags" ? $"{ClinicalTest.Title}-with-flags.xlsx" : $"{ ClinicalTest.Title}-without-flags.xlsx", $"http://localhost:5110/exports/{ClinicalTest.id}.xlsx");
+        await JS.InvokeVoidAsync("triggerFileDownload", withFlags == "withFlags" ? $"{ClinicalTest.Title}-result-table-with-flags.xlsx" : $"{ ClinicalTest.Title}-result-table-without-flags.xlsx", $"http://localhost:5110/exports/{ClinicalTest.id}-result-table.xlsx");
         await Task.Delay(1000).ContinueWith(t => file.Delete());
     }
-
-
 
     public void OpenExportModal()
     {
         showExportModal = true;
+    }
+
+    public void CloseExportModal()
+    {
+        showExportModal = false;
     }
 }

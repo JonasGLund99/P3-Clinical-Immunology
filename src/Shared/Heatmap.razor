@@ -1,6 +1,9 @@
 ﻿@using src.Data
 @using src.Shared
 
+@inject IJSRuntime JS
+
+
 <div class="heatmap-component">
     <div class="heatmap-and-scale">
         <div class="all-heatmap-cells">
@@ -47,7 +50,7 @@
         </div>
         <div class="export-and-color-scale">
             <div id="export-icon" title="Export heatmap">
-                <i class="fa-solid fa-file-export"></i>
+                <i class="fa-solid fa-file-export" @onclick="OpenExportModal"></i>
             </div>
             <div class="flag-example">
                 Flag
@@ -86,11 +89,18 @@
         ShownNplicate="@clickedNplicate"/>
 }
 
+@if (showExportModal)
+{
+    <ExportModal ModalCancelCallback="CloseExportModal"
+             ExportCallback="Export" />
+}
+
 @code {
 
     private bool showSpotModal = false;
+    private bool showExportModal = false;
     private List<Block> allBlocks = new();
-    private Nplicate clickedNplicate = new();
+    private Nplicate? clickedNplicate = new();
 
     [Parameter]
     public ClinicalTest ClinicalTest { get; set; } = new();
@@ -121,5 +131,23 @@
     private string nplicateTitleHelper(Nplicate n) 
     {
         return "RI: " + Math.Round(n.RI,3) + "\nXYZ: " + Math.Round(n.XYZ,3) + "\nMean intensity: " + Math.Round(n.Mean,3) + "\nAnalyte: " + n.AnalyteType;
+    }
+
+    public async void Export(string withFlags)
+    {
+        if (ClinicalTest == null) return;
+        FileInfo file = await ClinicalTest.ExportHeatmap(withFlags);
+        await JS.InvokeVoidAsync("triggerFileDownload", withFlags == "withFlags" ? $"{ClinicalTest.Title}-heatmap-with-flags.xlsx" : $"{ClinicalTest.Title}-heatmap-without-flags.xlsx", $"http://localhost:5110/exports/{ClinicalTest.id}-heatmap.xlsx");
+        await Task.Delay(1000).ContinueWith(t => file.Delete());
+    }
+
+    public void OpenExportModal()
+    {
+        showExportModal = true;
+    }
+
+    public void CloseExportModal()
+    {
+        showExportModal = false;
     }
 }

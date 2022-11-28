@@ -5,6 +5,9 @@ using Microsoft.Azure.Cosmos;
 using Azure;
 using System.IO;
 using System.Drawing;
+using src.Shared;
+using OfficeOpenXml.ConditionalFormatting;
+using OfficeOpenXml.Drawing.Style.Fill;
 
 namespace src.Data;
 
@@ -14,6 +17,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
     private int nplicatesInBlock { get; set; }
     private int numOfBlocks { get; } = 21;
     private List<Block>? normalBlocks { get; set; } = null;
+
     public ClinicalTest(string id, string title, int nplicateSize, string description, DateTime createdAt) : base(id)
     {
         PartitionKey = id;
@@ -184,13 +188,108 @@ public class ClinicalTest : BaseModel<ClinicalTest>
         return overview;
     }
 
-    public async Task<FileInfo> ExportResultTable(string withFlags)
+    public async Task<FileInfo> ExportHeatmap(string withFlags)
     {
-        FileInfo fileInfo = new FileInfo(Path.Combine(Directory.GetCurrentDirectory(),"wwwroot", "exports", $"{id}.xlsx"));
+        FileInfo fileInfo = new FileInfo(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "exports", $"{id}-heatmap.xlsx"));
         if (fileInfo.Exists)
         {
             fileInfo.Delete();  // ensures we create a new workbook
-            fileInfo = new FileInfo(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "exports", $"{id}.xlsx"));
+            fileInfo = new FileInfo(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "exports", $"{id}-heatmap.xlsx"));
+        }
+        ExcelPackage package = new ExcelPackage(fileInfo);
+        ExcelWorkbook workBook = package.Workbook;
+        ExcelWorksheet heatmap = workBook.Worksheets.Add("Heatmap");
+        int row = 2;
+        int col = 1;
+
+        heatmap.Columns.AutoFit(3);
+        heatmap.View.FreezePanes(4, 4);
+        heatmap.Cells[row, col].Style.Font.Size = 18;
+        heatmap.Cells[row, col].Style.Font.Bold = true;
+
+        heatmap.Cells[row++, col].Value = "Heatmap";
+
+        foreach (string chosenTableTitle in ChosenTableTitles)
+        {
+            heatmap.Cells[row, col++].Value = chosenTableTitle;
+        }
+
+        foreach (string analyteName in AnalyteNames)
+        {
+            heatmap.Cells[row, col].Style.TextRotation = 90;
+            heatmap.Column(col).Width = 5;
+            heatmap.Cells[row, col++].Value = analyteName;
+        }
+
+        foreach (Block block in await GetSortedBlocks())
+        {
+            col = 1;
+            row++;
+
+            foreach (string chosenTableTitle in ChosenTableTitles)
+            {
+                heatmap.Cells[row, col++].Value = block.PatientData[TableTitles.IndexOf(chosenTableTitle)];
+            }
+
+            foreach (Nplicate nplicate in block.Nplicates)
+            {
+                if (withFlags == "withFlags")
+                {
+                    if (nplicate.IsFlagged)
+                    {
+                        setFlagsBorder(heatmap, row, col);
+                    }
+                }
+                heatmap.Cells[row, col].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                heatmap.Cells[row, col++].Style.Fill.BackgroundColor.SetColor(nplicate.HeatmapColour);
+            }
+        }
+        makeColourScale(heatmap, 5, col += 2);
+        package.Save();
+        return fileInfo;
+    }
+
+    private void makeColourScale(ExcelWorksheet worksheet, int row, int col)
+    {
+        worksheet.Cells[row, col, row + 4, col].Style.Fill.PatternType = ExcelFillStyle.Solid;
+        worksheet.Cells[row, col, row + 4, col].Merge = true;
+        worksheet.Cells[row, col + 1].Value = Math.Round(MaxRI, 1);
+        worksheet.Cells[row, col + 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
+        worksheet.Cells[row, col, row + 4, col].Style.Fill.Gradient.Color1.SetColor(Color.FromArgb(255, 249, 235, 46));
+        worksheet.Cells[row, col, row += 5, col].Style.Fill.Gradient.Color2.SetColor(Color.FromArgb(255, 76, 194, 108));
+
+        worksheet.Cells[row, col, row + 4, col].Style.Fill.PatternType = ExcelFillStyle.Solid;
+        worksheet.Cells[row, col, row + 4, col].Merge = true;
+        worksheet.Cells[row, col + 1].Value = Math.Round((MinRI + (MaxRI - MinRI) * 0.75), 1);
+        worksheet.Cells[row, col + 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
+        worksheet.Cells[row, col, row + 4, col].Style.Fill.Gradient.Color1.SetColor(Color.FromArgb(255, 76, 194, 108));
+        worksheet.Cells[row, col, row += 5, col].Style.Fill.Gradient.Color2.SetColor(Color.FromArgb(255, 32, 140, 141));
+
+        worksheet.Cells[row, col, row + 4, col].Style.Fill.PatternType = ExcelFillStyle.Solid;
+        worksheet.Cells[row, col, row + 4, col].Merge = true;
+        worksheet.Cells[row, col + 1].Value = Math.Round((MinRI + (MaxRI - MinRI) * 0.50), 1);
+        worksheet.Cells[row, col + 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
+        worksheet.Cells[row, col, row + 4, col].Style.Fill.Gradient.Color1.SetColor(Color.FromArgb(255, 32, 140, 141));
+        worksheet.Cells[row, col, row += 5, col].Style.Fill.Gradient.Color2.SetColor(Color.FromArgb(255, 62, 78, 138));
+
+        worksheet.Cells[row, col, row + 4, col].Style.Fill.PatternType = ExcelFillStyle.Solid;
+        worksheet.Cells[row, col, row + 4, col].Merge = true;
+        worksheet.Cells[row, col + 1].Value = Math.Round((MinRI + (MaxRI - MinRI) * 0.25), 1);
+        worksheet.Cells[row, col + 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
+        worksheet.Cells[row, col, row + 4, col].Style.Fill.Gradient.Color1.SetColor(Color.FromArgb(255, 62, 78, 138));
+        worksheet.Cells[row, col, row += 4, col].Style.Fill.Gradient.Color2.SetColor(Color.FromArgb(255, 68, 1, 88));
+        
+        worksheet.Cells[row, col + 1].Value = Math.Round(MinRI, 1);
+        worksheet.Cells[row, col + 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
+    }
+
+    public async Task<FileInfo> ExportResultTable(string withFlags)
+    {
+        FileInfo fileInfo = new FileInfo(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "exports", $"{id}-result-table.xlsx"));
+        if (fileInfo.Exists)
+        {
+            fileInfo.Delete();  // ensures we create a new workbook
+            fileInfo = new FileInfo(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "exports", $"{id}-result-table.xlsx"));
         }
 
         ExcelPackage package = new ExcelPackage(fileInfo);
@@ -201,6 +300,8 @@ public class ClinicalTest : BaseModel<ClinicalTest>
         int XYZCol = 1;
         int Log2Row = 2;
         int Log2Col = 1;
+        XYZ.Columns.AutoFit();
+        Log2.Columns.AutoFit();
         XYZ.Row(1).Style.Font.Bold = true;
         Log2.Row(1).Style.Font.Bold = true;
         XYZ.Cells.Style.Numberformat.Format = "0.00";
@@ -274,45 +375,34 @@ public class ClinicalTest : BaseModel<ClinicalTest>
                 {
                     if (nplicate.IsFlagged)
                     {
-                        setFlagsBorderXYZ(XYZ, XYZRow, XYZCol);
-                        setFlagsBorderLog2(Log2, Log2Row, Log2Col);
+                        setFlagsBorder(XYZ, XYZRow, XYZCol);
+                        setFlagsBorder(Log2, Log2Row, Log2Col);
                     }
                 }
                 XYZ.Cells[XYZRow, XYZCol++].Value = nplicate.XYZ;
                 Log2.Cells[Log2Row, Log2Col++].Value = nplicate.RI;
             }
         }
-        XYZ.Columns.AutoFit();
-        Log2.Columns.AutoFit();
-        await package.SaveAsync();
+        package.Save();
         return fileInfo;
     }
 
-    private void setFlagsBorderXYZ(ExcelWorksheet XYZ, int row, int col)
+    public void ExportPatientData()
     {
-        XYZ.Cells[row, col].Style.Border.Top.Style = ExcelBorderStyle.Thick;
-        XYZ.Cells[row, col].Style.Border.Left.Style = ExcelBorderStyle.Thick;
-        XYZ.Cells[row, col].Style.Border.Right.Style = ExcelBorderStyle.Thick;
-        XYZ.Cells[row, col].Style.Border.Bottom.Style = ExcelBorderStyle.Thick;
 
-
-        XYZ.Cells[row, col].Style.Border.Top.Color.SetColor(Color.Red);
-        XYZ.Cells[row, col].Style.Border.Left.Color.SetColor(Color.Red);
-        XYZ.Cells[row, col].Style.Border.Right.Color.SetColor(Color.Red);
-        XYZ.Cells[row, col].Style.Border.Bottom.Color.SetColor(Color.Red);
     }
 
-    private void setFlagsBorderLog2(ExcelWorksheet Log2, int row, int col)
+    private void setFlagsBorder(ExcelWorksheet worksheet, int row, int col)
     {
-        Log2.Cells[row, col].Style.Border.Top.Style = ExcelBorderStyle.Thick;
-        Log2.Cells[row, col].Style.Border.Left.Style = ExcelBorderStyle.Thick;
-        Log2.Cells[row, col].Style.Border.Right.Style = ExcelBorderStyle.Thick;
-        Log2.Cells[row, col].Style.Border.Bottom.Style = ExcelBorderStyle.Thick;
+        worksheet.Cells[row, col].Style.Border.Top.Style = ExcelBorderStyle.Thick;
+        worksheet.Cells[row, col].Style.Border.Left.Style = ExcelBorderStyle.Thick;
+        worksheet.Cells[row, col].Style.Border.Right.Style = ExcelBorderStyle.Thick;
+        worksheet.Cells[row, col].Style.Border.Bottom.Style = ExcelBorderStyle.Thick;
 
-        Log2.Cells[row, col].Style.Border.Top.Color.SetColor(Color.Red);
-        Log2.Cells[row, col].Style.Border.Left.Color.SetColor(Color.Red);
-        Log2.Cells[row, col].Style.Border.Right.Color.SetColor(Color.Red);
-        Log2.Cells[row, col].Style.Border.Bottom.Color.SetColor(Color.Red);
+        worksheet.Cells[row, col].Style.Border.Top.Color.SetColor(Color.Red);
+        worksheet.Cells[row, col].Style.Border.Left.Color.SetColor(Color.Red);
+        worksheet.Cells[row, col].Style.Border.Right.Color.SetColor(Color.Red);
+        worksheet.Cells[row, col].Style.Border.Bottom.Color.SetColor(Color.Red);
     }
 
     private string findSingleSpotInfo(List<string> spotInfo, string[] titles, string key)

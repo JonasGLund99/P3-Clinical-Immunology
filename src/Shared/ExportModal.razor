@@ -15,7 +15,7 @@
                 <div class="radio-buttons">
                     
                     <label>
-                        <input type="radio" name="flags" value="withFlags" @onchange="ValueChanged" /> With flags
+                        <input type="radio" name="flags" value="withFlags" @onchange="ValueChanged" checked/> With flags
                     </label>
                     
                     <label>
@@ -34,7 +34,7 @@
 </div>
 
 @code {
-    private string withFlags = "";
+    private string withFlags = "withFlags";
 
     [Parameter]
     public EventCallback ModalCancelCallback { get; set; }
@@ -54,8 +54,6 @@
     }
     public async void Export()
     {
-        if (withFlags == "") return;
-
         await ExportCallback.InvokeAsync(withFlags);
     }
 }
