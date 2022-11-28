@@ -120,11 +120,13 @@
     //Switch viewmode (Overview or Table-view)
     public string mode { get; set; } = "Overview";
 
-    protected override void OnAfterRender(bool firstRender) 
+    protected override async void OnAfterRender(bool firstRender) 
     {
         if (firstRender)
         {
-            updateOverviewState();
+            overview = await ClinicalTest.GenerateOverview();
+            overviewLoaded = true;
+            StateHasChanged();
         }
     }
 
@@ -133,6 +135,7 @@
         mode = newMode;
     }
     private async void updateOverviewState() {
+        ClinicalTest.CalculationNecessary = true;
         await ClinicalTest.SaveToDatabase();
         overview = await ClinicalTest.GenerateOverview();
         overviewLoaded = true;
@@ -193,6 +196,7 @@
         switchMode("Overview");
         StateHasChanged();
         ClinicalTest.EditedAt = DateTime.Now;
+        ClinicalTest.CalculationNecessary = true;
         Experiment.EditedAt = DateTime.Now;
         await ClinicalTest.SaveToDatabase(true);
         await Experiment.SaveToDatabase();
