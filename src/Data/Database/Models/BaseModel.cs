@@ -36,6 +36,16 @@ public abstract class BaseModel<T> where T : BaseModel<T>
             ProcessQueue.Instance.Enqueue(process, this.id);
         }
     }
+    public async Task saveToDatabaseAsync()
+    {
+        Database? db = DatabaseService.Instance.Database;
+		if (db == null) throw new NullReferenceException("There was no reference to the database");
+        
+        await db.GetContainer(typeof(T).Name).UpsertItemAsync<T>(
+            item: (T) this,
+            partitionKey: new PartitionKey(this.PartitionKey)
+        );
+    }
 
 	public virtual async Task RemoveFromDatabase()
 	{

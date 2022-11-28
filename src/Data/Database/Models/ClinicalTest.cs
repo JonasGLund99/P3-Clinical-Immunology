@@ -265,6 +265,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
 
             for (int j = 0; j < allBlocksInSlide.Count; j++)
             {
+                allBlocksInSlide[j].Nplicates.Clear();
                 for (int k = 0; k < nplicatesInBlock; k++)
                 {
                     //Split the line with spotinformation, add the information elements to spotinfo.
@@ -274,7 +275,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
                     Nplicate nplicate = new Nplicate(spotInfo[Array.IndexOf(titles, "ID")].ToLower());
 
                     // Add analyteNames when looping through the first block
-                    if (j == 0)
+                    if (j == 0 && SlideDataFiles.IndexOf(slideDataFile) == 0)
                     {
                         AnalyteNames.Add(findSingleSpotInfo(spotInfo, titles, "Name"));
                     }
@@ -322,8 +323,8 @@ public class ClinicalTest : BaseModel<ClinicalTest>
 
                 for (int j = 0; j < block.Nplicates.Count; j++)
                 {
-                    Block firstBlankBlock = bBlocksInSlide[0];
-                    updateMaxMinRI(block.Nplicates[j].CalculateRI(firstBlankBlock.Nplicates[j], neg));
+                    Block lastBlankBlock = bBlocksInSlide.Last();
+                    updateMaxMinRI(block.Nplicates[j].CalculateRI(lastBlankBlock.Nplicates[j], neg));
                 }
             }
         }
