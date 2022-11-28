@@ -137,3 +137,19 @@ tbody td:hover {
     width: 60%;
     border-bottom: 0px;
 }
+
+.key-data {
+    width: 90px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-right: 5px;
+}
+
+.key-header {
+    width: 90px;
+    writing-mode: horizontal-tb;
+    transform: rotate(0deg);
+    padding-right: 5px;
+    vertical-align: bottom;
+}

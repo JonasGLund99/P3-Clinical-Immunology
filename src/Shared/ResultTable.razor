@@ -20,7 +20,9 @@
     {
         <SpotModal 
             ShownNplicate="@selectedNplicate" 
-            ModalCancelCallback="ModalCancel"/>
+            ModalCancelCallback="ModalCancel"
+            Block="@selectedBlock"
+            ClinicalTest="@ClinicalTest"/>
     }
 
     <div class="table-view-container">
@@ -39,6 +41,7 @@
     private string mode = "XYZ";
     private bool displaySpots = false;
     private Nplicate? selectedNplicate = default;
+    private Block? selectedBlock = default;
 
     [Parameter, EditorRequired]
     public ClinicalTest? ClinicalTest { get; set; } = default;
@@ -47,8 +50,9 @@
         mode = newmode;
     }
 
-    public void ShowSpots(Tuple<MouseEventArgs, Nplicate> args)
+    public void ShowSpots(Tuple<MouseEventArgs, Nplicate, Block> args)
     {
+        selectedBlock = args.Item3;
         selectedNplicate = args.Item2;
         displaySpots = true;
     }   
