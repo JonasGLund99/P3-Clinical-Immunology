@@ -7,6 +7,7 @@
         <div class="toolbar-container">
             <i id="info-button" title="Select which information to show in the overview" class="fa fa-info-circle"></i>
             <div id="toolbar">
+                <i class="fa-solid fa-droplet-slash" title="Clear all colors" @onclick="() => clearColors(overview)"></i>
                 <div id="edit-icon" data-title="Edit overview in table view" @onclick='() => { tableViewIcon = "icons/TableView_icon.svg"; switchMode("Table-view"); }'>
                     <img src="@tableViewIcon" @onmouseover='() => tableViewIcon = "icons/TableView_icon_hover.svg"' @onmouseout='() => tableViewIcon = "icons/TableView_icon.svg"'/>
                 </div>
@@ -36,6 +37,10 @@
                 <div id="export-icon" data-title="Export overview">
                     <i class="fa-solid fa-file-export"></i>
                 </div>
+            </div>
+            <div id="save-blocks-animation" class='@(isSavingOverview ? "saving" : "")'>
+                @* disable button if saving *@
+                @* <i id="save-blocks-btn" class="fa-solid fa-circle-check" @onclick="() => saveOverview()"></i> *@
             </div>
         </div>
         
@@ -102,7 +107,7 @@
 @code {
     [Parameter, EditorRequired]
     public ClinicalTest ClinicalTest { get; set; } = new();
-    
+
     private string tableViewIcon { get; set; } = "icons/TableView_icon.svg";
     private string tableViewIconWhite { get; set; } = "icons/TableView_icon_white.svg";
     private string clearTableIcon{ get; set; } = "icons/ClearTable_icon.svg";
@@ -114,6 +119,7 @@
 
     private List<List<Block[]>> overview = new List<List<Block[]>>();
     private bool overviewLoaded = false;
+    private bool isSavingOverview = false;
 
     [Parameter, EditorRequired]
     public Experiment Experiment { get; set; }
@@ -135,15 +141,15 @@
         mode = newMode;
     }
     private async void updateOverviewState() {
+        @* ClinicalTest.SaveToDatabase(); *@
         ClinicalTest.CalculationNecessary = true;
-        await ClinicalTest.SaveToDatabase();
         overview = await ClinicalTest.GenerateOverview();
         overviewLoaded = true;
         StateHasChanged();
     }
 
     //Update chosen table titles
-    async void chooseTableTitle(ChangeEventArgs e, int tableTitleNumber)
+    private void chooseTableTitle(ChangeEventArgs e, int tableTitleNumber)
     {
         string? selectedTableTitle = e.Value?.ToString();
         if (selectedTableTitle == null) return;
@@ -151,16 +157,16 @@
         ClinicalTest.ChosenTableTitles[tableTitleNumber] = selectedTableTitle;
         ClinicalTest.EditedAt = DateTime.Now;
         Experiment.EditedAt = DateTime.Now;
-        await ClinicalTest.SaveToDatabase();
-        await Experiment.SaveToDatabase();
+        ClinicalTest.SaveToDatabase();
+        Experiment.SaveToDatabase();
         StateHasChanged();
     }
 
     private async void saveBlocks() {
         if (ClinicalTest == null) throw new NullReferenceException("ClinicalTest object is null");
-        
+
         string[][] tableData = await JS.InvokeAsync<string[][]>("getTableData");
-        
+
         if (tableData.Length == 0)
         {
             ClinicalTest.IsEmpty = true;
@@ -198,12 +204,32 @@
         ClinicalTest.EditedAt = DateTime.Now;
         ClinicalTest.CalculationNecessary = true;
         Experiment.EditedAt = DateTime.Now;
-        await ClinicalTest.SaveToDatabase(true);
-        await Experiment.SaveToDatabase();
+        ClinicalTest.SaveToDatabase(true);
+        Experiment.SaveToDatabase();
         updateOverviewState();
     }
 
     private async void clearTable() {
         await JS.InvokeVoidAsync("clearTable");
     }
+
+    private void clearColors(List<List<Block[]>> overview)
+    {
+        for(int ovNr = 0; ovNr < overview.Count; ovNr++)
+        {
+            for(int slNr = 0; slNr < overview[ovNr].Count; slNr++)
+            {
+                for (int blNr = 0; blNr < overview[ovNr][slNr].Length; blNr++)
+                {
+                    if (overview[ovNr][slNr][blNr].TextColour != "#212529" && overview[ovNr][slNr][blNr].TextColour != "")
+                    {
+                        overview[ovNr][slNr][blNr].TextColour = "#212529";
+                        /*No await, may cause problems*/
+                        overview[ovNr][slNr][blNr].SaveToDatabase();
+                    }
+                }
+            }
+        }
+        StateHasChanged();
+    } 
 }

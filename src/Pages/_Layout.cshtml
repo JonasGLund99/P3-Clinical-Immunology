@@ -40,11 +40,9 @@
         function listenForPaste() {
             const overviewTable = document.querySelector('#overview-table');
             if (!overviewTable) return;
-            const cells = overviewTable.querySelectorAll('td');
-
+            const cells = overviewTable.querySelectorAll('tr td');
             cells.forEach(c => {
-                c.addEventListener('paste', event => {
-
+                c.onpaste = event => {
                     event.preventDefault();
 
                     const clipboard = event.clipboardData.getData('text');
@@ -63,7 +61,7 @@
                             }
                         }
                     }
-                })
+                }
             })
         }
 
