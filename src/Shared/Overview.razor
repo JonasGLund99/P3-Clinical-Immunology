@@ -38,6 +38,10 @@
                     <i class="fa-solid fa-file-export"></i>
                 </div>
             </div>
+            <div id="save-blocks-animation" class='@(isSavingOverview ? "saving" : "")'>
+                @* disable button if saving *@
+                @* <i id="save-blocks-btn" class="fa-solid fa-circle-check" @onclick="() => saveOverview()"></i> *@
+            </div>
         </div>
         
         @if (!ClinicalTest.IsEmpty && overview.Count > 0 && overviewLoaded)
@@ -115,6 +119,7 @@
 
     private List<List<Block[]>> overview = new List<List<Block[]>>();
     private bool overviewLoaded = false;
+    private bool isSavingOverview = false;
 
     [Parameter, EditorRequired]
     public Experiment Experiment { get; set; }
@@ -134,14 +139,14 @@
         mode = newMode;
     }
     private async void updateOverviewState() {
-        await ClinicalTest.SaveToDatabase();
+        @* ClinicalTest.SaveToDatabase(); *@
         overview = await ClinicalTest.GenerateOverview();
         overviewLoaded = true;
         StateHasChanged();
     }
 
     //Update chosen table titles
-    async void chooseTableTitle(ChangeEventArgs e, int tableTitleNumber)
+    private void chooseTableTitle(ChangeEventArgs e, int tableTitleNumber)
     {
         string? selectedTableTitle = e.Value?.ToString();
         if (selectedTableTitle == null) return;
@@ -149,8 +154,8 @@
         ClinicalTest.ChosenTableTitles[tableTitleNumber] = selectedTableTitle;
         ClinicalTest.EditedAt = DateTime.Now;
         Experiment.EditedAt = DateTime.Now;
-        await ClinicalTest.SaveToDatabase();
-        await Experiment.SaveToDatabase();
+        ClinicalTest.SaveToDatabase();
+        Experiment.SaveToDatabase();
         StateHasChanged();
     }
 
@@ -195,8 +200,8 @@
         StateHasChanged();
         ClinicalTest.EditedAt = DateTime.Now;
         Experiment.EditedAt = DateTime.Now;
-        await ClinicalTest.SaveToDatabase(true);
-        await Experiment.SaveToDatabase();
+        ClinicalTest.SaveToDatabase(true);
+        Experiment.SaveToDatabase();
         updateOverviewState();
     }
 

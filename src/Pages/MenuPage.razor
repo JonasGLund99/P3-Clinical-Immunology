@@ -323,7 +323,7 @@
         showExperimentModal = false;
         e.EditedAt = DateTime.Now;
         loader = true;
-        await e.SaveToDatabase();
+        await e.SaveToDatabaseAsync();
         loader = false;
         experiments = await ExperimentManager.QueryExperiments("");
         StateHasChanged();

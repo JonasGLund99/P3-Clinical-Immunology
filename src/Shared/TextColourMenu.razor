@@ -21,10 +21,10 @@
 
     private string[] textColours = { "#212529", "#8064a2", "#ff0000", "#00b050", "#9bbb59", "#4bacc6", "#f46036", "#064789" };
 
-    async void saveTextColour(string chosenColour)
+    private void saveTextColour(string chosenColour)
     {
         Block.TextColour = chosenColour;
-        await Block.SaveToDatabase();
+        Block.SaveToDatabase();
         ChangeTextColourCallback.InvokeAsync();
     }
 }

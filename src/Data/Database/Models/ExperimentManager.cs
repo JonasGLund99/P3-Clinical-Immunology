@@ -50,7 +50,7 @@ public static class ExperimentManager
     {
         experiment.ClinicalTestIds.Remove(clinicalTest.id);
         experiment.EditedAt = DateTime.Now;
-        await experiment.SaveToDatabase();
+        await experiment.SaveToDatabaseAsync();
 
         clinicalTest.ExperimentIds.Remove(experiment.id);
         
@@ -61,27 +61,27 @@ public static class ExperimentManager
         else 
         {
             clinicalTest.EditedAt = DateTime.Now;
-            await clinicalTest.SaveToDatabase();
+            await clinicalTest.SaveToDatabaseAsync();
         }
     }
     
     public static async Task Associate(Experiment experiment, ClinicalTest clinicalTest)
     {
-        if ( !experiment.ClinicalTestIds.Contains(clinicalTest.id))
+        if (!experiment.ClinicalTestIds.Contains(clinicalTest.id))
         {
             if (!experiment.ClinicalTestIds.Contains(clinicalTest.id))
             {
                 experiment.ClinicalTestIds.Add(clinicalTest.id);
             }
             experiment.EditedAt = DateTime.Now;
-            await experiment.SaveToDatabase();
+            await experiment.SaveToDatabaseAsync();
             
             if (!clinicalTest.ExperimentIds.Contains(experiment.id))
             {
                 clinicalTest.ExperimentIds.Add(experiment.id);
             }
             clinicalTest.EditedAt = DateTime.Now;
-            await clinicalTest.SaveToDatabase();
+            await clinicalTest.SaveToDatabaseAsync();
         }
     }
 
@@ -116,7 +116,8 @@ public static class ExperimentManager
                 Experiment e = await ExperimentManager.GetExperimentById(ExpId);
                 await ExperimentManager.Associate(e, SavedClinicalTest);
             }
-        } else //if clinical test exists, the relations needs to be checked
+        }
+        else //if clinical test exists, the relations needs to be checked
         {
             List<string> NewExpIds = SavedClinicalTest.ExperimentIds.Except(ClinicalTestFromDB.ExperimentIds).ToList();
             List<string> RemovedIds = ClinicalTestFromDB.ExperimentIds.Except(SavedClinicalTest.ExperimentIds).ToList();
@@ -131,7 +132,7 @@ public static class ExperimentManager
                 Experiment e = await ExperimentManager.GetExperimentById(ExpId);
                 await ExperimentManager.Disassociate(e, ClinicalTestFromDB);
             }
-            await SavedClinicalTest.SaveToDatabase();
+            await SavedClinicalTest.SaveToDatabaseAsync();
         }
     }
 }
