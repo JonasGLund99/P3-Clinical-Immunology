@@ -335,13 +335,11 @@ public class ClinicalTest : BaseModel<ClinicalTest>
             foreach (Nplicate nplicate in block.Nplicates)
             {
                 nplicate.SetHeatMapColour(MaxRI, MinRI);
-
-                if (block.Nplicates.IndexOf(nplicate) == 2) {
-                    System.Console.WriteLine($"{nplicate.RI}");
-                }
             }
         }
     }
+
+
 
     private string findSingleSpotInfo(List<string> spotInfo, string[] titles, string key)
     {
