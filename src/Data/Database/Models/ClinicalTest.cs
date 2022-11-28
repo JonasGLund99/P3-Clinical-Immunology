@@ -230,7 +230,6 @@ public class ClinicalTest : BaseModel<ClinicalTest>
 
     public async void CalculateClinicalTestResult()
     {
-        int beginningIndex = 0;
         Regex start = new Regex(@"^Block\s*Row\s*Column", RegexOptions.IgnoreCase);
 
         List<Block> normBlocks = await GetNormalBlocks();
@@ -240,17 +239,11 @@ public class ClinicalTest : BaseModel<ClinicalTest>
 
         foreach (SlideDataFile slideDataFile in SlideDataFiles)
         {
-            //Read all lines in a file and add each line as an element in a string array
-            string[] allLines = slideDataFile.Content.Split("\n");
-
-            //Find the line in which the information about spots begin
-            beginningIndex = Array.FindIndex(allLines, line => start.Match(line).Success);
-
             //Create string array with only spot information
-            string[] spotLines = new ArraySegment<string>(allLines, beginningIndex + 1, allLines.Length - beginningIndex - 2).ToArray();
+            string[] spotLines = slideDataFile.getSpotLines();
 
             //Create array where each entry is a title for spot information
-            string[] titles = allLines[beginningIndex].Split("\t");
+            string[] titles = slideDataFile.getTitles();
 
             List<string> spotInfo = new List<string>();
             nplicatesInBlock = spotLines.Length / numOfBlocks / NplicateSize;
