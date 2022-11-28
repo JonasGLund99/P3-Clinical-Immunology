@@ -29,6 +29,12 @@ public class Experiment : BaseModel<Experiment>
     public DateTime? CreatedAt { get; set; } = DateTime.Now;
     public DateTime EditedAt { get; set; } = DateTime.Now;
 
+    public override async Task SaveToDatabaseAsync()
+    {
+        EditedAt = DateTime.Now;
+        await base.SaveToDatabaseAsync();
+    }
+
     public async Task<List<ClinicalTest>> QueryClinicalTests(string searchParameter) {
         List<ClinicalTest> clinicalTests = new List<ClinicalTest>();
         if(DatabaseService.Instance.Database == null)

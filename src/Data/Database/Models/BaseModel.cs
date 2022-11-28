@@ -29,7 +29,7 @@ public abstract class BaseModel<T> where T : BaseModel<T>
             ProcessQueue.Instance.Enqueue(process, this.id);
         }
     }
-    public async Task SaveToDatabaseAsync()
+    public virtual async Task SaveToDatabaseAsync()
     {
         const int MaxRetryCount = 3;
         int retryCount = 0;

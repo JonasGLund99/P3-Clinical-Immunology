@@ -49,7 +49,6 @@ public static class ExperimentManager
     public static async Task Disassociate(Experiment experiment, ClinicalTest clinicalTest)
     {
         experiment.ClinicalTestIds.Remove(clinicalTest.id);
-        experiment.EditedAt = DateTime.Now;
         await experiment.SaveToDatabaseAsync();
 
         clinicalTest.ExperimentIds.Remove(experiment.id);
@@ -60,7 +59,6 @@ public static class ExperimentManager
         } 
         else 
         {
-            clinicalTest.EditedAt = DateTime.Now;
             await clinicalTest.SaveToDatabaseAsync();
         }
     }
@@ -73,14 +71,12 @@ public static class ExperimentManager
             {
                 experiment.ClinicalTestIds.Add(clinicalTest.id);
             }
-            experiment.EditedAt = DateTime.Now;
             await experiment.SaveToDatabaseAsync();
             
             if (!clinicalTest.ExperimentIds.Contains(experiment.id))
             {
                 clinicalTest.ExperimentIds.Add(experiment.id);
             }
-            clinicalTest.EditedAt = DateTime.Now;
             await clinicalTest.SaveToDatabaseAsync();
         }
     }
