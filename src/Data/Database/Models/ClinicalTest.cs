@@ -44,6 +44,8 @@ public class ClinicalTest : BaseModel<ClinicalTest>
     public DateTime EditedAt { get; set; } = DateTime.Now;
     public bool IsEmpty { get; set; } = true;
 
+    public bool CalculationNecessary {get; set; } = true;
+
     public async Task<List<Block>> GetNormalBlocks()
     {
         if (normalBlocks == null)
@@ -161,9 +163,6 @@ public class ClinicalTest : BaseModel<ClinicalTest>
                         else if (normalBlockIndex < normBlocks.Count)
                         {
                             Block normalBlock = normBlocks[normalBlockIndex];
-                            NormalBlockIds.Append(normalBlock.id);
-                            normalBlock.SlideIndex = slideIndex;
-                            normalBlock.BlockIndex = blockIndex;
                             overview[i][slideIndex][blockIndex] = normalBlock;
                             normalBlockIndex++; 
                         }
