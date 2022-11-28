@@ -44,7 +44,7 @@
 
         @if (pos != null)
         {
-            <td>@Math.Round(pos.Mean, 2)</td>
+            <td class="pos">@Math.Round(pos.Mean, 2).ToString("#,##0.00")</td>
         }
         else
         {
@@ -53,7 +53,7 @@
         @{Nplicate? neg = block.Nplicates.Find(nplicate => nplicate.AnalyteType == "neg");}
         @if (neg != null)
         {
-            <td>@Math.Round(neg.Mean, 2)</td>
+            <td class="neg">@Math.Round(neg.Mean, 2).ToString("#,##0.00")</td>
         }
         else
         {
@@ -63,21 +63,21 @@
         {
             if (nplicate.XYZ == double.NaN && nplicate.IsFlagged)
             {
-                <td @onclick="@((e) => OpenSpots(e, nplicate))" class="data @(nplicate==SelectedNplicate ? "selected-td" : "") flagged-nplicate">-</td>
+                <td @onclick="@((e) => OpenSpots(e, nplicate, block))" class="data @(nplicate==SelectedNplicate ? "selected-td" : "") flagged-nplicate">-</td>
             }
             else if (nplicate.XYZ == double.NaN)
             {
-                <td class="@(nplicate==SelectedNplicate ? "selected-td" : "")" @onclick="@((e) => OpenSpots(e, nplicate))">-</td>
+                <td class="@(nplicate==SelectedNplicate ? "selected-td" : "")" @onclick="@((e) => OpenSpots(e, nplicate, block))">-</td>
 
             }
             else if (nplicate.IsFlagged)
             {
-                <td @onclick="@((e) => OpenSpots(e, nplicate))" class="data @(nplicate==SelectedNplicate ? "selected-td" : "") flagged-nplicate">@Math.Round(nplicate.XYZ, 2)</td>
+                <td @onclick="@((e) => OpenSpots(e, nplicate, block))" class="data @(nplicate==SelectedNplicate ? "selected-td" : "") flagged-nplicate">@Math.Round(nplicate.XYZ, 2).ToString("0.00")</td>
 
             }
             else
             {
-                <td class="data @(nplicate==SelectedNplicate ? "selected-td" : "")" @onclick="@((e) => OpenSpots(e, nplicate))">@Math.Round(nplicate.XYZ, 2)</td>
+                <td class="data @(nplicate==SelectedNplicate ? "selected-td" : "")" @onclick="@((e) => OpenSpots(e, nplicate, block))">@Math.Round(nplicate.XYZ, 2).ToString("0.00")</td>
             }
         }
     </tr>
@@ -95,11 +95,11 @@
     public ClinicalTest ClinicalTest { get; set; }
 
     [Parameter, EditorRequired]
-    public EventCallback<Tuple<MouseEventArgs, Nplicate>> ShowSpots { get; set; }
+    public EventCallback<Tuple<MouseEventArgs, Nplicate, Block>> ShowSpots { get; set; }
 
-    public async void OpenSpots(MouseEventArgs e, Nplicate selectedTd)
+    public async void OpenSpots(MouseEventArgs e, Nplicate selectedTd, Block selectedBlock)
     {
-        await ShowSpots.InvokeAsync(new Tuple<MouseEventArgs, Nplicate>(e, selectedTd));
+        await ShowSpots.InvokeAsync(new Tuple<MouseEventArgs, Nplicate, Block>(e, selectedTd, selectedBlock));
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

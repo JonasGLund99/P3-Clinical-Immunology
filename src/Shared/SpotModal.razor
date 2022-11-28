@@ -7,7 +7,10 @@
 
             <!-- Modal Header -->
             <div class="modal-header">
-                <h4 class="modal-title">The spots related to <b>@ShownNplicate.AnalyteType</b></h4>
+                <h4 class="modal-title">Analyte name: <b>@ShownNplicate.AnalyteType</b></h4>
+                <h4 class="modal-title">@ClinicalTest.ChosenTableTitles[0]: <b>@Block.PatientData[ClinicalTest.TableTitles.IndexOf(ClinicalTest.ChosenTableTitles[0])]</b></h4>
+                <h4 class="modal-title">@ClinicalTest.ChosenTableTitles[1]: <b>@Block.PatientData[ClinicalTest.TableTitles.IndexOf(ClinicalTest.ChosenTableTitles[1])]</b></h4>
+                <h4 class="modal-title">@ClinicalTest.ChosenTableTitles[2]: <b>@Block.PatientData[ClinicalTest.TableTitles.IndexOf(ClinicalTest.ChosenTableTitles[2])]</b></h4>
             </div>
 
             <!-- Modal body -->
@@ -48,10 +51,12 @@
 @code {
     [Parameter]
     public EventCallback ModalCancelCallback { get; set; }
-
     [Parameter, EditorRequired]
     public Nplicate ShownNplicate { get; set; }
-
+    [Parameter, EditorRequired]
+    public Block Block {get; set;}
+    [Parameter, EditorRequired]
+    public ClinicalTest ClinicalTest {get; set;}
     public async void CloseModal()
     {
         await ModalCancelCallback.InvokeAsync();
