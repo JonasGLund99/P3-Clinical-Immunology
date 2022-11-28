@@ -133,6 +133,18 @@ public class ClinicalTest : BaseModel<ClinicalTest>
 
         base.SaveToDatabase();
     }
+    public override async Task SaveToDatabaseAsync()
+    {
+        foreach (string id in ExperimentIds)
+        {
+            Experiment? e = await ExperimentManager.GetExperimentById(id);
+            if (e == null) continue;
+            e.EditedAt = DateTime.Now;
+            await e.SaveToDatabaseAsync();
+        }
+        EditedAt = DateTime.Now;
+        await base.SaveToDatabaseAsync();
+    }
 
     public override async Task RemoveFromDatabase()
     {

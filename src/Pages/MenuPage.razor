@@ -321,7 +321,6 @@
     public async void SaveExperimentCallback(Experiment e)
     {
         showExperimentModal = false;
-        e.EditedAt = DateTime.Now;
         loader = true;
         await e.SaveToDatabaseAsync();
         loader = false;
