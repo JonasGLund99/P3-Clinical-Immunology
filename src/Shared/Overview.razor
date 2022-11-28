@@ -145,7 +145,7 @@
     }
 
     //Update chosen table titles
-    async void chooseTableTitle(ChangeEventArgs e, int tableTitleNumber)
+    private void chooseTableTitle(ChangeEventArgs e, int tableTitleNumber)
     {
         string? selectedTableTitle = e.Value?.ToString();
         if (selectedTableTitle == null) return;
@@ -203,15 +203,6 @@
         Experiment.SaveToDatabase();
         updateOverviewState();
     }
-    
-    @* private async void saveOverview()
-    {
-        isSavingOverview = true;
-        StateHasChanged();
-        ClinicalTest.SaveToDatabase(true);
-        isSavingOverview = false;
-        StateHasChanged();
-    } *@
 
     private async void clearTable() {
         await JS.InvokeVoidAsync("clearTable");

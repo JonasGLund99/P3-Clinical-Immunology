@@ -163,7 +163,7 @@ else
     {
         showExperimentModal = false;
         savedExperiment.EditedAt = DateTime.Now;
-        savedExperiment.SaveToDatabase();
+        await savedExperiment.SaveToDatabaseAsync();
         experiment = savedExperiment;
         StateHasChanged();
     }
