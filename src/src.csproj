@@ -8,12 +8,14 @@
 
   <ItemGroup>
     <None Remove="Shared\CancelOrConfirmModal.razor.css" />
+    <None Remove="Shared\ExportModal.razor.css" />
     <None Remove="Shared\Loader.razor.css" />
     <None Remove="Shared\Overview.razor.css" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="Shared\CancelOrConfirmModal.razor.css" />
+    <Content Include="Shared\ExportModal.razor.css" />
     <Content Include="Shared\Loader.razor.css" />
     <Content Include="Shared\Overview.razor.css" />
   </ItemGroup>
