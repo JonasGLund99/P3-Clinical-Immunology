@@ -124,7 +124,7 @@
                             }
                         </div>
                     }
-                    else if (currentClinicalTests != null)
+                    else if (currentClinicalTests != null && currentClinicalTests.Count() != 0)
                     {
                         <div class="all-clinicaltest-cards">
                             @foreach (ClinicalTest ct in currentClinicalTests)
