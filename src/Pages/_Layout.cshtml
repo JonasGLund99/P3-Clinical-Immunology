@@ -123,7 +123,7 @@
             }
         }
 
-        window.triggerFileDownload = (fileName, url) => {
+        window.triggerFileDownload = (fileName, url, file) => {
             let anchorElement = document.createElement('a');
             anchorElement.href =  url;
             anchorElement.download = fileName ?? '';

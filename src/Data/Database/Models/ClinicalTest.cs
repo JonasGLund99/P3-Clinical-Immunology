@@ -1,8 +1,10 @@
 ﻿using System.Text.RegularExpressions;
 using OfficeOpenXml;
+using OfficeOpenXml.Style;
 using Microsoft.Azure.Cosmos;
 using Azure;
 using System.IO;
+using System.Drawing;
 
 namespace src.Data;
 
@@ -182,7 +184,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
         return overview;
     }
 
-    public async Task<FileInfo> ExportResultTable()
+    public async Task<FileInfo> ExportResultTable(string withFlags)
     {
         FileInfo fileInfo = new FileInfo(Path.Combine(Directory.GetCurrentDirectory(),"wwwroot", "exports", $"{id}.xlsx"));
         if (fileInfo.Exists)
@@ -195,33 +197,49 @@ public class ClinicalTest : BaseModel<ClinicalTest>
         ExcelWorkbook workBook = package.Workbook;
         ExcelWorksheet XYZ = workBook.Worksheets.Add("XYZ");
         ExcelWorksheet Log2 = workBook.Worksheets.Add("Log2");
-        int XYZRow = 1;
+        int XYZRow = 2;
         int XYZCol = 1;
-        int Log2Row = 1;
+        int Log2Row = 2;
         int Log2Col = 1;
         XYZ.Row(1).Style.Font.Bold = true;
         Log2.Row(1).Style.Font.Bold = true;
+        XYZ.Cells.Style.Numberformat.Format = "0.00";
+        Log2.Cells.Style.Numberformat.Format = "0.00";
+        XYZ.Cells.Style.Numberformat.Format = "_ * #,##0.00_ ;_ * -#,##0.00_ ;_ * \"-\"??_ ;_ @_ ";
+        Log2.Cells.Style.Numberformat.Format = "_ * #,##0.00_ ;_ * -#,##0.00_ ;_ * \"-\"??_ ;_ @_ ";
+
+
+        XYZ.View.FreezePanes(4, 5);
+        Log2.View.FreezePanes(4, 5);
+        XYZ.Cells[XYZRow, XYZCol].Style.Font.Size = 18;
+        Log2.Cells[Log2Row, XYZCol].Style.Font.Size = 18;
+        XYZ.Cells[XYZRow, XYZCol].Style.Font.Bold = true;
+        Log2.Cells[Log2Row, XYZCol].Style.Font.Bold = true;
+
+        XYZ.Cells[XYZRow++, XYZCol].Value = "(X-Y)/Z";
+        Log2.Cells[Log2Row++, XYZCol].Value = "Log2";
 
         XYZ.Cells[XYZRow, XYZCol++].Value = "Slide";
         Log2.Cells[Log2Row, Log2Col++].Value = "Slide";
 
-        foreach (var chosenTableTitle in ChosenTableTitles)
+        foreach (string chosenTableTitle in ChosenTableTitles)
         {
             XYZ.Cells[XYZRow, XYZCol++].Value = chosenTableTitle;
             Log2.Cells[Log2Row, Log2Col++].Value = chosenTableTitle;
         }
         XYZ.Cells[XYZRow, XYZCol++].Value = "Pos raw";
         XYZ.Cells[XYZRow, XYZCol++].Value = "Neg raw";
+        Log2.Column(Log2Col).Style.Numberformat.Format = "General";
         Log2.Cells[Log2Row, Log2Col++].Value = "Quality control";
 
-        foreach (var analyteName in AnalyteNames)
+        foreach (string analyteName in AnalyteNames)
         {
             XYZ.Cells[XYZRow, XYZCol++].Value = analyteName;
             Log2.Cells[Log2Row, Log2Col++].Value = analyteName;
         }
 
 
-        foreach (var block in await GetSortedBlocks())
+        foreach (Block block in await GetSortedBlocks())
         {
             XYZCol = 1;
             Log2Col = 1;
@@ -242,7 +260,6 @@ public class ClinicalTest : BaseModel<ClinicalTest>
             {
                 XYZ.Cells[XYZRow, XYZCol++].Value = "-";
                 XYZ.Cells[XYZRow, XYZCol++].Value = "-";
-                //throw new ArgumentException("Missing positive control or negative control");
             }
             else
             {
@@ -251,8 +268,16 @@ public class ClinicalTest : BaseModel<ClinicalTest>
             }
             Log2.Cells[Log2Row, Log2Col++].Value = block.QC;
 
-            foreach (var nplicate in block.Nplicates)
+            foreach (Nplicate nplicate in block.Nplicates)
             {
+                if (withFlags == "withFlags")
+                {
+                    if (nplicate.IsFlagged)
+                    {
+                        setFlagsBorderXYZ(XYZ, XYZRow, XYZCol);
+                        setFlagsBorderLog2(Log2, Log2Row, Log2Col);
+                    }
+                }
                 XYZ.Cells[XYZRow, XYZCol++].Value = nplicate.XYZ;
                 Log2.Cells[Log2Row, Log2Col++].Value = nplicate.RI;
             }
@@ -263,41 +288,33 @@ public class ClinicalTest : BaseModel<ClinicalTest>
         return fileInfo;
     }
 
-    //public void ExportResultTable() 
-    //{
-    //FileInfo fileInfo = new FileInfo(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "exports", $"{id}.xlsx"));
+    private void setFlagsBorderXYZ(ExcelWorksheet XYZ, int row, int col)
+    {
+        XYZ.Cells[row, col].Style.Border.Top.Style = ExcelBorderStyle.Thick;
+        XYZ.Cells[row, col].Style.Border.Left.Style = ExcelBorderStyle.Thick;
+        XYZ.Cells[row, col].Style.Border.Right.Style = ExcelBorderStyle.Thick;
+        XYZ.Cells[row, col].Style.Border.Bottom.Style = ExcelBorderStyle.Thick;
 
-    //    if (fileInfo.Exists) fileInfo.Delete();
 
-    //    ExcelPackage package = new ExcelPackage(fileInfo);
-    //    ExcelWorksheet wsXYZ = package.Workbook.Worksheets.Add("XYZ");
-    //    ExcelWorksheet wsLog2 = package.Workbook.Worksheets.Add("log2");
+        XYZ.Cells[row, col].Style.Border.Top.Color.SetColor(Color.Red);
+        XYZ.Cells[row, col].Style.Border.Left.Color.SetColor(Color.Red);
+        XYZ.Cells[row, col].Style.Border.Right.Color.SetColor(Color.Red);
+        XYZ.Cells[row, col].Style.Border.Bottom.Color.SetColor(Color.Red);
+    }
 
-    //    wsXYZ.SetValue(1, 1, "Slide");
-    //    wsLog2.SetValue(1, 1, "Slide");
-    //    for (int i = 0; i < AnalyteNames.Count; i++) 
-    //    {
-    //        wsXYZ.SetValue(1, i + 2, AnalyteNames[i]);
-    //        wsLog2.SetValue(1, i + 2, AnalyteNames[i]);
-    //    }
-    //    for (int i = 0; i < Slides.Count; i++) 
-    //    {
-    //        for (int j = 0; j < Slides[i].Blocks.Count; j++) 
-    //        {
-    //            wsXYZ.SetValue((j + 2) + (i * numOfBlocks), j + 1, i + 1);
-    //            wsLog2.SetValue((j + 2) + (i * numOfBlocks), j + 1, i + 1);
+    private void setFlagsBorderLog2(ExcelWorksheet Log2, int row, int col)
+    {
+        Log2.Cells[row, col].Style.Border.Top.Style = ExcelBorderStyle.Thick;
+        Log2.Cells[row, col].Style.Border.Left.Style = ExcelBorderStyle.Thick;
+        Log2.Cells[row, col].Style.Border.Right.Style = ExcelBorderStyle.Thick;
+        Log2.Cells[row, col].Style.Border.Bottom.Style = ExcelBorderStyle.Thick;
 
-    //            for (int k = 0; k < Slides[i].Blocks[j].Nplicates.Count; k++)
-    //            {
-    //                wsXYZ.SetValue((j + 2) + (i * numOfBlocks), k + 2, Slides[i].Blocks[j].Nplicates[k].XYZ);
+        Log2.Cells[row, col].Style.Border.Top.Color.SetColor(Color.Red);
+        Log2.Cells[row, col].Style.Border.Left.Color.SetColor(Color.Red);
+        Log2.Cells[row, col].Style.Border.Right.Color.SetColor(Color.Red);
+        Log2.Cells[row, col].Style.Border.Bottom.Color.SetColor(Color.Red);
+    }
 
-    //                wsLog2.SetValue((j + 2) + (i * numOfBlocks), k + 2, Slides[i].Blocks[j].Nplicates[k].RI);
-    //            }
-    //        }
-    //    }
-
-    //    package.Save();
-    //}
     private string findSingleSpotInfo(List<string> spotInfo, string[] titles, string key)
     {
         return spotInfo[Array.IndexOf(titles, Array.Find(titles, element => element.Contains(key)))].Trim();

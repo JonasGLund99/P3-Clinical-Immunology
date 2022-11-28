@@ -15,7 +15,7 @@
             </button>
 
         <div id="export-icon" title="Export result table">
-            <i class="fa-solid fa-file-export" @onclick="Export"></i>
+            <i class="fa-solid fa-file-export" @onclick="OpenExportModal"></i>
         </div>
     </div>
 
@@ -24,6 +24,12 @@
         <SpotModal 
             ShownNplicate="@selectedNplicate" 
             ModalCancelCallback="ModalCancel"/>
+    }
+    @if (showExportModal)
+    {
+        <ExportModal
+            ModalCancelCallback="ModalCancel"
+            ExportCallback="Export"/>
     }
 
     <div class="table-view-container">
@@ -41,6 +47,7 @@
 @code {
     private string mode = "XYZ";
     private bool displaySpots = false;
+    private bool showExportModal = false;
     private Nplicate? selectedNplicate = default;
 
     [Parameter, EditorRequired]
@@ -60,12 +67,21 @@
     {
         selectedNplicate = default;
         displaySpots = false;
+        showExportModal = false;
     }
 
-    public async void Export()
+    public async void Export(string withFlags)
     {
         if (ClinicalTest == null) return;
-        FileInfo file = await ClinicalTest.ExportResultTable();
-        await JS.InvokeVoidAsync("triggerFileDownload", $"{ClinicalTest.Title}.xlsx", $"http://localhost:5110/exports/{ClinicalTest.id}.xlsx");
+        FileInfo file = await ClinicalTest.ExportResultTable(withFlags);
+        await JS.InvokeVoidAsync("triggerFileDownload", withFlags == "withFlags" ? $"{ClinicalTest.Title}-with-flags.xlsx" : $"{ ClinicalTest.Title}-without-flags.xlsx", $"http://localhost:5110/exports/{ClinicalTest.id}.xlsx");
+        await Task.Delay(1000).ContinueWith(t => file.Delete());
+    }
+
+
+
+    public void OpenExportModal()
+    {
+        showExportModal = true;
     }
 }
