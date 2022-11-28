@@ -18,7 +18,7 @@ public class Block : BaseModel<Block>
     public BlockType Type { get; set; } = Block.BlockType.Empty;
     public List<Nplicate> Nplicates { get; set; } = new List<Nplicate>();
     public List<string> PatientData { get; set; } = new List<string>();
-    public Color TextColour { get; set; } = new Color();
+    public string TextColour { get; set; } = "#212529";
     public double QC { get; set; } = 0;
     public int BlockIndex { get; set; } = 0;
 

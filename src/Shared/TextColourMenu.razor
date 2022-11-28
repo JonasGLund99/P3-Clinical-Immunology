@@ -1,0 +1,30 @@
+﻿@using src.Data
+
+<div id="text-color-menu" style="top: @(MouseY)px; left: @(MouseX)px;">
+    <div class="color-picker">
+        @foreach (string colour in textColours)
+        {
+            <div class="color-option @(Block.TextColour == colour ? "chosen" : "")" style="background-color: @(colour)" @onclick="() => saveTextColour(colour)"></div>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public Block Block { get; set; } = new();
+    [Parameter, EditorRequired]
+    public EventCallback ChangeTextColourCallback { get; set; }
+    [Parameter, EditorRequired]
+    public double MouseX { get; set; }
+    [Parameter, EditorRequired]
+    public double MouseY { get; set; }
+
+    private string[] textColours = { "#212529", "#8064a2", "#ff0000", "#00b050", "#9bbb59", "#4bacc6", "#f46036", "#064789" };
+
+    async void saveTextColour(string chosenColour)
+    {
+        Block.TextColour = chosenColour;
+        await Block.SaveToDatabase();
+        ChangeTextColourCallback.InvokeAsync();
+    }
+}
