@@ -162,7 +162,6 @@ else
     private async void saveExperimentCallback(Experiment savedExperiment)
     {
         showExperimentModal = false;
-        savedExperiment.EditedAt = DateTime.Now;
         await savedExperiment.SaveToDatabaseAsync();
         experiment = savedExperiment;
         StateHasChanged();

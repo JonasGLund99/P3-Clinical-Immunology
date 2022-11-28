@@ -124,7 +124,7 @@
                             }
                         </div>
                     }
-                    else if (currentClinicalTests != null)
+                    else if (currentClinicalTests != null && currentClinicalTests.Count() != 0)
                     {
                         <div class="all-clinicaltest-cards">
                             @foreach (ClinicalTest ct in currentClinicalTests)
@@ -321,7 +321,6 @@
     public async void SaveExperimentCallback(Experiment e)
     {
         showExperimentModal = false;
-        e.EditedAt = DateTime.Now;
         loader = true;
         await e.SaveToDatabaseAsync();
         loader = false;

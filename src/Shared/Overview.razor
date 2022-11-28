@@ -152,10 +152,7 @@
         if (selectedTableTitle == null) return;
 
         ClinicalTest.ChosenTableTitles[tableTitleNumber] = selectedTableTitle;
-        ClinicalTest.EditedAt = DateTime.Now;
-        Experiment.EditedAt = DateTime.Now;
         ClinicalTest.SaveToDatabase();
-        Experiment.SaveToDatabase();
         StateHasChanged();
     }
 
@@ -199,11 +196,8 @@
         overviewLoaded = false;
         switchMode("Overview");
         StateHasChanged();
-        ClinicalTest.EditedAt = DateTime.Now;
         ClinicalTest.CalculationNecessary = true;
-        Experiment.EditedAt = DateTime.Now;
         ClinicalTest.SaveToDatabase(true);
-        Experiment.SaveToDatabase();
         updateOverviewState();
     }
 
@@ -222,12 +216,11 @@
                     if (overview[ovNr][slNr][blNr].TextColour != "#212529" && overview[ovNr][slNr][blNr].TextColour != "")
                     {
                         overview[ovNr][slNr][blNr].TextColour = "#212529";
-                        /*No await, may cause problems*/
-                        overview[ovNr][slNr][blNr].SaveToDatabase();
                     }
                 }
             }
         }
+        ClinicalTest.SaveToDatabase();
         StateHasChanged();
     } 
 }

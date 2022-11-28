@@ -134,6 +134,18 @@ public class ClinicalTest : BaseModel<ClinicalTest>
 
         base.SaveToDatabase();
     }
+    public override async Task SaveToDatabaseAsync()
+    {
+        foreach (string id in ExperimentIds)
+        {
+            Experiment? e = await ExperimentManager.GetExperimentById(id);
+            if (e == null) continue;
+            e.EditedAt = DateTime.Now;
+            await e.SaveToDatabaseAsync();
+        }
+        EditedAt = DateTime.Now;
+        await base.SaveToDatabaseAsync();
+    }
 
     public override async Task RemoveFromDatabase()
     {
@@ -231,7 +243,6 @@ public class ClinicalTest : BaseModel<ClinicalTest>
 
     public async Task CalculateClinicalTestResult()
     {
-        int beginningIndex = 0;
         Regex start = new Regex(@"^Block\s*Row\s*Column", RegexOptions.IgnoreCase);
 
         List<Block> normBlocks = await GetNormalBlocks();
@@ -241,17 +252,11 @@ public class ClinicalTest : BaseModel<ClinicalTest>
 
         foreach (SlideDataFile slideDataFile in SlideDataFiles)
         {
-            //Read all lines in a file and add each line as an element in a string array
-            string[] allLines = slideDataFile.Content.Split("\n");
-
-            //Find the line in which the information about spots begin
-            beginningIndex = Array.FindIndex(allLines, line => start.Match(line).Success);
-
             //Create string array with only spot information
-            string[] spotLines = new ArraySegment<string>(allLines, beginningIndex + 1, allLines.Length - beginningIndex - 2).ToArray();
+            string[] spotLines = slideDataFile.getSpotLines();
 
             //Create array where each entry is a title for spot information
-            string[] titles = allLines[beginningIndex].Split("\t");
+            string[] titles = slideDataFile.getTitles();
 
             List<string> spotInfo = new List<string>();
             nplicatesInBlock = spotLines.Length / numOfBlocks / NplicateSize;
@@ -336,13 +341,11 @@ public class ClinicalTest : BaseModel<ClinicalTest>
             foreach (Nplicate nplicate in block.Nplicates)
             {
                 nplicate.SetHeatMapColour(MaxRI, MinRI);
-
-                if (block.Nplicates.IndexOf(nplicate) == 2) {
-                    System.Console.WriteLine($"{nplicate.RI}");
-                }
             }
         }
     }
+
+
 
     private string findSingleSpotInfo(List<string> spotInfo, string[] titles, string key)
     {
