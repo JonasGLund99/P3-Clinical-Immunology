@@ -89,6 +89,10 @@
     cursor: pointer;
 }
 
+#export-icon i.no-export{
+    cursor: not-allowed;
+}
+
 #buttons {
     display: flex;
     justify-content: space-between;

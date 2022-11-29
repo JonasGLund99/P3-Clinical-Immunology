@@ -63,8 +63,8 @@ else
                 </table>
             </div>
             <div class="export-and-color-scale">
-                <div id="export-icon" title="Export heatmap">
-                    <i class="fa-solid fa-file-export" @onclick="OpenExportModal"></i>
+                <div id="export-icon" title=" @(DatabaseStatus != 1 ? "Can't export while saving" : "Export heatmap")">
+                    <i class="fa-solid fa-file-export @(DatabaseStatus != 1 ? "no-export" : "")" @onclick="OpenExportModal"></i>
                 </div>
                 <div class="flag-example">
                     Flag
@@ -123,6 +123,8 @@ else
     public ClinicalTest ClinicalTest { get; set; } = new();
     [Parameter, EditorRequired]
     public EventCallback<int> setActiveButtonCallback { get; set; }
+    [Parameter, EditorRequired]
+    public double DatabaseStatus { get; set; } = 1;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)  
     {
@@ -167,7 +169,10 @@ else
 
     public void OpenExportModal()
     {
-        showExportModal = true;
+        if (DatabaseStatus == 1)
+        {
+            showExportModal = true;  
+        }
     }
 
     public void CloseExportModal()

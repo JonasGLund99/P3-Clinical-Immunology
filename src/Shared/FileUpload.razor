@@ -77,7 +77,14 @@
         </div>
     </div>
     
-    @if (allMatched) {
+    @if (DatabaseStatus != 1)
+    {
+        <button class="red-button wait-calc-button">
+            Saving . . .
+            <i class="fa-sharp fa-solid fa-file-circle-exclamation"></i>
+        </button>
+    }
+    else if (allMatched) {
         <button @onclick="StartCalculation" class="green-button @(loading ? "calculating-button" : "start-calc-button")">
             @(loading ? "Calculating . . ." : "Start calculations")
             <i class="fa-sharp fa-solid @(loading ? "fa-gears" : "fa-calculator")"></i>
@@ -108,6 +115,9 @@
 
     [Parameter, EditorRequired]
     public int ActiveButton { get; set; }
+
+    [Parameter, EditorRequired]
+    public double DatabaseStatus { get; set; } = 1;
 
     [Parameter, EditorRequired]
     public EventCallback<int> setActiveButtonCallback { get; set; }

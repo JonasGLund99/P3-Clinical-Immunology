@@ -34,8 +34,8 @@
                         </div>
                     }
                 </div>
-                <div id="export-icon" data-title="Export overview">
-                    <i class="fa-solid fa-file-export"></i>
+                <div id="export-icon" data-title="@(DatabaseStatus != 1 ? "Can't export while saving" : "Export overview")">
+                    <i class="@(DatabaseStatus != 1 ? "no-export" : "") fa-solid fa-file-export" @onclick="Export"></i>
                 </div>
             </div>
             <div id="save-blocks-animation" class='@(isSavingOverview ? "saving" : "")'>
@@ -109,6 +109,9 @@
     public Experiment Experiment { get; set; } = new();
     [Parameter, EditorRequired]
     public ClinicalTest ClinicalTest { get; set; } = new();
+    [Parameter, EditorRequired]
+    public double DatabaseStatus { get; set; } = 1;
+
 
     private string tableViewIcon { get; set; } = "icons/TableView_icon.svg";
     private string tableViewIconWhite { get; set; } = "icons/TableView_icon_white.svg";
@@ -220,4 +223,15 @@
         ClinicalTest.SaveToDatabase();
         StateHasChanged();
     } 
+
+    public async void Export()
+    {
+        if (ClinicalTest == null) return;
+        if (DatabaseStatus == 1)
+        {
+            FileInfo file = await ClinicalTest.ExportOverview();
+            await JS.InvokeVoidAsync("triggerFileDownload", $"{ClinicalTest.Title}-prøve-opsætning.xlsx", $"http://localhost:5110/exports/{ClinicalTest.id}-prøve-opsætning.xlsx");
+            await Task.Delay(1000).ContinueWith(t => file.Delete());
+        }
+    }
 }

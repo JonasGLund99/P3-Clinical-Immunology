@@ -20,11 +20,11 @@
 	<div class="component-container">
 		@switch (activeButton)
 		{
-			case 0: <Details Experiment="@experiment" ClinicalTest="@clinicalTest" editCTCallback="editCT" editExpCallback="editExp"/> break;
-			case 1: <Overview Experiment="@experiment" ClinicalTest="@clinicalTest" /> break;
-			case 2: <FileUpload Experiment="@experiment" ClinicalTest="@clinicalTest" ActiveButton="@activeButton" setActiveButtonCallback="@SetActiveButton" /> break;
-		    case 3: <ResultTable ClinicalTest="@clinicalTest" setActiveButtonCallback="@SetActiveButton" /> break;
-			case 4: <Heatmap ClinicalTest="@clinicalTest" setActiveButtonCallback="@SetActiveButton" /> break;
+			case 0: <Details Experiment="@experiment" ClinicalTest="@clinicalTest" editCTCallback="editCT" editExpCallback="editExp" /> break;
+            case 1: <Overview Experiment="@experiment" ClinicalTest="@clinicalTest" DatabaseStatus="@databaseStatus" />break;
+            case 2: <FileUpload Experiment="@experiment" ClinicalTest="@clinicalTest" ActiveButton="@activeButton" setActiveButtonCallback="@SetActiveButton" DatabaseStatus="@databaseStatus" />break;
+            case 3: <ResultTable ClinicalTest="@clinicalTest" setActiveButtonCallback="@SetActiveButton" DatabaseStatus="@databaseStatus" />break;
+			case 4: <Heatmap ClinicalTest="@clinicalTest" setActiveButtonCallback="@SetActiveButton" DatabaseStatus="@databaseStatus" /> break;
 		}
 	</div>
 } 
