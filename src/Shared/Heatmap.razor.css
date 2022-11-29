@@ -50,7 +50,7 @@
     height: calc(100vh - 115px);
     justify-items: center;
     align-items: flex-end;
-    background-color: white;
+    background: linear-gradient(to bottom, var(--main-background-color) 0, white 10% 100%) ;
     padding-top: 15px;
 }
 
@@ -58,7 +58,6 @@
     width: 100%;
     padding-left: 15px;
     height: inherit;
-    padding-bottom: 15px;
 }
 
 .color-scale-container {

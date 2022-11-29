@@ -60,7 +60,7 @@ else
     private Block? selectedBlock = default;
 
     [Parameter, EditorRequired]
-    public ClinicalTest? ClinicalTest { get; set; } = default;
+    public ClinicalTest ClinicalTest { get; set; } = new();
 
     [Parameter, EditorRequired]
     public EventCallback<int> setActiveButtonCallback { get; set; }
