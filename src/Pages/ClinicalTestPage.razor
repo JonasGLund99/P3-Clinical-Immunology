@@ -1,6 +1,8 @@
 ﻿@page "/clinicaltest/{ExperimentId}/{ClinicalTestId}"
 @using src.Data
 @using src.Shared
+@using System.Timers
+
 @inject NavigationManager NavManager
 @inject IJSRuntime JS
 
@@ -12,17 +14,17 @@
         ClinicalTestId="@clinicalTest.id"
         ExperimentNumber="@experiment.ExperimentNumber"
         setActiveButtonCallback="@SetActiveButton"
-        ActiveButton="@activeButton">
-    </Navbar>
+        ActiveButton="@activeButton" 
+        DatabaseStatus="@databaseStatus" />
 
 	<div class="component-container">
 		@switch (activeButton)
 		{
-			case 0: <Details Experiment="@experiment" ClinicalTest="@clinicalTest" editCTCallback="editCT" editExpCallback="editExp"></Details> break;
-			case 1: <Overview Experiment="@experiment" ClinicalTest="@clinicalTest"></Overview> break;
-			case 2: <FileUpload Experiment="@experiment" ClinicalTest="@clinicalTest" ActiveButton="@activeButton" setActiveButtonCallback="@SetActiveButton" StopReloadCallback="@stopReload"></FileUpload> break;
-		    case 3: <ResultTable ClinicalTest="@clinicalTest"></ResultTable> break;
-			case 4: <Heatmap ClinicalTest="@clinicalTest"></Heatmap> break;
+			case 0: <Details Experiment="@experiment" ClinicalTest="@clinicalTest" editCTCallback="editCT" editExpCallback="editExp" /> break;
+			case 1: <Overview Experiment="@experiment" ClinicalTest="@clinicalTest" /> break;
+			case 2: <FileUpload Experiment="@experiment" ClinicalTest="@clinicalTest" ActiveButton="@activeButton" setActiveButtonCallback="@SetActiveButton" /> break;
+		    case 3: <ResultTable ClinicalTest="@clinicalTest" /> break;
+			case 4: <Heatmap ClinicalTest="@clinicalTest" /> break;
 		}
 	</div>
 } 
@@ -32,10 +34,11 @@ else
         ClinicalTestId="@placeholderCt.id"
 		ExperimentNumber="@placeholderExp.ExperimentNumber"
 		setActiveButtonCallback="@SetActiveButton"
-		ActiveButton="@activeButton">
-	</Navbar>
+		ActiveButton="@activeButton"
+        DatabaseStatus="@databaseStatus" />
+
 	<div class="component-container">
-		<Details Experiment="@placeholderExp" ClinicalTest="@placeholderCt"></Details>
+		<Details Experiment="@placeholderExp" ClinicalTest="@placeholderCt" editCTCallback="() => {}" editExpCallback="() => {}" />
 	</div>
 }
 
@@ -65,7 +68,6 @@ else
     <div class="modal fade show" style="display:block" aria-modal="true" role="dialog" @onclick="@ModalCancel">
         <div class="modal-dialog">
             <div class="modal-content">
-
                 <!-- Modal Header -->
                 <div class="modal-header">
                     <h4 class="modal-title">Clinical test disassociated</h4>
@@ -80,7 +82,6 @@ else
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" @onclick=@ModalCancel>Ok</button>
                 </div>
-
             </div>
         </div>
     </div>
@@ -91,7 +92,7 @@ else
     public string ExperimentId { get; set; } = "";
     [Parameter]
     public string ClinicalTestId { get; set; } = "";
-
+    
 	private Experiment placeholderExp = new Experiment(
 		id: "",
 		experimentNumber: "EXP",
@@ -109,23 +110,54 @@ else
         createdAt: DateTime.Now
     );
 
-    private Experiment? experiment;
-    private ClinicalTest? clinicalTest;
+    private Experiment experiment = new();
+    private ClinicalTest clinicalTest = new();
     private bool showClinicalTestModal = false;
     private bool showExperimentModal = false;
     private string editModalTitle = "";
     private bool showWarningModal = false;
+    private Timer? databaseTimer = null;
+    private double databaseStatus = 1;
+
 
     // Get experiment and clincical test from database on the first render
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            experiment = await ExperimentManager.GetExperimentById(ExperimentId);
-            clinicalTest = await ExperimentManager.GetClinicalTestById(ClinicalTestId);
+            // Get experiment and clinical test from database
+            experiment = await ExperimentManager.GetExperimentById(ExperimentId) ?? throw new Exception("Experiment is null");
+            clinicalTest = await ExperimentManager.GetClinicalTestById(ClinicalTestId) ?? throw new Exception("Clinical test is null");
+
+            // Setup onbeforeunload check in javascript
+            var dotNetReference = DotNetObjectReference.Create(this);
+            await JS.InvokeVoidAsync("listenForBeforeUnload", dotNetReference);
+
             StateHasChanged();
+
+            // Load the blocks from the database
             await clinicalTest.GetNormalBlocks();
+            await clinicalTest.GetBlankBlocks();
+
+            // Start the timer that updates the database status
+            if (databaseTimer == null)
+            {
+                startTimer();
+            }
         }
+    }
+    private void startTimer()
+    {
+        databaseTimer = new Timer(50);
+        databaseTimer.Elapsed += TimerHandler;
+        databaseTimer.AutoReset = true;
+        databaseTimer.Enabled = true;
+    }
+
+    private void TimerHandler(Object? source, ElapsedEventArgs e)
+    {
+        databaseStatus = ProcessQueue.Instance.GetProgress(ClinicalTestId);
+        InvokeAsync(() => StateHasChanged());
     }
 
     private async void closeEditorModal()
@@ -133,8 +165,8 @@ else
         if (experiment == null || clinicalTest == null) return;
         showClinicalTestModal = false;
         showExperimentModal = false;
-        experiment = await ExperimentManager.GetExperimentById(experiment.id);
-        clinicalTest = await ExperimentManager.GetClinicalTestById(clinicalTest.id);
+        experiment = await ExperimentManager.GetExperimentById(experiment.id) ?? throw new Exception("Experiment is null");
+        clinicalTest = await ExperimentManager.GetClinicalTestById(clinicalTest.id) ?? throw new Exception("Clinical test is null");
         StateHasChanged();
     }
 
@@ -167,7 +199,7 @@ else
         StateHasChanged();
     }
 
-    private void editExp () 
+    private void editExp() 
     {
         if (experiment == null) return;
         showExperimentModal = true;
@@ -187,16 +219,10 @@ else
     {
         activeButton = buttonId;
     }
-    private async void stopReload() 
-    {
-        @* await JS.InvokeVoidAsync("addBeforeUnload");
 
-        clinicalTest.SaveToDatabase().ContinueWith((task) =>
-        {
-            experiment.SaveToDatabase().ContinueWith(async (secondTask) =>
-            {
-                await JS.InvokeVoidAsync("removeBeforeUnload");
-            });
-        }); *@
+    [JSInvokable("GetDatabaseStatus")]
+    public double GetDatabaseStatus()
+    {
+        return databaseStatus;
     }
 }

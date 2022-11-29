@@ -3,18 +3,18 @@
 @using System.Timers
 
 <header id="topnavContainer">
-        @if (databaseStatus == 1)
-        {
-            <div id="saving-status">
-                <i class="fa-solid fa-check"></i>
-            </div>
-        }
-        else
-        {
-            <div id="saving-status" style="background: conic-gradient(red 0deg @((int)(databaseStatus * 360))deg, transparent @((int)(databaseStatus * 360))deg 360deg)">
-                <i class="fa-solid fa-xmark"></i>
-            </div>
-        }    
+    @if (DatabaseStatus == 1)
+    {
+        <div id="saving-status">
+            <i class="fa-solid fa-check"></i>
+        </div>
+    }
+    else
+    {
+        <div id="saving-status" style="background: conic-gradient(red 0deg @((int)(DatabaseStatus * 360))deg, transparent @((int)(DatabaseStatus * 360))deg 360deg)">
+            <i class="fa-solid fa-xmark"></i>
+        </div>
+    }    
     <div id="topPart">
         <div id="leftPart">
             <button id="homeButton" title="Go back to list of experiments and clinical tests">
@@ -24,8 +24,7 @@
         <h1 id="middlePart">
             <span class="ct-title">@ClinicalTestTitle</span> in @ExperimentNumber
         </h1>
-        <div id="rightPart">
-        </div>
+        <div id="rightPart"></div>
     </div>
 
     <div id="navButtonContainer">    
@@ -56,39 +55,10 @@
     public string ClinicalTestId { get; set; } = "";
     [Parameter]
     public int ActiveButton { get; set; }
-
     [Parameter]
     public EventCallback<int> setActiveButtonCallback { get; set; }
-
-    
-    private double databaseStatus { get; set; }
-    private Timer? databaseTimer { get; set; } = null;
-
-    protected override void OnAfterRender(bool firstRender)
-    {
-        if (firstRender)
-        {
-            if (databaseTimer == null)
-            {
-                startTimer();
-            }
-        }
-    }
-
-    private void startTimer()
-    {
-        databaseTimer = new Timer(50);
-        databaseTimer.Elapsed += TimerHandler;
-        databaseTimer.AutoReset = true;
-        databaseTimer.Enabled = true;
-    }
-
-    private void TimerHandler(Object? source, ElapsedEventArgs e)
-    {
-        databaseStatus = ProcessQueue.Instance.GetProgress(ClinicalTestId);
-        InvokeAsync(() => StateHasChanged());
-    }
-
+    [Parameter, EditorRequired]
+    public double DatabaseStatus { get; set; } = 1;
 
     public void NavigateToHomepage() {
         NavManager.NavigateTo("/");

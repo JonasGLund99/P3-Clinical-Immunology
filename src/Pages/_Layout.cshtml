@@ -36,6 +36,7 @@
     <script src="_framework/blazor.server.js"></script>
 
     <script>
+        // Setup event listener in each table overview table cell that listens for paste event
         function listenForPaste() {
             const overviewTable = document.querySelector('#overview-table');
             if (!overviewTable) return;
@@ -64,12 +65,7 @@
             })
         }
 
-        //function addFocusEventListener() {
-        //    const searchBar = document.querySelector('.searchbar');
-
-        //}
-
-        //Returns a 2D string array
+        // Returns a 2D string array of the overview talbe
         function getTableData() {
             const cells = [...document.querySelectorAll('tr')].map(row => [...row.querySelectorAll('td')].slice(1).map(cell => cell.innerText.trim()));
             
@@ -98,19 +94,7 @@
             return cells.slice(0, lastDataIndex + 1).map(row => row.filter((cell, index) => registeredColumns.includes(index)));
         }
 
-        
-        function addBeforeUnload() {
-            window.addEventListener("beforeunload", closeText);
-        }
-        
-        function removeBeforeUnload() {
-            window.removeEventListener("beforeunload", closeText);
-        }
-
-        function closeText(event) {
-            event.returnValue = "Write something clever here..";
-        }
-
+        // Clear the content of all the cells in the overview table
         function clearTable() {
             for (const row of document.querySelectorAll('tr')) {
                 for (const [i, cell] of [...row.querySelectorAll('td')].entries()) {
@@ -118,6 +102,22 @@
                     cell.innerText = '';
                 }
             }
+        }
+
+        // Setup listener that warns the user, if they try to close the clinical test while saving
+        async function listenForBeforeUnload(dotNetObject) {
+            setInterval(async () => {
+                let databaseStatus = await dotNetObject.invokeMethodAsync('GetDatabaseStatus');
+                if (databaseStatus === 1) {
+                    window.onbeforeunload = null;
+                } else {
+                    window.onbeforeunload = (e) => {
+                        e.preventDefault();
+                        e.returnValue = "";
+                        return "";
+                    };
+                }
+            }, 100)
         }
     </script>
 

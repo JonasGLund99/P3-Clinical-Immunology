@@ -97,7 +97,9 @@ public static class ExperimentManager
         ids.AddRange(clinicalTest.ExperimentIds); 
         foreach (string id in ids)
         {
-            Experiment e = await GetExperimentById(id);
+            Experiment? e = await GetExperimentById(id);
+            if (e == null) continue;
+
             await Disassociate(e, clinicalTest);
         }
    }
@@ -109,7 +111,9 @@ public static class ExperimentManager
         {
             foreach (string ExpId in SavedClinicalTest.ExperimentIds)
             {   
-                Experiment e = await ExperimentManager.GetExperimentById(ExpId);
+                Experiment? e = await ExperimentManager.GetExperimentById(ExpId);
+                if (e == null) continue;
+
                 await ExperimentManager.Associate(e, SavedClinicalTest);
             }
         }
@@ -119,13 +123,17 @@ public static class ExperimentManager
             List<string> RemovedIds = ClinicalTestFromDB.ExperimentIds.Except(SavedClinicalTest.ExperimentIds).ToList();
             foreach(string ExpId in NewExpIds)
             {
-                Experiment e = await ExperimentManager.GetExperimentById(ExpId);
+                Experiment? e = await ExperimentManager.GetExperimentById(ExpId);
+                if (e == null) continue;
+
                 await ExperimentManager.Associate(e, ClinicalTestFromDB);
             }
 
             foreach (string ExpId in RemovedIds)
             {
-                Experiment e = await ExperimentManager.GetExperimentById(ExpId);
+                Experiment? e = await ExperimentManager.GetExperimentById(ExpId);
+                if (e == null) continue;
+
                 await ExperimentManager.Disassociate(e, ClinicalTestFromDB);
             }
             await SavedClinicalTest.SaveToDatabaseAsync();

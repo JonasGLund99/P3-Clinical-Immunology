@@ -85,17 +85,16 @@
 
 
 @code {
-    private string mode = "XYZ";
-    private List<Block> blocks { get; set; } = new List<Block>();
+
 
     [Parameter]
-    public Nplicate SelectedNplicate { get; set; }
-
+    public Nplicate? SelectedNplicate { get; set; } = null;
     [Parameter, EditorRequired]
-    public ClinicalTest ClinicalTest { get; set; }
-
+    public ClinicalTest ClinicalTest { get; set; } = new();
     [Parameter, EditorRequired]
     public EventCallback<Tuple<MouseEventArgs, Nplicate, Block>> ShowSpots { get; set; }
+
+    private List<Block> blocks { get; set; } = new List<Block>();
 
     public async void OpenSpots(MouseEventArgs e, Nplicate selectedTd, Block selectedBlock)
     {
@@ -110,6 +109,4 @@
             StateHasChanged();
         }
     }
-
-
 }

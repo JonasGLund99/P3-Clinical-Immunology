@@ -7,14 +7,14 @@
 </div>
 
 @code {
-    [Parameter]
-    public Experiment? Experiment { get; set; }
-    [Parameter]
-    public ClinicalTest? ClinicalTest { get; set; }
-    [Parameter]
-    public EventCallback editCTCallback {get; set; }
-    [Parameter] 
-    public EventCallback editExpCallback {get; set; }
+    [Parameter, EditorRequired]
+    public Experiment Experiment { get; set; } = new();
+    [Parameter, EditorRequired]
+    public ClinicalTest ClinicalTest { get; set; } = new();
+    [Parameter, EditorRequired]
+    public EventCallback editCTCallback { get; set; } = default;
+    [Parameter, EditorRequired] 
+    public EventCallback editExpCallback { get; set; } = default;
 
     public async void executeCtCallback ()
     {
