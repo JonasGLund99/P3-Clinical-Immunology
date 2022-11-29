@@ -154,7 +154,7 @@
             Block blankBlock = blankBlocks.Find(b => b.SlideIndex == slideIndex && b.BlockIndex == blockIndex);
             await ClinicalTest.RemoveBlankBlock(blankBlock);
         }
-
+        ClinicalTest.CalculationNecessary = true;
         await updateOverviewState.InvokeAsync();
     }
 
@@ -170,6 +170,7 @@
     }
 
     private async void saveBarcode() {
+        ClinicalTest.CalculationNecessary = true;
         ClinicalTest.SaveToDatabase();
     }
     private string[] headingLetters = { "A", "B", "C", "D", "E", "F", "G", "H" };
