@@ -3,40 +3,43 @@
 @inject IJSRuntime JS
 
 <table id="overview-table">
-    @*Title row*@
-    <tr>
-        <td class="line-number"></td>
-        @for (int i = 0; i < numCols - 1; i++) 
-        {
-            @if (i < ClinicalTest.TableTitles.Count) 
-            {
-                <td contenteditable>@ClinicalTest.TableTitles[i]</td>
-            }
-            else 
-            {
-                <td contenteditable></td>
-            }
-        }
-    </tr>
-
-    @*Data rows*@
-    @for (int i = 0; i < numRows; i++) 
-    { 
+    <thead>
+        @*Title row*@
         <tr>
-            <td class="line-number">@(i + 1)</td>
-            @for (int j = 0; j < numCols; j++)
+            <td></td>
+            @for (int i = 0; i < numCols; i++) 
             {
-                @if (i < normalBlocks.Count && j < normalBlocks[i].PatientData.Count)
+                @if (i < ClinicalTest.TableTitles.Count) 
                 {
-                    <td contenteditable>@normalBlocks[i].PatientData[j]</td>
-                } 
+                    <td contenteditable>@ClinicalTest.TableTitles[i]</td>
+                }
                 else 
                 {
                     <td contenteditable></td>
                 }
             }
         </tr>
-    }
+    </thead>
+    <tbody>
+        @*Data rows*@
+        @for (int i = 0; i < numRows; i++) 
+        { 
+            <tr>
+                <td class="line-number">@(i + 1)</td>
+                @for (int j = 0; j < numCols; j++)
+                {
+                    @if (i < normalBlocks.Count && j < normalBlocks[i].PatientData.Count)
+                    {
+                        <td contenteditable>@normalBlocks[i].PatientData[j]</td>
+                    } 
+                    else 
+                    {
+                        <td contenteditable></td>
+                    }
+                }
+            </tr>
+        }
+    </tbody>
 </table>
 
 @code {
@@ -51,9 +54,9 @@
     {
         if (firstRender)
         {
-            await JS.InvokeVoidAsync("listenForPaste");
             normalBlocks = await ClinicalTest.GetNormalBlocks();
             StateHasChanged();
         }
+        await JS.InvokeVoidAsync("listenForPaste");
     }
 }

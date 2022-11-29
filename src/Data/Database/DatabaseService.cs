@@ -21,7 +21,6 @@ public class DatabaseService
     }
     public Database? Database;
 
-    
     public async Task SetupDatabase()
     {
         Database = await client.CreateDatabaseIfNotExistsAsync("ClinicalImmunology2", 500);

@@ -22,6 +22,10 @@
     padding: 10px;
     grid-template-columns: 48% 20% 22% 6% 4%;
 }
+.card-textcontent-experiment,
+.card-textcontent-clinicaltest {
+    transition: 0.1s;
+}
 
 .card-textcontent-clinicaltest span,
 .card-textcontent-experiment span {

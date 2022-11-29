@@ -1,6 +1,7 @@
 .plate {
     background-color: var(--plate-background-color);
     width: 100%;
+    /* height: 3000px; */
     max-width: 1500px;
     border: 5px solid var(--plate-border-color);
     border-radius: 10px;
@@ -12,10 +13,10 @@
     display: flex;
     flex-direction: column;
     background-color: var(--heading-background-color);
-/*    border: 1px solid var(--block-border-color);*/
     color: white;
     justify-content: center;
     font-size: 18px;
+    z-index: 0;
 }
 
 .block, .empty-block {
@@ -25,9 +26,16 @@
     flex-direction: column;
     justify-content: space-evenly;
     font-size: clamp(12px, 0.8vw, 16px);
+    font-weight: bold;
 }
 .block {
     cursor: pointer;
+}
+.block:hover {
+    box-shadow: 0px 0px 0px 5px var(--grey) inset;
+}
+.block.selected {
+    box-shadow: 0px 0px 0px 5px var(--grey) inset;
 }
 .block > div {
     height: 33.33%;
@@ -213,4 +221,13 @@ input:focus {
     align-items: center;
     aspect-ratio: 1/1;
     border-radius: 50%;
+}
+
+.remove-colorpick {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 5;
 }

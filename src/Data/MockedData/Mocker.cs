@@ -42,7 +42,7 @@ static class Mocker
                 description: "Some description",
                 createdAt: DateTime.Now
             );
-            await e.SaveToDatabase();
+            await e.SaveToDatabaseAsync();
 
             // int numCT = r.Next(1, 3);
             int numCT = 1;
@@ -65,7 +65,7 @@ static class Mocker
                 ct.TableTitles = new List<string>() { "key1", "key2", "key3", "key4", "key5" };
                 ct.ChosenTableTitles = new string[] { "key2", "key1", "key3" };
                 //ct.CalculateClinicalTestResult();
-                await ct.SaveToDatabase();
+                await ct.SaveToDatabaseAsync();
                 await ExperimentManager.Associate(e, ct);
             }
         }

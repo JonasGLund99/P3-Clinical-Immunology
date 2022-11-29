@@ -68,45 +68,44 @@
                         <p>Associate experiments</p>
                         <div class="associator">
                             <div class="search-experiments">
-                            <div class="searchbar">
-                                <i class="fa-solid fa-magnifying-glass"></i>
-                                <input type="text" placeholder="Search experiment..." @oninput="@searchExperiments">
-                            </div>
-                            <div class="experiments-found">
-                            @foreach (Experiment e in searchedExperiments)
-                            {
-                                if (((ClinicalTest)((object)ModalObject)).ExperimentIds.Contains(e.id))
-                                {
-                                    <div class="experiment-is-added" @onclick="@(() => clickedRelatedExperiment(e.id))" title="@titleHelper(e)" >@e.ExperimentNumber</div>
-                                } 
-                                else 
-                                {
-                                    <div title="@titleHelper(e)" @onclick="@(() => clickedExperimentToRelate(e.id))">@e.ExperimentNumber</div>
-                                }
-                            }
-                            </div>
+                                <div class="searchbar">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                    <input type="text" placeholder="Search experiment..." @oninput="@searchExperiments">
+                                </div>
+                                <div class="experiments-found">
+                                    @foreach (Experiment e in searchedExperiments)
+                                    {
+                                        if (((ClinicalTest)((object)ModalObject)).ExperimentIds.Contains(e.id))
+                                        {
+                                            <div class="experiment-is-added" @onclick="@(() => clickedRelatedExperiment(e.id))" title="@titleHelper(e)" >@e.ExperimentNumber</div>
+                                        } 
+                                        else 
+                                        {
+                                            <div title="@titleHelper(e)" @onclick="@(() => clickedExperimentToRelate(e.id))">@e.ExperimentNumber</div>
+                                        }
+                                    }
+                                </div>
                             </div>
                             <div class="associated-experiments">
-                            <p>Associated experiments</p>
-                            <div class="related-experiments">
-                                @foreach (string id in ((ClinicalTest)((object)ModalObject)).ExperimentIds)
-                                {
-                                    <div title="@titleHelperRelatedExperiments(id)" @onclick="@(() => clickedRelatedExperiment(id))">@(getRelatedExperimentNumber(id))</div>
-                                }
-                            </div>
+                                <p>Associated experiments</p>
+                                <div class="related-experiments">
+                                    @foreach (string id in ((ClinicalTest)((object)ModalObject)).ExperimentIds)
+                                    {
+                                        <div title="@titleHelperRelatedExperiments(id)" @onclick="@(() => clickedRelatedExperiment(id))">@(getRelatedExperimentNumber(id))</div>
+                                    }
+                                </div>
                             </div>
                         </div>
                     }
                 </div>
-                  
                 <div class="modal-footer">
                     <button type="button" class="grey-button" @onclick="cancelEdits">Cancel</button>
-                        @if (ModalObject is ClinicalTest && ((ClinicalTest)((object)ModalObject)).ExperimentIds.Count <= 0){
-                            <button type="button" class="green-button" style="opacity: 0.5"disabled>No associated experiments</button>
-                        }
-                        else{
-                            <button type="submit" class="green-button">Save</button>
-                        }
+                    @if (ModalObject is ClinicalTest && ((ClinicalTest)((object)ModalObject)).ExperimentIds.Count <= 0){
+                        <button type="button" class="green-button" style="opacity: 0.5"disabled>No associated experiments</button>
+                    }
+                    else{
+                        <button type="submit" class="green-button">Save</button>
+                    }
                 </div>
             </form>
         </div>
@@ -118,11 +117,11 @@
     [Parameter, EditorRequired] 
     public string ModalTitle { get; set; } = "";
     [Parameter, EditorRequired] 
-    public EventCallback<ModalType> CallbackClose {get; set;}
+    public EventCallback<ModalType> CallbackClose { get; set; }
     [Parameter, EditorRequired] 
     public ModalType ModalObject { get; set; } = new();
     [Parameter, EditorRequired] 
-    public EventCallback<ModalType> CallbackSave {get; set;}
+    public EventCallback<ModalType> CallbackSave { get; set; }
 
     private List<Experiment> allExperiments = new();
 
@@ -142,7 +141,7 @@
 
     private string titleHelperRelatedExperiments(string id)
     {
-        Experiment experiment = allExperiments.Find((e) => e.id == id);
+        Experiment? experiment = allExperiments.Find((e) => e.id == id);
         return experiment == null ? "" : titleHelper(experiment);
     } 
 
@@ -160,7 +159,7 @@
 
     private async void searchExperiments(ChangeEventArgs args) 
     {
-        string experimentSearchValue = args.Value?.ToString();
+        string? experimentSearchValue = args.Value?.ToString();
         if (experimentSearchValue == null) return;
         searchedExperiments = await ExperimentManager.QueryExperiments(experimentSearchValue);
         StateHasChanged();

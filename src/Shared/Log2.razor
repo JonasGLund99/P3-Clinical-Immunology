@@ -36,51 +36,55 @@
         }
         else if (block.QC < 0.97)
         {
-            <td class="invalid-block">@Math.Round(block.QC, 9)</td>
+            <td class="invalid-block">@Math.Round(block.QC, 9).ToString("0.000000000")</td>
         }
         else
         {
-            <td>@Math.Round(block.QC, 9)</td>
+            <td class="qc">@Math.Round(block.QC, 9).ToString("0.000000000")</td>
         }
         @foreach (Nplicate nplicate in block.Nplicates)
         {
             if ((nplicate.RI == 0 || nplicate.RI == double.NaN) && nplicate.IsFlagged)
             {
-                <td @onclick="@((e) => OpenSpots(e, nplicate))" contenteditable="false" class="data @(nplicate==SelectedNplicate ? "selected-td" : "") flagged-nplicate">-</td>
+                <td @onclick="@((e) => OpenSpots(e, nplicate, block))" contenteditable="false" class="data @(nplicate==SelectedNplicate ? "selected-td" : "") flagged-nplicate">-</td>
             }
             else if (nplicate.RI == 0 || nplicate.RI == double.NaN)
             {
-                <td class="data @(nplicate==SelectedNplicate ? "selected-td" : "")" @onclick="@((e) => OpenSpots(e, nplicate))" contenteditable="false">-</td>
+                <td class="data @(nplicate==SelectedNplicate ? "selected-td" : "")" @onclick="@((e) => OpenSpots(e, nplicate, block))" contenteditable="false">-</td>
 
             }
             else if (nplicate.IsFlagged)
             {
-                <td @onclick="@((e) => OpenSpots(e, nplicate))" contenteditable="false" class="data @(nplicate==SelectedNplicate ? "selected-td" : "") flagged-nplicate">@Math.Round(nplicate.RI, 2)</td>
-
+                <td @onclick="@((e) => OpenSpots(e, nplicate, block))" contenteditable="false" class="data @(nplicate==SelectedNplicate ? "selected-td" : "") flagged-nplicate">@Math.Round(nplicate.RI, 2).ToString("0.00")</td>
             }
             else
             {
-                <td class="data @(nplicate==SelectedNplicate ? "selected-td" : "")" @onclick="@((e) => OpenSpots(e, nplicate))" contenteditable="false">@Math.Round(nplicate.RI, 2)</td>
+                <td class="data @(nplicate==SelectedNplicate ? "selected-td" : "")" @onclick="@((e) => OpenSpots(e, nplicate, block))" contenteditable="false">@Math.Round(nplicate.RI, 2).ToString("0.00")</td>
             }
         }
     </tr>
 }
 
+
 @code {
     private List<Block> blocks { get; set; } = new List<Block>();
+    private bool loadingResultTable = true;
+
+    [Parameter, EditorRequired]
+    public EventCallback<bool> UpdateLoadingStatus { get; set; }
 
     [Parameter]
-    public Nplicate SelectedNplicate { get; set; }
+    public Nplicate? SelectedNplicate { get; set; } = null;
 
     [Parameter, EditorRequired]
-    public ClinicalTest ClinicalTest { get; set; }
+    public ClinicalTest ClinicalTest { get; set; } = new();
 
     [Parameter, EditorRequired]
-    public EventCallback<Tuple<MouseEventArgs, Nplicate>> ShowSpots { get; set; }
+    public EventCallback<Tuple<MouseEventArgs, Nplicate, Block>> ShowSpots { get; set; }
 
-    public async void OpenSpots(MouseEventArgs e, Nplicate selectedTd)
+    public async void OpenSpots(MouseEventArgs e, Nplicate selectedTd, Block selectedBlock)
     {
-        await ShowSpots.InvokeAsync(new Tuple<MouseEventArgs, Nplicate>(e, selectedTd));
+        await ShowSpots.InvokeAsync(new Tuple<MouseEventArgs, Nplicate, Block>(e, selectedTd, selectedBlock));
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -88,8 +92,9 @@
         if (firstRender)
         {
             blocks = await ClinicalTest.GetSortedBlocks();
+            loadingResultTable = false;
+            await UpdateLoadingStatus.InvokeAsync(loadingResultTable);
             StateHasChanged();
         }
     }
 }
-

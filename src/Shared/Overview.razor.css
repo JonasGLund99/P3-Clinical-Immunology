@@ -115,7 +115,7 @@
     font-size: 25px;
 }
 #info-button {
-    font-size: 25px;
+    font-size: 35px;
     color: var(--secondary-dark-color);
     filter: drop-shadow(0px 2px 4px var(--grey));
 }
@@ -148,7 +148,6 @@
     background-color: white;
     width: 98%;
     height: calc(100vh - 250px);
-    /*    border: 5px solid var(--primary-dark-color);*/
     box-shadow: 0px 2px 10px 2px var(--grey);
     border-radius: 20px;
     margin-bottom: 40px;
@@ -169,6 +168,86 @@
 .green-button i {
     font-size: 14px;
     margin-left: 12px;
+}
+/* #save-blocks-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 90%;
+    height: 90%;
+    font-size: 38px;
+    color: var(--green-btn-color);
+    cursor: pointer;
+    transition: 0.3s;
+}
+#save-blocks-btn:hover {
+    color: var(--green-btn-hover-color);
+    animation: color-change 1.5s linear infinite;
+}
+#save-blocks-animation {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50px;
+    height: 50px;
+    border: none;
+    border-radius: 50%;
+}
+
+#save-blocks-animation.saving {
+    border: 5px solid transparent;
+    border-top: 5px solid #005bb3;
+    animation: spinner 1s ease infinite;
+}
+#save-blocks-animation.saving #save-blocks-btn {
+    animation: spinner-reverse 1s ease infinite;
+}
+@keyframes spinner {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+@keyframes spinner-reverse {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(-360deg);
+    }
+} */
+/* @keyframes color-change {
+    0% {
+        color: rgb(10, 127, 230);
+        transform: scale(1.2) rotate(0.5turn);
+    }
+    25% {
+        color: rgb(57, 210, 15);
+        transform: scale(0.5) rotate(-1.5turn);
+    }
+    50% {
+        color: rgb(28, 103, 169);
+        transform: scale(1.5) rotate(0turn);
+    }
+    75% {
+        color: rgb(227, 34, 12);
+        transform: scale(1) rotate(0.8turn);
+    }
+    100% {
+        color: rgb(10, 127, 230);
+        transform: scale(1.2) rotate(0.5turn);
+    }
+} */
+
+.fa-droplet-slash {
+    font-size: 28px;
+    color: var(--secondary-dark-color);
+}
+
+.fa-droplet-slash:hover {
+    cursor: pointer;
 }
 
 /*Ghosting*/
