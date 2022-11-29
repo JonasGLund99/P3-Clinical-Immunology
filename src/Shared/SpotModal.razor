@@ -8,9 +8,13 @@
             <!-- Modal Header -->
             <div class="modal-header">
                 <h4 class="modal-title">Analyte name: <b>@ShownNplicate.AnalyteType</b></h4>
-                <h4 class="modal-title">@ClinicalTest.ChosenTableTitles[0]: <b>@Block.PatientData[ClinicalTest.TableTitles.IndexOf(ClinicalTest.ChosenTableTitles[0])]</b></h4>
-                <h4 class="modal-title">@ClinicalTest.ChosenTableTitles[1]: <b>@Block.PatientData[ClinicalTest.TableTitles.IndexOf(ClinicalTest.ChosenTableTitles[1])]</b></h4>
-                <h4 class="modal-title">@ClinicalTest.ChosenTableTitles[2]: <b>@Block.PatientData[ClinicalTest.TableTitles.IndexOf(ClinicalTest.ChosenTableTitles[2])]</b></h4>
+                @foreach (string chosenTableTitle in ClinicalTest.ChosenTableTitles)
+                {
+                    if (chosenTableTitle != "" && chosenTableTitle != null)
+                    {
+                        <h4 class="modal-title">@chosenTableTitle: <b>@Block.PatientData[ClinicalTest.TableTitles.IndexOf(chosenTableTitle)]</b></h4>
+                    }
+                }
             </div>
 
             <!-- Modal body -->

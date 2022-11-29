@@ -4,7 +4,7 @@ namespace src.Data;
 
 public class SlideDataFile
 {
-    private Regex titlesPattern = new Regex(@"^Block\s*Row\s*Column", RegexOptions.IgnoreCase);
+    private Regex titlesPattern = new Regex(@"^Block\s*", RegexOptions.IgnoreCase);
     public SlideDataFile(string filename, string content)
     {
         Filename = filename;
