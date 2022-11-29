@@ -11,6 +11,18 @@ td {
     text-align: center;
 }
 
+.data,
+.qc,
+.invalid-block {
+    text-align: right;
+    font-family: 'Roboto Mono', monospace;
+    font-weight: 500;
+}
+
+.invalid-block {
+    background-color: rgb(255, 159, 159);
+}
+
 .data:hover {
     box-shadow: 0px 0px 0px 5px rgb(170, 170, 170) inset;
 }
@@ -31,9 +43,9 @@ tr:first-child td {
     text-align: center;
 }
 
-    tr:first-child td:first-child {
-        z-index: 2;
-    }
+tr:first-child td:first-child {
+    z-index: 2;
+}
 
 #key-number-1 {
     z-index: 2;

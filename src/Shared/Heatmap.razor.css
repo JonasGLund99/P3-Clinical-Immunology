@@ -1,3 +1,19 @@
+.calculations-necessary-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.update-calculation-message {
+    font-size: 30px;
+    font-weight: 600;
+    color: var(--secondary-dark-color);
+    margin-bottom: 20px;
+}
+
 .heatmap-component {
     display: flex;
     flex-direction: column;
@@ -136,4 +152,20 @@ tbody td:hover {
 .color-scale div:nth-child(3n+2) {
     width: 60%;
     border-bottom: 0px;
+}
+
+.key-data {
+    width: 90px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-right: 5px;
+}
+
+.key-header {
+    width: 90px;
+    writing-mode: horizontal-tb;
+    transform: rotate(0deg);
+    padding-right: 5px;
+    vertical-align: bottom;
 }

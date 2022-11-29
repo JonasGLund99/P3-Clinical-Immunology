@@ -2,115 +2,68 @@
 @using src.Shared
 
 <tr>
-    @if (loadingResultTable)
+    <td class="line-number">Slide</td>
+    @{int j = 1;}
+    @foreach (string chosenTableTitle in ClinicalTest.ChosenTableTitles)
     {
-        <td class="line-number"></td>
-        int j = 1;
-        for (int i = 0; i < 9; i++)
-        {
-            <td id="key-number-@j"></td>
+        if (chosenTableTitle != "") {
+            <td id="key-number-@j">@chosenTableTitle</td>
             j++;
-        }
-        for (int i = 0; i < 9; i++)
-        {
-            <td contenteditable="false"></td>
-        }
-
+        }       
     }
-    else
+    <td>Quality control</td>
+    @foreach (string analyteName in ClinicalTest.AnalyteNames) 
     {
-        <td class="line-number">Slide</td>
-        int j = 1;
-        foreach (string chosenTableTitle in ClinicalTest.ChosenTableTitles)
+        <td contenteditable="false">@analyteName</td>
+    }
+</tr>
+@foreach(Block block in blocks)
+{
+    <tr>
+        <td class="line-number">@((block.SlideIndex + 1))</td>
+        @{int k = 1;}
+        @foreach (string chosenTableTitle in ClinicalTest.ChosenTableTitles)
         {
             if (chosenTableTitle != "")
             {
-                <td id="key-number-@j">@chosenTableTitle</td>
-                j++;
+                <td class="key-number-@k">@block.PatientData[ClinicalTest.TableTitles.IndexOf(chosenTableTitle)]</td>
+                k++;
             }
         }
-        <td>Quality control</td>
-        foreach (string analyteName in ClinicalTest.AnalyteNames)
+        @if (block.QC == double.NaN)
         {
-            <td contenteditable="false">@analyteName</td>
+            <td class="invalid-block">-</td>
         }
-
-    }
-</tr>
-@if (loadingResultTable)
-{
-    @for (int l = 0; l < 35; l++)
-    {
-        <tr>
-                @{
-                    int k = 1;
-                }
-                @for (int i = 0; i < 3; i++)
-                {
-                    <td class="data"></td>
-                    k++;
-                }
-
-                @for (int i = 0; i < 16 ; i++)
-                {
-                <td class="data" contenteditable="false"></td>
-                }
-
-        </tr>
-    }
-}
-else
-{
-    foreach (Block block in blocks)
-    {
-        <tr>
-            <td class="line-number">@((block.SlideIndex + 1))</td>
-            @{
-                int k = 1;
-            }
-            @foreach (string chosenTableTitle in ClinicalTest.ChosenTableTitles)
+        else if (block.QC < 0.97)
+        {
+            <td class="invalid-block">@Math.Round(block.QC, 9).ToString("0.000000000")</td>
+        }
+        else
+        {
+            <td class="qc">@Math.Round(block.QC, 9).ToString("0.000000000")</td>
+        }
+        @foreach (Nplicate nplicate in block.Nplicates)
+        {
+            if ((nplicate.RI == 0 || nplicate.RI == double.NaN) && nplicate.IsFlagged)
             {
-                if (chosenTableTitle != "")
-                {
-                    <td class="key-number-@k">@block.PatientData[ClinicalTest.TableTitles.IndexOf(chosenTableTitle)]</td>
-                    k++;
-                }
+                <td @onclick="@((e) => OpenSpots(e, nplicate, block))" contenteditable="false" class="data @(nplicate==SelectedNplicate ? "selected-td" : "") flagged-nplicate">-</td>
             }
-            @if (block.QC == double.NaN)
+            else if (nplicate.RI == 0 || nplicate.RI == double.NaN)
             {
-                <td class="invalid-block">-</td>
+                <td class="data @(nplicate==SelectedNplicate ? "selected-td" : "")" @onclick="@((e) => OpenSpots(e, nplicate, block))" contenteditable="false">-</td>
+
             }
-            else if (block.QC < 0.97)
+            else if (nplicate.IsFlagged)
             {
-                <td class="invalid-block">@Math.Round(block.QC, 9)</td>
+                <td @onclick="@((e) => OpenSpots(e, nplicate, block))" contenteditable="false" class="data @(nplicate==SelectedNplicate ? "selected-td" : "") flagged-nplicate">@Math.Round(nplicate.RI, 2).ToString("0.00")</td>
+
             }
             else
             {
-                <td>@Math.Round(block.QC, 9)</td>
+                <td class="data @(nplicate==SelectedNplicate ? "selected-td" : "")" @onclick="@((e) => OpenSpots(e, nplicate, block))" contenteditable="false">@Math.Round(nplicate.RI, 2).ToString("0.00")</td>
             }
-            @foreach (Nplicate nplicate in block.Nplicates)
-            {
-                if ((nplicate.RI == 0 || nplicate.RI == double.NaN) && nplicate.IsFlagged)
-                {
-                    <td @onclick="@((e) => OpenSpots(e, nplicate))" contenteditable="false" class="data @(nplicate==SelectedNplicate ? "selected-td" : "") flagged-nplicate">-</td>
-                }
-                else if (nplicate.RI == 0 || nplicate.RI == double.NaN)
-                {
-                    <td class="data @(nplicate==SelectedNplicate ? "selected-td" : "")" @onclick="@((e) => OpenSpots(e, nplicate))" contenteditable="false">-</td>
-
-                }
-                else if (nplicate.IsFlagged)
-                {
-                    <td @onclick="@((e) => OpenSpots(e, nplicate))" contenteditable="false" class="data @(nplicate==SelectedNplicate ? "selected-td" : "") flagged-nplicate">@Math.Round(nplicate.RI, 2)</td>
-
-                }
-                else
-                {
-                    <td class="data @(nplicate==SelectedNplicate ? "selected-td" : "")" @onclick="@((e) => OpenSpots(e, nplicate))" contenteditable="false">@Math.Round(nplicate.RI, 2)</td>
-                }
-            }
-        </tr>
-    }
+        }
+    </tr>
 }
 
 
@@ -128,11 +81,11 @@ else
     public ClinicalTest ClinicalTest { get; set; }
 
     [Parameter, EditorRequired]
-    public EventCallback<Tuple<MouseEventArgs, Nplicate>> ShowSpots { get; set; }
+    public EventCallback<Tuple<MouseEventArgs, Nplicate, Block>> ShowSpots { get; set; }
 
-    public async void OpenSpots(MouseEventArgs e, Nplicate selectedTd)
+    public async void OpenSpots(MouseEventArgs e, Nplicate selectedTd, Block selectedBlock)
     {
-        await ShowSpots.InvokeAsync(new Tuple<MouseEventArgs, Nplicate>(e, selectedTd));
+        await ShowSpots.InvokeAsync(new Tuple<MouseEventArgs, Nplicate, Block>(e, selectedTd, selectedBlock));
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

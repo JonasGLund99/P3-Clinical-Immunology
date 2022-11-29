@@ -124,7 +124,7 @@
                             }
                         </div>
                     }
-                    else if (currentClinicalTests != null)
+                    else if (currentClinicalTests != null && currentClinicalTests.Count() != 0)
                     {
                         <div class="all-clinicaltest-cards">
                             @foreach (ClinicalTest ct in currentClinicalTests)
@@ -180,21 +180,21 @@
 @if (showExperimentModal)
 {
     <EditorModal 
-             CallbackClose="closeEditorModal"
-             CallbackSave="SaveExperimentCallback"
-             ModalObject="@selectedExp"
-             ModalType="@Experiment"
-             ModalTitle="@EditorModalTitle" />
+        CallbackClose="closeEditorModal"
+        CallbackSave="SaveExperimentCallback"
+        ModalObject="@selectedExp"
+        ModalType="@Experiment"
+        ModalTitle="@EditorModalTitle" />
 }
 
 @if (showClinicalTestModal)
 {
     <EditorModal 
-             CallbackClose="closeEditorModal"
-             CallbackSave="SaveClinicalTestCallback"
-             ModalObject="@selectedCT"
-             ModalType="@ClinicalTest"
-             ModalTitle="@EditorModalTitle" />
+        CallbackClose="closeEditorModal"
+        CallbackSave="SaveClinicalTestCallback"
+        ModalObject="@selectedCT"
+        ModalType="@ClinicalTest"
+        ModalTitle="@EditorModalTitle" />
 }
 
 @if (showCancelConfirmModalDeleteExperiment)
@@ -321,9 +321,8 @@
     public async void SaveExperimentCallback(Experiment e)
     {
         showExperimentModal = false;
-        e.EditedAt = DateTime.Now;
         loader = true;
-        await e.SaveToDatabase();
+        await e.SaveToDatabaseAsync();
         loader = false;
         experiments = await ExperimentManager.QueryExperiments("");
         StateHasChanged();

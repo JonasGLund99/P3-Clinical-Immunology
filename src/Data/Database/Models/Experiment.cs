@@ -29,18 +29,32 @@ public class Experiment : BaseModel<Experiment>
     public DateTime? CreatedAt { get; set; } = DateTime.Now;
     public DateTime EditedAt { get; set; } = DateTime.Now;
 
+    public override async Task SaveToDatabaseAsync()
+    {
+        EditedAt = DateTime.Now;
+        await base.SaveToDatabaseAsync();
+    }
+
     public async Task<List<ClinicalTest>> QueryClinicalTests(string searchParameter) {
         List<ClinicalTest> clinicalTests = new List<ClinicalTest>();
         if(DatabaseService.Instance.Database == null)
         {
             throw new NullReferenceException("No database");
         }
-        string queryString = @"SELECT DISTINCT VALUE CT FROM ClinicalTest CT
-                            JOIN s IN CT.Slides
-                            WHERE (CONTAINS(CT.Title, @searchParameter, true)
-                            OR CONTAINS(s.Barcode, @searchParameter, true))
-                            AND ARRAY_CONTAINS(CT.ExperimentIds, @expId)
-                            ORDER BY CT.EditedAt DESC";
+
+        string queryString = @"SELECT VALUE CT
+                                FROM ClinicalTest CT
+                                WHERE 
+                                (
+                                    EXISTS (
+                                        SELECT VALUE s
+                                        FROM s IN CT.Slides
+                                        WHERE CONTAINS(s.Barcode, @searchParameter, true)
+                                        )
+                                    OR CONTAINS(CT.Title, @searchParameter, true)
+                                )
+                                AND ARRAY_CONTAINS(CT.ExperimentIds, @expId)
+                                ORDER BY CT.EditedAt DESC ";
 
         FeedIterator<ClinicalTest> feed = DatabaseService.Instance.Database.GetContainer("ClinicalTest")
                                         .GetItemQueryIterator<ClinicalTest>(

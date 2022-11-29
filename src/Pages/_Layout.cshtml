@@ -14,6 +14,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap" rel="stylesheet">
     <component type="typeof(HeadOutlet)" render-mode="ServerPrerendered" />
     <link href="~/lib/font-awesome/css/all.css" rel="stylesheet" />
     <link href="~/lib/font-awesome/css/all.min.css" rel="stylesheet" />
@@ -39,11 +40,9 @@
         function listenForPaste() {
             const overviewTable = document.querySelector('#overview-table');
             if (!overviewTable) return;
-            const cells = overviewTable.querySelectorAll('td');
-
+            const cells = overviewTable.querySelectorAll('tr td');
             cells.forEach(c => {
-                c.addEventListener('paste', event => {
-
+                c.onpaste = event => {
                     event.preventDefault();
 
                     const clipboard = event.clipboardData.getData('text');
@@ -62,7 +61,7 @@
                             }
                         }
                     }
-                })
+                }
             })
         }
 

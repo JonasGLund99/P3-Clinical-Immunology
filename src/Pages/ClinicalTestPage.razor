@@ -9,6 +9,7 @@
     <PageTitle>@clinicalTest.Title | Clinical Immunology</PageTitle>
 
     <Navbar ClinicalTestTitle="@clinicalTest.Title"
+        ClinicalTestId="@clinicalTest.id"
         ExperimentNumber="@experiment.ExperimentNumber"
         setActiveButtonCallback="@SetActiveButton"
         ActiveButton="@activeButton">
@@ -20,14 +21,15 @@
 			case 0: <Details Experiment="@experiment" ClinicalTest="@clinicalTest" editCTCallback="editCT" editExpCallback="editExp"></Details> break;
 			case 1: <Overview Experiment="@experiment" ClinicalTest="@clinicalTest"></Overview> break;
 			case 2: <FileUpload Experiment="@experiment" ClinicalTest="@clinicalTest" ActiveButton="@activeButton" setActiveButtonCallback="@SetActiveButton" StopReloadCallback="@stopReload"></FileUpload> break;
-		    case 3: <ResultTable ClinicalTest="@clinicalTest"></ResultTable> break;
-			case 4: <Heatmap ClinicalTest="@clinicalTest"></Heatmap> break;
+		    case 3: <ResultTable ClinicalTest="@clinicalTest" setActiveButtonCallback="@SetActiveButton"></ResultTable> break;
+			case 4: <Heatmap ClinicalTest="@clinicalTest" setActiveButtonCallback="@SetActiveButton"></Heatmap> break;
 		}
 	</div>
 } 
 else 
 {
 	<Navbar ClinicalTestTitle="@placeholderCt.Title"
+        ClinicalTestId="@placeholderCt.id"
 		ExperimentNumber="@placeholderExp.ExperimentNumber"
 		setActiveButtonCallback="@SetActiveButton"
 		ActiveButton="@activeButton">
@@ -160,8 +162,7 @@ else
     private async void saveExperimentCallback(Experiment savedExperiment)
     {
         showExperimentModal = false;
-        savedExperiment.EditedAt = DateTime.Now;
-        await savedExperiment.SaveToDatabase();
+        await savedExperiment.SaveToDatabaseAsync();
         experiment = savedExperiment;
         StateHasChanged();
     }
@@ -188,7 +189,7 @@ else
     }
     private async void stopReload() 
     {
-        await JS.InvokeVoidAsync("addBeforeUnload");
+        @* await JS.InvokeVoidAsync("addBeforeUnload");
 
         clinicalTest.SaveToDatabase().ContinueWith((task) =>
         {
@@ -196,7 +197,6 @@ else
             {
                 await JS.InvokeVoidAsync("removeBeforeUnload");
             });
-        });
-
+        }); *@
     }
 }

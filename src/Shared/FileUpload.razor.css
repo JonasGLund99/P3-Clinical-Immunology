@@ -122,7 +122,3 @@ i {
 .red-button:hover {
     background-color: var(--red-btn-color);
 }
-
-button {
-    box-shadow: 0px 2px 10px 2px var(--grey);
-}

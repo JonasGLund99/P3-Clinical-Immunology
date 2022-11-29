@@ -34,6 +34,10 @@
     --block-border-color: grey;
     --heading-background-color: var(--secondary-dark-color);
     --plate-background-color: white;
+
+    /*OverviewTable*/
+    --overviewtable-head-background-color: var(--experiment-hover-color);
+    --overviewtable-head-border-color: var(--experiment-color);
 }
 
 * {
@@ -187,6 +191,7 @@ a,
     border-radius: 15px;
     justify-content: center;
     align-items: center;
+    white-space: nowrap;
 }
 .add-element-button:hover {
     color: white;
