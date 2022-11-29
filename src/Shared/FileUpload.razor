@@ -204,13 +204,7 @@
         return true;
     }
 
-    @* protected override void OnAfterRender(bool firstRender) {
-        ClinicalTest.Matches.Clear();
-        foreach (SlideDataFile f in ClinicalTest.SlideDataFiles) 
-        {
-            MatchBarcodes(f.Filename);
-        }
-    } *@
+
 
     protected override void OnInitialized()
     {
@@ -221,13 +215,13 @@
         }
         StateHasChanged();
     }
+
     public async void StartCalculation() 
     {
         loading = true;
         bool calculationIsValid = await checkCalculationValidity();
         if (ClinicalTest == null) return;
 
-<<<<<<< HEAD
         if (calculationIsValid == false)
         {
             loading = false;
@@ -238,16 +232,12 @@
         }
         else
         {
-        ClinicalTest.CalculateClinicalTestResult();
-=======
-        await ClinicalTest.CalculateClinicalTestResult();
->>>>>>> origin/main
-        ClinicalTest.SaveToDatabase(true);
-        ClinicalTest.CalculationNecessary = false;
-        await StopReloadCallback.InvokeAsync();
-        loading = false;
-        await setActiveButtonCallback.InvokeAsync(4);
-
+            await ClinicalTest.CalculateClinicalTestResult();
+            ClinicalTest.SaveToDatabase(true);
+            ClinicalTest.CalculationNecessary = false;
+            await StopReloadCallback.InvokeAsync();
+            loading = false;
+            await setActiveButtonCallback.InvokeAsync(4);
         }
     }
     
