@@ -200,7 +200,6 @@ public class ClinicalTest : BaseModel<ClinicalTest>
         ExcelWorkbook workBook = package.Workbook;
         ExcelWorksheet overview = workBook.Worksheets.Add("Prøve opsætning");
 
-        overview.Columns.AutoFit();
         char[] headings = "ABCDEFGH".ToCharArray();
         int row = 5;
         int col;
@@ -317,8 +316,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
             }
             plateNum++;
             row = 5 + (plateNum * 30);
-        } 
-
+        }
 
         package.Save();
         return fileInfo;
