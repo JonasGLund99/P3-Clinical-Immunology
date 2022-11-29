@@ -6,4 +6,3 @@ public class Slide
 
     public string Barcode { get; set; } = "";    
 }
-

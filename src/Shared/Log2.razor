@@ -56,7 +56,6 @@
             else if (nplicate.IsFlagged)
             {
                 <td @onclick="@((e) => OpenSpots(e, nplicate, block))" contenteditable="false" class="data @(nplicate==SelectedNplicate ? "selected-td" : "") flagged-nplicate">@Math.Round(nplicate.RI, 2).ToString("0.00")</td>
-
             }
             else
             {
@@ -75,10 +74,10 @@
     public EventCallback<bool> UpdateLoadingStatus { get; set; }
 
     [Parameter]
-    public Nplicate SelectedNplicate { get; set; }
+    public Nplicate? SelectedNplicate { get; set; } = null;
 
     [Parameter, EditorRequired]
-    public ClinicalTest ClinicalTest { get; set; }
+    public ClinicalTest ClinicalTest { get; set; } = new();
 
     [Parameter, EditorRequired]
     public EventCallback<Tuple<MouseEventArgs, Nplicate, Block>> ShowSpots { get; set; }
@@ -99,4 +98,3 @@
         }
     }
 }
-

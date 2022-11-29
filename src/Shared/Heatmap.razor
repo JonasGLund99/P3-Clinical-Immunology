@@ -114,17 +114,15 @@ else
 }
 
 @code {
-
     private bool showSpotModal = false;
     private bool showExportModal = false;
     private List<Block> allBlocks = new();
-    private Nplicate clickedNplicate = new();
+    private Nplicate? clickedNplicate = null;
     private Block clickedBlock = new();
     [Parameter]
     public ClinicalTest ClinicalTest { get; set; } = new();
     [Parameter, EditorRequired]
     public EventCallback<int> setActiveButtonCallback { get; set; }
-
 
     protected override async Task OnAfterRenderAsync(bool firstRender)  
     {

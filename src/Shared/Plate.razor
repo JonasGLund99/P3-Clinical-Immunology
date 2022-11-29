@@ -108,13 +108,10 @@
 {
     [Parameter, EditorRequired]
     public ClinicalTest ClinicalTest { get; set; } = new();
-
     [Parameter, EditorRequired]
     public int PlateIndex { get; set; }
-
     [Parameter, EditorRequired]
     public List<Block[]> Slides { get; set; } = new();
-
     [Parameter, EditorRequired]
     public EventCallback updateOverviewState { get; set; }
 
@@ -144,14 +141,15 @@
         List<Block> blankBlocks = await ClinicalTest.GetBlankBlocks();
         bool blankBlockExists = blankBlocks.Exists(b => b.SlideIndex == slideIndex && b.BlockIndex == blockIndex);
 
-        if (!blankBlockExists)
+        Block? blankBlock = blankBlocks.Find(b => b.SlideIndex == slideIndex && b.BlockIndex == blockIndex);
+
+        if (blankBlock == null)
         {
-            Block blankBlock = new Block(Guid.NewGuid().ToString(), new List<string>(), Block.BlockType.Blank, slideIndex, blockIndex, ClinicalTest.id);
-            await ClinicalTest.AddBlankBlock(blankBlock);
+            Block newBlankBlock = new Block(Guid.NewGuid().ToString(), new List<string>(), Block.BlockType.Blank, slideIndex, blockIndex, ClinicalTest.id);
+            await ClinicalTest.AddBlankBlock(newBlankBlock);
         }
         else
         {
-            Block blankBlock = blankBlocks.Find(b => b.SlideIndex == slideIndex && b.BlockIndex == blockIndex);
             await ClinicalTest.RemoveBlankBlock(blankBlock);
         }
         ClinicalTest.CalculationNecessary = true;
@@ -169,7 +167,7 @@
         textColourMenuVisible = false;
     }
 
-    private async void saveBarcode() {
+    private void saveBarcode() {
         ClinicalTest.CalculationNecessary = true;
         ClinicalTest.SaveToDatabase();
     }
