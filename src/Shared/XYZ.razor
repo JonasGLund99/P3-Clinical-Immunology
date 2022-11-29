@@ -3,43 +3,87 @@
 
 
 <tr>
-    <td class="line-number">Slide</td>
-    @{int j = 1;}
-    @foreach (string chosenTableTitle in ClinicalTest.ChosenTableTitles)
+    @if (loadingResultTable)
     {
-        if (chosenTableTitle != "")
+        <td class="line-number"></td>
+
+        int j = 1;
+        for (int i = 0; i < 9; i++)
         {
-            <td id="key-number-@j">@chosenTableTitle</td>
+            <td id="key-number-@j"></td>
             j++;
         }
-    }
-
-    <td>Pos raw</td>
-    <td>Neg raw</td>
-
-    @foreach (string analyteName in ClinicalTest.AnalyteNames)
-    {
-        <td>@analyteName</td>
-    }
-</tr>
-
-@foreach (Block block in blocks)
-{
-    <tr>
-        <td class="line-number">@((block.SlideIndex + 1))</td>
-        @{
-            int k = 1;
+        for (int i = 0; i < 9; i++)
+        {
+            <td contenteditable="false"></td>
         }
+    }
+    else
+    {
+        <td class="line-number">Slide</td>
+        int j = 1;
         @foreach (string chosenTableTitle in ClinicalTest.ChosenTableTitles)
         {
             if (chosenTableTitle != "")
             {
-                <td class="key-number-@k">@block.PatientData[ClinicalTest.TableTitles.IndexOf(chosenTableTitle)]</td>
-                k++;
+                <td id="key-number-@j">@chosenTableTitle</td>
+                j++;
             }
         }
-        @{
-            Nplicate? pos = block.Nplicates.Find(nplicate => nplicate.AnalyteType == "pos");
+
+        <td>Pos raw</td>
+        <td>Neg raw</td>
+
+        @foreach (string analyteName in ClinicalTest.AnalyteNames)
+        {
+            <td>@analyteName</td>
+        }
+    }
+</tr>
+
+@if (loadingResultTable)
+{
+    @for (int l = 0; l < 35; l++)
+    {
+        <tr>
+            @{
+                int k = 1;
+            }
+            @for (int i = 0; i < 3; i++)
+            {
+                <td class="data"></td>
+                k++;
+            }
+
+            @for (int i = 0; i < 16; i++)
+            {
+                <td class="data" contenteditable="false"></td>
+            }
+
+        </tr>
+    }
+}
+else
+{
+    @foreach (Block block in blocks)
+    {
+
+
+        <tr>
+            <td class="line-number">@((block.SlideIndex + 1))</td>
+            @{
+                int k = 1;
+            }
+            @foreach (string chosenTableTitle in ClinicalTest.ChosenTableTitles)
+            {
+                if (chosenTableTitle != "")
+                {
+                    <td class="key-number-@k">@block.PatientData[ClinicalTest.TableTitles.IndexOf(chosenTableTitle)]</td>
+                    k++;
+                }
+            }
+            @{
+                Nplicate? pos = block.Nplicates.Find(nplicate => nplicate.AnalyteType == "pos");
             }
 
         @if (pos != null)
@@ -83,18 +127,24 @@
     </tr>
 }
 
+}
+
 
 @code {
+    private List<Block> blocks { get; set; } = new List<Block>();
+    private bool loadingResultTable = true;
 
 
     [Parameter]
     public Nplicate? SelectedNplicate { get; set; } = null;
     [Parameter, EditorRequired]
+    public EventCallback<bool> UpdateLoadingStatus { get; set; }
+
+    [Parameter, EditorRequired]
     public ClinicalTest ClinicalTest { get; set; } = new();
+
     [Parameter, EditorRequired]
     public EventCallback<Tuple<MouseEventArgs, Nplicate, Block>> ShowSpots { get; set; }
-
-    private List<Block> blocks { get; set; } = new List<Block>();
 
     public async void OpenSpots(MouseEventArgs e, Nplicate selectedTd, Block selectedBlock)
     {
@@ -106,6 +156,8 @@
         if (firstRender)
         {
             blocks = await ClinicalTest.GetSortedBlocks();
+            loadingResultTable = false;
+            await UpdateLoadingStatus.InvokeAsync(loadingResultTable);
             StateHasChanged();
         }
     }

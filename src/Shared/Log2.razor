@@ -65,8 +65,13 @@
     </tr>
 }
 
+
 @code {
     private List<Block> blocks { get; set; } = new List<Block>();
+    private bool loadingResultTable = true;
+
+    [Parameter, EditorRequired]
+    public EventCallback<bool> UpdateLoadingStatus { get; set; }
 
     [Parameter]
     public Nplicate? SelectedNplicate { get; set; } = null;
@@ -87,6 +92,8 @@
         if (firstRender)
         {
             blocks = await ClinicalTest.GetSortedBlocks();
+            loadingResultTable = false;
+            await UpdateLoadingStatus.InvokeAsync(loadingResultTable);
             StateHasChanged();
         }
     }
