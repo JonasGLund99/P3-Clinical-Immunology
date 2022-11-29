@@ -35,7 +35,7 @@
                     }
                 </div>
                 <div id="export-icon" data-title="Export overview">
-                    <i class="fa-solid fa-file-export"></i>
+                    <i class="fa-solid fa-file-export" @onclick="Export"></i>
                 </div>
             </div>
             <div id="save-blocks-animation" class='@(isSavingOverview ? "saving" : "")'>
@@ -220,4 +220,12 @@
         ClinicalTest.SaveToDatabase();
         StateHasChanged();
     } 
+
+    public async void Export()
+    {
+        if (ClinicalTest == null) return;
+        FileInfo file = await ClinicalTest.ExportOverview();
+        await JS.InvokeVoidAsync("triggerFileDownload", $"{ClinicalTest.Title}-prøve-opsætning.xlsx", $"http://localhost:5110/exports/{ClinicalTest.id}-prøve-opsætning.xlsx");
+        await Task.Delay(1000).ContinueWith(t => file.Delete());
+    }
 }

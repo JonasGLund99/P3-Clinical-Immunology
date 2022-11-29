@@ -14,7 +14,6 @@ namespace src.Data;
 
 public class ClinicalTest : BaseModel<ClinicalTest>
 {
-    private List<Slide> slides { get; set; } = new List<Slide>();
     private int nplicatesInBlock { get; set; }
     private int numOfBlocks { get; } = 21;
     private List<Block>? normalBlocks { get; set; } = null;
@@ -243,6 +242,148 @@ public class ClinicalTest : BaseModel<ClinicalTest>
         return overview;
     }
 
+    public async Task<FileInfo> ExportOverview()
+    {
+        FileInfo fileInfo = new FileInfo(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "exports", $"{id}-prøve-opsætning.xlsx"));
+        if (fileInfo.Exists)
+        {
+            fileInfo.Delete();  // ensures we create a new workbook
+            fileInfo = new FileInfo(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "exports", $"{id}-prøve-opsætning.xlsx"));
+        }
+        ExcelPackage package = new ExcelPackage(fileInfo);
+        ExcelWorkbook workBook = package.Workbook;
+        ExcelWorksheet overview = workBook.Worksheets.Add("Prøve opsætning");
+
+        char[] headings = "ABCDEFGH".ToCharArray();
+        int row = 5;
+        int col;
+        int blockNum;
+        int slideNum;
+        int plateNum = 0;
+
+
+
+        foreach (List<Block[]> plate in await GenerateOverview())
+        {
+            col = 2;
+            overview.Cells[row, col].Style.Border.Top.Style = ExcelBorderStyle.Thick;
+            overview.Cells[row, col].Style.Border.Left.Style = ExcelBorderStyle.Thick;
+            overview.Cells[row, col].Style.Border.Top.Color.SetColor(Color.Gray);
+            overview.Cells[row, col].Style.Border.Left.Color.SetColor(Color.Gray);
+            overview.Cells[row, col++].Style.Fill.SetBackground(ColorTranslator.FromHtml("#474747"), ExcelFillStyle.Solid);
+
+            for (int i = 1; i <= 12; i++)
+            {
+                overview.Cells[row, col].Style.Border.Top.Style = ExcelBorderStyle.Thick;
+                overview.Cells[row, col].Style.Border.Top.Color.SetColor(Color.Gray);
+                overview.Cells[row, col].Value = i;
+                overview.Cells[row, col].Style.Font.Color.SetColor(Color.White);
+                overview.Cells[row, col].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                overview.Cells[row, col++].Style.Fill.SetBackground(ColorTranslator.FromHtml("#474747"), ExcelFillStyle.Solid);
+            }
+
+            overview.Cells[row, col - 1].Style.Border.Right.Style = ExcelBorderStyle.Thick;
+            overview.Cells[row, col - 1].Style.Border.Right.Color.SetColor(Color.Gray);
+
+            col = 2;
+
+            for (int i = 0; i < 8; i++)
+            {
+                row++;
+                overview.Cells[row, col, row + 2, col].Style.Border.Left.Style = ExcelBorderStyle.Thick;
+                overview.Cells[row, col, row + 2, col].Style.Border.Left.Color.SetColor(Color.Gray);
+                overview.Cells[row , col].Value = headings[i];
+                overview.Cells[row, col].Style.Font.Color.SetColor(Color.White);
+                overview.Cells[row, col, row + 2, col].Style.Fill.SetBackground(ColorTranslator.FromHtml("#474747"), ExcelFillStyle.Solid);
+                overview.Cells[row, col].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                overview.Cells[row, col].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+                overview.Cells[row, col, row += 2 , col].Merge = true;
+            }
+
+            overview.Cells[row, col].Style.Border.Bottom.Style = ExcelBorderStyle.Thick;
+            overview.Cells[row, col].Style.Border.Bottom.Color.SetColor(Color.Gray);
+
+            slideNum = 0;
+
+            foreach (Block[] slide in plate)
+            {
+                blockNum = 1;
+                row = 6 + (plateNum * 30);
+                col = 3 + (slideNum * 3);
+                foreach (Block block in slide)
+                {
+                    overview.Cells[row, col, row + 2, col].Style.Border.BorderAround(ExcelBorderStyle.Thin, Color.Gray);
+
+                    if (block.Type == Block.BlockType.Blank)
+                    {
+                        overview.Cells[row + 1, col].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                        overview.Cells[row + 1, col].Style.Font.Color.SetColor(ColorTranslator.FromHtml(block.TextColour));
+                        overview.Cells[row + 1, col].Value = "Blank";
+                        row += blockNum % 3 == 0 ? 3 : 0;
+                        col = blockNum % 3 == 0 ? col - 2 : col + 1;
+                        blockNum++;
+                        continue;
+                    }
+                    else if (block.Type == Block.BlockType.Empty)
+                    {
+                        row += blockNum % 3 == 0 ? 3 : 0;
+                        col = blockNum % 3 == 0 ? col - 2 : col + 1;
+                        blockNum++;
+                        continue;
+                    }
+                    for (int i = 0; i < 3; i++)
+                    {
+                        overview.Cells[row + i, col].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                        overview.Cells[row + i, col].Style.Font.Color.SetColor(ColorTranslator.FromHtml(block.TextColour));
+                        int titleIndex = findTitleIndex(i);
+                        overview.Cells[row + i, col].Value = titleIndex == -1 || titleIndex >= block.PatientData.Count ? "" : block.PatientData[titleIndex];
+                    }
+                    overview.Cells[row, col, row + 2, col].Style.Border.BorderAround(ExcelBorderStyle.Thin, Color.Gray);
+                    row += blockNum % 3 == 0 ? 3 : 0;
+                    col = blockNum % 3 == 0 ? col - 2 : col + 1;
+                    blockNum++;
+                }
+
+                overview.Cells[row, col].Value = Slides[slideNum + (plateNum * 4)].Barcode;
+                overview.Cells[row, col].Style.Font.Color.SetColor(Color.White);
+                overview.Cells[6 + (plateNum * 30), col, 26 + (plateNum * 30), col + 2].Style.Border.BorderAround(ExcelBorderStyle.Thick, Color.Gray);
+                overview.Cells[row, col, row + 2, col + 2].Style.Border.BorderAround(ExcelBorderStyle.Thick, Color.Gray);
+                overview.Cells[row, col, row + 2, col + 2].Style.Fill.SetBackground(ColorTranslator.FromHtml("#474747"), ExcelFillStyle.Solid);
+                overview.Cells[row, col].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                overview.Cells[row, col].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+                overview.Cells[row, col, row + 2, col + 2].Merge = true;
+                slideNum++;
+            }
+            for (int i = slideNum; i < 4; i++)
+            {
+                for (int j = 0; j < 7; j++)
+                {
+                    for (int k = 0; k < 3; k++)
+                    {
+                        overview.Cells[6 + (plateNum * 30) + (j * 3), col + k + 3, 8 + (plateNum * 30) + (j * 3), col + k + 3].Style.Border.BorderAround(ExcelBorderStyle.Thin, Color.Gray);
+                    }
+                }
+                overview.Cells[6 + (plateNum * 30), col + 3, 26 + (plateNum * 30), col + 5].Style.Border.BorderAround(ExcelBorderStyle.Thick, Color.Gray);
+                overview.Cells[row, col + 3, row + 2, col + 5].Style.Fill.SetBackground(ColorTranslator.FromHtml("#474747"), ExcelFillStyle.Solid);
+                overview.Cells[row, col + 3, row + 2, col + 5].Style.Border.BorderAround(ExcelBorderStyle.Thick, Color.Gray);
+                overview.Cells[row, col += 3, row + 2, col + 2].Merge = true;
+            }
+            plateNum++;
+            row = 5 + (plateNum * 30);
+        }
+
+        package.Save();
+        return fileInfo;
+    }
+
+    private int findTitleIndex(int i)
+    {
+        string? title = TableTitles.Find((title) => title == ChosenTableTitles[i]);
+        if (title == null)
+            return -1;
+
+        return TableTitles.IndexOf(title);
+    }
 
     public async Task ExportHeatmap(ExcelWorkbook workBook, string withFlags)
     {
@@ -250,7 +391,6 @@ public class ClinicalTest : BaseModel<ClinicalTest>
         int row = 2;
         int col = 1;
 
-        heatmap.Columns.AutoFit(3);
         heatmap.View.FreezePanes(4, 4);
         heatmap.Cells[row, col].Style.Font.Size = 18;
         heatmap.Cells[row, col].Style.Font.Bold = true;
@@ -285,15 +425,15 @@ public class ClinicalTest : BaseModel<ClinicalTest>
                 {
                     if (nplicate.IsFlagged)
                     {
-                        setFlagsBorder(heatmap, row, col);
+                        heatmap.Cells[row, col].Style.Border.BorderAround(ExcelBorderStyle.Thick, Color.Red);
                     }
                 }
                 heatmap.Cells[row, col].Style.Fill.PatternType = ExcelFillStyle.Solid;
                 heatmap.Cells[row, col++].Style.Fill.BackgroundColor.SetColor(nplicate.HeatmapColour);
             }
         }
-        makeColourScale(heatmap, 5, col += 2);
-        
+        heatmap.Columns.AutoFit(3);
+        makeColourScale(heatmap, 5, col += 2);   
     }
 
     private void makeColourScale(ExcelWorksheet worksheet, int row, int col)
@@ -411,8 +551,10 @@ public class ClinicalTest : BaseModel<ClinicalTest>
                 {
                     if (nplicate.IsFlagged)
                     {
-                        setFlagsBorder(XYZ, XYZRow, XYZCol);
-                        setFlagsBorder(Log2, Log2Row, Log2Col);
+                        XYZ.Cells[XYZRow, XYZCol].Style.Border.BorderAround(ExcelBorderStyle.Thick, Color.Red);
+                        Log2.Cells[Log2Row, Log2Col].Style.Border.BorderAround(ExcelBorderStyle.Thick, Color.Red);
+
+
                     }
                 }
                 XYZ.Cells[XYZRow, XYZCol++].Value = nplicate.XYZ;
@@ -478,18 +620,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
         return fileInfo;
     }
 
-    private void setFlagsBorder(ExcelWorksheet worksheet, int row, int col)
-    {
-        worksheet.Cells[row, col].Style.Border.Top.Style = ExcelBorderStyle.Thick;
-        worksheet.Cells[row, col].Style.Border.Left.Style = ExcelBorderStyle.Thick;
-        worksheet.Cells[row, col].Style.Border.Right.Style = ExcelBorderStyle.Thick;
-        worksheet.Cells[row, col].Style.Border.Bottom.Style = ExcelBorderStyle.Thick;
-
-        worksheet.Cells[row, col].Style.Border.Top.Color.SetColor(Color.Red);
-        worksheet.Cells[row, col].Style.Border.Left.Color.SetColor(Color.Red);
-        worksheet.Cells[row, col].Style.Border.Right.Color.SetColor(Color.Red);
-        worksheet.Cells[row, col].Style.Border.Bottom.Color.SetColor(Color.Red);
-    }
+ 
    
 
 
