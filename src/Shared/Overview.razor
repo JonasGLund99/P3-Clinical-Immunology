@@ -106,23 +106,21 @@
 
 @code {
     [Parameter, EditorRequired]
+    public Experiment Experiment { get; set; } = new();
+    [Parameter, EditorRequired]
     public ClinicalTest ClinicalTest { get; set; } = new();
 
     private string tableViewIcon { get; set; } = "icons/TableView_icon.svg";
     private string tableViewIconWhite { get; set; } = "icons/TableView_icon_white.svg";
     private string clearTableIcon{ get; set; } = "icons/ClearTable_icon.svg";
-
     private const int SlideWidth = 3;
     private const int SlidesInPlate = 21;
     private const int BlocksInSlide = 21;
     private const int BlocksInPlate = 84;
-
     private List<List<Block[]>> overview = new List<List<Block[]>>();
     private bool overviewLoaded = false;
     private bool isSavingOverview = false;
 
-    [Parameter, EditorRequired]
-    public Experiment Experiment { get; set; }
     //Switch viewmode (Overview or Table-view)
     public string mode { get; set; } = "Overview";
 
@@ -139,7 +137,6 @@
         mode = newMode;
     }
     private async void updateOverviewState() {
-        @* ClinicalTest.SaveToDatabase(); *@
         overview = await ClinicalTest.GenerateOverview();
         overviewLoaded = true;
         StateHasChanged();

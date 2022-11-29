@@ -110,7 +110,6 @@ public class ClinicalTest : BaseModel<ClinicalTest>
     {
         (await GetBlankBlocks()).Remove(block);
     }
-
     public async void SaveToDatabase(bool saveBlocks)
     {
         if (saveBlocks)
@@ -210,9 +209,9 @@ public class ClinicalTest : BaseModel<ClinicalTest>
                         int totalSlideIndex = plateIndex * 4 + slideIndex;
                         int blockIndex = j * 3 + l;
 
-                        if (bBlocks.Exists(b => b.SlideIndex == totalSlideIndex && b.BlockIndex == blockIndex))
+                        Block? blankBlock = bBlocks.Find(b => b.SlideIndex == totalSlideIndex && b.BlockIndex == blockIndex);
+                        if (blankBlock != null)
                         {
-                            Block blankBlock = bBlocks.Find(b => b.SlideIndex == totalSlideIndex && b.BlockIndex == blockIndex);
                             overview[plateIndex][slideIndex][blockIndex] = blankBlock;
                         }
                         else if (normalBlockIndex < normBlocks.Count)
@@ -345,8 +344,6 @@ public class ClinicalTest : BaseModel<ClinicalTest>
         }
     }
 
-
-
     private string findSingleSpotInfo(List<string> spotInfo, string[] titles, string key)
     {
         return spotInfo[Array.IndexOf(titles, Array.Find(titles, element => element.Contains(key)))].Trim();
@@ -364,5 +361,3 @@ public class ClinicalTest : BaseModel<ClinicalTest>
         }
     }
 }
-
-
