@@ -8,7 +8,7 @@
 
                     <!-- Modal Header -->
                     <div class="modal-header">
-                        <h4 class="modal-title">Confirm action</h4>
+                        <h4 class="modal-title">@errorTitle</h4>
                     </div>
 
                     <!-- Modal body -->
@@ -97,7 +97,8 @@
     private int maximumAllowedFiles = 16;
     private bool displayError = false;
     private string? errorMessage = "File(s) with the name(s): ";
-    private static string? errorMessageEnd = " already exist(s).";
+    private string? errorMessageEnd = " already exist(s).";
+    private string? errorTitle;
     private bool allMatched;
     private bool loading = false;
 
@@ -119,7 +120,9 @@
     void ModalCancel() 
     {
         displayError = false;
+        errorTitle = "An error occured";
         errorMessage = "File(s) with the name(s): ";
+        errorMessageEnd = " already exist(s).";
     }
 
     public async Task UploadFiles(InputFileChangeEventArgs e)
@@ -210,13 +213,21 @@
 
         if (calculationIsValid == false)
         {
-            //handle invalid calculation
+            loading = false;
+            displayError = true;
+            errorMessage = "One blank block is necessary in every slide for the calculations to be executed";
+            errorMessageEnd = "";
+            errorTitle = "Calculation canceled";
         }
+        else
+        {
         ClinicalTest.CalculateClinicalTestResult();
         ClinicalTest.SaveToDatabase(true);
         await StopReloadCallback.InvokeAsync();
         loading = false;
         await setActiveButtonCallback.InvokeAsync(4);
+
+        }
     }
     
     public async Task<bool> checkCalculationValidity() 
@@ -230,13 +241,6 @@
                 return false;
             }
         }
-
-        foreach (SlideDataFile sdf in ClinicalTest.SlideDataFiles)
-        {
-            int fileLines = sdf.getSpotLines().Length;
-            //Find expected lines
-        }
-
         return true;        
     }
 }
