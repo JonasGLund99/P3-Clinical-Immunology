@@ -29,7 +29,7 @@ else
                 </button>
 
         <div id="export-icon" title="Export result table">
-            <i class="fa-solid fa-file-export" @onclick="OpenExportModal"></i>
+            <i class="fa-solid fa-file-export @(DatabaseStatus != 1 ? "no-export" : "")" @onclick="OpenExportModal"></i>
         </div>
     </div>
 
@@ -80,6 +80,10 @@ else
     [Parameter, EditorRequired]
     public EventCallback<int> setActiveButtonCallback { get; set; }
 
+    [Parameter, EditorRequired]
+    public double DatabaseStatus { get; set; } = 1;
+
+
     public void SetMode(string newmode) {
         mode = newmode;
     }
@@ -117,7 +121,10 @@ else
 
     public void OpenExportModal()
     {
-        showExportModal = true;
+        if (DatabaseStatus == 1)
+        {
+            showExportModal = true;  
+        }
     }
 
     public void CloseExportModal()

@@ -28,6 +28,10 @@
     cursor: pointer;
 }
 
+#export-icon i.no-export {
+    cursor: not-allowed;
+}
+
 .export-and-color-scale {
     height: 100%;
     display: flex;

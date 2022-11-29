@@ -67,6 +67,10 @@
     cursor: pointer;
 }
 
+#export-icon i.no-export{
+    cursor: not-allowed;
+}
+
 .result-buttons {
     border: none;
     color: var(--primary-dark-color);
