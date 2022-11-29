@@ -46,6 +46,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
     public DateTime? CreatedAt { get; set; } = DateTime.Now;
     public DateTime EditedAt { get; set; } = DateTime.Now;
     public bool IsEmpty { get; set; } = true;
+    public bool CalculationNecessary {get; set; } = true;
 
     // Normal blocks
     public async Task<List<Block>> GetNormalBlocks()
@@ -239,7 +240,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
 
     }
 
-    public async void CalculateClinicalTestResult()
+    public async Task CalculateClinicalTestResult()
     {
         Regex start = new Regex(@"^Block\s*Row\s*Column", RegexOptions.IgnoreCase);
 

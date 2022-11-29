@@ -1,83 +1,100 @@
 ﻿@using src.Data
 @using src.Shared
 
-<div class="heatmap-component">
-    <div class="heatmap-and-scale">
-        <div class="all-heatmap-cells">
-            <table class ="heatmap-table">
-                <thead>
-                    <tr class="heatmap-header">
-                        @{int j = 1;}
-                        @foreach (string chosenTableTitle in ClinicalTest.ChosenTableTitles)
-                        {
-                            if (chosenTableTitle != null) {
-                                <th class="key-header" id="key-number-@j">@chosenTableTitle</th>
-                                j++;
-                            }
-                        }
-                        @foreach (string analyteName in ClinicalTest.AnalyteNames) 
-                        {
-                            <th title="@analyteName">@analyteName</th>
-                        }
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach(Block block in allBlocks) {
-                        <tr>
-                            @{int k = 1;}
+@if (ClinicalTest.CalculationNecessary)
+{
+    <div class="calculations-necessary-container">
+        <div class="update-calculation-message">
+            Run calculations to show heatmap
+        </div>
+        <div>
+            <button class="green-button" @onclick="gotoFileUpload">
+                Open file upload
+            </button>
+        </div>
+    </div>
+}
+else
+{
+    <div class="heatmap-component">
+        <div class="heatmap-and-scale">
+            <div class="all-heatmap-cells">
+                <table class ="heatmap-table">
+                    <thead>
+                        <tr class="heatmap-header">
+                            @{int j = 1;}
                             @foreach (string chosenTableTitle in ClinicalTest.ChosenTableTitles)
                             {
-                                if (chosenTableTitle != null)
-                                {
-                                    <td class="key-data key-number-@k" title="@block.PatientData[ClinicalTest.TableTitles.IndexOf(chosenTableTitle)]">@block.PatientData[ClinicalTest.TableTitles.IndexOf(chosenTableTitle)]</td>
-                                    k++;
+                                if (chosenTableTitle != null) {
+                                    <th class="key-header" id="key-number-@j">@chosenTableTitle</th>
+                                    j++;
                                 }
                             }
-                            @foreach (Nplicate nplicate in block.Nplicates) 
+                            @foreach (string analyteName in ClinicalTest.AnalyteNames) 
                             {
-                                <td title="@nplicateTitleHelper(nplicate)"
-                                    class="flagged-@nplicate.IsFlagged.ToString().ToLower() selected-@((nplicate == clickedNplicate).ToString().ToLower() )" 
-                                    style="background-color: @System.Drawing.ColorTranslator.ToHtml(nplicate.HeatmapColour);"
-                                    @onclick="() => nplicateClicked(nplicate, block)"></td>
+                                <th title="@analyteName">@analyteName</th>
                             }
-                        </tr>    
-                    }                    
-                </tbody>
-            </table>
-        </div>
-        <div class="export-and-color-scale">
-            <div id="export-icon" title="Export heatmap">
-                <i class="fa-solid fa-file-export"></i>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach(Block block in allBlocks) {
+                            <tr>
+                                @{int k = 1;}
+                                @foreach (string chosenTableTitle in ClinicalTest.ChosenTableTitles)
+                                {
+                                    if (chosenTableTitle != null)
+                                    {
+                                        <td class="key-data key-number-@k" title="@block.PatientData[ClinicalTest.TableTitles.IndexOf(chosenTableTitle)]">@block.PatientData[ClinicalTest.TableTitles.IndexOf(chosenTableTitle)]</td>
+                                        k++;
+                                    }
+                                }
+                                @foreach (Nplicate nplicate in block.Nplicates) 
+                                {
+                                    <td title="@nplicateTitleHelper(nplicate)"
+                                        class="flagged-@nplicate.IsFlagged.ToString().ToLower() selected-@((nplicate == clickedNplicate).ToString().ToLower() )" 
+                                        style="background-color: @System.Drawing.ColorTranslator.ToHtml(nplicate.HeatmapColour);"
+                                        @onclick="() => nplicateClicked(nplicate, block)"></td>
+                                }
+                            </tr>    
+                        }                    
+                    </tbody>
+                </table>
             </div>
-            <div class="flag-example">
-                Flag
-            </div>
-            <div class="color-scale-container">
-                <div class="color-scale">
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
+            <div class="export-and-color-scale">
+                <div id="export-icon" title="Export heatmap">
+                    <i class="fa-solid fa-file-export"></i>
                 </div>
-                <div class="color-scale-index">
-                    <p>@Math.Round(ClinicalTest.MaxRI,1)</p>
-                    <p>@(Math.Round((ClinicalTest.MinRI + (ClinicalTest.MaxRI - ClinicalTest.MinRI)*0.75),1))</p>
-                    <p>@(Math.Round((ClinicalTest.MinRI + (ClinicalTest.MaxRI - ClinicalTest.MinRI)*0.50),1))</p>
-                    <p>@(Math.Round((ClinicalTest.MinRI + (ClinicalTest.MaxRI - ClinicalTest.MinRI)*0.25),1))</p>
-                    <p>@(Math.Round(ClinicalTest.MinRI,1)) </p>
+                <div class="flag-example">
+                    Flag
+                </div>
+                <div class="color-scale-container">
+                    <div class="color-scale">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
+                    <div class="color-scale-index">
+                        <p>@Math.Round(ClinicalTest.MaxRI,1)</p>
+                        <p>@(Math.Round((ClinicalTest.MinRI + (ClinicalTest.MaxRI - ClinicalTest.MinRI)*0.75),1))</p>
+                        <p>@(Math.Round((ClinicalTest.MinRI + (ClinicalTest.MaxRI - ClinicalTest.MinRI)*0.50),1))</p>
+                        <p>@(Math.Round((ClinicalTest.MinRI + (ClinicalTest.MaxRI - ClinicalTest.MinRI)*0.25),1))</p>
+                        <p>@(Math.Round(ClinicalTest.MinRI,1)) </p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+}
+
 
 @if (showSpotModal)
 {
@@ -95,6 +112,8 @@
     private Block clickedBlock = new();
     [Parameter]
     public ClinicalTest ClinicalTest { get; set; } = new();
+    [Parameter, EditorRequired]
+    public EventCallback<int> setActiveButtonCallback { get; set; }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)  
     {
@@ -122,5 +141,10 @@
     private string nplicateTitleHelper(Nplicate n) 
     {
         return "RI: " + Math.Round(n.RI,3) + "\nXYZ: " + Math.Round(n.XYZ,3) + "\nMean intensity: " + Math.Round(n.Mean,3) + "\nAnalyte: " + n.AnalyteType;
+    }
+
+    private async void gotoFileUpload() 
+    {
+        await setActiveButtonCallback.InvokeAsync(2);
     }
 }

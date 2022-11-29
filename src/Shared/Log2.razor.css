@@ -11,10 +11,15 @@
 }
 
 .data,
-.qc {
+.qc,
+.invalid-block {
     text-align: right;
     font-family: 'Roboto Mono', monospace;
     font-weight: 500;
+}
+
+.invalid-block {
+    background-color: rgb(255, 159, 159);
 }
 
 .data:hover {

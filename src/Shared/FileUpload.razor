@@ -7,7 +7,7 @@
                 <div class="modal-content">
                     <!-- Modal Header -->
                     <div class="modal-header">
-                        <h4 class="modal-title">Confirm action</h4>
+                        <h4 class="modal-title">@errorTitle</h4>
                     </div>
 
                     <!-- Modal body -->
@@ -95,7 +95,8 @@
     private int maximumAllowedFiles = 16;
     private bool displayError = false;
     private string? errorMessage = "File(s) with the name(s): ";
-    private static string? errorMessageEnd = " already exist(s).";
+    private string? errorMessageEnd = " already exist(s).";
+    private string? errorTitle;
     private bool allMatched;
     private bool loading = false;
 
@@ -114,7 +115,9 @@
     void ModalCancel() 
     {
         displayError = false;
+        errorTitle = "An error occured";
         errorMessage = "File(s) with the name(s): ";
+        errorMessageEnd = " already exist(s).";
     }
 
     public async Task UploadFiles(InputFileChangeEventArgs e)
@@ -137,6 +140,7 @@
                 displayError = true;
             }
         }
+        ClinicalTest.CalculationNecessary = true;
         StateHasChanged();
         ClinicalTest.SaveToDatabase();
         Experiment.SaveToDatabase();
@@ -150,6 +154,7 @@
         ClinicalTest.Matches.Remove(slideDataFile.Filename);
 
         allMatched = AllMatched();
+        ClinicalTest.CalculationNecessary = true;
         ClinicalTest.SaveToDatabase();
         Experiment.SaveToDatabase();
     }
@@ -166,11 +171,14 @@
     {
         if (ClinicalTest == null) return;
 
-        for(int i = 0; i < ClinicalTest.Slides.Count; i++) {
-            if (filename.Contains(ClinicalTest.Slides[i].Barcode)){
-                ClinicalTest.Matches.Add(filename, i);
+        foreach(Slide s in ClinicalTest.Slides)
+        {
+            if (filename.Contains(s.Barcode) && s.Barcode != "")
+            {
+                ClinicalTest.Matches[filename] = ClinicalTest.Slides.IndexOf(s);
             }
         }
+        ClinicalTest.SaveToDatabase();
         allMatched = AllMatched();
     }
 
@@ -180,7 +188,8 @@
 
         for (int i = 0; i < ClinicalTest.Slides.Count; i++)
         {
-            if (!ClinicalTest.Matches.ContainsValue(i)) return false;
+            int j = i;
+            if (!ClinicalTest.Matches.ContainsValue(j)) return false;
         }
 
         foreach (SlideDataFile slideDataFile in ClinicalTest.SlideDataFiles) {
@@ -189,21 +198,53 @@
         return true;
     }
 
-    protected override void OnAfterRender(bool firstRender) {
-        if (firstRender) {
-            allMatched = AllMatched();
-            StateHasChanged();
+
+
+    protected override void OnInitialized()
+    {
+        ClinicalTest.Matches.Clear();
+        foreach (SlideDataFile f in ClinicalTest.SlideDataFiles) 
+        {
+            MatchBarcodes(f.Filename);
         }
+        StateHasChanged();
     }
 
     public async void StartCalculation() 
     {
         loading = true;
+        bool calculationIsValid = await checkCalculationValidity();
         if (ClinicalTest == null) return;
 
-        ClinicalTest.CalculateClinicalTestResult();
-        ClinicalTest.SaveToDatabase(true);
-        loading = false;
-        await setActiveButtonCallback.InvokeAsync(4);
+        if (calculationIsValid == false)
+        {
+            loading = false;
+            displayError = true;
+            errorMessage = "One blank block is necessary in every slide for the calculations to be executed";
+            errorMessageEnd = "";
+            errorTitle = "Calculation canceled";
+        }
+        else
+        {
+            await ClinicalTest.CalculateClinicalTestResult();
+            ClinicalTest.SaveToDatabase(true);
+            ClinicalTest.CalculationNecessary = false;
+            loading = false;
+            await setActiveButtonCallback.InvokeAsync(4);
+        }
+    }
+    
+    public async Task<bool> checkCalculationValidity() 
+    {
+        List<Block> blankBlocks = await ClinicalTest.GetBlankBlocks();
+        foreach(Slide s in ClinicalTest.Slides)
+        {
+            if (blankBlocks.Find(bb => bb.SlideIndex == ClinicalTest.Slides.IndexOf(s)) == null)
+            {
+                //if no black block has slide index of slide
+                return false;
+            }
+        }
+        return true;        
     }
 }

@@ -152,7 +152,7 @@
         {
             await ClinicalTest.RemoveBlankBlock(blankBlock);
         }
-
+        ClinicalTest.CalculationNecessary = true;
         await updateOverviewState.InvokeAsync();
     }
 
@@ -168,6 +168,7 @@
     }
 
     private void saveBarcode() {
+        ClinicalTest.CalculationNecessary = true;
         ClinicalTest.SaveToDatabase();
     }
     private string[] headingLetters = { "A", "B", "C", "D", "E", "F", "G", "H" };

@@ -136,6 +136,11 @@ public static class ExperimentManager
 
                 await ExperimentManager.Disassociate(e, ClinicalTestFromDB);
             }
+    
+            if (SavedClinicalTest.NplicateSize != ClinicalTestFromDB.NplicateSize) //calc needed if nplicatesize changed
+            {
+                SavedClinicalTest.CalculationNecessary = true;
+            }
             await SavedClinicalTest.SaveToDatabaseAsync();
         }
     }
