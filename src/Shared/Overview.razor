@@ -160,6 +160,7 @@
         if (ClinicalTest == null) throw new NullReferenceException("ClinicalTest object is null");
 
         string[][] tableData = await JS.InvokeAsync<string[][]>("getTableData");
+        ClinicalTest.Slides.Clear();
 
         if (tableData.Length == 0)
         {
@@ -195,6 +196,7 @@
         overviewLoaded = false;
         switchMode("Overview");
         StateHasChanged();
+        ClinicalTest.CalculationNecessary = true;
         ClinicalTest.SaveToDatabase(true);
         updateOverviewState();
     }

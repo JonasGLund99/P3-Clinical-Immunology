@@ -1,40 +1,56 @@
 ﻿@using src.Data
 @using src.Shared
 
-<div class="result-table-component">
-    <div id="toolbar">
-        <button @onclick='() => SetMode("XYZ")' class="result-buttons @(mode=="XYZ" ? "result-button-active" : "")">
-                (x-y)/z
+@if (ClinicalTest.CalculationNecessary)
+{
+    <div class="calculations-necessary-container">
+        <div class="update-calculation-message">
+            Run calculations to show result table
+        </div>
+        <div>
+            <button class="green-button" @onclick="gotoFileUpload">
+                Open file upload
             </button>
-        <button @onclick='() => SetMode("Log2")' class="result-buttons @(mode=="Log2" ? "result-button-active" : "")">
-            Log
-            <sub>2</sub>
-            </button>
-
-        <div id="export-icon" title="Export result table">
-            <i class="fa-solid fa-file-export"></i>
         </div>
     </div>
+}
+else
+{
+    <div class="result-table-component">
+        <div id="toolbar">
+            <button @onclick='() => SetMode("XYZ")' class="result-buttons @(mode=="XYZ" ? "result-button-active" : "")">
+                    (x-y)/z
+                </button>
+            <button @onclick='() => SetMode("Log2")' class="result-buttons @(mode=="Log2" ? "result-button-active" : "")">
+                Log
+                <sub>2</sub>
+                </button>
 
-    @if (displaySpots)
-    {
-        <SpotModal 
-            ShownNplicate="@selectedNplicate" 
-            ModalCancelCallback="ModalCancel"
-            Block="@selectedBlock"
-            ClinicalTest="@ClinicalTest"/>
-    }
+            <div id="export-icon" title="Export result table">
+                <i class="fa-solid fa-file-export"></i>
+            </div>
+        </div>
 
-    <div class="table-view-container">
-        <table id="result-table">
-            @switch(mode) 
-            {
-                case "XYZ": <XYZ ClinicalTest="@ClinicalTest" ShowSpots="@((args) => ShowSpots(args))" SelectedNplicate="@selectedNplicate"></XYZ> break;
-                case "Log2": <Log2 ClinicalTest="@ClinicalTest" ShowSpots="@((args) => ShowSpots(args))" SelectedNplicate="@selectedNplicate"></Log2> break;
-            }
-        </table>
+        @if (displaySpots)
+        {
+            <SpotModal 
+                ShownNplicate="@selectedNplicate" 
+                ModalCancelCallback="ModalCancel"
+                Block="@selectedBlock"
+                ClinicalTest="@ClinicalTest"/>
+        }
+
+        <div class="table-view-container">
+            <table id="result-table">
+                @switch(mode) 
+                {
+                    case "XYZ": <XYZ ClinicalTest="@ClinicalTest" ShowSpots="@((args) => ShowSpots(args))" SelectedNplicate="@selectedNplicate"></XYZ> break;
+                    case "Log2": <Log2 ClinicalTest="@ClinicalTest" ShowSpots="@((args) => ShowSpots(args))" SelectedNplicate="@selectedNplicate"></Log2> break;
+                }
+            </table>
+        </div>
     </div>
-</div>
+}
 
 
 @code {
@@ -45,6 +61,9 @@
 
     [Parameter, EditorRequired]
     public ClinicalTest? ClinicalTest { get; set; } = default;
+
+    [Parameter, EditorRequired]
+    public EventCallback<int> setActiveButtonCallback { get; set; }
 
     public void SetMode(string newmode) {
         mode = newmode;
@@ -61,5 +80,10 @@
     {
         selectedNplicate = default;
         displaySpots = false;
+    }
+
+    private async void gotoFileUpload() 
+    {
+        await setActiveButtonCallback.InvokeAsync(2);
     }
 }
