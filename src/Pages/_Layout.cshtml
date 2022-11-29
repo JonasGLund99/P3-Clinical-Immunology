@@ -1,4 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Components.Web
+@using src.Data
 @namespace src.Pages
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
@@ -119,6 +120,14 @@
                     };
                 }
             }, 100)
+        }
+
+        window.triggerFileDownload = (fileName, url) => {
+            let anchorElement = document.createElement('a');
+            anchorElement.href =  url;
+            anchorElement.download = fileName ?? '';
+            anchorElement.click();
+            anchorElement.remove();
         }
     </script>
 

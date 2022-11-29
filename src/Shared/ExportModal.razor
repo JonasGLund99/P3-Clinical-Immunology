@@ -1,0 +1,59 @@
+﻿@using src.Shared
+@using src.Data
+
+<div class="modal fade show spot-modal" style="display:block;" aria-modal="true" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Export result table</h4>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div class="radio-buttons">
+                    
+                    <label>
+                        <input type="radio" name="flags" value="withFlags" @onchange="ValueChanged" checked/> With flags
+                    </label>
+                    
+                    <label>
+                        <input type="radio" name="flags" value="withoutFlags" @onchange="ValueChanged" /> Without flags
+                    </label>
+                </div>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" @onclick=@CloseModal>Close</button>
+                <button type="button" class="btn btn-danger" @onclick="() => Export()">Export</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string withFlags = "withFlags";
+
+    [Parameter]
+    public EventCallback ModalCancelCallback { get; set; }
+
+    [Parameter]
+    public EventCallback<string> ExportCallback { get; set; }
+
+    public void ValueChanged(ChangeEventArgs e)
+    {
+        if (e.Value == null) return;
+        withFlags = (string)e.Value;
+    }
+
+    public async void CloseModal()
+    {
+        await ModalCancelCallback.InvokeAsync();
+    }
+    public async void Export()
+    {
+        await ExportCallback.InvokeAsync(withFlags);
+    }
+}
