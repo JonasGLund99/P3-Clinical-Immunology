@@ -344,7 +344,9 @@ public class ClinicalTest : BaseModel<ClinicalTest>
                     blockNum++;
                 }
 
-                overview.Cells[row, col].Value = Slides[slideNum + (plateNum * 4)].Barcode;
+                double dbl;
+                bool conv = double.TryParse(Slides[slideNum + (plateNum * 4)].Barcode, out dbl);
+                overview.Cells[row, col].Value = conv ? dbl : Slides[slideNum + (plateNum * 4)].Barcode;
                 overview.Cells[row, col].Style.Font.Color.SetColor(Color.White);
                 overview.Cells[6 + (plateNum * 30), col, 26 + (plateNum * 30), col + 2].Style.Border.BorderAround(ExcelBorderStyle.Thick, Color.Gray);
                 overview.Cells[row, col, row + 2, col + 2].Style.Border.BorderAround(ExcelBorderStyle.Thick, Color.Gray);
@@ -609,7 +611,9 @@ public class ClinicalTest : BaseModel<ClinicalTest>
             PatientData.Cells[patientDataRow, patientDataCol++].Value = block.SlideIndex + 1;
             foreach (string data in block.PatientData)
             {
-                PatientData.Cells[patientDataRow, patientDataCol++].Value = data;
+                double dbl;
+                bool conv = double.TryParse(data, out dbl);
+                PatientData.Cells[patientDataRow, patientDataCol++].Value = conv ? dbl : data;
             }
             patientDataCol = 1;
             patientDataRow++;
