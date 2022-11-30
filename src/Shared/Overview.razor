@@ -186,10 +186,17 @@
 
         // Remove first line from table data
         tableData = tableData.Skip(1).ToArray();
-
+        List<Block> normBlocks = await ClinicalTest.GetNormalBlocks();
+        
         foreach (string[] block in tableData) 
         {
-            blockList.Add(new Block(Guid.NewGuid().ToString(), block.ToList(), Block.BlockType.Normal, 0, 0, ClinicalTest.id));
+            int blockIndex = Array.IndexOf(tableData, block);
+            Block newBlock = new Block(Guid.NewGuid().ToString(), block.ToList(), Block.BlockType.Normal, 0, 0, ClinicalTest.id);
+            if (blockIndex < normBlocks.Count)
+            {
+                newBlock.TextColour = normBlocks[blockIndex].TextColour;
+            }
+            blockList.Add(newBlock);
         }
         ClinicalTest.SetNormalBlocks(blockList);
 
