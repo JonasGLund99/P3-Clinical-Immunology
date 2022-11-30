@@ -15,7 +15,8 @@
         ExperimentNumber="@experiment.ExperimentNumber"
         setActiveButtonCallback="@SetActiveButton"
         ActiveButton="@activeButton" 
-        DatabaseStatus="@databaseStatus" />
+        DatabaseStatus="@databaseStatus" 
+        BlocksLoaded="@blocksLoaded" />
 
 	<div class="component-container">
 		@switch (activeButton)
@@ -92,24 +93,25 @@ else
     public string ExperimentId { get; set; } = "";
     [Parameter]
     public string ClinicalTestId { get; set; } = "";
-    
-	private Experiment placeholderExp = new Experiment(
-		id: "",
-		experimentNumber: "EXP",
-		title: "Exp",
+
+    private Experiment placeholderExp = new Experiment(
+        id: "",
+        experimentNumber: "EXP",
+        title: "Exp",
         author: "A",
-        description: "",
-        createdAt: DateTime.Now
-	);
-	
-	private ClinicalTest placeholderCt = new ClinicalTest(
-		id: "",
-		title: "Ct",
-		nplicateSize: 3,
         description: "",
         createdAt: DateTime.Now
     );
 
+    private ClinicalTest placeholderCt = new ClinicalTest(
+        id: "",
+        title: "Ct",
+        nplicateSize: 3,
+        description: "",
+        createdAt: DateTime.Now
+    );
+
+    private bool blocksLoaded = false;
     private Experiment experiment = new();
     private ClinicalTest clinicalTest = new();
     private bool showClinicalTestModal = false;
@@ -138,6 +140,8 @@ else
             // Load the blocks from the database
             await clinicalTest.GetNormalBlocks();
             await clinicalTest.GetBlankBlocks();
+
+            blocksLoaded = true;
 
             // Start the timer that updates the database status
             if (databaseTimer == null)

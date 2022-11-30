@@ -128,6 +128,9 @@
     color: rgb(38, 61, 79);
     padding: 3px 10px !important;
 }
+#clear-button.no-clear {
+    cursor: not-allowed;
+}
 #check-button {
     background-color: rgb(57, 135, 53);
     color: rgb(26, 63, 24);
