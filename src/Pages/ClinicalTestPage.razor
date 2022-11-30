@@ -88,6 +88,11 @@ else
     </div>
 }
 
+@if (!blocksLoaded) 
+{
+    <Loader/> 
+}
+
 @code {
     [Parameter]
     public string ExperimentId { get; set; } = "";

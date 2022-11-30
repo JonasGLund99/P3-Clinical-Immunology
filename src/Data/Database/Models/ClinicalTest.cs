@@ -694,7 +694,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
                         nplicate.Spots.Add(
                             new Spot(
                                 intensity: double.Parse(findSingleSpotInfo(spotInfo, titles, "Intensity")),
-                                flagged: titles.Contains("Flags") ? findSingleSpotInfo(spotInfo, titles, "Flags") != "0" : false
+                                flagged: Array.Find(titles, t => t.Contains("Flags")) != null && findSingleSpotInfo(spotInfo, titles, "Flags") != "0"
                             )
                         );
                         spotInfo.Clear();
