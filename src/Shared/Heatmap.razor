@@ -64,12 +64,6 @@ else
                 </table>
             </div>
             <div class="export-and-color-scale">
-                <div id="export-icon" title=" @(DatabaseStatus != 1 ? "Can't export while saving" : "Export heatmap")">
-                    <i class="fa-solid fa-file-export @(DatabaseStatus != 1 ? "no-export" : "")" @onclick="OpenExportModal"></i>
-                </div>
-                <div class="flag-example">
-                    Flag
-                </div>
                 <div class="color-scale-container">
                     <div class="color-scale">
                         <div></div>
@@ -106,12 +100,6 @@ else
         ShownNplicate="@clickedNplicate"
         Block="@clickedBlock"
         ClinicalTest="@ClinicalTest"/>
-}
-
-@if (showExportModal)
-{
-    <ExportModal ModalCancelCallback="CloseExportModal"
-             ExportCallback="Export" />
 }
 
 @code {
@@ -158,26 +146,5 @@ else
     private async void gotoFileUpload() 
     {
         await setActiveButtonCallback.InvokeAsync(2);
-    }
-
-    public async void Export(string withFlags)
-    {
-        if (ClinicalTest == null) return;
-        FileInfo file = await ClinicalTest.ExportResultTableAndHeatmap(withFlags);
-        await JS.InvokeVoidAsync("triggerFileDownload", withFlags == "withFlags" ? $"{ClinicalTest.Title}-result-with-flags.xlsx" : $"{ClinicalTest.Title}-result-without-flags.xlsx", $"http://localhost:5110/exports/{ClinicalTest.id}-result.xlsx");
-        await Task.Delay(1000).ContinueWith(t => file.Delete());
-    }
-
-    public void OpenExportModal()
-    {
-        if (DatabaseStatus == 1)
-        {
-            showExportModal = true;  
-        }
-    }
-
-    public void CloseExportModal()
-    {
-        showExportModal = false;
     }
 }
