@@ -2,6 +2,11 @@
 table {
     overflow: scroll;
 }
+
+.header-line-number {
+    text-align: center;
+}
+
 thead td {
     height: 20px;
     padding: 10px;
@@ -33,6 +38,7 @@ tbody td {
     z-index: 0;
     text-align: right;
 }
+
 tbody td:focus {
     outline: 3px solid rgb(19, 96, 25);
     outline-offset: -2px;

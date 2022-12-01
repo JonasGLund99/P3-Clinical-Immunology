@@ -2,6 +2,30 @@
 
 @inject IJSRuntime JS
 
+@if (displayError) {
+    <div class="modal fade show" style="display:block" aria-modal="true" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">No sensitive data allowed</h4>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <input type=checkbox @onchange="ToggleSensitiveDataCheck"> I have not inserted any sensitive personal data
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick=@ModalCancel>Cancel</button>
+                    <button type="button" class="btn btn-primary" @onclick=@(() => { displayError = false; noSensitiveData = false; saveBlocks();}) disabled=@(!noSensitiveData)>OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
 <div class="overview-component">
     @if (mode == "Overview") {
         <div class="toolbar-container">
@@ -93,7 +117,7 @@
                         <img src="@clearTableIcon"/>
                     </span>
                     <span id="xmark-button" data-title="Continue without saving" @onclick='() => switchMode("Overview")'><i class="fa-solid fa-xmark"></i></span>
-                    <span id="check-button" data-title="Continue and save changes" @onclick=saveBlocks><i class="fa-solid fa-check"></i></span>
+                    <span id="check-button" data-title="Continue and save changes" @onclick='(() => displayError = true)'><i class="fa-solid fa-check"></i></span>
                 </div>
             </div>
         </div>
@@ -112,7 +136,8 @@
     [Parameter, EditorRequired]
     public double DatabaseStatus { get; set; } = 1;
 
-
+    private bool noSensitiveData = false;
+    private bool displayError = false;
     private string tableViewIcon { get; set; } = "icons/TableView_icon.svg";
     private string tableViewIconWhite { get; set; } = "icons/TableView_icon_white.svg";
     private string clearTableIcon{ get; set; } = "icons/ClearTable_icon.svg";
@@ -133,6 +158,12 @@
         {
             updateOverviewState();
         }
+    }
+
+    public void ToggleSensitiveDataCheck(ChangeEventArgs e)
+    {
+        if (e.Value == null) return;
+        noSensitiveData = (bool)e.Value;
     }
 
     public void switchMode(string newMode)
@@ -251,5 +282,10 @@
             await JS.InvokeVoidAsync("triggerFileDownload", $"{ClinicalTest.Title}-prøve-opsætning.xlsx", $"http://localhost:5110/exports/{ClinicalTest.id}-prøve-opsætning.xlsx");
             await Task.Delay(1000).ContinueWith(t => file.Delete());
         }
+    }
+    
+    public void ModalCancel()
+    {
+        displayError = false;
     }
 }

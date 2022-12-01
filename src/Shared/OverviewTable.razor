@@ -2,11 +2,12 @@
 
 @inject IJSRuntime JS
 
+
 <table id="overview-table">
     <thead>
         @*Title row*@
         <tr>
-            <td></td>
+            <td class="header-line-number">1</td>
             @for (int i = 0; i < numCols; i++) 
             {
                 @if (i < ClinicalTest.TableTitles.Count) 
@@ -25,7 +26,7 @@
         @for (int i = 0; i < numRows; i++) 
         { 
             <tr>
-                <td class="line-number">@(i + 1)</td>
+                <td class="line-number">@(i + 2)</td>
                 @for (int j = 0; j < numCols; j++)
                 {
                     @if (i < normalBlocks.Count && j < normalBlocks[i].PatientData.Count)

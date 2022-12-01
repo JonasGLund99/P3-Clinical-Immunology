@@ -1,7 +1,7 @@
 @using src.Shared
 @using src.Data
 
-<div class="modal fade show spot-modal" style="display:block;" aria-modal="true" role="dialog" @onclick="@CloseModal">
+<div class="modal fade show spot-modal" style="display:block;" aria-modal="true" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
 
@@ -36,7 +36,7 @@
                             <tr>
                                 <th scope="row">@i</th>
                                 <td>@spot.Intensity</td>
-                                <td>@spot.IsFlagged</td>
+                                <td>@(spot.IsFlagged ? "Flag" : "-")</td>
                             </tr>
                             i++;
                         }
@@ -46,7 +46,7 @@
 
             <!-- Modal footer -->
             <div class="modal-footer">
-                <button type="button" class="btn btn-danger" @onclick=@CloseModal>Close</button>
+                <button type="button" class="btn btn-secondary" @onclick=@CloseModal>Close</button>
             </div>
         </div>
     </div>
