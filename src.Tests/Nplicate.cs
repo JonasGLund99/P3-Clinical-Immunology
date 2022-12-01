@@ -34,44 +34,6 @@ public class NplicateTest
         Assert.Equal(expected, _sut.Mean); 
     }
 
-    [Theory]
-    [MemberData(nameof(SetHeatMapColourTheoryData)), 
-    ClassData(typeof(NplicateTestData))]
-    //https://youtu.be/2Wp8en1I9oQ?t=461
-    public void SetHeatMapColourTheory(Color expected, params Nplicate[] nplicates)
-    {
-        double maxRI = 8.05;
-        double minRI = 0;
-
-        foreach (Nplicate np in nplicates)
-        {
-            np.SetHeatMapColour(maxRI, minRI);
-
-            _sut.HeatmapColour = np.HeatmapColour;
-        }
-
-        Assert.Equal(expected, _sut.HeatmapColour);
-
-    }
-
-    public static IEnumerable<object[]> SetHeatMapColourTheoryData()
-    {
-        Color max = Color.FromArgb(255, 249, 235, 46);
-        Color high = Color.FromArgb(255, 76, 194, 108);
-        Color medium = Color.FromArgb(255, 32, 140, 141);
-        Color low = Color.FromArgb(255, 62, 78, 138);
-        Color min = Color.FromArgb(255, 68, 1, 88);
-        Color expected1 = Color.FromArgb((int)255, (int)50, (int)80, (int)100);
-        Color expected2 = Color.FromArgb((int)255, (int)50, (int)80, (int)100);
-
-
-        yield return new object[] { expected1 };
-        yield return new object[] { expected2 };
-
-    }
-
-
-
     public class NplicateTestData : IEnumerable<object[]>
     {
         public IEnumerator<object[]> GetEnumerator()
