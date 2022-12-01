@@ -184,6 +184,14 @@
         }
         ClinicalTest.TableTitles = tableTitles;
 
+        for (int i = 0; i < ClinicalTest.ChosenTableTitles.Length; i++)
+        {
+            if (!tableTitles.Contains(ClinicalTest.ChosenTableTitles[i]))
+            {
+                ClinicalTest.ChosenTableTitles[i] = "";
+            }
+        }
+
         // Remove first line from table data
         tableData = tableData.Skip(1).ToArray();
         List<Block> normBlocks = await ClinicalTest.GetNormalBlocks();
