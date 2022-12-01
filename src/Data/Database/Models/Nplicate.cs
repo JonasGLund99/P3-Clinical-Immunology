@@ -89,7 +89,7 @@ public class Nplicate
         Color medium = Color.FromArgb(255, 32, 140, 141);
         Color low = Color.FromArgb(255, 62, 78, 138);
         Color min = Color.FromArgb(255, 68, 1, 88);
-
+        
         if (weight >= 0 && weight < 0.25)
         {
             return lerp(min, low, weight * 4);

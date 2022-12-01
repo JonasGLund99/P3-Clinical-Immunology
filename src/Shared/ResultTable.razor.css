@@ -1,4 +1,30 @@
-﻿.result-table-component {
+﻿.calculations-necessary-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.update-calculation-message {
+    font-size: 30px;
+    font-weight: 600;
+    color: var(--secondary-dark-color);
+    margin-bottom: 20px;
+}
+
+.ghost {
+    animation-duration: 3s;
+    animation-fill-mode: forwards;
+    animation-iteration-count: infinite;
+    animation-name: resultTableGhosting;
+    animation-timing-function: linear;
+    background: #f6f7f8;
+    background: linear-gradient(110deg, var(--light-grey) 8%, var(--grey) 38%, var(--light-grey) 54%);
+}
+
+.result-table-component {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -14,7 +40,9 @@
     overflow: scroll;
 }
 
+
 /* Toolbar */
+
 #toolbar {
     position: relative;
     display: flex;
@@ -27,7 +55,7 @@
     justify-content: space-evenly;
 }
 
-#toolbar > * {
+#toolbar>* {
     display: flex;
     align-items: center;
     height: inherit;
@@ -37,6 +65,10 @@
     font-size: 30px;
     color: var(--secondary-dark-color);
     cursor: pointer;
+}
+
+#export-icon i.no-export{
+    cursor: not-allowed;
 }
 
 .result-buttons {
@@ -55,5 +87,3 @@
 table {
     overflow: scroll;
 }
-
-

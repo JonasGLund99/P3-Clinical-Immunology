@@ -7,19 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Shared\CancelOrConfirmModal.razor.css" />
-    <None Remove="Shared\Loader.razor.css" />
-    <None Remove="Shared\Overview.razor.css" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Shared\CancelOrConfirmModal.razor.css" />
-    <Content Include="Shared\Loader.razor.css" />
-    <Content Include="Shared\Overview.razor.css" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <PackageReference Include="EPPlus" Version="6.1.0" />
     <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.31.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\exports\" />
   </ItemGroup>
 
 </Project>

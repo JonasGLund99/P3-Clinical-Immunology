@@ -34,6 +34,10 @@
     --block-border-color: grey;
     --heading-background-color: var(--secondary-dark-color);
     --plate-background-color: white;
+
+    /*OverviewTable*/
+    --overviewtable-head-background-color: var(--experiment-hover-color);
+    --overviewtable-head-border-color: var(--experiment-color);
 }
 
 * {
@@ -187,6 +191,7 @@ a,
     border-radius: 15px;
     justify-content: center;
     align-items: center;
+    white-space: nowrap;
 }
 .add-element-button:hover {
     color: white;
@@ -293,6 +298,16 @@ a,
 
     100% {
         background-position: 722px
+    }
+}
+
+@keyframes resultTableGhosting {
+    0% {
+        background-position: calc(-28.6458333vw) 0
+    }
+
+    100% {
+        background-position: calc(69.7916667vw) 0
     }
 }
 

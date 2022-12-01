@@ -2,3 +2,15 @@
     display: flex;
     justify-content: center;
 }
+
+.modal-header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.modal-header .modal-title:first-child {
+    border-bottom: 1px solid #dee2e6;
+    width: 100%;
+    margin-bottom: 10px;
+}

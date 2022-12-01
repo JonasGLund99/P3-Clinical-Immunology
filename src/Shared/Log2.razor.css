@@ -1,4 +1,5 @@
-﻿td {
+﻿
+td {
     background-color: white;
     border: 0.5px solid rgb(170, 170, 170);
     min-width: 100px;
@@ -8,6 +9,18 @@
     box-sizing: border-box;
     z-index: 0;
     text-align: center;
+}
+
+.data,
+.qc,
+.invalid-block {
+    text-align: right;
+    font-family: 'Roboto Mono', monospace;
+    font-weight: 500;
+}
+
+.invalid-block {
+    background-color: rgb(255, 159, 159);
 }
 
 .data:hover {
@@ -30,9 +43,9 @@ tr:first-child td {
     text-align: center;
 }
 
-    tr:first-child td:first-child {
-        z-index: 2;
-    }
+tr:first-child td:first-child {
+    z-index: 2;
+}
 
 #key-number-1 {
     z-index: 2;

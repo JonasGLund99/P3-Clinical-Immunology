@@ -1,18 +1,35 @@
 ﻿@using src.Data
 @using src.Shared
 
-<div class="result-table-component">
-    <div id="toolbar">
-        <button @onclick='() => SetMode("XYZ")' class="result-buttons @(mode=="XYZ" ? "result-button-active" : "")">
-                (x-y)/z
+@inject IJSRuntime JS
+
+@if (ClinicalTest.CalculationNecessary)
+{
+    <div class="calculations-necessary-container">
+        <div class="update-calculation-message">
+            Run calculations to show result table
+        </div>
+        <div>
+            <button class="green-button" @onclick="gotoFileUpload">
+                Open file upload
             </button>
-        <button @onclick='() => SetMode("Log2")' class="result-buttons @(mode=="Log2" ? "result-button-active" : "")">
-            Log
-            <sub>2</sub>
-            </button>
+        </div>
+    </div>
+}
+else
+{
+    <div class="result-table-component">
+        <div id="toolbar">
+            <button @onclick='() => SetMode("XYZ")' class="result-buttons @(mode=="XYZ" ? "result-button-active" : "")">
+                    (x-y)/z
+                </button>
+            <button @onclick='() => SetMode("Log2")' class="result-buttons @(mode=="Log2" ? "result-button-active" : "")">
+                Log
+                <sub>2</sub>
+                </button>
 
         <div id="export-icon" title="Export result table">
-            <i class="fa-solid fa-file-export"></i>
+            <i class="fa-solid fa-file-export @(DatabaseStatus != 1 ? "no-export" : "")" @onclick="OpenExportModal"></i>
         </div>
     </div>
 
@@ -20,35 +37,60 @@
     {
         <SpotModal 
             ShownNplicate="@selectedNplicate" 
-            ModalCancelCallback="ModalCancel"/>
+            ModalCancelCallback="ModalCancel"
+            Block="@selectedBlock"
+            ClinicalTest="@ClinicalTest"/>
+    }
+    @if (showExportModal)
+    {
+        <ExportModal
+            ModalCancelCallback="CloseExportModal"
+            ExportCallback="Export"/>
     }
 
-    <div class="table-view-container">
-        <table id="result-table">
-            @switch(mode) 
-            {
-                case "XYZ": <XYZ ClinicalTest="@ClinicalTest" ShowSpots="@((args) => ShowSpots(args))" SelectedNplicate="@selectedNplicate"></XYZ> break;
-                case "Log2": <Log2 ClinicalTest="@ClinicalTest" ShowSpots="@((args) => ShowSpots(args))" SelectedNplicate="@selectedNplicate"></Log2> break;
-            }
-        </table>
+
+        <div class="table-view-container @(loading ? "ghost" : "")">
+            <table id="result-table" style ="@(loading ? "opacity:0.4" : "")">
+                @switch(mode) 
+                {
+                    case "XYZ":
+                        <XYZ ClinicalTest="@ClinicalTest" ShowSpots="@((args) => ShowSpots(args))" SelectedNplicate="@selectedNplicate" UpdateLoadingStatus=@UpdateLoadingStatus></XYZ>
+                        break;
+                    case "Log2":
+                        <Log2 ClinicalTest="@ClinicalTest" ShowSpots="@((args) => ShowSpots(args))" SelectedNplicate="@selectedNplicate" UpdateLoadingStatus=@UpdateLoadingStatus></Log2>
+                        break;
+                }
+            </table>
+        </div>
     </div>
-</div>
+}
 
 
 @code {
     private string mode = "XYZ";
     private bool displaySpots = false;
+    private bool showExportModal = false;
     private Nplicate? selectedNplicate = default;
+    private Block? selectedBlock = default;
 
     [Parameter, EditorRequired]
-    public ClinicalTest? ClinicalTest { get; set; } = default;
+    public ClinicalTest ClinicalTest { get; set; } = new();
+    private bool loading { get; set; } = true;
+
+    [Parameter, EditorRequired]
+    public EventCallback<int> setActiveButtonCallback { get; set; }
+
+    [Parameter, EditorRequired]
+    public double DatabaseStatus { get; set; } = 1;
+
 
     public void SetMode(string newmode) {
         mode = newmode;
     }
 
-    public void ShowSpots(Tuple<MouseEventArgs, Nplicate> args)
+    public void ShowSpots(Tuple<MouseEventArgs, Nplicate, Block> args)
     {
+        selectedBlock = args.Item3;
         selectedNplicate = args.Item2;
         displaySpots = true;
     }   
@@ -57,5 +99,36 @@
     {
         selectedNplicate = default;
         displaySpots = false;
+    }
+
+    private async void gotoFileUpload() 
+    {
+        await setActiveButtonCallback.InvokeAsync(2);
+    }
+
+    public void UpdateLoadingStatus(bool isLoading) 
+    {
+        loading = isLoading;
+    }
+
+    public async void Export(string withFlags)
+    {
+        if (ClinicalTest == null) return;
+        FileInfo file = await ClinicalTest.ExportResultTableAndHeatmap(withFlags);
+        await JS.InvokeVoidAsync("triggerFileDownload", withFlags == "withFlags" ? $"{ClinicalTest.Title}-result-with-flags.xlsx" : $"{ ClinicalTest.Title}-result-without-flags.xlsx", $"http://localhost:5110/exports/{ClinicalTest.id}-result.xlsx");
+        await Task.Delay(1000).ContinueWith(t => file.Delete());
+    }
+
+    public void OpenExportModal()
+    {
+        if (DatabaseStatus == 1)
+        {
+            showExportModal = true;  
+        }
+    }
+
+    public void CloseExportModal()
+    {
+        showExportModal = false;
     }
 }

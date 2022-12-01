@@ -12,7 +12,7 @@
     }
     <div id="experiments-container">
         <div id="experiment-header" class="menu-header">
-            <img src="icons/expIcon_white.svg"/>
+            <img src="icons/expIcon_white.svg" />
             Experiments
         </div>
         <div class="toolbar">
@@ -22,7 +22,8 @@
             </button>
             <div title="Search for experiment" class="searchbar">
                 <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" placeholder="Search by experiment number, title, author or date..." @oninput="@searchExperiments">
+                <input type="text" placeholder="Search by experiment number, title, author or date..."
+                    @oninput="@searchExperiments">
             </div>
         </div>
         <div id="experiment-grid">
@@ -38,15 +39,12 @@
             {
                 @*When loading: Display 10 ghost elements*@
                 <div class="all-experiment-cards">
-                    @for (int i = 0; i < 10; i++)
+                @for (int i = 0; i < 10; i++)
                     {
                         <div class="grid-content expGhost">
-                            <MenuCard MenuCardType="@Experiment"
-                                    objectDeleteCallback="MenuCardDeleteCallback"
-                                    objectEditCallback="MenuCardEditCallback"
-                                    objectOnclickCallback="MenuCardOnclickCallback"
-                                    obj="@placeholderExp"
-                                    selectedObj="null" />
+                            <MenuCard MenuCardType="@Experiment" objectDeleteCallback="MenuCardDeleteCallback"
+                        objectEditCallback="MenuCardEditCallback" objectOnclickCallback="MenuCardOnclickCallback"
+                        obj="@placeholderExp" selectedObj="null" />
                         </div>
                     }
                 </div>
@@ -57,13 +55,9 @@
                     @foreach (Experiment e in experiments)
                     {
                         <div class="grid-content active-@((e == selectedExp).ToString().ToLower())">
-                            <MenuCard 
-                                MenuCardType="@Experiment" 
-                                objectDeleteCallback="MenuCardDeleteCallback"
-                                objectEditCallback="MenuCardEditCallback" 
-                                objectOnclickCallback="MenuCardOnclickCallback"
-                                obj="@e" 
-                                selectedObj="@selectedExp" />
+                            <MenuCard MenuCardType="@Experiment" objectDeleteCallback="MenuCardDeleteCallback"
+                        objectEditCallback="MenuCardEditCallback" objectOnclickCallback="MenuCardOnclickCallback"
+                        obj="@e" selectedObj="@selectedExp" />
                         </div>
                     }
                 </div>
@@ -97,49 +91,43 @@
                     </button>
                     <div title="Search for clinical test" class="ct-searchbar">
                         <i class="fa-solid fa-magnifying-glass"></i>
-                        <input type="text" placeholder="Search by title or barcode..." @oninput="(input) => showClinicalTests(selectedExp, input.Value.ToString())">
+                        <input type="text" placeholder="Search by title or barcode..."
+                        @oninput='(input) => showClinicalTests(selectedExp, input.Value?.ToString() ?? "")'>
                     </div>
                 </div>
                 <div id="clinical-test-grid">
-                    <div class="grid-header-clinicalTest">
-                        <div>Title</div>
-                        <div>Created</div>
-                        <div>Edited</div>
-                    </div>
+                <div class="grid-header-clinicalTest">
+                    <div>Title</div>
+                    <div>Created</div>
+                    <div>Edited</div>
+                </div>
 
                     @if (loadingCt)
                     {
                         @*When loading: Display 1 ghost elements*@
                         <div class="all-experiment-cards">
-                            @for (int i = 0; i < 3; i++)
+                    @for (int i = 0; i < 3; i++)
                             {
                                 <div class="grid-content ctGhost">
-                                    <MenuCard MenuCardType="@ClinicalTest"
-                                    objectDeleteCallback="MenuCardDeleteCallback"
-                                    objectEditCallback="MenuCardEditCallback"
-                                    objectOnclickCallback="MenuCardOnclickCallback"
-                                    obj="@placeholderCt"
-                                    selectedObj="null" />
+                                    <MenuCard MenuCardType="@ClinicalTest" objectDeleteCallback="MenuCardDeleteCallback"
+                            objectEditCallback="MenuCardEditCallback" objectOnclickCallback="MenuCardOnclickCallback"
+                            obj="@placeholderCt" selectedObj="null" />
                                 </div>
                             }
                         </div>
                     }
-                    else if (currentClinicalTests != null)
+                    else if (currentClinicalTests != null && currentClinicalTests.Count() != 0)
                     {
                         <div class="all-clinicaltest-cards">
                             @foreach (ClinicalTest ct in currentClinicalTests)
                             {
                                 <div class="grid-content active-@((ct == selectedCT).ToString().ToLower())">
-                                    <MenuCard 
-                                        MenuCardType="@ClinicalTest" 
-                                        objectDeleteCallback="MenuCardDeleteCallback"
-                                        objectEditCallback="MenuCardEditCallback" 
-                                        objectOnclickCallback="MenuCardOnclickCallback"
-                                        obj="@ct" 
-                                        selectedObj="@selectedCT" />
+                                    <MenuCard MenuCardType="@ClinicalTest" objectDeleteCallback="MenuCardDeleteCallback"
+                            objectEditCallback="MenuCardEditCallback" objectOnclickCallback="MenuCardOnclickCallback"
+                            obj="@ct" selectedObj="@selectedCT" />
                                 </div>
                             }
-                        </div> 
+                        </div>
                     }
                     else
                     {
@@ -179,46 +167,28 @@
 
 @if (showExperimentModal)
 {
-    <EditorModal 
-             CallbackClose="closeEditorModal"
-             CallbackSave="SaveExperimentCallback"
-             ModalObject="@selectedExp"
-             ModalType="@Experiment"
-             ModalTitle="@EditorModalTitle" />
+    <EditorModal CallbackClose="closeEditorModal" CallbackSave="SaveExperimentCallback" ModalObject="@selectedExp"
+    ModalType="@Experiment" ModalTitle="@EditorModalTitle" />
 }
 
 @if (showClinicalTestModal)
 {
-    <EditorModal 
-             CallbackClose="closeEditorModal"
-             CallbackSave="SaveClinicalTestCallback"
-             ModalObject="@selectedCT"
-             ModalType="@ClinicalTest"
-             ModalTitle="@EditorModalTitle" />
+    <EditorModal CallbackClose="closeEditorModal" CallbackSave="SaveClinicalTestCallback" ModalObject="@selectedCT"
+    ModalType="@ClinicalTest" ModalTitle="@EditorModalTitle" />
 }
 
 @if (showCancelConfirmModalDeleteExperiment)
 {
-    <CancelOrConfirmModal
-        ModalType="@Experiment"
-        Title="@cancelConfirmModalTitle"
-        Body="@cancelConfirmModalBody"
-        CallbackCancel="@(() => showCancelConfirmModalDeleteExperiment = false)"
-        CallbackConfirm="deleteExperiment"
-    />
-} 
+    <CancelOrConfirmModal ModalType="@Experiment" Title="@cancelConfirmModalTitle" Body="@cancelConfirmModalBody"
+    CallbackCancel="@(() => showCancelConfirmModalDeleteExperiment = false)" CallbackConfirm="deleteExperiment" />
+}
 
 
 @if (showCancelConfirmModalDeleteClinicalTest)
 {
-    <CancelOrConfirmModal
-        ModalType="@ClinicalTest"
-        Title="@cancelConfirmModalTitle"
-        Body="@cancelConfirmModalBody"
-        CallbackCancel="@(() => showCancelConfirmModalDeleteClinicalTest = false)"
-        CallbackConfirm="@deleteClinicalTest"
-    />
-} 
+    <CancelOrConfirmModal ModalType="@ClinicalTest" Title="@cancelConfirmModalTitle" Body="@cancelConfirmModalBody"
+    CallbackCancel="@(() => showCancelConfirmModalDeleteClinicalTest = false)" CallbackConfirm="@deleteClinicalTest" />
+}
 
 @code {
     private List<Experiment>? experiments;
@@ -267,13 +237,13 @@
 
     private async void searchExperiments(ChangeEventArgs args)
     {
-        experimentSearchValue = args.Value?.ToString();
+        experimentSearchValue = args.Value?.ToString() ?? "";
         if (experimentSearchValue == null) return;
         experiments = await ExperimentManager.QueryExperiments(experimentSearchValue);
         StateHasChanged();
     }
 
-    private async Task showClinicalTests(Experiment exp, string input="")
+    private async Task showClinicalTests(Experiment exp, string input = "")
     {
         loadingCt = true;
         currentClinicalTests = await exp.QueryClinicalTests(input);
@@ -291,6 +261,7 @@
 
     private void openNewClinicalTestModal<T>(T obj)
     {
+        if (selectedExp == null) return;
         selectedCT = new ClinicalTest(Guid.NewGuid().ToString());
         selectedCT.ExperimentIds.Add(selectedExp.id);
         EditorModalTitle = "Add clinical test";
@@ -321,9 +292,8 @@
     public async void SaveExperimentCallback(Experiment e)
     {
         showExperimentModal = false;
-        e.EditedAt = DateTime.Now;
         loader = true;
-        await e.SaveToDatabase();
+        await e.SaveToDatabaseAsync();
         loader = false;
         experiments = await ExperimentManager.QueryExperiments("");
         StateHasChanged();
@@ -332,6 +302,7 @@
 
     public async void SaveClinicalTestCallback(ClinicalTest SavedClinicalTest)
     {
+        if (selectedExp == null) return;
         showClinicalTestModal = false;
         loader = true;
         await ExperimentManager.SaveClinicalTestWithAssociate(SavedClinicalTest);
@@ -341,13 +312,14 @@
         await showClinicalTests(selectedExp);
     }
 
-    private void setCurrentObject<T>(T obj) 
+    private void setCurrentObject<T>(T obj)
     {
         if (obj is Experiment)
         {
             selectedExp = ((Experiment)(object)obj);
             selectedCT = null;
-        } else if (obj is ClinicalTest)
+        }
+        else if (obj is ClinicalTest)
         {
             selectedCT = ((ClinicalTest)(object)obj);
         }
@@ -375,48 +347,51 @@
         loader = false;
         currentClinicalTests = await selectedExp.QueryClinicalTests("");
         StateHasChanged();
-   }
+    }
 
-   private async void MenuCardOnclickCallback<T>(T obj) 
-   {
-      setCurrentObject(obj);
-      if (selectedExp == null) return;
-      if (selectedCT == null) 
-      {
-         await showClinicalTests(selectedExp);
-      } else
-      {
-         NavManager.NavigateTo($"/clinicaltest/{selectedExp.id}/{selectedCT.id}");
-      }
-   }
+    private async void MenuCardOnclickCallback<T>(T obj)
+    {
+        setCurrentObject(obj);
+        if (selectedExp == null) return;
+        if (selectedCT == null)
+        {
+            await showClinicalTests(selectedExp);
+        }
+        else
+        {
+            NavManager.NavigateTo($"/clinicaltest/{selectedExp.id}/{selectedCT.id}");
+        }
+    }
 
-   private void MenuCardEditCallback<T>(T obj)
-   {
-      setCurrentObject(obj);
-      if (selectedCT == null && selectedExp != null) {
-         EditorModalTitle = "Edit: " + selectedExp.ExperimentNumber;
-         showExperimentModal = true;
-      } else if (selectedCT != null)
-      {
-         EditorModalTitle = "Edit: " + selectedCT.Title;
-         showClinicalTestModal = true;
-      }  
-   }
+    private void MenuCardEditCallback<T>(T obj)
+    {
+        setCurrentObject(obj);
+        if (selectedCT == null && selectedExp != null)
+        {
+            EditorModalTitle = "Edit: " + selectedExp.ExperimentNumber;
+            showExperimentModal = true;
+        }
+        else if (selectedCT != null)
+        {
+            EditorModalTitle = "Edit: " + selectedCT.Title;
+            showClinicalTestModal = true;
+        }
+    }
 
-   private async void MenuCardDeleteCallback<T>(T obj)
-   {
-      setCurrentObject(obj);
-      if (selectedCT == null && selectedExp != null)
-      {
-         cancelConfirmModalTitle = "Delete: " + selectedExp.ExperimentNumber;
-         cancelConfirmModalBody = "The experiment and clinical tests that only relate to this experiment will be deleted.";
-         showCancelConfirmModalDeleteExperiment = true;
-      } else if (selectedCT != null)
-      {
-         cancelConfirmModalTitle = "Delete: " + selectedCT.Title;
-         cancelConfirmModalBody = "The clinical test will be deleted permanently from all associated experiments.";
-         showCancelConfirmModalDeleteClinicalTest = true;
-      }
-      
-   }
+    private void MenuCardDeleteCallback<T>(T obj)
+    {
+        setCurrentObject(obj);
+        if (selectedCT == null && selectedExp != null)
+        {
+            cancelConfirmModalTitle = "Delete: " + selectedExp.ExperimentNumber;
+            cancelConfirmModalBody = "The experiment and clinical tests that only relate to this experiment will be deleted.";
+            showCancelConfirmModalDeleteExperiment = true;
+        }
+        else if (selectedCT != null)
+        {
+            cancelConfirmModalTitle = "Delete: " + selectedCT.Title;
+            cancelConfirmModalBody = "The clinical test will be deleted permanently from all associated experiments.";
+            showCancelConfirmModalDeleteClinicalTest = true;
+        }
+    }
 }
