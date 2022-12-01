@@ -103,6 +103,19 @@ i {
     margin-right: 15px;
 }
 
+#navButtonContainer button:hover {
+    /*    color: var(--primary-dark-color);*/
+    background-color: var(--clinicaltest-color);
+}
+
+#navButtonContainer button.disabled {
+    cursor: not-allowed;
+}
+
+#navButtonContainer button.disabled:hover {
+    background-color: #005bb3;
+}
+
 #navButtonContainer button:last-child {
     margin-right: 0;
 }
@@ -120,10 +133,6 @@ span {
     justify-self: center;
 }
 
-#navButtonContainer button:hover {
-    /*    color: var(--primary-dark-color);*/
-    background-color: var(--clinicaltest-color);
-}
 
 #navButtonContainer button.active {
     color: var(--primary-dark-color);

@@ -8,8 +8,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 
-builder.Services.AddSignalR(e => {
-    e.MaximumReceiveMessageSize = 100000;
+builder.Services.AddSignalR(hubOptions =>
+{
+    hubOptions.MaximumReceiveMessageSize = 10000000;
 });
 
 var app = builder.Build();

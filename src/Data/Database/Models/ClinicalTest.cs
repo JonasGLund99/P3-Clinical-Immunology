@@ -344,7 +344,9 @@ public class ClinicalTest : BaseModel<ClinicalTest>
                     blockNum++;
                 }
 
-                overview.Cells[row, col].Value = Slides[slideNum + (plateNum * 4)].Barcode;
+                double dbl;
+                bool conv = double.TryParse(Slides[slideNum + (plateNum * 4)].Barcode, out dbl);
+                overview.Cells[row, col].Value = conv ? dbl : Slides[slideNum + (plateNum * 4)].Barcode;
                 overview.Cells[row, col].Style.Font.Color.SetColor(Color.White);
                 overview.Cells[6 + (plateNum * 30), col, 26 + (plateNum * 30), col + 2].Style.Border.BorderAround(ExcelBorderStyle.Thick, Color.Gray);
                 overview.Cells[row, col, row + 2, col + 2].Style.Border.BorderAround(ExcelBorderStyle.Thick, Color.Gray);
@@ -390,8 +392,8 @@ public class ClinicalTest : BaseModel<ClinicalTest>
         ExcelWorksheet heatmap = workBook.Worksheets.Add("Heatmap");
         int row = 2;
         int col = 1;
+        int numOfChosenTableTitles = 0;
 
-        heatmap.View.FreezePanes(4, 4);
         heatmap.Cells[row, col].Style.Font.Size = 18;
         heatmap.Cells[row, col].Style.Font.Bold = true;
 
@@ -399,7 +401,11 @@ public class ClinicalTest : BaseModel<ClinicalTest>
 
         foreach (string chosenTableTitle in ChosenTableTitles)
         {
-            heatmap.Cells[row, col++].Value = chosenTableTitle;
+            if (chosenTableTitle != "" && chosenTableTitle != null)
+            {
+                numOfChosenTableTitles++;
+                heatmap.Cells[row, col++].Value = chosenTableTitle;
+            }
         }
 
         foreach (string analyteName in AnalyteNames)
@@ -416,7 +422,10 @@ public class ClinicalTest : BaseModel<ClinicalTest>
 
             foreach (string chosenTableTitle in ChosenTableTitles)
             {
-                heatmap.Cells[row, col++].Value = block.PatientData[TableTitles.IndexOf(chosenTableTitle)];
+                if (chosenTableTitle != "" && chosenTableTitle != null)
+                {
+                    heatmap.Cells[row, col++].Value = block.PatientData[TableTitles.IndexOf(chosenTableTitle)];
+                }
             }
 
             foreach (Nplicate nplicate in block.Nplicates)
@@ -433,7 +442,8 @@ public class ClinicalTest : BaseModel<ClinicalTest>
             }
         }
         heatmap.Columns.AutoFit(3);
-        makeColourScale(heatmap, 5, col += 2);   
+        makeColourScale(heatmap, 5, col += 2);
+        heatmap.View.FreezePanes(4, numOfChosenTableTitles + 1);
     }
 
     private void makeColourScale(ExcelWorksheet worksheet, int row, int col)
@@ -471,13 +481,14 @@ public class ClinicalTest : BaseModel<ClinicalTest>
     }
 
     public async Task ExportResultTable(ExcelWorkbook workBook, string withFlags)
-    {        
+    {
         ExcelWorksheet XYZ = workBook.Worksheets.Add("XYZ");
         ExcelWorksheet Log2 = workBook.Worksheets.Add("Log2");
         int XYZRow = 2;
         int XYZCol = 1;
         int Log2Row = 2;
         int Log2Col = 1;
+        int numOfChosenTableTitles = 0;
         XYZ.Row(1).Style.Font.Bold = true;
         Log2.Row(1).Style.Font.Bold = true;
         XYZ.Cells.Style.Numberformat.Format = "0.00";
@@ -485,9 +496,6 @@ public class ClinicalTest : BaseModel<ClinicalTest>
         XYZ.Cells.Style.Numberformat.Format = "_ * #,##0.00_ ;_ * -#,##0.00_ ;_ * \"-\"??_ ;_ @_ ";
         Log2.Cells.Style.Numberformat.Format = "_ * #,##0.00_ ;_ * -#,##0.00_ ;_ * \"-\"??_ ;_ @_ ";
 
-
-        XYZ.View.FreezePanes(4, 5);
-        Log2.View.FreezePanes(4, 5);
         XYZ.Cells[XYZRow, XYZCol].Style.Font.Size = 18;
         Log2.Cells[Log2Row, XYZCol].Style.Font.Size = 18;
         XYZ.Cells[XYZRow, XYZCol].Style.Font.Bold = true;
@@ -501,8 +509,12 @@ public class ClinicalTest : BaseModel<ClinicalTest>
 
         foreach (string chosenTableTitle in ChosenTableTitles)
         {
-            XYZ.Cells[XYZRow, XYZCol++].Value = chosenTableTitle;
-            Log2.Cells[Log2Row, Log2Col++].Value = chosenTableTitle;
+            if (chosenTableTitle != "" && chosenTableTitle != null)
+            {
+                XYZ.Cells[XYZRow, XYZCol++].Value = chosenTableTitle;
+                Log2.Cells[Log2Row, Log2Col++].Value = chosenTableTitle;
+                numOfChosenTableTitles++;
+            }
         }
         XYZ.Cells[XYZRow, XYZCol++].Value = "Pos raw";
         XYZ.Cells[XYZRow, XYZCol++].Value = "Neg raw";
@@ -528,8 +540,11 @@ public class ClinicalTest : BaseModel<ClinicalTest>
 
             foreach (var chosenTableTitle in ChosenTableTitles)
             {
-                XYZ.Cells[XYZRow, XYZCol++].Value = block.PatientData[TableTitles.IndexOf(chosenTableTitle)];
-                Log2.Cells[Log2Row, Log2Col++].Value = block.PatientData[TableTitles.IndexOf(chosenTableTitle)];
+                if (chosenTableTitle != "" && chosenTableTitle != null)
+                {
+                    XYZ.Cells[XYZRow, XYZCol++].Value = block.PatientData[TableTitles.IndexOf(chosenTableTitle)];
+                    Log2.Cells[Log2Row, Log2Col++].Value = block.PatientData[TableTitles.IndexOf(chosenTableTitle)];
+                }
             }
             Nplicate? pos = block.Nplicates.Find(nplicate => nplicate.AnalyteType == "pos");
             Nplicate? neg = block.Nplicates.Find(nplicate => nplicate.AnalyteType == "neg");
@@ -563,6 +578,8 @@ public class ClinicalTest : BaseModel<ClinicalTest>
         }
         XYZ.Columns.AutoFit();
         Log2.Columns.AutoFit();
+        XYZ.View.FreezePanes(4, numOfChosenTableTitles + 1);
+        Log2.View.FreezePanes(4, numOfChosenTableTitles + 1);
     }
 
     public async Task ExportPatientData(ExcelWorkbook workBook)
@@ -594,7 +611,9 @@ public class ClinicalTest : BaseModel<ClinicalTest>
             PatientData.Cells[patientDataRow, patientDataCol++].Value = block.SlideIndex + 1;
             foreach (string data in block.PatientData)
             {
-                PatientData.Cells[patientDataRow, patientDataCol++].Value = data;
+                double dbl;
+                bool conv = double.TryParse(data, out dbl);
+                PatientData.Cells[patientDataRow, patientDataCol++].Value = conv ? dbl : data;
             }
             patientDataCol = 1;
             patientDataRow++;
@@ -679,7 +698,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
                         nplicate.Spots.Add(
                             new Spot(
                                 intensity: double.Parse(findSingleSpotInfo(spotInfo, titles, "Intensity")),
-                                flagged: findSingleSpotInfo(spotInfo, titles, "Flags") != "0"
+                                flagged: Array.Find(titles, t => t.Contains("Flags")) != null && findSingleSpotInfo(spotInfo, titles, "Flags") != "0"
                             )
                         );
                         spotInfo.Clear();

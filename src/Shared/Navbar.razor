@@ -31,22 +31,24 @@
         <button id="details" @onclick="() => SetActiveButton(0)" class="@((ActiveButton == 0 ? "active" : ""))">
             Details
         </button>
-        <button id="overview" @onclick="() => SetActiveButton(1)" class="@((ActiveButton == 1 ? "active" : ""))">
+        <button id="overview" @onclick="() => SetActiveButton(1)" class="@(BlocksLoaded == true ? (ActiveButton == 1 ? "active" : "") : "disabled")" title="@(BlocksLoaded == true ? "" : "Loading data from database")">
             Overview
         </button>
-        <button id="fileUpload" @onclick="() => SetActiveButton(2)" class="@((ActiveButton == 2 ? "active" : ""))">
+        <button id="fileUpload" @onclick="() => SetActiveButton(2)" class="@(BlocksLoaded == true ? (ActiveButton == 2 ? "active" : "") : "disabled")">
             File Upload
         </button>
-        <button id="resultTable" @onclick="() => SetActiveButton(3)" class="@((ActiveButton == 3 ? "active" : ""))">
+        <button id="resultTable" @onclick="() => SetActiveButton(3)" class="@(BlocksLoaded == true ? (ActiveButton == 3 ? "active" : "") : "disabled")">
             Result Table
         </button>
-        <button id="heatmap" @onclick="() => SetActiveButton(4)" class="@((ActiveButton == 4 ? "active" : ""))">
+        <button id="heatmap" @onclick="() => SetActiveButton(4)" class="@(BlocksLoaded == true ? (ActiveButton == 4 ? "active" : "") : "disabled")">
             Heatmap
         </button>
     </div>
 </header>
 
 @code {
+    [Parameter]
+    public bool BlocksLoaded { get; set; } = false;
     [Parameter]
     public string ClinicalTestTitle { get; set; } = "";
     [Parameter]
@@ -66,6 +68,9 @@
 
     public async void SetActiveButton(int buttonID)
     {
-        await setActiveButtonCallback.InvokeAsync(buttonID);
+        if (BlocksLoaded == true)
+        {
+            await setActiveButtonCallback.InvokeAsync(buttonID);
+        }
     }
 }
