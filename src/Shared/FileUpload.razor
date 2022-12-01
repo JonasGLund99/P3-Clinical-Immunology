@@ -222,19 +222,11 @@
 
     public async void StartCalculation() 
     {
+        if (ClinicalTest == null) return;
         loading = true;
         bool calculationIsValid = await checkCalculationValidity();
-        if (ClinicalTest == null) return;
 
-        if (calculationIsValid == false)
-        {
-            loading = false;
-            displayError = true;
-            errorMessage = "One blank block is necessary in every slide for the calculations to be executed";
-            errorMessageEnd = "";
-            errorTitle = "Calculation canceled";
-        }
-        else
+        if (calculationIsValid)
         {
             await ClinicalTest.CalculateClinicalTestResult();
             ClinicalTest.SaveToDatabase(true);
@@ -247,14 +239,33 @@
     public async Task<bool> checkCalculationValidity() 
     {
         List<Block> blankBlocks = await ClinicalTest.GetBlankBlocks();
+        List<Block> normBlocks = await ClinicalTest.GetNormalBlocks();
         foreach(Slide s in ClinicalTest.Slides)
         {
-            if (blankBlocks.Find(bb => bb.SlideIndex == ClinicalTest.Slides.IndexOf(s)) == null)
+            int numNormBlocksInSlide = normBlocks.FindAll(nb => nb.SlideIndex == ClinicalTest.Slides.IndexOf(s)).Count;
+            int numBlankBlocksInSlide = blankBlocks.FindAll(bb => bb.SlideIndex == ClinicalTest.Slides.IndexOf(s)).Count;
+            if (numBlankBlocksInSlide == 0)
             {
                 //if no black block has slide index of slide
+                loading = false;
+                displayError = true;
+                errorMessage = "One blank block is necessary in every slide for the calculations to be executed";
+                errorMessageEnd = "";
+                errorTitle = "Calculation canceled";
+                return false;
+            }
+            if (numNormBlocksInSlide + numBlankBlocksInSlide != 21)
+            {
+                // If there are not 21 total number of blocks in a slide
+                loading = false;
+                displayError = true;
+                errorMessage = "One or more slides contain an empty block";
+                errorMessageEnd = "";
+                errorTitle = "Calculation canceled";
                 return false;
             }
         }
+
         return true;        
     }
 }

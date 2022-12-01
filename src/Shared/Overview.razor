@@ -88,7 +88,7 @@
             <i id="info-button" title="Editing overview - insert clinical data in the table" class="fa fa-info-circle"></i>
             <div id="toolbar">
                 <div id="buttons">
-                    <span id="clear-button" data-title="Clear entire table" @onclick='() => { clearTableIcon = "icons/ClearTable_icon.svg"; clearTable(); }' @onmouseover='() => clearTableIcon = "icons/ClearTable_icon_hover.svg"' @onmouseout='() => clearTableIcon = "icons/ClearTable_icon.svg"'>
+                    <span id="clear-button" class="@(DatabaseStatus != 1 ? "no-clear" : "")" data-title="@(DatabaseStatus != 1 ? "Clearing table isn't allowed while saving" : "Clear entire table")" @onclick='() => { clearTableIcon = "icons/ClearTable_icon.svg"; clearTable(); }' @onmouseover='() => clearTableIcon = DatabaseStatus != 1 ? "icons/ClearTable_icon.svg" : "icons/ClearTable_icon_hover.svg"' @onmouseout='() => clearTableIcon = "icons/ClearTable_icon.svg"'>
                         Clear table
                         <img src="@clearTableIcon"/>
                     </span>
@@ -184,12 +184,27 @@
         }
         ClinicalTest.TableTitles = tableTitles;
 
+        for (int i = 0; i < ClinicalTest.ChosenTableTitles.Length; i++)
+        {
+            if (!tableTitles.Contains(ClinicalTest.ChosenTableTitles[i]))
+            {
+                ClinicalTest.ChosenTableTitles[i] = "";
+            }
+        }
+
         // Remove first line from table data
         tableData = tableData.Skip(1).ToArray();
-
+        List<Block> normBlocks = await ClinicalTest.GetNormalBlocks();
+        
         foreach (string[] block in tableData) 
         {
-            blockList.Add(new Block(Guid.NewGuid().ToString(), block.ToList(), Block.BlockType.Normal, 0, 0, ClinicalTest.id));
+            int blockIndex = Array.IndexOf(tableData, block);
+            Block newBlock = new Block(Guid.NewGuid().ToString(), block.ToList(), Block.BlockType.Normal, 0, 0, ClinicalTest.id);
+            if (blockIndex < normBlocks.Count)
+            {
+                newBlock.TextColour = normBlocks[blockIndex].TextColour;
+            }
+            blockList.Add(newBlock);
         }
         ClinicalTest.SetNormalBlocks(blockList);
 
@@ -202,7 +217,10 @@
     }
 
     private async void clearTable() {
-        await JS.InvokeVoidAsync("clearTable");
+        if (DatabaseStatus == 1)
+        {
+            await JS.InvokeVoidAsync("clearTable");
+        }
     }
 
     private void clearColors(List<List<Block[]>> overview)
@@ -220,7 +238,7 @@
                 }
             }
         }
-        ClinicalTest.SaveToDatabase();
+        ClinicalTest.SaveToDatabase(true);
         StateHasChanged();
     } 
 
