@@ -26,7 +26,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="old\" />
     <Folder Include="ProcessQueue\" />
     <Folder Include="DatabaseService\" />
     <Folder Include="ExperimentManager\" />
