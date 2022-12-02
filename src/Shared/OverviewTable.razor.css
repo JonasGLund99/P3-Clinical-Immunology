@@ -40,14 +40,14 @@ tbody td {
 }
 
 tbody td:focus {
-    outline: 3px solid rgb(19, 96, 25);
+    outline: 3px solid var(--clinicaltest-color);
     outline-offset: -2px;
 }
 .line-number {
     text-align: center;
     border-left: none;
     background-color: white;
-    outline: 0.5px solid rgb(37, 62, 39);
+    outline: 0.5px solid rgb(170, 170, 170);
     position: sticky;
     left: 0;
     z-index: 1;

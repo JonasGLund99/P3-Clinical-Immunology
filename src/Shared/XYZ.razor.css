@@ -34,8 +34,8 @@ td {
 tr:first-child td {
     height: 40px;
     font-weight: bold;
-    background-color: rgb(39, 80, 53);
-    outline: 1px solid rgb(37, 62, 39);
+    background-color: var(--overviewtable-head-background-color);
+    outline: 1px solid var(--experiment-color);
     border-bottom: hidden;
     color: rgb(244, 244, 244);
     position: sticky;
@@ -76,7 +76,7 @@ tr:first-child td:first-child {
     z-index: 1;
     left: 50.5px;
     white-space: break-spaces;
-    outline: 0.5px solid rgb(37, 62, 39);
+    outline: 0.5px solid rgb(170, 170, 170);
 }
 
 .key-number-2 {
@@ -84,7 +84,7 @@ tr:first-child td:first-child {
     z-index: 1;
     left: 150.5px;
     white-space: break-spaces;
-    outline: 0.5px solid rgb(37, 62, 39);
+    outline: 0.5px solid rgb(170, 170, 170);
 }
 
 .key-number-3 {
@@ -92,14 +92,14 @@ tr:first-child td:first-child {
     z-index: 1;
     left: 250.5px;
     white-space: break-spaces;
-    outline: 0.5px solid rgb(37, 62, 39);
+    outline: 0.5px solid rgb(170, 170, 170);
 }
 
 .line-number {
     text-align: center;
     border-left: none;
     background-color: white;
-    outline: 0.5px solid rgb(37, 62, 39);
+    outline: 0.5px solid rgb(170, 170, 170);
     position: sticky;
     left: 0;
     z-index: 1;
