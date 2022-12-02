@@ -29,9 +29,11 @@
 <div class="overview-component">
     @if (mode == "Overview") {
         <div class="toolbar-container">
-            <i id="info-button" title="Select which information to show in the overview" class="fa fa-info-circle"></i>
+            <i id="info-button" title="Select which information to show in the overview
+Left click on a block to insert a blank block
+Right click on a block to change it's colour" class="fa fa-info-circle"></i>
             <div id="toolbar">
-                <i class="fa-solid fa-droplet-slash" title="Clear all colors" @onclick="() => clearColors(overview)"></i>
+                <i class="fa-solid fa-droplet-slash" title="Clear all colours" @onclick="() => clearColors(overview)"></i>
                 <div id="edit-icon" data-title="Edit overview in table view" @onclick='() => { tableViewIcon = "icons/TableView_icon.svg"; switchMode("Table-view"); }'>
                     <img src="@tableViewIcon" @onmouseover='() => tableViewIcon = "icons/TableView_icon_hover.svg"' @onmouseout='() => tableViewIcon = "icons/TableView_icon.svg"'/>
                 </div>
