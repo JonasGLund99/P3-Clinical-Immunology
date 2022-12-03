@@ -10,7 +10,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
-namespace src.Tests.old;
+namespace src.Tests;
 
 public class SetHeatMapColourTest
 {
@@ -23,7 +23,7 @@ public class SetHeatMapColourTest
 
     [Theory]
     [ClassData(typeof(SetHeatMapColourTestData))]
-    public void lerpTheory(Color expected, double minRI, double maxRI, params Nplicate[] nplicates)
+    public void SetHeatMapColourTheory(Color expected, double minRI, double maxRI, params Nplicate[] nplicates)
     {
         Color output = default;
 
@@ -40,8 +40,8 @@ public class SetHeatMapColourTest
     {
         public IEnumerator<object[]> GetEnumerator()
         {
-            Color expectedColour1 = Color.FromArgb(255, 32, 140, 141);
-            Color expectedColour2 = Color.FromArgb(255, 32, 140, 141);
+            Color expectedColour1 = Color.FromArgb(255, 35, 133, 140);
+            Color expectedColour2 = Color.FromArgb(255, 68, 1, 88);
 
             double minRI = 0.8;
             double maxRI = 8.4;
@@ -61,8 +61,8 @@ public class SetHeatMapColourTest
 
 
 
-            yield return new object[] { expected1, minRI, maxRI, n1 };
-            yield return new object[] { expected1, minRI, maxRI, n2 };
+            yield return new object[] { expectedColour1, minRI, maxRI, n1 };
+            yield return new object[] { expectedColour2, minRI, maxRI, n2 };
 
         }
 

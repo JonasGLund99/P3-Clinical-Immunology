@@ -10,7 +10,7 @@
 //using System.Text;
 //using System.Threading.Tasks;
 //using Xunit;
-//namespace src.Tests.old;
+//namespace src.Tests;
 
 //public class lerpTest
 //{
