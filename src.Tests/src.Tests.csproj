@@ -25,4 +25,16 @@
   <ItemGroup>
     <ProjectReference Include="..\src\src.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="ProcessQueue\" />
+    <Folder Include="DatabaseService\" />
+    <Folder Include="ExperimentManager\" />
+    <Folder Include="Nplicate\" />
+    <Folder Include="SlideDataFile\" />
+    <Folder Include="Experiment\" />
+    <Folder Include="ClinicalTest\" />
+    <Folder Include="Block\" />
+    <Folder Include="BaseModel\" />
+  </ItemGroup>
 </Project>
