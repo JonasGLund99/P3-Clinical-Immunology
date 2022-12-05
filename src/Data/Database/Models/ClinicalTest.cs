@@ -656,10 +656,10 @@ public class ClinicalTest : BaseModel<ClinicalTest>
         foreach (SlideDataFile slideDataFile in SlideDataFiles)
         {
             //Create string array with only spot information
-            string[] spotLines = slideDataFile.getSpotLines();
+            string[] spotLines = slideDataFile.GetSpotLines();
 
             //Create array where each entry is a title for spot information
-            string[] titles = slideDataFile.getTitles();
+            string[] titles = slideDataFile.GetTitles();
 
             List<string> spotInfo = new List<string>();
             nplicatesInBlock = spotLines.Length / numOfBlocks / NplicateSize;

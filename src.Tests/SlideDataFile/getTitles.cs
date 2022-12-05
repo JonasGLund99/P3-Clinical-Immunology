@@ -25,14 +25,14 @@ public class GetTitlesTest
 
     [Theory]
     [ClassData(typeof(GetTitlesTestData))]
-    public void getTitlesTheory(string[] expected, params SlideDataFile[] slideDataFiles)
+    public void GetTitlesTheory(string[] expected, params SlideDataFile[] slideDataFiles)
     {
         string[] spotTitles = new string[0];
 
         foreach (SlideDataFile sf in slideDataFiles)
         {
 
-            spotTitles = sf.getTitles();
+            spotTitles = sf.GetTitles();
         }
 
         var serializedSpotTitles = JsonConvert.SerializeObject(spotTitles);

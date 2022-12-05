@@ -57,16 +57,44 @@ public abstract class BaseModel<T> where T : BaseModel<T>
             }   
         }
     }
+    public virtual async Task RemoveFromDatabase()
+    {
+        const int MaxRetryCount = 3;
+        int retryCount = 0;
+        bool success = false;
 
-	public virtual async Task RemoveFromDatabase()
-	{
-        Database? db = DatabaseService.Instance.Database;
+        while (!success && retryCount < MaxRetryCount)
+        {
+            try 
+            {
+                Database? db = DatabaseService.Instance.Database;
+                if (db == null) throw new NullReferenceException("There was no reference to the database");
+                
+                await db.GetContainer(typeof(T).Name).DeleteItemAsync<T>(
+                    id: this.id, 
+                    partitionKey: new PartitionKey(this.PartitionKey)
+                );
 
-        if (db == null) throw new NullReferenceException("There was no reference to the database");
-
-        await db.GetContainer(typeof(T).Name).DeleteItemAsync<T>(
-            id: this.id, 
-			partitionKey: new PartitionKey(this.PartitionKey)
-        );
+                success = true;
+            }
+            catch (Exception e)
+            {
+                System.Console.WriteLine(e.Message);
+                System.Console.WriteLine("Failed to remove " + typeof(T).Name + ". Retrying...");
+                retryCount++;
+            }   
+        }
     }
+
+	// public virtual async Task RemoveFromDatabase()
+	// {
+    //     Database? db = DatabaseService.Instance.Database;
+
+    //     if (db == null) throw new NullReferenceException("There was no reference to the database");
+
+    //     await db.GetContainer(typeof(T).Name).DeleteItemAsync<T>(
+    //         id: this.id, 
+	// 		partitionKey: new PartitionKey(this.PartitionKey)
+    //     );
+    // }
 }
