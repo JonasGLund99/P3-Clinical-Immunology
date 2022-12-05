@@ -18,22 +18,14 @@ public class GetSortedBlocks
 
     [Theory]
     [ClassData(typeof(GetNormalBlocksTestData))]
-    public void GetSortedBlocksTheory(List<Block> expected, List<Block> mockedBlocks, params ClinicalTest[] clinicalTests)
+    public async void GetSortedBlocksTheory(List<Block> expected, params ClinicalTest[] clinicalTests)
     {
         List<Block> blocks = new();
 
         foreach(ClinicalTest c in clinicalTests)
         {
             blocks.Clear();
-            blocks.AddRange(mockedBlocks);
-            blocks.Sort(delegate (Block x, Block y)
-            {
-                if (x.SlideIndex == y.SlideIndex)
-                {
-                    return x.BlockIndex - y.BlockIndex;
-                }
-                return x.SlideIndex - y.SlideIndex;
-            });
+            blocks.AddRange(await c.GetSortedBlocks());
         }
 
         var serializedExpected = JsonConvert.SerializeObject(expected);
@@ -48,6 +40,7 @@ public class GetSortedBlocks
         {
             ClinicalTest c1 = new ClinicalTest();
             MockedNormalBlocks mb = new MockedNormalBlocks();
+            c1.SetNormalBlocks(mb.Blocks);
             ClinicalTest c2 = new ClinicalTest();
             ClinicalTest c3 = new ClinicalTest();
 
@@ -74,7 +67,7 @@ public class GetSortedBlocks
                 new Block { SlideIndex = 0, BlockIndex = 18 , Type = Block.BlockType.Normal},
                 new Block { SlideIndex = 0, BlockIndex = 19 , Type = Block.BlockType.Normal},
                 new Block { SlideIndex = 0, BlockIndex = 20 , Type = Block.BlockType.Normal},
-            }, mb.Blocks, c1 };
+            }, c1 };
 
         }
 
