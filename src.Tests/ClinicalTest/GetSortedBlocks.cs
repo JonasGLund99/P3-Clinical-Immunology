@@ -85,7 +85,7 @@ public class GetSortedBlocks
 
         private class MockedNormalBlocks
         {
-
+            private int numSlides = 1;
             public List<Block> Blocks { get; set; }
 
             public MockedNormalBlocks()
@@ -97,9 +97,9 @@ public class GetSortedBlocks
             {
                 Blocks = new List<Block>();
 
-                for (int j = 0; j < 1; j++)
+                for (int j = 0; j < numSlides; j++)
                 {
-                    for (int i = 0; i < 21; i++)
+                    for (int i = 20; i >= 0 ; i--)
                     {
                         Block block = new Block();
                         block.SlideIndex = j;
