@@ -25,14 +25,14 @@ public class GetSpotlinesTest
 
     [Theory]
     [ClassData(typeof(GetSpotLinesTestData))]
-    public void getSpotLinesTheory(string[] expected, params SlideDataFile[] slideDataFiles)
+    public void GetSpotLinesTheory(string[] expected, params SlideDataFile[] slideDataFiles)
     {
         string[] spotLines = new string[0];
 
         foreach (SlideDataFile sf in slideDataFiles)
         {
 
-            spotLines = sf.getSpotLines();
+            spotLines = sf.GetSpotLines();
         }
 
         var serializedSpotLines = JsonConvert.SerializeObject(spotLines);

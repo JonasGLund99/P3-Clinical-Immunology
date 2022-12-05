@@ -14,13 +14,13 @@ public class SlideDataFile
     public string Filename { get; set; } = "";
     public string Content { get; set; } = "";
 
-    public string[] getTitles()
+    public string[] GetTitles()
     {
         string[] allLines = Content.Split("\n");
         int beginningIndex = Array.FindIndex(allLines, line => titlesPattern.Match(line).Success);
         return allLines[beginningIndex].Split("\t");
     }
-    public string[] getSpotLines()
+    public string[] GetSpotLines()
     {
         string[] allLines = Content.Split("\n");
         int beginningIndex = Array.FindIndex(allLines, line => titlesPattern.Match(line).Success);
