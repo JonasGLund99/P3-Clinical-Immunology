@@ -43,7 +43,10 @@ public class GetNormalBlocks
                 "SestilJulefrokost"
             };
 
-        await Assert.ThrowsAnyAsync<CosmosException>(c2.GetNormalBlocks);
+        await DatabaseService.Instance.SetupDatabase();
+        if (DatabaseService.Instance.Database == null) throw new Exception("Database did not complete setup for this test");
+
+        await Assert.ThrowsAnyAsync<NullReferenceException>(c2.GetNormalBlocks);
 
     }
 

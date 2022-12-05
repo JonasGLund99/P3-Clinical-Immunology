@@ -17,35 +17,35 @@ public class AddBlankBlock
     }
 
 
-    [Theory]
-    [ClassData(typeof(GetNormalBlocksTestData))]
-    public async void GetBlankBlocksTheory(List<Block> expected, params ClinicalTest[] clinicalTests)
-    {
-        List<Block> blocks = new();
+    //[Theory]
+    //[ClassData(typeof(GetNormalBlocksTestData))]
+    //public async void GetBlankBlocksTheory(List<Block> expected, params ClinicalTest[] clinicalTests)
+    //{
+    //    List<Block> blocks = new();
 
-        foreach (ClinicalTest c in clinicalTests)
-        {
-            blocks.Clear();
-            blocks.AddRange(await c.GetSortedBlocks());
-        }
+    //    foreach (ClinicalTest c in clinicalTests)
+    //    {
+    //        blocks.Clear();
+    //        blocks.AddRange(await c.GetSortedBlocks());
+    //    }
 
-        var serializedExpected = JsonConvert.SerializeObject(expected);
-        var serializedActual = JsonConvert.SerializeObject(blocks);
+    //    var serializedExpected = JsonConvert.SerializeObject(expected);
+    //    var serializedActual = JsonConvert.SerializeObject(blocks);
 
-        Assert.Equal(serializedExpected, serializedActual);
-    }
+    //    Assert.Equal(serializedExpected, serializedActual);
+    //}
 
-    [Fact]
-    public async void GetBlankBlocksNullException()
-    {
-        ClinicalTest c2 = new ClinicalTest();
-        c2.NormalBlockIds = new List<string>() {
-                "SestilJulefrokost"
-            };
+    //[Fact]
+    //public async void GetBlankBlocksNullException()
+    //{
+    //    ClinicalTest c2 = new ClinicalTest();
+    //    c2.NormalBlockIds = new List<string>() {
+    //            "SestilJulefrokost"
+    //        };
 
-        await Assert.ThrowsAnyAsync<CosmosException>(c2.GetNormalBlocks);
+    //    await Assert.ThrowsAnyAsync<CosmosException>(c2.GetNormalBlocks);
 
-    }
+    //}
 
     public class GetNormalBlocksTestData : IEnumerable<object[]>
     {
