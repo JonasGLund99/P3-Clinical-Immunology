@@ -7,80 +7,111 @@ using Xunit;
 namespace src.Tests;
 
 //https://youtu.be/2Wp8en1I9oQ?t=1152 Se delen om Reusing Instances
-public class AddBlankBlock
+public class AddBlankBlockTest
 {
     private readonly ClinicalTest _sut;
 
-    public AddBlankBlock()
+    public AddBlankBlockTest()
     {
         _sut = new ClinicalTest();
     }
 
 
-    //[Theory]
-    //[ClassData(typeof(GetNormalBlocksTestData))]
-    //public async void GetBlankBlocksTheory(List<Block> expected, params ClinicalTest[] clinicalTests)
-    //{
-    //    List<Block> blocks = new();
+    [Theory]
+    [ClassData(typeof(AddBlankBlockTestData))]
+    public async void AddBlankBlock(List<Block> expected, List<Block> mockedBlocks, params ClinicalTest[] clinicalTests)
+    {
+        List<Block> blocks = new();
 
-    //    foreach (ClinicalTest c in clinicalTests)
-    //    {
-    //        blocks.Clear();
-    //        blocks.AddRange(await c.GetSortedBlocks());
-    //    }
+        await DatabaseService.Instance.SetupDatabase();
+        if (DatabaseService.Instance.Database == null) throw new Exception("Database did not complete setup for GetBlankBlocks test");
 
-    //    var serializedExpected = JsonConvert.SerializeObject(expected);
-    //    var serializedActual = JsonConvert.SerializeObject(blocks);
+        foreach (ClinicalTest c in clinicalTests)
+        {
+            foreach (Block block in mockedBlocks)
+            {
+                await c.AddBlankBlock(block);
+            }
+            blocks.Clear();
+            blocks.AddRange(await c.GetBlankBlocks());
+        }
 
-    //    Assert.Equal(serializedExpected, serializedActual);
-    //}
+        var serializedExpected = JsonConvert.SerializeObject(expected);
+        var serializedActual = JsonConvert.SerializeObject(blocks);
 
-    //[Fact]
-    //public async void GetBlankBlocksNullException()
-    //{
-    //    ClinicalTest c2 = new ClinicalTest();
-    //    c2.NormalBlockIds = new List<string>() {
-    //            "SestilJulefrokost"
-    //        };
+        Assert.Equal(serializedExpected, serializedActual);
+    }
 
-    //    await Assert.ThrowsAnyAsync<CosmosException>(c2.GetNormalBlocks);
+    [Fact]
+    public async void AddBlankblockEmptyAfterwardsContainingElement()
+    {
+        ClinicalTest c2 = new ClinicalTest();
+        List<Block> expected = new List<Block>();
 
-    //}
+        await DatabaseService.Instance.SetupDatabase();
+        if (DatabaseService.Instance.Database == null) throw new Exception("Database did not complete setup for this test");
 
-    public class GetNormalBlocksTestData : IEnumerable<object[]>
+        List<Block> actualBlocks = await c2.GetBlankBlocks();
+        var serializedExpected = JsonConvert.SerializeObject(expected);
+        var serializedActual = JsonConvert.SerializeObject(actualBlocks);
+
+        Assert.Equal(serializedExpected, serializedActual);
+        await c2.AddBlankBlock(new Block { SlideIndex = 0, BlockIndex = 0, Type = Block.BlockType.Blank });
+
+        expected.Add(new Block { SlideIndex = 0, BlockIndex = 0, Type = Block.BlockType.Blank });
+        List<Block> actualBlocks2 = await c2.GetBlankBlocks();
+        var serializedExpected2 = JsonConvert.SerializeObject(expected);
+        var serializedActual2 = JsonConvert.SerializeObject(actualBlocks2);
+
+        Assert.Equal(serializedExpected2, serializedActual2);
+    }
+
+    [Fact]
+    public async void AddBlankBlocksNullException()
+    {
+        ClinicalTest c2 = new ClinicalTest();
+        c2.BlankBlockIds = new List<string>() {
+                "Vi ses til julefrokost"
+            };
+
+        await DatabaseService.Instance.SetupDatabase();
+        if (DatabaseService.Instance.Database == null) throw new Exception("Database did not complete setup for this test");
+     
+        await Assert.ThrowsAnyAsync<NullReferenceException>(() => c2.AddBlankBlock(new Block { SlideIndex = 0, BlockIndex = 0, Type = Block.BlockType.Blank }));
+    }
+
+    public class AddBlankBlockTestData : IEnumerable<object[]>
     {
         public IEnumerator<object[]> GetEnumerator()
         {
             ClinicalTest c1 = new ClinicalTest();
             MockedNormalBlocks mb = new MockedNormalBlocks();
-            c1.SetNormalBlocks(mb.Blocks);
-
 
 
             yield return new object[] { new List<Block>
             {
-                new Block { SlideIndex = 0, BlockIndex = 0, Type = Block.BlockType.Normal },
-                new Block { SlideIndex = 0, BlockIndex = 1, Type = Block.BlockType.Normal},
-                new Block { SlideIndex = 0, BlockIndex = 2, Type = Block.BlockType.Normal },
-                new Block { SlideIndex = 0, BlockIndex = 3, Type = Block.BlockType.Normal},
-                new Block { SlideIndex = 0, BlockIndex = 4, Type = Block.BlockType.Normal},
-                new Block { SlideIndex = 0, BlockIndex = 5, Type = Block.BlockType.Normal},
-                new Block { SlideIndex = 0, BlockIndex = 6, Type = Block.BlockType.Normal},
-                new Block { SlideIndex = 0, BlockIndex = 7, Type = Block.BlockType.Normal},
-                new Block { SlideIndex = 0, BlockIndex = 8, Type = Block.BlockType.Normal},
-                new Block { SlideIndex = 0, BlockIndex = 9, Type = Block.BlockType.Normal},
-                new Block { SlideIndex = 0, BlockIndex = 10, Type = Block.BlockType.Normal},
-                new Block { SlideIndex = 0, BlockIndex = 11, Type = Block.BlockType.Normal},
-                new Block { SlideIndex = 0, BlockIndex = 12, Type = Block.BlockType.Normal},
-                new Block { SlideIndex = 0, BlockIndex = 13, Type = Block.BlockType.Normal},
-                new Block { SlideIndex = 0, BlockIndex = 14, Type = Block.BlockType.Normal},
-                new Block { SlideIndex = 0, BlockIndex = 15, Type = Block.BlockType.Normal},
-                new Block { SlideIndex = 0, BlockIndex = 16, Type = Block.BlockType.Normal},
-                new Block { SlideIndex = 0, BlockIndex = 17, Type = Block.BlockType.Normal},
-                new Block { SlideIndex = 0, BlockIndex = 18, Type = Block.BlockType.Normal},
-                new Block { SlideIndex = 0, BlockIndex = 19, Type = Block.BlockType.Normal},
-                new Block { SlideIndex = 0, BlockIndex = 20, Type = Block.BlockType.Normal},
-            }, c1 };
+                new Block { SlideIndex = 0, BlockIndex = 0, Type = Block.BlockType.Blank },
+                new Block { SlideIndex = 0, BlockIndex = 1, Type = Block.BlockType.Blank},
+                new Block { SlideIndex = 0, BlockIndex = 2, Type = Block.BlockType.Blank },
+                new Block { SlideIndex = 0, BlockIndex = 3, Type = Block.BlockType.Blank},
+                new Block { SlideIndex = 0, BlockIndex = 4, Type = Block.BlockType.Blank},
+                new Block { SlideIndex = 0, BlockIndex = 5, Type = Block.BlockType.Blank},
+                new Block { SlideIndex = 0, BlockIndex = 6, Type = Block.BlockType.Blank},
+                new Block { SlideIndex = 0, BlockIndex = 7, Type = Block.BlockType.Blank},
+                new Block { SlideIndex = 0, BlockIndex = 8, Type = Block.BlockType.Blank},
+                new Block { SlideIndex = 0, BlockIndex = 9, Type = Block.BlockType.Blank},
+                new Block { SlideIndex = 0, BlockIndex = 10, Type = Block.BlockType.Blank},
+                new Block { SlideIndex = 0, BlockIndex = 11, Type = Block.BlockType.Blank},
+                new Block { SlideIndex = 0, BlockIndex = 12, Type = Block.BlockType.Blank},
+                new Block { SlideIndex = 0, BlockIndex = 13, Type = Block.BlockType.Blank},
+                new Block { SlideIndex = 0, BlockIndex = 14, Type = Block.BlockType.Blank},
+                new Block { SlideIndex = 0, BlockIndex = 15, Type = Block.BlockType.Blank},
+                new Block { SlideIndex = 0, BlockIndex = 16, Type = Block.BlockType.Blank},
+                new Block { SlideIndex = 0, BlockIndex = 17, Type = Block.BlockType.Blank},
+                new Block { SlideIndex = 0, BlockIndex = 18, Type = Block.BlockType.Blank},
+                new Block { SlideIndex = 0, BlockIndex = 19, Type = Block.BlockType.Blank},
+                new Block { SlideIndex = 0, BlockIndex = 20, Type = Block.BlockType.Blank},
+            }, mb.Blocks, c1 };
 
         }
 
@@ -110,7 +141,7 @@ public class AddBlankBlock
                         Block block = new Block();
                         block.SlideIndex = j;
                         block.BlockIndex = i;
-                        block.Type = Block.BlockType.Normal;
+                        block.Type = Block.BlockType.Blank;
                         Blocks.Add(block);
                     }
                 }

@@ -25,8 +25,6 @@ public class SetHeatMapColourTest
     [ClassData(typeof(SetHeatMapColourTestData))]
     public void SetHeatMapColourTheory(Color expected, double minRI, double maxRI, params Nplicate[] nplicates)
     {
-        Color output = default;
-
         foreach (Nplicate np in nplicates)
         {
             np.SetHeatMapColour(minRI, maxRI);

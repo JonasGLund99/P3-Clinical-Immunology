@@ -17,7 +17,7 @@ public class GetSortedBlocks
 
 
     [Theory]
-    [ClassData(typeof(GetNormalBlocksTestData))]
+    [ClassData(typeof(GetSortedBlocksTestData))]
     public async void GetSortedBlocksTheory(List<Block> expected, params ClinicalTest[] clinicalTests)
     {
         List<Block> blocks = new();
@@ -34,7 +34,7 @@ public class GetSortedBlocks
         Assert.Equal(serializedExpected, serializedActual);
     }
 
-    public class GetNormalBlocksTestData : IEnumerable<object[]>
+    public class GetSortedBlocksTestData : IEnumerable<object[]>
     {
         public IEnumerator<object[]> GetEnumerator()
         {
