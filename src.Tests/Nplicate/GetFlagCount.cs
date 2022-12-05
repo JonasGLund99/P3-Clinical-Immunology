@@ -50,8 +50,24 @@ public class GetFlagCountTest
             n2.Spots.Add(new Spot(0, true));
 
 
+            Nplicate n3 = new Nplicate("c69");
+            n3.Spots.Add(new Spot(0, false));
+            n3.Spots.Add(new Spot(0, true));
+            n3.Spots.Add(new Spot(0, true));
+
+            Nplicate n4 = new Nplicate("c69");
+            n4.Spots.Add(new Spot(0, true));
+            n4.Spots.Add(new Spot(0, true));
+            n4.Spots.Add(new Spot(0, true));
+            n4.Spots.Add(new Spot(0, true));
+
+
+
             yield return new object[] { 1, n1 };
             yield return new object[] { 3, n2 };
+            yield return new object[] { 2, n3 };
+            yield return new object[] { 4, n4 };
+
 
         }
 

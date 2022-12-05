@@ -1,8 +1,7 @@
-using Microsoft.Azure.Cosmos;
+using Newtonsoft.Json;
 using src.Data;
 using System.Collections;
 using Xunit;
-using static System.Reflection.Metadata.BlobBuilder;
 
 namespace src.Tests;
 
@@ -19,20 +18,28 @@ public class GetSortedBlocks
 
     [Theory]
     [ClassData(typeof(GetNormalBlocksTestData))]
-    public async void GetSortedBlocksTheory(List<Block> expected, params ClinicalTest[] clinicalTests)
+    public void GetSortedBlocksTheory(List<Block> expected, List<Block> mockedBlocks, params ClinicalTest[] clinicalTests)
     {
         List<Block> blocks = new();
 
-        blocks.Sort(delegate (Block x, Block y)
+        foreach(ClinicalTest c in clinicalTests)
         {
-            if (x.SlideIndex == y.SlideIndex)
+            blocks.Clear();
+            blocks.AddRange(mockedBlocks);
+            blocks.Sort(delegate (Block x, Block y)
             {
-                return x.BlockIndex - y.BlockIndex;
-            }
-            return x.SlideIndex - y.SlideIndex;
-        });
+                if (x.SlideIndex == y.SlideIndex)
+                {
+                    return x.BlockIndex - y.BlockIndex;
+                }
+                return x.SlideIndex - y.SlideIndex;
+            });
+        }
 
-        Assert.Equal(expected, blocks);
+        var serializedExpected = JsonConvert.SerializeObject(expected);
+        var serializedActual = JsonConvert.SerializeObject(blocks);
+
+        Assert.Equal(serializedExpected, serializedActual);
     }
 
     public class GetNormalBlocksTestData : IEnumerable<object[]>
@@ -41,40 +48,33 @@ public class GetSortedBlocks
         {
             ClinicalTest c1 = new ClinicalTest();
             MockedNormalBlocks mb = new MockedNormalBlocks();
-            
-
             ClinicalTest c2 = new ClinicalTest();
-
             ClinicalTest c3 = new ClinicalTest();
 
             yield return new object[] { new List<Block>
             {
-                new Block { SlideIndex = 0, BlockIndex = 0 },
-                new Block { SlideIndex = 0, BlockIndex = 1 },
-                new Block { SlideIndex = 0, BlockIndex = 2 },
-                new Block { SlideIndex = 0, BlockIndex = 3 },
-                new Block { SlideIndex = 0, BlockIndex = 4 },
-                new Block { SlideIndex = 0, BlockIndex = 5 },
-                new Block { SlideIndex = 0, BlockIndex = 6 },
-                new Block { SlideIndex = 0, BlockIndex = 7 },
-                new Block { SlideIndex = 0, BlockIndex = 8 },
-                new Block { SlideIndex = 0, BlockIndex = 9 },
-                new Block { SlideIndex = 0, BlockIndex = 10 },
-                new Block { SlideIndex = 0, BlockIndex = 11 },
-                new Block { SlideIndex = 0, BlockIndex = 12 },
-                new Block { SlideIndex = 0, BlockIndex = 13 },
-                new Block { SlideIndex = 0, BlockIndex = 14 },
-                new Block { SlideIndex = 0, BlockIndex = 15 },
-                new Block { SlideIndex = 0, BlockIndex = 16 },
-                new Block { SlideIndex = 0, BlockIndex = 17 },
-                new Block { SlideIndex = 0, BlockIndex = 18 },
-                new Block { SlideIndex = 0, BlockIndex = 19 },
-                new Block { SlideIndex = 0, BlockIndex = 20 },
-
-
-
-
-            }, c1 };
+                new Block { SlideIndex = 0, BlockIndex = 0, Type = Block.BlockType.Normal },
+                new Block { SlideIndex = 0, BlockIndex = 1, Type = Block.BlockType.Normal},
+                new Block { SlideIndex = 0, BlockIndex = 2, Type = Block.BlockType.Normal },
+                new Block { SlideIndex = 0, BlockIndex = 3 , Type = Block.BlockType.Normal},
+                new Block { SlideIndex = 0, BlockIndex = 4 , Type = Block.BlockType.Normal},
+                new Block { SlideIndex = 0, BlockIndex = 5 , Type = Block.BlockType.Normal},
+                new Block { SlideIndex = 0, BlockIndex = 6 , Type = Block.BlockType.Normal},
+                new Block { SlideIndex = 0, BlockIndex = 7 , Type = Block.BlockType.Normal},
+                new Block { SlideIndex = 0, BlockIndex = 8 , Type = Block.BlockType.Normal},
+                new Block { SlideIndex = 0, BlockIndex = 9 , Type = Block.BlockType.Normal},
+                new Block { SlideIndex = 0, BlockIndex = 10 , Type = Block.BlockType.Normal},
+                new Block { SlideIndex = 0, BlockIndex = 11 , Type = Block.BlockType.Normal},
+                new Block { SlideIndex = 0, BlockIndex = 12 , Type = Block.BlockType.Normal},
+                new Block { SlideIndex = 0, BlockIndex = 13 , Type = Block.BlockType.Normal},
+                new Block { SlideIndex = 0, BlockIndex = 14 , Type = Block.BlockType.Normal},
+                new Block { SlideIndex = 0, BlockIndex = 15 , Type = Block.BlockType.Normal},
+                new Block { SlideIndex = 0, BlockIndex = 16 , Type = Block.BlockType.Normal},
+                new Block { SlideIndex = 0, BlockIndex = 17 , Type = Block.BlockType.Normal},
+                new Block { SlideIndex = 0, BlockIndex = 18 , Type = Block.BlockType.Normal},
+                new Block { SlideIndex = 0, BlockIndex = 19 , Type = Block.BlockType.Normal},
+                new Block { SlideIndex = 0, BlockIndex = 20 , Type = Block.BlockType.Normal},
+            }, mb.Blocks, c1 };
 
         }
 
@@ -86,18 +86,18 @@ public class GetSortedBlocks
         private class MockedNormalBlocks
         {
 
-            public List<Block> blocks { get; set; }
+            public List<Block> Blocks { get; set; }
 
             public MockedNormalBlocks()
             {
-                blocks = generateBlocks();
+                Blocks = generateBlocks();
             }
 
             public List<Block> generateBlocks()
             {
-                blocks = new List<Block>();
+                Blocks = new List<Block>();
 
-                for (int j = 0; j < 2; j++)
+                for (int j = 0; j < 1; j++)
                 {
                     for (int i = 0; i < 21; i++)
                     {
@@ -105,12 +105,12 @@ public class GetSortedBlocks
                         block.SlideIndex = j;
                         block.BlockIndex = i;
                         block.Type = Block.BlockType.Normal;
-                        blocks.Add(block);
+                        Blocks.Add(block);
                     }
                 }
 
 
-                return blocks;
+                return Blocks;
             }
         }
     }
