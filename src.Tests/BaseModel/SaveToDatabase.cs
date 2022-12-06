@@ -16,19 +16,19 @@ public class SaveToDatabaseTest
         Container container = await DatabaseService.Instance.Database.CreateContainerAsync("TestItemBlock", "/PartitionKey");
         string id = Guid.NewGuid().ToString();
         string partitionKey = Guid.NewGuid().ToString();
-        TestItemBlock block = new TestItemBlock();
-        block.id = id;
-        block.PartitionKey = partitionKey;
+        TestItemBlock block = new TestItemBlock { id = id, PartitionKey = partitionKey };
 
         // Act
         block.SaveToDatabase();
 
         // Assert
         Assert.True(ProcessQueue.Instance.GetQueues().ContainsKey(partitionKey));
+        Assert.False(ProcessQueue.Instance.GetQueues().ContainsKey(id));
 
         // Clean up
         await container.DeleteContainerAsync();
     }
+
     [Fact]
     public async void ClinicalTestQueuedWithId()
     {
@@ -39,16 +39,14 @@ public class SaveToDatabaseTest
         Container container = await DatabaseService.Instance.Database.CreateContainerAsync("TestItemClinicalTest", "/PartitionKey");
         string id = Guid.NewGuid().ToString();
         string partitionKey = Guid.NewGuid().ToString();
-        TestItemBlock block = new TestItemBlock();
-        block.id = id;
-        block.PartitionKey = partitionKey;
+        TestItemClinicalTest clinicalTest = new TestItemClinicalTest { id = id, PartitionKey = partitionKey };
 
         // Act
-        if (ProcessQueue.Instance.GetQueues().Count > 0) throw new Exception("Queue is not empty");
-        block.SaveToDatabase();
+        clinicalTest.SaveToDatabase();
 
         // Assert
-        Assert.True(ProcessQueue.Instance.GetQueues().ContainsKey(partitionKey));
+        Assert.True(ProcessQueue.Instance.GetQueues().ContainsKey(id));
+        Assert.False(ProcessQueue.Instance.GetQueues().ContainsKey(partitionKey));
 
         // Clean up
         await container.DeleteContainerAsync();
