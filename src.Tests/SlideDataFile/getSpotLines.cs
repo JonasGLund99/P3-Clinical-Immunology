@@ -31,13 +31,11 @@ public class GetSpotlinesTest
 
         foreach (SlideDataFile sf in slideDataFiles)
         {
-
             spotLines = sf.GetSpotLines();
         }
 
         var serializedSpotLines = JsonConvert.SerializeObject(spotLines);
         var serializedExpected = JsonConvert.SerializeObject(expected);
-
 
         Assert.Equal(serializedExpected, serializedSpotLines);
     }

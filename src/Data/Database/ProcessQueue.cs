@@ -1,7 +1,7 @@
 using Microsoft.Azure.Cosmos;
 namespace src.Data;
 
-class ProcessQueue
+public class ProcessQueue
 {
     private static readonly ProcessQueue instance = new ProcessQueue();
     private Dictionary<string, Queue<Func<Task>>> queues = new Dictionary<string, Queue<Func<Task>>>();
@@ -71,5 +71,9 @@ class ProcessQueue
             queues[queueId].Clear();
             queueCounts[queueId] = 0;
         }
+    }
+    public Dictionary<string, Queue<Func<Task>>> GetQueues()
+    {
+        return queues;
     }
 }
