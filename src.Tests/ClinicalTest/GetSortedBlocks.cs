@@ -17,23 +17,15 @@ public class GetSortedBlocks
 
 
     [Theory]
-    [ClassData(typeof(GetNormalBlocksTestData))]
-    public void GetSortedBlocksTheory(List<Block> expected, List<Block> mockedBlocks, params ClinicalTest[] clinicalTests)
+    [ClassData(typeof(GetSortedBlocksTestData))]
+    public async void GetSortedBlocksTheory(List<Block> expected, params ClinicalTest[] clinicalTests)
     {
         List<Block> blocks = new();
 
         foreach(ClinicalTest c in clinicalTests)
         {
             blocks.Clear();
-            blocks.AddRange(mockedBlocks);
-            blocks.Sort(delegate (Block x, Block y)
-            {
-                if (x.SlideIndex == y.SlideIndex)
-                {
-                    return x.BlockIndex - y.BlockIndex;
-                }
-                return x.SlideIndex - y.SlideIndex;
-            });
+            blocks.AddRange(await c.GetSortedBlocks());
         }
 
         var serializedExpected = JsonConvert.SerializeObject(expected);
@@ -42,12 +34,13 @@ public class GetSortedBlocks
         Assert.Equal(serializedExpected, serializedActual);
     }
 
-    public class GetNormalBlocksTestData : IEnumerable<object[]>
+    public class GetSortedBlocksTestData : IEnumerable<object[]>
     {
         public IEnumerator<object[]> GetEnumerator()
         {
             ClinicalTest c1 = new ClinicalTest();
             MockedNormalBlocks mb = new MockedNormalBlocks();
+            c1.SetNormalBlocks(mb.Blocks);
             ClinicalTest c2 = new ClinicalTest();
             ClinicalTest c3 = new ClinicalTest();
 
@@ -74,7 +67,7 @@ public class GetSortedBlocks
                 new Block { SlideIndex = 0, BlockIndex = 18 , Type = Block.BlockType.Normal},
                 new Block { SlideIndex = 0, BlockIndex = 19 , Type = Block.BlockType.Normal},
                 new Block { SlideIndex = 0, BlockIndex = 20 , Type = Block.BlockType.Normal},
-            }, mb.Blocks, c1 };
+            }, c1 };
 
         }
 
@@ -85,7 +78,7 @@ public class GetSortedBlocks
 
         private class MockedNormalBlocks
         {
-
+            private int numSlides = 1;
             public List<Block> Blocks { get; set; }
 
             public MockedNormalBlocks()
@@ -97,9 +90,9 @@ public class GetSortedBlocks
             {
                 Blocks = new List<Block>();
 
-                for (int j = 0; j < 1; j++)
+                for (int j = 0; j < numSlides; j++)
                 {
-                    for (int i = 0; i < 21; i++)
+                    for (int i = 20; i >= 0 ; i--)
                     {
                         Block block = new Block();
                         block.SlideIndex = j;
