@@ -21,7 +21,6 @@ public class SaveToDatabaseTest
         block.PartitionKey = partitionKey;
 
         // Act
-        if (ProcessQueue.Instance.GetQueues().Count > 0) throw new Exception("Queue is not empty");
         block.SaveToDatabase();
 
         // Assert
