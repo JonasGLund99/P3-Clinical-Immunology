@@ -23,7 +23,7 @@ public class DatabaseService
 
     public async Task SetupDatabase()
     {
-        Database = await client.CreateDatabaseIfNotExistsAsync("ClinicalImmunology2", 500);
+        Database = await client.CreateDatabaseIfNotExistsAsync("ClinicalImmunology2", 1000);
         await Database.CreateContainerIfNotExistsAsync("Experiment", "/PartitionKey");
         await Database.CreateContainerIfNotExistsAsync("ClinicalTest", "/PartitionKey");
         await Database.CreateContainerIfNotExistsAsync("Block", "/PartitionKey");
@@ -41,7 +41,6 @@ public class DatabaseService
         }
         catch
         {
-      
             res = default;
         }
         return res;

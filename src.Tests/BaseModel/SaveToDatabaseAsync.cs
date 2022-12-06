@@ -7,11 +7,11 @@ namespace src.Tests;
 public class SaveToDatabaseAsyncTest
 {
     [Fact]
-    public async void SaveSingleItem()
+    public async void SaveItem()
     {
         // Arrange
         await DatabaseService.Instance.SetupDatabase();
-        if (DatabaseService.Instance.Database == null) return;
+        if (DatabaseService.Instance.Database == null) throw new Exception("Database is null");
 
         Container container = await DatabaseService.Instance.Database.CreateContainerAsync("TestItem", "/id");
         TestItem item = new TestItem(Guid.NewGuid().ToString());
@@ -26,14 +26,24 @@ public class SaveToDatabaseAsyncTest
         // Clean up
         await container.DeleteContainerAsync();
     }
-}
 
-public class TestItem : BaseModel<TestItem>
-{
-    public TestItem(string id) : base(id)
+    [Fact]
+    public async void SaveItemCatchException() // Container name doesn't match type name
     {
-        PartitionKey = id;
-    }
+        // Arrange
+        await DatabaseService.Instance.SetupDatabase();
+        if (DatabaseService.Instance.Database == null) throw new Exception("Database is null");
 
-    public override string PartitionKey { get; set; }
+        Container container = await DatabaseService.Instance.Database.CreateContainerAsync("TestItemExceptionTest", "/id");
+        TestItem item = new TestItem(Guid.NewGuid().ToString());
+    
+        // Act
+        await item.SaveToDatabaseAsync();
+
+        // Assert
+        Assert.True(true);
+
+        // Clean up
+        await container.DeleteContainerAsync();
+    }
 }
