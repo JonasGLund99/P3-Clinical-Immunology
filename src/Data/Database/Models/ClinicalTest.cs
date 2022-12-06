@@ -109,6 +109,10 @@ public class ClinicalTest : BaseModel<ClinicalTest>
         }
         return blankBlocks;
     }
+    public async Task AddNormalBlock(Block block) // ONLY USED FOR TESTING
+    {
+        (await GetNormalBlocks()).Add(block);
+    }
     public async Task AddBlankBlock(Block block)
     {
         (await GetBlankBlocks()).Add(block);

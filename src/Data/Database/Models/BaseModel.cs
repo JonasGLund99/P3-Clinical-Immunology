@@ -42,17 +42,20 @@ public abstract class BaseModel<T> where T : BaseModel<T>
                 Database? db = DatabaseService.Instance.Database;
                 if (db == null) throw new NullReferenceException("There was no reference to the database");
                 
-                await db.GetContainer(typeof(T).Name).UpsertItemAsync<T>(
+                await db.GetContainer(this.GetType().Name).UpsertItemAsync<T>(
                     item: (T) this,
                     partitionKey: new PartitionKey(this.PartitionKey)
                 );
+
+                System.Console.WriteLine("Saved " + this.GetType().Name);
+
 
                 success = true;
             }
             catch (Exception e)
             {
-                System.Console.WriteLine(e.Message);
-                System.Console.WriteLine("Failed to save " + typeof(T).Name + ". Retrying...");
+                // System.Console.WriteLine(e.Message);
+                System.Console.WriteLine("Failed to save " + this.GetType().Name + ". Retrying...");
                 retryCount++;
             }   
         }
@@ -70,7 +73,7 @@ public abstract class BaseModel<T> where T : BaseModel<T>
                 Database? db = DatabaseService.Instance.Database;
                 if (db == null) throw new NullReferenceException("There was no reference to the database");
                 
-                await db.GetContainer(typeof(T).Name).DeleteItemAsync<T>(
+                await db.GetContainer(this.GetType().Name).DeleteItemAsync<T>(
                     id: this.id, 
                     partitionKey: new PartitionKey(this.PartitionKey)
                 );
@@ -79,8 +82,8 @@ public abstract class BaseModel<T> where T : BaseModel<T>
             }
             catch (Exception e)
             {
-                System.Console.WriteLine(e.Message);
-                System.Console.WriteLine("Failed to remove " + typeof(T).Name + ". Retrying...");
+                // System.Console.WriteLine(e.Message);
+                System.Console.WriteLine("Failed to remove " + this.GetType().Name + ". Retrying...");
                 retryCount++;
             }   
         }
