@@ -124,7 +124,7 @@
     filter: drop-shadow(0px 2px 4px var(--grey));
 }
 #clear-button {
-    background-color: rgb(72, 117, 151);
+    background-color: var(--clinicaltest-color);
     color: rgb(38, 61, 79);
     padding: 3px 10px !important;
 }
@@ -132,11 +132,11 @@
     cursor: not-allowed;
 }
 #check-button {
-    background-color: rgb(57, 135, 53);
+    background-color: var(--green-btn-color);
     color: rgb(26, 63, 24);
 }
 #xmark-button {
-    background-color: rgb(170, 64, 64);
+    background-color: var(--red-btn-color);
     color: rgb(70, 25, 25);
 }
 
