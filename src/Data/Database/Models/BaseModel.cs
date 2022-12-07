@@ -57,7 +57,9 @@ public abstract class BaseModel<T> where T : BaseModel<T>
                 // System.Console.WriteLine(e.Message);
                 System.Console.WriteLine("Failed to save " + this.GetType().Name + ". Retrying...");
                 retryCount++;
-            }   
+                throw new Exception(e.Message);
+
+            }
         }
     }
     public virtual async Task RemoveFromDatabase()
