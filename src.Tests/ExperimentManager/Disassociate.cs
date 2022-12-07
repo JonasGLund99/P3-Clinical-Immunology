@@ -14,7 +14,6 @@ public class DisassociateTest
     public async void DisassociateRemovesExperimentAndClinicalTestid()
     {
         DatabaseService.EnableTestMode();
-
         await DatabaseService.Instance.SetupDatabase();
         if (DatabaseService.Instance.Database == null) throw new Exception("Database did not complete setup for SaveToDatabase test in ClinicalTest");
 

@@ -14,7 +14,6 @@ public class GetExperimentByIdTest
     public async void GetExperimentByIdReturnsExperiment()
     {
         DatabaseService.EnableTestMode();
-
         await DatabaseService.Instance.SetupDatabase();
         if (DatabaseService.Instance.Database == null) throw new Exception("Database did not complete setup for SaveToDatabase test in ClinicalTest");
 
@@ -41,7 +40,6 @@ public class GetExperimentByIdTest
     public async void GetExperimentByIdNonExistingIDReturnsNull()
     {
         DatabaseService.EnableTestMode();
-
         await DatabaseService.Instance.SetupDatabase();
         if (DatabaseService.Instance.Database == null) throw new Exception("Database did not complete setup for SaveToDatabase test in ClinicalTest");
 

@@ -31,7 +31,7 @@ public class RemoveFromDatabaseTest
         // Act
         c2.SaveToDatabase(true);
 
-        while (ProcessQueue.Instance.isRunning[guidClinicalTest])
+        while (ProcessQueue.Instance.IsRunning[guidClinicalTest])
         {
 
         }
@@ -74,7 +74,7 @@ public class RemoveFromDatabaseTest
         // Act
         c2.SaveToDatabase(true);
 
-        while (ProcessQueue.Instance.isRunning[guidClinicalTest])
+        while (ProcessQueue.Instance.IsRunning[guidClinicalTest])
         {
             
         }

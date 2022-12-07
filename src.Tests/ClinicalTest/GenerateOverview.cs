@@ -19,10 +19,11 @@ public class GenerateOverviewTest
     [ClassData(typeof(GenerateOverviewTestData))]
     public async void GenerateOverview(List<List<Block[]>> expected, params ClinicalTest[] clinicalTests)
     {
+        DatabaseService.EnableTestMode();
         await DatabaseService.Instance.SetupDatabase();
         if (DatabaseService.Instance.Database == null) throw new Exception("Database did not complete setup for SaveToDatabase test in ClinicalTest");
         
-        List<List<Block[]>> overview = null; 
+        List<List<Block[]>>? overview = null; 
 
         foreach (ClinicalTest clinicalTest in clinicalTests)
         {

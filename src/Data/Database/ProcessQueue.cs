@@ -71,6 +71,7 @@ public class ProcessQueue
             queues[queueId].Clear();
             QueueCounts[queueId] = 0;
         }
+        IsRunning[queueId] = false;
     }
     public Dictionary<string, Queue<Func<Task>>> GetQueues()
     {

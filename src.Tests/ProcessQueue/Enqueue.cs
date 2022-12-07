@@ -12,6 +12,7 @@ public class EnqueueTest
     {
         Func<Task> process = () => Task.Delay(1000);
         string queueId = Guid.NewGuid().ToString();
+        ProcessQueue.Instance.Clear(queueId);
         ProcessQueue.Instance.Enqueue(process, queueId);
         Assert.True(ProcessQueue.Instance.IsRunning[queueId]);
     }
