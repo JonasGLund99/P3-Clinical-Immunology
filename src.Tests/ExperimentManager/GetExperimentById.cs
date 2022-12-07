@@ -15,7 +15,7 @@ public class GetExperimentByIdTest
     {
         DatabaseService.EnableTestMode();
         await DatabaseService.Instance.SetupDatabase();
-        if (DatabaseService.Instance.Database == null) throw new Exception("Database did not complete setup for SaveToDatabase test in ClinicalTest");
+        if (DatabaseService.Instance.Database == null) throw new Exception("Database did not complete setup for GetExperimentByIdtest in ExperimentManager");
 
         Container experimentContainer = await DatabaseService.Instance.Database.CreateContainerIfNotExistsAsync("Experiment", "/PartitionKey");
 
