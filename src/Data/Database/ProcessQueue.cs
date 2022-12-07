@@ -5,8 +5,8 @@ public class ProcessQueue
 {
     private static readonly ProcessQueue instance = new ProcessQueue();
     private Dictionary<string, Queue<Func<Task>>> queues = new Dictionary<string, Queue<Func<Task>>>();
-    private Dictionary<string, int> queueCounts = new Dictionary<string, int>();
-    public Dictionary<string, bool> isRunning = new Dictionary<string, bool>();
+    public Dictionary<string, int> QueueCounts = new Dictionary<string, int>();
+    public Dictionary<string, bool> IsRunning = new Dictionary<string, bool>();
 
 
     private ProcessQueue() { }
@@ -25,23 +25,23 @@ public class ProcessQueue
         {
             queues[queueId] = new Queue<Func<Task>>();
         }
-        if (!queueCounts.ContainsKey(queueId))
+        if (!QueueCounts.ContainsKey(queueId))
         {
-            queueCounts[queueId] = 1;
+            QueueCounts[queueId] = 1;
         }
         
         queues[queueId].Enqueue(process);
-        queueCounts[queueId]++;
+        QueueCounts[queueId]++;
 
-        if (!isRunning.ContainsKey(queueId) || !isRunning[queueId])
+        if (!IsRunning.ContainsKey(queueId) || !IsRunning[queueId])
         {
-            queueCounts[queueId] = 1;
-            Execute(queueId);
+            QueueCounts[queueId] = 1;
+            execute(queueId);
         }
     }
-    private async void Execute(string queueId)
+    private async void execute(string queueId)
     {
-        isRunning[queueId] = true;
+        IsRunning[queueId] = true;
 
         Func<Task> currentProcess;
 
@@ -52,13 +52,13 @@ public class ProcessQueue
         }
         while (queues[queueId].Count > 0);
 
-        isRunning[queueId] = false;
+        IsRunning[queueId] = false;
     }
 
     public double GetProgress(string queueId)
     {
-        if (!isRunning.ContainsKey(queueId) || !isRunning[queueId] || queueCounts[queueId] == 0) return 1;
-        return 1 - (double)queues[queueId].Count / (double)queueCounts[queueId];
+        if (!IsRunning.ContainsKey(queueId) || !IsRunning[queueId] || QueueCounts[queueId] == 0) return 1;
+        return 1 - (double)queues[queueId].Count / (double)QueueCounts[queueId];
     }
     public void Clear(string queueId)
     {
@@ -69,7 +69,7 @@ public class ProcessQueue
         else
         {
             queues[queueId].Clear();
-            queueCounts[queueId] = 0;
+            QueueCounts[queueId] = 0;
         }
     }
     public Dictionary<string, Queue<Func<Task>>> GetQueues()

@@ -47,9 +47,6 @@ public abstract class BaseModel<T> where T : BaseModel<T>
                     partitionKey: new PartitionKey(this.PartitionKey)
                 );
 
-                System.Console.WriteLine("Saved " + this.GetType().Name);
-
-
                 success = true;
             }
             catch (Exception e)
