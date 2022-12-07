@@ -23,6 +23,7 @@ public class AddBlankBlockTest
     {
         List<Block> blocks = new();
 
+        DatabaseService.EnableTestMode();
         await DatabaseService.Instance.SetupDatabase();
         if (DatabaseService.Instance.Database == null) throw new Exception("Database did not complete setup for GetBlankBlocks test");
 
@@ -48,6 +49,7 @@ public class AddBlankBlockTest
         ClinicalTest c2 = new ClinicalTest();
         List<Block> expected = new List<Block>();
 
+        DatabaseService.EnableTestMode();
         await DatabaseService.Instance.SetupDatabase();
         if (DatabaseService.Instance.Database == null) throw new Exception("Database did not complete setup for this test");
 
@@ -74,6 +76,7 @@ public class AddBlankBlockTest
                 "Vi ses til julefrokost"
             };
 
+        DatabaseService.EnableTestMode();
         await DatabaseService.Instance.SetupDatabase();
         if (DatabaseService.Instance.Database == null) throw new Exception("Database did not complete setup for this test");
      

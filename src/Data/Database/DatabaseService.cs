@@ -5,25 +5,42 @@ namespace src.Data;
 
 public class DatabaseService 
 {
-    private static readonly DatabaseService instance = new DatabaseService();
+    private static DatabaseService? instance;
+    private static bool inTestMode = false;
 
-    private CosmosClient client;
+    public CosmosClient Client;
     private DatabaseService()
     {
-        client = new CosmosClient("https://p3-database.documents.azure.com:443/", "nMTHGd46oUJ9xzWTS4kCmKhjbfqM5Qm7tbI1pt7knTvKpqBd48azK9cu1ZWoGKZZKiQgeItFWvxFACDbCLyEZw==");
+        if (inTestMode)
+        {
+            Client = new CosmosClient("https://asbjoernjc.documents.azure.com:443/", "Ny5RJxrhuBR5gH4C3BFIGOBdq8BPpkNnHdqWqBZuU5pMcmkVWUzYA8lJxOpat73WRQU5IfKOq4qxACDbf06Gng==");
+        }
+        else
+        {
+            Client = new CosmosClient("https://p3-database.documents.azure.com:443/", "nMTHGd46oUJ9xzWTS4kCmKhjbfqM5Qm7tbI1pt7knTvKpqBd48azK9cu1ZWoGKZZKiQgeItFWvxFACDbCLyEZw==");
+        }
     }
     public static DatabaseService Instance
     {
         get
         {
+            if (instance == null) 
+            {
+                instance = new DatabaseService();
+            }
             return instance;
         }
     }
+    
     public Database? Database;
 
+    public static void EnableTestMode()
+    {
+        inTestMode = true;
+    }
     public async Task SetupDatabase()
     {
-        Database = await client.CreateDatabaseIfNotExistsAsync("ClinicalImmunology2", 1000);
+        Database = await Client.CreateDatabaseIfNotExistsAsync("ClinicalImmunology2", 1000);
         await Database.CreateContainerIfNotExistsAsync("Experiment", "/PartitionKey");
         await Database.CreateContainerIfNotExistsAsync("ClinicalTest", "/PartitionKey");
         await Database.CreateContainerIfNotExistsAsync("Block", "/PartitionKey");

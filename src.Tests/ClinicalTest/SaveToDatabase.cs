@@ -16,7 +16,6 @@ public class SaveToDatabaseClinicalTestTest
         _sut = new ClinicalTest();
     }
 
-
     [Fact]
     public async void SaveToDatabase()
     {
@@ -37,6 +36,7 @@ public class SaveToDatabaseClinicalTestTest
         await c2.AddNormalBlock(nBlocks[0]);
         await c2.AddBlankBlock(bBlocks[0]);
 
+        DatabaseService.EnableTestMode();
         await DatabaseService.Instance.SetupDatabase();
         if (DatabaseService.Instance.Database == null) throw new Exception("Database did not complete setup for SaveToDatabase test in ClinicalTest");
         Container ctContainer = await DatabaseService.Instance.Database.CreateContainerAsync("ClinicalTestSaveToDatabase", "/PartitionKey");

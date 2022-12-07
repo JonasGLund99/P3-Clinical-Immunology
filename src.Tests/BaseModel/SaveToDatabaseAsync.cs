@@ -10,6 +10,7 @@ public class SaveToDatabaseAsyncTest
     public async void SaveItem()
     {
         // Arrange
+        DatabaseService.EnableTestMode();
         await DatabaseService.Instance.SetupDatabase();
         if (DatabaseService.Instance.Database == null) throw new Exception("Database is null");
 
@@ -31,6 +32,7 @@ public class SaveToDatabaseAsyncTest
     public async void SaveItemCatchException() // Container name doesn't match type name
     {
         // Arrange
+        DatabaseService.EnableTestMode();
         await DatabaseService.Instance.SetupDatabase();
         if (DatabaseService.Instance.Database == null) throw new Exception("Database is null");
 
