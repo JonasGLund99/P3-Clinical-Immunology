@@ -160,7 +160,12 @@ public class ClinicalTest : BaseModel<ClinicalTest>
     public override async Task RemoveFromDatabase()
     {
         List<Block> normBlocks = await GetNormalBlocks();
+        List<Block> blankBlocks = await GetBlankBlocks();
         foreach (Block block in normBlocks)
+        {
+            await block.RemoveFromDatabase();
+        }
+        foreach (Block block in blankBlocks)
         {
             await block.RemoveFromDatabase();
         }

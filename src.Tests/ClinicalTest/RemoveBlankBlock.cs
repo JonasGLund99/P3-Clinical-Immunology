@@ -98,7 +98,7 @@ public class RemoveBlankBlocksTest
         public IEnumerator<object[]> GetEnumerator()
         {
             ClinicalTest c1 = new ClinicalTest();
-            MockedNormalBlocks mb = new MockedNormalBlocks();
+            MockedBlankBlocks mb = new MockedBlankBlocks();
 
 
             yield return new object[] { new List<Block>
@@ -133,12 +133,12 @@ public class RemoveBlankBlocksTest
             return GetEnumerator();
         }
 
-        private class MockedNormalBlocks
+        private class MockedBlankBlocks
         {
             private int numSlides = 1;
             public List<Block> Blocks { get; set; }
 
-            public MockedNormalBlocks()
+            public MockedBlankBlocks()
             {
                 Blocks = generateBlocks();
             }

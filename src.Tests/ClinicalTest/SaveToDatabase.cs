@@ -51,7 +51,6 @@ public class SaveToDatabaseClinicalTestTest
             
         }
 
-        BlockClinicalTestSaveToDatabase normalBlockFromDatabase = await blockContainer.ReadItemAsync<BlockClinicalTestSaveToDatabase>(nBlocks[0].id, new PartitionKey(nBlocks[0].PartitionKey));
 
         BlockClinicalTestSaveToDatabase blankBlockFromDatabase = await blockContainer.ReadItemAsync<BlockClinicalTestSaveToDatabase>(bBlocks[0].id, new PartitionKey(bBlocks[0].PartitionKey));
 
