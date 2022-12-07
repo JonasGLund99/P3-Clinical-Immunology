@@ -10,6 +10,7 @@ public class RemoveFromDatabaseAsyncTest
     public async void RemoveItem()
     {
         // Arrange
+        DatabaseService.EnableTestMode();
         await DatabaseService.Instance.SetupDatabase();
         if (DatabaseService.Instance.Database == null) throw new Exception("Database is null");
 
@@ -32,6 +33,7 @@ public class RemoveFromDatabaseAsyncTest
     public async void RemoveItemCatchException() // Container name doesn't match type name
     {
         // Arrange
+        DatabaseService.EnableTestMode();
         await DatabaseService.Instance.SetupDatabase();
         if (DatabaseService.Instance.Database == null) throw new Exception("Database is null");
 

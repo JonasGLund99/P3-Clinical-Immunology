@@ -10,6 +10,7 @@ public class SaveToDatabaseTest
     public async void BlockQueuedWithPartitionKey()
     {
         // Arrange
+        DatabaseService.EnableTestMode();
         await DatabaseService.Instance.SetupDatabase();
         if (DatabaseService.Instance.Database == null) throw new Exception("Database is null");
 
@@ -33,6 +34,7 @@ public class SaveToDatabaseTest
     public async void ClinicalTestQueuedWithId()
     {
         // Arrange
+        DatabaseService.EnableTestMode();
         await DatabaseService.Instance.SetupDatabase();
         if (DatabaseService.Instance.Database == null) throw new Exception("Database is null");
 
