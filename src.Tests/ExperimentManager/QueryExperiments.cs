@@ -68,15 +68,15 @@ public class QueryExperimentsTest
             yield return new object[] { "Title", 3 };
             yield return new object[] { "TestTitle", 2 };
             yield return new object[] { "anothertesttitle", 1 };
-            yield return new object[] { "IHaveSpecialCharacters �blemost", 1 };
+            yield return new object[] { "IHaveSpecialCharacters Æblemost", 1 };
             yield return new object[] { "not existing", 0 };
 
             // Cases for querying after Experiment.Author
-            yield return new object[] { "�", 1 };
-            yield return new object[] { "J�rn", 2 };
-            yield return new object[] { "J�rn Christas", 1 };
-            yield return new object[] { "Papa No�l", 1 };
-            yield return new object[] { "Christina St�rmer", 0 };
+            yield return new object[] { "ë", 1 };
+            yield return new object[] { "Jørn", 2 };
+            yield return new object[] { "Jørn Christas", 1 };
+            yield return new object[] { "Papa Noël", 1 };
+            yield return new object[] { "Christina Stürmer", 0 };
 
             // Cases for querying after Experiment.ExperimentNumber
             yield return new object[] { "JE190", 2 };
