@@ -8,7 +8,7 @@ namespace src.Tests;
 public class QueryExperimentsTest
 {
     [Theory]
-    [ClassData(typeof(SearchByBarcodeOrTitleData))]
+    [ClassData(typeof(SearchByExperimentNumberAuthorOrTitleData))]
     public async void SearchByExperimentNumberAuthorOrTitle(string searchParameter, int expectedNumResults)
     {
         DatabaseService.EnableTestMode();
@@ -54,7 +54,7 @@ public class QueryExperimentsTest
 
 
     }
-    class SearchByBarcodeOrTitleData : IEnumerable<object[]>
+    class SearchByExperimentNumberAuthorOrTitleData : IEnumerable<object[]>
     {
         public IEnumerator<object[]> GetEnumerator()
         {
