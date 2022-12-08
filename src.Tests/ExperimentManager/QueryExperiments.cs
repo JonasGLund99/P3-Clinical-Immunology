@@ -9,7 +9,7 @@ public class QueryExperimentsTest
 {
     [Theory]
     [ClassData(typeof(SearchByBarcodeOrTitleData))]
-    public async void SearchByBarcodeOrTitle(string searchParameter, int expectedNumResults)
+    public async void SearchByExperimentNumberAuthorOrTitle(string searchParameter, int expectedNumResults)
     {
         DatabaseService.EnableTestMode();
         await DatabaseService.Instance.SetupDatabase();
@@ -46,7 +46,7 @@ public class QueryExperimentsTest
         experiment5.ExperimentNumber = "KL6432";
         experiment5.SaveToDatabase();
 
-        while (ProcessQueue.Instance.IsRunning[experiment1.id] || ProcessQueue.Instance.IsRunning[experiment2.id] || ProcessQueue.Instance.IsRunning[experiment3.id] || ProcessQueue.Instance.IsRunning[experiment4.id])
+        while (ProcessQueue.Instance.IsRunning[experiment1.id] || ProcessQueue.Instance.IsRunning[experiment2.id] || ProcessQueue.Instance.IsRunning[experiment3.id] || ProcessQueue.Instance.IsRunning[experiment4.id] || ProcessQueue.Instance.IsRunning[experiment5.id]) 
         {
 
         }
