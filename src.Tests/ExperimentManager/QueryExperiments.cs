@@ -18,19 +18,19 @@ public class QueryExperimentsTest
         Container experimentContainer = await DatabaseService.Instance.Database.CreateContainerIfNotExistsAsync("Experiment", "/PartitionKey");
         Experiment experiment1 = mockExperiment();
         experiment1.Title = "Title";
-        experiment1.Author = "J�rn Christas";
+        experiment1.Author = "Jørn Christas";
         experiment1.ExperimentNumber = "JE1903";
         experiment1.SaveToDatabase();
 
         Experiment experiment2 = mockExperiment();
         experiment2.Title = "TestTitle";
-        experiment2.Author = "Ren�";
+        experiment2.Author = "René";
         experiment2.ExperimentNumber = "JE1902";
         experiment2.SaveToDatabase();
 
         Experiment experiment3 = mockExperiment();
         experiment3.Title = "anothertesttitle";
-        experiment3.Author = "Papa No�l";
+        experiment3.Author = "Papa Noël";
         experiment3.ExperimentNumber = "FA7246";
         experiment3.SaveToDatabase();
 
