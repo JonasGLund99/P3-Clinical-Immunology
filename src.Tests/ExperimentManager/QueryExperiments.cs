@@ -18,25 +18,25 @@ public class QueryExperimentsTest
         Container experimentContainer = await DatabaseService.Instance.Database.CreateContainerIfNotExistsAsync("Experiment", "/PartitionKey");
         Experiment experiment1 = mockExperiment();
         experiment1.Title = "Title";
-        experiment1.Author = "Jørn Christas";
+        experiment1.Author = "Jï¿½rn Christas";
         experiment1.ExperimentNumber = "JE1903";
         experiment1.SaveToDatabase();
 
         Experiment experiment2 = mockExperiment();
         experiment2.Title = "TestTitle";
-        experiment2.Author = "René";
+        experiment2.Author = "Renï¿½";
         experiment2.ExperimentNumber = "JE1902";
         experiment2.SaveToDatabase();
 
         Experiment experiment3 = mockExperiment();
         experiment3.Title = "anothertesttitle";
-        experiment3.Author = "Papa Noël";
+        experiment3.Author = "Papa Noï¿½l";
         experiment3.ExperimentNumber = "FA7246";
         experiment3.SaveToDatabase();
 
         Experiment experiment4 = mockExperiment();
-        experiment4.Title = "IHaveSpecialCharacters æblemost";
-        experiment4.Author = "Jørn";
+        experiment4.Title = "IHaveSpecialCharacters Ã¦blemost";
+        experiment4.Author = "JÃ¸rn";
         experiment4.ExperimentNumber = "GE7247";
         experiment4.SaveToDatabase();
 
@@ -68,15 +68,15 @@ public class QueryExperimentsTest
             yield return new object[] { "Title", 3 };
             yield return new object[] { "TestTitle", 2 };
             yield return new object[] { "anothertesttitle", 1 };
-            yield return new object[] { "IHaveSpecialCharacters æblemost", 1 };
+            yield return new object[] { "IHaveSpecialCharacters ï¿½blemost", 1 };
             yield return new object[] { "not existing", 0 };
 
             // Cases for querying after Experiment.Author
-            yield return new object[] { "é", 1 };
-            yield return new object[] { "Jørn", 2 };
-            yield return new object[] { "Jørn Christas", 1 };
-            yield return new object[] { "Papa Noël", 1 };
-            yield return new object[] { "Christina Stürmer", 0 };
+            yield return new object[] { "ï¿½", 1 };
+            yield return new object[] { "Jï¿½rn", 2 };
+            yield return new object[] { "Jï¿½rn Christas", 1 };
+            yield return new object[] { "Papa Noï¿½l", 1 };
+            yield return new object[] { "Christina Stï¿½rmer", 0 };
 
             // Cases for querying after Experiment.ExperimentNumber
             yield return new object[] { "JE190", 2 };
