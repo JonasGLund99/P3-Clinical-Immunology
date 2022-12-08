@@ -1,8 +1,4 @@
-using Microsoft.Azure.Cosmos;
-using Newtonsoft.Json;
-using OfficeOpenXml.Core;
 using src.Data;
-using System.Collections;
 using Xunit;
 
 namespace src.Tests;

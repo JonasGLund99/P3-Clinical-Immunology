@@ -1,13 +1,5 @@
 using src.Data;
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 namespace src.Tests;
 
@@ -95,7 +87,27 @@ public class CalculateRITest
 
 
 
+            Nplicate testNplicate4 = new Nplicate("BD9");
+            testNplicate4.Spots.Add(new Spot(6096001, false));
+            testNplicate4.Spots.Add(new Spot(7235172, false));
+            testNplicate4.Spots.Add(new Spot(9251540, false));
+            testNplicate4.Spots.Add(new Spot(7235172, false));
+            testNplicate4.Mean = 7454471.25;
 
+            Nplicate correspondingBlank4 = new Nplicate("BD9");
+            correspondingBlank4.Spots.Add(new Spot(33099, false));
+            correspondingBlank4.Spots.Add(new Spot(36860, false));
+            correspondingBlank4.Spots.Add(new Spot(34385, false));
+            correspondingBlank4.Spots.Add(new Spot(34385, false));
+            correspondingBlank4.Mean = 34682.25;
+
+
+            Nplicate negBlock4 = new Nplicate("Neg");
+            negBlock4.Spots.Add(new Spot(54275, false));
+            negBlock4.Spots.Add(new Spot(51941, false));
+            negBlock4.Spots.Add(new Spot(64986, false));
+            negBlock4.Spots.Add(new Spot(64986, false));
+            negBlock4.Mean = 59047;
 
             //1   2   1   CD63 CD63    369730 - 100
             //1   2   2   CD63 CD63    294669  0
@@ -112,6 +124,7 @@ public class CalculateRITest
             yield return new object[] { 7.0366940784893153, correspondingBlank1, negBlock1, testNplicate1 };
             yield return new object[] { 2.581150002062131, correspondingBlank2, negBlock1, testNplicate2 };
             yield return new object[] { double.NaN, correspondingBlank3, negBlock2, testNplicate3 };
+            yield return new object[] { 6.973370588112287, correspondingBlank4, negBlock4, testNplicate4 };
 
 
         }

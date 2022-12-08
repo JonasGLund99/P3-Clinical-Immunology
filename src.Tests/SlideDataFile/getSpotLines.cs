@@ -10,18 +10,11 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
-namespace Tests;
+namespace src.Tests;
 
 
 public class GetSpotlinesTest
 {
-    private readonly SlideDataFile _sut;
-
-    public GetSpotlinesTest()
-    {
-        _sut = new SlideDataFile();
-    }
-
 
     [Theory]
     [ClassData(typeof(GetSpotLinesTestData))]

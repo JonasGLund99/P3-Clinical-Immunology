@@ -1,5 +1,4 @@
 using Xunit;
-using Microsoft.Azure.Cosmos;
 using src.Data;
 
 namespace src.Tests;

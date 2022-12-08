@@ -1,13 +1,5 @@
 using src.Data;
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 namespace src.Tests;
 
@@ -48,9 +40,21 @@ public class CalculateMeanTest
             n2.Spots.Add(new Spot(0, true));
             n2.Spots.Add(new Spot(0, true));
 
+            Nplicate n3 = new Nplicate("c69");
+            n3.Spots.Add(new Spot(19855, false));
+            n3.Spots.Add(new Spot(24627, false));
+            n3.Spots.Add(new Spot(23000, false));
+            n3.Spots.Add(new Spot(22278, false));
+
+            Nplicate n4 = new Nplicate("c69");
+            n4.Spots.Add(new Spot(19855, false));
+            n4.Spots.Add(new Spot(24627, false));
 
             yield return new object[] { 22241, n1 };
             yield return new object[] { 0, n2 };
+            yield return new object[] { 22440, n3};
+            yield return new object[] { 22241, n4 };
+
 
         }
 

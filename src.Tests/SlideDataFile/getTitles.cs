@@ -1,27 +1,12 @@
 using src.Data;
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 using Newtonsoft.Json;
-namespace Tests;
+namespace src.Tests;
 
 
 public class GetTitlesTest
 {
-    private readonly SlideDataFile _sut;
-
-    public GetTitlesTest()
-    {
-        _sut = new SlideDataFile();
-    }
-
 
     [Theory]
     [ClassData(typeof(GetTitlesTestData))]

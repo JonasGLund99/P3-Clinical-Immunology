@@ -1,25 +1,10 @@
 using src.Data;
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 namespace src.Tests;
 
 public class SetFlagTest
 {
-    private readonly Nplicate _sut;
-
-    public SetFlagTest()
-    {
-        _sut = new Nplicate();
-    }
-
     [Theory]
     [ClassData(typeof(SetFlagTestData))]
     public void CalculateRITheory(bool expected, params Nplicate[] nplicates)
@@ -51,14 +36,29 @@ public class SetFlagTest
             n2.Spots.Add(new Spot(0, true));
 
             Nplicate n3 = new Nplicate("c69");
-            n2.Spots.Add(new Spot(0, false));
-            n2.Spots.Add(new Spot(0, false));
-            n2.Spots.Add(new Spot(0, false));
+            n3.Spots.Add(new Spot(0, false));
+            n3.Spots.Add(new Spot(0, false));
+            n3.Spots.Add(new Spot(0, false));
+
+            Nplicate n4 = new Nplicate("c69");
+            n4.Spots.Add(new Spot(0, false));
+            n4.Spots.Add(new Spot(0, false));
+            n4.Spots.Add(new Spot(0, false));
+            n4.Spots.Add(new Spot(0, false));
+
+            Nplicate n5 = new Nplicate("c69");
+            n5.Spots.Add(new Spot(0, false));
+            n5.Spots.Add(new Spot(0, true));
+
 
 
             yield return new object[] { true, n1 };
             yield return new object[] { true, n2 };
             yield return new object[] { false, n3 };
+            yield return new object[] { false, n4 };
+            yield return new object[] { true, n5 };
+
+
 
         }
 

@@ -41,8 +41,6 @@ public class GetSortedBlocks
             ClinicalTest c1 = new ClinicalTest();
             MockedNormalBlocks mb = new MockedNormalBlocks();
             c1.SetNormalBlocks(mb.Blocks);
-            ClinicalTest c2 = new ClinicalTest();
-            ClinicalTest c3 = new ClinicalTest();
 
             yield return new object[] { new List<Block>
             {

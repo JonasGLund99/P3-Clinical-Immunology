@@ -13,12 +13,6 @@ namespace src.Tests;
 
 public class GetFlagCountTest
 {
-    private readonly Nplicate _sut;
-
-    public GetFlagCountTest()
-    {
-        _sut = new Nplicate();
-    }
 
     [Theory]
     [ClassData(typeof(GetFlagCountTestData))]
@@ -61,12 +55,18 @@ public class GetFlagCountTest
             n4.Spots.Add(new Spot(0, true));
             n4.Spots.Add(new Spot(0, true));
 
+            Nplicate n5 = new Nplicate("c69");
+            n5.Spots.Add(new Spot(0, true));
+            n5.Spots.Add(new Spot(0, true));
+
 
 
             yield return new object[] { 1, n1 };
             yield return new object[] { 3, n2 };
             yield return new object[] { 2, n3 };
             yield return new object[] { 4, n4 };
+            yield return new object[] { 2, n5 };
+
 
 
         }
