@@ -20,11 +20,11 @@ public class EnqueueTest
     [Fact]
     public async void IsNotRunning()
     {
-        Func<Task> process = () => Task.Delay(1000);
+        Func<Task> process = () => Task.Delay(100);
         string queueId = Guid.NewGuid().ToString();
         ProcessQueue.Instance.Clear(queueId);
         ProcessQueue.Instance.Enqueue(process, queueId);
-        await Task.Delay(1000);
+        await Task.Delay(100);
         Assert.False(ProcessQueue.Instance.IsRunning[queueId]);
     }
 

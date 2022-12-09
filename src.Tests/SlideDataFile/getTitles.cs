@@ -10,8 +10,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 using Newtonsoft.Json;
-namespace Tests;
 
+namespace src.Tests;
 
 public class GetTitlesTest
 {

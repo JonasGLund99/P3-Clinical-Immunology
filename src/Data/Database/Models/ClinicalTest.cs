@@ -729,8 +729,8 @@ public class ClinicalTest : BaseModel<ClinicalTest>
                 allBlocksInSlide[j].CalculateQC(pos, neg);
             }
 
-            //Calculate the RI for each Nplicate in each block and update max / min RI
-            foreach (Block block in allBlocksInSlide)
+            //Calculate the RI for each Nplicate in each normal block and update max / min RI
+            foreach (Block block in normBlocksInSlide)
             {
                 Nplicate? neg = block.Nplicates.Find(element => element.AnalyteType == "neg");
 
