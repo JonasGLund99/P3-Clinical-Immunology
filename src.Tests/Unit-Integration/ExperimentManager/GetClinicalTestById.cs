@@ -8,7 +8,7 @@ namespace src.Tests;
 public class GetClinicalTestByIdTest
 {
     [Fact]
-    public async void GetClinicalTestByIdReturnsExperiment()
+    public async void GetClinicalTestById_ValidId_ReturnsClinicalTest()
     {
         DatabaseService.EnableTestMode();
         await DatabaseService.Instance.SetupDatabase();
@@ -26,9 +26,9 @@ public class GetClinicalTestByIdTest
 
         // Act
 
-        await ExperimentManager.GetExperimentById(guidClinicalTest1);
+        Experiment? actualExperiment = await ExperimentManager.GetExperimentById(guidClinicalTest1);
 
-        Assert.True(true);
+        Assert.NotNull(actualExperiment);
 
         await clinicalTestContainer.DeleteContainerAsync();
     }
