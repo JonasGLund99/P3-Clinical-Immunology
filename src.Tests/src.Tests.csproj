@@ -20,6 +20,9 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="108.0.5359.7100" />
+    <PackageReference Include="Selenium.WebDriver" Version="4.7.0" />
+    <PackageReference Include="Selenium.Support" Version="4.7.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -36,5 +39,10 @@
     <Folder Include="ClinicalTest\" />
     <Folder Include="Block\" />
     <Folder Include="BaseModel\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Selenium.WebDriver.ChromeDriver" />
+    <None Remove="Selenium.WebDriver" />
+    <None Remove="Selenium.Support" />
   </ItemGroup>
 </Project>

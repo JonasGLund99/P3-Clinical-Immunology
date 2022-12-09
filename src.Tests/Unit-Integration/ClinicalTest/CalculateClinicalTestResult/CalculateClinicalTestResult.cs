@@ -19,7 +19,7 @@ public class CalculateClinicalTestResultTest
         public IEnumerator<object[]> GetEnumerator()
         {
             // Data from excel file
-            FileInfo fileInfo = new FileInfo(Path.Combine(Directory.GetCurrentDirectory(), "../../../ClinicalTest", "CalculateClinicalTestResult", "expectedResults.xlsx"));
+            FileInfo fileInfo = new FileInfo(Path.Combine(Directory.GetCurrentDirectory(), "../../../Unit-Integration", "ClinicalTest", "CalculateClinicalTestResult", "expectedResults.xlsx"));
 
             ExcelPackage package = new ExcelPackage(fileInfo);
             ExcelWorkbook workBook = package.Workbook;
@@ -63,9 +63,9 @@ public class CalculateClinicalTestResultTest
         // Add slide data files
         clinicalTest.SlideDataFiles = new List<SlideDataFile>
         {
-            new SlideDataFile("10000465_0016_flag.txt", File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), "../../../ClinicalTest", "CalculateClinicalTestResult" , "10000465_0016_flag.txt"))),
-            new SlideDataFile("10000466_0014_flag.txt", File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), "../../../ClinicalTest", "CalculateClinicalTestResult" , "10000466_0014_flag.txt"))),
-            new SlideDataFile("10000467_0005_flag.txt", File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), "../../../ClinicalTest", "CalculateClinicalTestResult" , "10000467_0005_flag.txt"))),
+            new SlideDataFile("10000465_0016_flag.txt", File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), "../../../Unit-Integration", "ClinicalTest", "CalculateClinicalTestResult" , "10000465_0016_flag.txt"))),
+            new SlideDataFile("10000466_0014_flag.txt", File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), "../../../Unit-Integration", "ClinicalTest", "CalculateClinicalTestResult" , "10000466_0014_flag.txt"))),
+            new SlideDataFile("10000467_0005_flag.txt", File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), "../../../Unit-Integration", "ClinicalTest", "CalculateClinicalTestResult" , "10000467_0005_flag.txt"))),
         };
 
         // Add Slides
