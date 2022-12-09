@@ -13,16 +13,8 @@ using Xunit;
 
 namespace src.Tests;
 
-
 public class GetSpotlinesTest
 {
-    private readonly SlideDataFile _sut;
-
-    public GetSpotlinesTest()
-    {
-        _sut = new SlideDataFile();
-    }
-
 
     [Theory]
     [ClassData(typeof(GetSpotLinesTestData))]

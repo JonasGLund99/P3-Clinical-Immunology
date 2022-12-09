@@ -9,13 +9,6 @@ namespace src.Tests;
 //https://youtu.be/2Wp8en1I9oQ?t=1152 Se delen om Reusing Instances
 public class GetBlankBlocksTest
 {
-    private readonly ClinicalTest _sut;
-
-    public GetBlankBlocksTest()
-    {
-        _sut = new ClinicalTest();
-    }
-
 
     [Theory]
     [ClassData(typeof(GetBlankBlocksTestData))]

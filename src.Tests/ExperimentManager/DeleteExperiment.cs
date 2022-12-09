@@ -1,99 +1,153 @@
-//using Xunit;
-//using Microsoft.Azure.Cosmos;
-//using src.Data;
-//using System.Collections;
+using Xunit;
+using Microsoft.Azure.Cosmos;
+using src.Data;
 
-//namespace src.Tests;
+namespace src.Tests;
 
-//public class DeleteExperimentTest
-//{
-//    [Theory]
-//    [ClassData(typeof(SearchByBarcodeOrTitleData))]
-//    public async void DeleteExperiment(bool expected, params Experiment[] experiments)
-//    {
-//        DatabaseService.EnableTestMode();
-//        await DatabaseService.Instance.SetupDatabase();
-//        if (DatabaseService.Instance.Database == null) throw new Exception("Database did not complete setup for QueryExperiemnts test in Experiment Manager");
+public class DeleteExperimentTest
+{
+    [Fact]
+    public async void DeleteExperimentThrowsCosmosException()
+    {
+        DatabaseService.EnableTestMode();
+        await DatabaseService.Instance.SetupDatabase();
+        if (DatabaseService.Instance.Database == null) throw new Exception("Database did not complete setup for QueryExperiemnts test in Experiment Manager");
 
-//        Experiment experiment1 = mockExperiment();
-//        experiment1.Title = "Title";
-//        experiment1.Author = "Jørn Christas";
-//        experiment1.ExperimentNumber = "JE1903";
-//        experiment1.SaveToDatabase();
+        Container experimentContainer = await DatabaseService.Instance.Database.CreateContainerIfNotExistsAsync("Experiment", "/PartitionKey");
 
-//        Experiment experiment2 = mockExperiment();
-//        experiment2.Title = "TestTitle";
-//        experiment2.Author = "René";
-//        experiment2.ExperimentNumber = "JE1902";
-//        experiment2.SaveToDatabase();
+        Container clinicalTestContainer = await DatabaseService.Instance.Database.CreateContainerIfNotExistsAsync("ClinicalTest", "/PartitionKey");
 
-//        Experiment experiment3 = mockExperiment();
-//        experiment3.Title = "anothertesttitle";
-//        experiment3.Author = "Papa Noël";
-//        experiment3.ExperimentNumber = "FA7246";
-//        experiment3.SaveToDatabase();
+        Experiment experiment1 = await mockExperiment();
+        experiment1.Title = "Title";
+        experiment1.Author = "Jørn Christas";
+        experiment1.ExperimentNumber = "JE1903";
 
-//        Experiment experiment4 = mockExperiment();
-//        experiment4.Title = "IHaveSpecialCharacters æblemost";
-//        experiment4.Author = "Jørn";
-//        experiment4.ExperimentNumber = "GE7247";
-//        experiment4.SaveToDatabase();
+        List<string> experiment1ClinicalTestIds = new List<string>();
 
-//        Experiment experiment5 = mockExperiment();
-//        experiment5.Title = "gsjdfs";
-//        experiment5.Author = "farooq";
-//        experiment5.ExperimentNumber = "KL6432";
-//        experiment5.SaveToDatabase();
+        foreach (string id in experiment1.ClinicalTestIds)
+        {
+            experiment1ClinicalTestIds.Add(id);
+        }
 
-//        while (ProcessQueue.Instance.IsRunning[experiment1.id] || ProcessQueue.Instance.IsRunning[experiment2.id] || ProcessQueue.Instance.IsRunning[experiment3.id] || ProcessQueue.Instance.IsRunning[experiment4.id])
-//        {
 
-//        }
-        
+        await experiment1.SaveToDatabaseAsync();
+        await ExperimentManager.DeleteExperiment(experiment1);
 
-//    }
-//    class SearchByBarcodeOrTitleData : IEnumerable<object[]>
-//    {
-//        public IEnumerator<object[]> GetEnumerator()
-//        {
-//            // Cases for querying after Experiment.Title
-//            yield return new object[] { "Title", 3 };
-//            yield return new object[] { "TestTitle", 2 };
-//            yield return new object[] { "anothertesttitle", 1 };
-//            yield return new object[] { "IHaveSpecialCharacters æblemost", 1 };
-//            yield return new object[] { "not existing", 0 };
+        await Assert.ThrowsAnyAsync<CosmosException>(() => experimentContainer.ReadItemAsync<Experiment>(experiment1.id, new PartitionKey(experiment1.id)));
 
-//            // Cases for querying after Experiment.Author
-//            yield return new object[] { "é", 1 };
-//            yield return new object[] { "Jørn", 2 };
-//            yield return new object[] { "Jørn Christas", 1 };
-//            yield return new object[] { "Papa Noël", 1 };
-//            yield return new object[] { "Christina Stürmer", 0 };
+        await Assert.ThrowsAnyAsync<CosmosException>(() => clinicalTestContainer.ReadItemAsync<ClinicalTest>(experiment1ClinicalTestIds[0], new PartitionKey(experiment1ClinicalTestIds[0])));
 
-//            // Cases for querying after Experiment.ExperimentNumber
-//            yield return new object[] { "JE190", 2 };
-//            yield return new object[] { "FA7246", 1 };
-//            yield return new object[] { "FA", 2 };
-//            yield return new object[] { "ge7247", 1 };
-//            yield return new object[] { "je99999999", 0 };
-//        }
+        await Assert.ThrowsAnyAsync<CosmosException>(() => clinicalTestContainer.ReadItemAsync<ClinicalTest>(experiment1ClinicalTestIds[1], new PartitionKey(experiment1ClinicalTestIds[1])));
 
-//        IEnumerator IEnumerable.GetEnumerator()
-//        {
-//            return GetEnumerator();
-//        }
-//    }
+        await Assert.ThrowsAnyAsync<CosmosException>(() => clinicalTestContainer.ReadItemAsync<ClinicalTest>(experiment1ClinicalTestIds[2], new PartitionKey(experiment1ClinicalTestIds[2])));
 
-//    private Experiment mockExperiment()
-//    {
-//        Experiment experiment = new Experiment { id = Guid.NewGuid().ToString(), PartitionKey = Guid.NewGuid().ToString() };
-//        List<ClinicalTest> clinicalTests = new List<ClinicalTest>
-//        {
-//            new ClinicalTest(Guid.NewGuid().ToString()),
-//            new ClinicalTest(Guid.NewGuid().ToString()),
-//            new ClinicalTest(Guid.NewGuid().ToString()),
-//        };
 
-//        return experiment;
-//    }
-//}
+        await experimentContainer.DeleteContainerAsync();
+
+        await clinicalTestContainer.DeleteContainerAsync();
+    }
+
+    [Fact]
+    public async void DeleteExperimentDoesNotDeleteClinicalTestWithMultipleAssociatedExperiments()
+    {
+        DatabaseService.EnableTestMode();
+        await DatabaseService.Instance.SetupDatabase();
+        if (DatabaseService.Instance.Database == null) throw new Exception("Database did not complete setup for QueryExperiemnts test in Experiment Manager");
+
+        Container experimentContainer = await DatabaseService.Instance.Database.CreateContainerIfNotExistsAsync("Experiment", "/PartitionKey");
+
+        Container clinicalTestContainer = await DatabaseService.Instance.Database.CreateContainerIfNotExistsAsync("ClinicalTest", "/PartitionKey");
+
+        Experiment experiment1 = await mockExperimentMultipleAssociates();
+
+        List<string> experiment1ClinicalTestIds = new List<string>();
+
+        foreach (string id in experiment1.ClinicalTestIds)
+        {
+            experiment1ClinicalTestIds.Add(id);
+        }
+
+        await ExperimentManager.DeleteExperiment(experiment1);
+
+        await Assert.ThrowsAnyAsync<CosmosException>(() => experimentContainer.ReadItemAsync<Experiment>(experiment1.id, new PartitionKey(experiment1.id)));
+
+        await clinicalTestContainer.ReadItemAsync<ClinicalTest>(experiment1ClinicalTestIds[0], new PartitionKey(experiment1ClinicalTestIds[0]));
+        Assert.True(true);
+
+        await clinicalTestContainer.ReadItemAsync<ClinicalTest>(experiment1ClinicalTestIds[1], new PartitionKey(experiment1ClinicalTestIds[1]));
+        Assert.True(true);
+
+
+        await clinicalTestContainer.ReadItemAsync<ClinicalTest>(experiment1ClinicalTestIds[2], new PartitionKey(experiment1ClinicalTestIds[2]));
+        Assert.True(true);
+
+
+        await experimentContainer.DeleteContainerAsync();
+
+        await clinicalTestContainer.DeleteContainerAsync();
+    }
+
+    private async Task<Experiment> mockExperiment()
+    {
+        string guidExperiment = Guid.NewGuid().ToString();
+        Experiment experiment = new Experiment { id = guidExperiment, PartitionKey = guidExperiment};
+
+        List<ClinicalTest> clinicalTests = new List<ClinicalTest>
+        {
+            new ClinicalTest(Guid.NewGuid().ToString()),
+            new ClinicalTest(Guid.NewGuid().ToString()),
+            new ClinicalTest(Guid.NewGuid().ToString()),
+        };
+
+        clinicalTests[0].Slides.Add(new Slide { Barcode = "TestBarcode" });
+        clinicalTests[1].Slides.Add(new Slide { Barcode = "BarcodeTest" });
+        clinicalTests[2].Slides.Add(new Slide { Barcode = "TestBarcodeTest" });
+
+        clinicalTests[0].Title = "Title";
+        clinicalTests[1].Title = "TestTitle";
+        clinicalTests[2].Title = "AnotherTestTitle";
+
+        foreach (ClinicalTest ct in clinicalTests)
+        {
+            int index = clinicalTests.IndexOf(ct);
+            await ExperimentManager.Associate(experiment, ct);
+            await ct.SaveToDatabaseAsync();
+        }
+
+        return experiment;
+    }
+
+    private async Task<Experiment> mockExperimentMultipleAssociates()
+    {
+        Experiment experiment = new Experiment { id = Guid.NewGuid().ToString(), PartitionKey = Guid.NewGuid().ToString() };
+
+        Experiment experiment1 = new Experiment { id = Guid.NewGuid().ToString(), PartitionKey = Guid.NewGuid().ToString() };
+
+        List<ClinicalTest> clinicalTests = new List<ClinicalTest>
+        {
+            new ClinicalTest(Guid.NewGuid().ToString()),
+            new ClinicalTest(Guid.NewGuid().ToString()),
+            new ClinicalTest(Guid.NewGuid().ToString()),
+        };
+
+
+        clinicalTests[0].Slides.Add(new Slide { Barcode = "TestBarcode" });
+        clinicalTests[1].Slides.Add(new Slide { Barcode = "BarcodeTest" });
+        clinicalTests[2].Slides.Add(new Slide { Barcode = "TestBarcodeTest" });
+
+        clinicalTests[0].Title = "Title";
+        clinicalTests[1].Title = "TestTitle";
+        clinicalTests[2].Title = "AnotherTestTitle";
+
+        foreach (ClinicalTest ct in clinicalTests)
+        {
+            int index = clinicalTests.IndexOf(ct);
+            await ExperimentManager.Associate(experiment, ct);
+            await ExperimentManager.Associate(experiment1, ct);
+            await ct.SaveToDatabaseAsync();
+        }
+
+        return experiment;
+    }
+
+}

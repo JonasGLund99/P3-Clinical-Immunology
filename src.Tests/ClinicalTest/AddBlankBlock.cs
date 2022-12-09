@@ -1,4 +1,3 @@
-using Microsoft.Azure.Cosmos;
 using Newtonsoft.Json;
 using src.Data;
 using System.Collections;
@@ -9,13 +8,6 @@ namespace src.Tests;
 //https://youtu.be/2Wp8en1I9oQ?t=1152 Se delen om Reusing Instances
 public class AddBlankBlockTest
 {
-    private readonly ClinicalTest _sut;
-
-    public AddBlankBlockTest()
-    {
-        _sut = new ClinicalTest();
-    }
-
 
     [Theory]
     [ClassData(typeof(AddBlankBlockTestData))]

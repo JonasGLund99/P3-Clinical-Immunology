@@ -8,7 +8,7 @@ namespace src.Tests;
 public class QueryExperimentsTest
 {
     [Theory]
-    [ClassData(typeof(SearchByBarcodeOrTitleData))]
+    [ClassData(typeof(SearchByExperimentNumberAuthorOrTitleData))]
     public async void SearchByExperimentNumberAuthorOrTitle(string searchParameter, int expectedNumResults)
     {
         DatabaseService.EnableTestMode();
@@ -20,47 +20,41 @@ public class QueryExperimentsTest
         experiment1.Title = "Title";
         experiment1.Author = "Jørn Christas";
         experiment1.ExperimentNumber = "JE1903";
-        experiment1.SaveToDatabase();
+        await experiment1.SaveToDatabaseAsync();
 
         Experiment experiment2 = mockExperiment();
         experiment2.Title = "TestTitle";
         experiment2.Author = "René";
         experiment2.ExperimentNumber = "JE1902";
-        experiment2.SaveToDatabase();
+        await experiment2.SaveToDatabaseAsync();
 
         Experiment experiment3 = mockExperiment();
         experiment3.Title = "anothertesttitle";
         experiment3.Author = "Papa Noël";
         experiment3.ExperimentNumber = "FA7246";
-        experiment3.SaveToDatabase();
+        await experiment3.SaveToDatabaseAsync();
 
         Experiment experiment4 = mockExperiment();
         experiment4.Title = "IHaveSpecialCharacters æblemost";
         experiment4.Author = "Jørn";
         experiment4.ExperimentNumber = "GE7247";
-        experiment4.SaveToDatabase();
+        await experiment4.SaveToDatabaseAsync();
 
         Experiment experiment5 = mockExperiment();
         experiment5.Title = "gsjdfs";
         experiment5.Author = "farooq";
         experiment5.ExperimentNumber = "KL6432";
-        experiment5.SaveToDatabase();
-
-        while (ProcessQueue.Instance.IsRunning[experiment1.id] || ProcessQueue.Instance.IsRunning[experiment2.id] || ProcessQueue.Instance.IsRunning[experiment3.id] || ProcessQueue.Instance.IsRunning[experiment4.id] || ProcessQueue.Instance.IsRunning[experiment5.id]) 
-        {
-
-        }
-
-
+        await experiment5.SaveToDatabaseAsync();
 
         List<Experiment> experiments = await ExperimentManager.QueryExperiments(searchParameter);
+        
         await experimentContainer.DeleteContainerAsync();
         
         Assert.Equal(expectedNumResults, experiments.Count);
 
 
     }
-    class SearchByBarcodeOrTitleData : IEnumerable<object[]>
+    class SearchByExperimentNumberAuthorOrTitleData : IEnumerable<object[]>
     {
         public IEnumerator<object[]> GetEnumerator()
         {
@@ -96,7 +90,8 @@ public class QueryExperimentsTest
 
     private Experiment mockExperiment()
     {
-        Experiment experiment = new Experiment { id = Guid.NewGuid().ToString(), PartitionKey = Guid.NewGuid().ToString() };
+        string guidExperiment = Guid.NewGuid().ToString();
+        Experiment experiment = new Experiment { id = guidExperiment, PartitionKey = guidExperiment };
         List<ClinicalTest> clinicalTests = new List<ClinicalTest>
         {
             new ClinicalTest(Guid.NewGuid().ToString()),

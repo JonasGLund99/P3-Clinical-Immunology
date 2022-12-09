@@ -1,7 +1,5 @@
 using Microsoft.Azure.Cosmos;
-using Newtonsoft.Json;
 using src.Data;
-using System.Collections;
 using Xunit;
 
 namespace src.Tests;
@@ -9,13 +7,6 @@ namespace src.Tests;
 //https://youtu.be/2Wp8en1I9oQ?t=1152 Se delen om Reusing Instances
 public class RemoveFromDatabaseTest
 {
-    private readonly ClinicalTest _sut;
-
-    public RemoveFromDatabaseTest()
-    {
-        _sut = new ClinicalTest();
-    }
-
 
     [Fact]
     public async void RemoveFromDatabaseRemovesClinicalTest()

@@ -1,10 +1,6 @@
 using Microsoft.Azure.Cosmos;
-using Newtonsoft.Json;
-using OfficeOpenXml.Core;
 using src.Data;
-using System.Collections;
 using Xunit;
-
 namespace src.Tests;
 
 //https://youtu.be/2Wp8en1I9oQ?t=1152 Se delen om Reusing Instances
