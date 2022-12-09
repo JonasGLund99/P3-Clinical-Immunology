@@ -7,7 +7,7 @@ namespace src.Tests;
 public class GetExperimentByIdTest
 {
     [Fact]
-    public async void GetExperimentByIdReturnsExperiment()
+    public async void GetExperimentById_ValidId_ReturnsExperiment()
     {
         DatabaseService.EnableTestMode();
         await DatabaseService.Instance.SetupDatabase();
@@ -25,9 +25,9 @@ public class GetExperimentByIdTest
 
         // Act
 
-        await ExperimentManager.GetExperimentById(guidExperiment1);
+        Experiment? actualExperiment = await ExperimentManager.GetExperimentById(guidExperiment1);
 
-        Assert.True(true);
+        Assert.NotNull(actualExperiment);
 
         await experimentContainer.DeleteContainerAsync();
     }
