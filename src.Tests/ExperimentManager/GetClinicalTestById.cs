@@ -26,9 +26,9 @@ public class GetClinicalTestByIdTest
 
         // Act
 
-        await ExperimentManager.GetExperimentById(guidClinicalTest1);
+        Experiment? actualExperiment = await ExperimentManager.GetExperimentById(guidClinicalTest1);
 
-        Assert.True(true);
+        Assert.NotNull(actualExperiment);
 
         await clinicalTestContainer.DeleteContainerAsync();
     }
