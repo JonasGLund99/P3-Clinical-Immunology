@@ -8,7 +8,7 @@ namespace src.Tests;
 public class GetClinicalTestByIdTest
 {
     [Fact]
-    public async void GetClinicalTestByIdReturnsExperiment()
+    public async void GetClinicalTestById_ValidId_ReturnsClinicalTest()
     {
         DatabaseService.EnableTestMode();
         await DatabaseService.Instance.SetupDatabase();
