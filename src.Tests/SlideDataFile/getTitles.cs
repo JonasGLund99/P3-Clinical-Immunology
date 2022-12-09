@@ -10,7 +10,7 @@ public class GetTitlesTest
 
     [Theory]
     [ClassData(typeof(GetTitlesTestData))]
-    public void GetTitlesTheory(string[] expected, params SlideDataFile[] slideDataFiles)
+    public void GetTitles(string[] expected, params SlideDataFile[] slideDataFiles)
     {
         string[] spotTitles = new string[0];
 

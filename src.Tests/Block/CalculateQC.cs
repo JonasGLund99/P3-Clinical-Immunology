@@ -33,8 +33,6 @@ public class CalculateQCTest
             Block testBlock2 = new Block();
             Block testBlock3 = new Block();
 
-
-
             Nplicate posBlock1 = new Nplicate("K20");
             posBlock1.Spots.Add(new Spot(24588904, false));
             posBlock1.Spots.Add(new Spot(21498584, false));
