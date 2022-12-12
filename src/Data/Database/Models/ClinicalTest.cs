@@ -148,7 +148,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
     {
         foreach (string id in ExperimentIds)
         {
-            Experiment? e = await ExperimentManager.GetExperimentById(id);
+            Experiment? e = await DatabaseService.Instance.GetItemById<Experiment>(id, id);
             if (e == null) continue;
             e.EditedAt = DateTime.Now;
             await e.SaveToDatabaseAsync();

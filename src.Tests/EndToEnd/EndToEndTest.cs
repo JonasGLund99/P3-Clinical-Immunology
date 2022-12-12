@@ -6,6 +6,10 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Chrome;
+using Xunit.Sdk;
+
+//https://stackoverflow.com/questions/9210281/how-to-set-the-test-case-sequence-in-xunit
+[assembly: TestCaseOrderer("src.Tests.EndToEndOrderer", "OrderTestCases")]
 
 namespace src.Tests;
 
@@ -21,7 +25,7 @@ public class EndToEndTest
         actions = new Actions(driver);
     }
 
-    [Fact]
+    [Fact, EndToEndPriority(-5)]
     public void CompleteFlow()
     {
         driver.Navigate().GoToUrl("http://localhost:5110");
@@ -83,6 +87,15 @@ public class EndToEndTest
 
         // driver.Quit();
     }
+
+    [Fact, EndToEndPriority(1)]
+    public void OpenClinicalTest()
+    {
+        var clinicaltest = driver.FindElements(By.CssSelector("#clinical-test-grid > div.all-clinicaltest-cards > div > div > div"));
+        Assert.NotNull(clinicaltest);
+    }
+
+
 }
 
 public static class ChromeDriverExtension
