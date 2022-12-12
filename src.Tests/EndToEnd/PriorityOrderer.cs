@@ -1,18 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Xunit;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
-//https://stackoverflow.com/questions/9210281/how-to-set-the-test-case-sequence-in-xunit
 
 
-namespace src.Tests
+namespace src.Tests.TestCaseOrdering
 {
-    public class EndToEndOrderer : ITestCaseOrderer
+    public class PriorityOrderer : ITestCaseOrderer
     {
         public IEnumerable<TTestCase> OrderTestCases<TTestCase>(IEnumerable<TTestCase> testCases) where TTestCase : ITestCase
         {
@@ -22,7 +18,7 @@ namespace src.Tests
             {
                 int priority = 0;
 
-                foreach (IAttributeInfo attr in testCase.TestMethod.Method.GetCustomAttributes(typeof(EndToEndPriorityAttribute).AssemblyQualifiedName))
+                foreach (IAttributeInfo attr in testCase.TestMethod.Method.GetCustomAttributes((typeof(TestPriorityAttribute).AssemblyQualifiedName)))
                     priority = attr.GetNamedArgument<int>("Priority");
 
                 GetOrCreate(sortedMethods, priority).Add(testCase);
@@ -48,5 +44,4 @@ namespace src.Tests
             return result;
         }
     }
-}
 }
