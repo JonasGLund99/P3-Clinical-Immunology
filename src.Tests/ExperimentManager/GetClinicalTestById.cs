@@ -17,18 +17,18 @@ public class GetClinicalTestByIdTest
         Container clinicalTestContainer = await DatabaseService.Instance.Database.CreateContainerIfNotExistsAsync("ClinicalTest", "/PartitionKey");
 
         string guidClinicalTest1 = Guid.NewGuid().ToString();
-        ClinicalTest c1 = new ClinicalTest { id = guidClinicalTest1, PartitionKey = guidClinicalTest1};
+        ClinicalTest c1 = new ClinicalTest { id = guidClinicalTest1, PartitionKey = guidClinicalTest1 };
 
-        await clinicalTestContainer.UpsertItemAsync<ClinicalTest>(
+        await clinicalTestContainer.UpsertItemAsync(
                     item: c1,
                     partitionKey: new PartitionKey(c1.PartitionKey)
                 );
 
         // Act
 
-        Experiment? actualExperiment = await ExperimentManager.GetExperimentById(guidClinicalTest1);
+        ClinicalTest? clinicalTest = await ExperimentManager.GetClinicalTestById(guidClinicalTest1);
 
-        Assert.NotNull(actualExperiment);
+        Assert.NotNull(clinicalTest);
 
         await clinicalTestContainer.DeleteContainerAsync();
     }
