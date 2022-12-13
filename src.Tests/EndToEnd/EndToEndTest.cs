@@ -8,6 +8,7 @@ using Xunit;
 using Microsoft.Azure.Cosmos;
 using OpenQA.Selenium.DevTools.V106.Overlay;
 using Xunit.Abstractions;
+using src.Shared;
 
 namespace src.Tests.OrderedTests
 {
@@ -41,7 +42,7 @@ namespace src.Tests.OrderedTests
             inputFields[0].SendKeys("EXP-NO");
             inputFields[1].SendKeys("EXP-title");
             inputFields[2].SendKeys("EXP-author");
-            driver.FindElementWait(".green-button", 1000).Click();
+            driver.FindElementWait(".green-button").Click();
             System.Threading.Thread.Sleep(1000);
             var experimentCardInfo = driver.FindElementsWait("#experiment-grid > div.all-experiment-cards > div > div > div > span");
             Assert.Equal("EXP-NO", experimentCardInfo[0].Text);
@@ -126,7 +127,6 @@ namespace src.Tests.OrderedTests
                 }
             }
 
-            //actions.ContextClick(driver.FindElementWait("button#overview")).Perform();
         }
 
         [Fact, TestPriority(6)]
@@ -161,13 +161,14 @@ namespace src.Tests.OrderedTests
                     for (int j = 1; j < 4; j++)
                     {
                         var pd = PatientData[pdIndex++].Split("\t");
-                        if (pd[0] == "")
-                        {
-                            shouldRun = false;
-                            break;
-                        }
+
                         for (int k = 1; k < 4; k++)
                         {
+                            if (pd[0] == "")
+                            {
+                                shouldRun = false;
+                                break;
+                            }
                             var divElem = driver.FindElementWait($"" +
                                 $"body > div.page > main > div > div > div.plates > div > div > div.Slide-{i} > div:nth-child({j+secondDivNthChildIndex}) > div:nth-child({k})");
                             _output.WriteLine($"div.Slide-{i} > div:nth-child({j + secondDivNthChildIndex}) > div:nth-child({k}) text was: {divElem.Text}");
@@ -176,12 +177,88 @@ namespace src.Tests.OrderedTests
 
                             Assert.Equal(pd[k - 1].TrimEnd(), divElem.Text);
                         }
+                        if (!shouldRun) break;
                     }
                     if (!shouldRun) break;
                 }
                 secondDivNthChildIndex += 3;
             }
 
+
+        }
+
+        [Fact, TestPriority(7)]
+        public void TestCase7()
+        {
+            string[] blocksToMakeBlank = { "body > div.page > main > div > div > div.plates > div > div > div.Slide-1 > div:nth-child(19) > div", "body > div.page > main > div > div > div.plates > div > div > div.Slide-1 > div:nth-child(20) > div", "body > div.page > main > div > div > div.plates > div > div > div.Slide-1 > div:nth-child(21) > div", "body > div.page > main > div > div > div.plates > div > div > div.Slide-2 > div:nth-child(16) > div", "body > div.page > main > div > div > div.plates > div > div > div.Slide-2 > div:nth-child(17) > div", "body > div.page > main > div > div > div.plates > div > div > div.Slide-2 > div:nth-child(18) > div", "body > div.page > main > div > div > div.plates > div > div > div.Slide-2 > div:nth-child(19) > div", "body > div.page > main > div > div > div.plates > div > div > div.Slide-2 > div:nth-child(20) > div", "body > div.page > main > div > div > div.plates > div > div > div.Slide-2 > div:nth-child(21) > div",
+            "body > div.page > main > div > div > div.plates > div > div > div.Slide-3 > div:nth-child(16) > div", "body > div.page > main > div > div > div.plates > div > div > div.Slide-3 > div:nth-child(17) > div", "body > div.page > main > div > div > div.plates > div > div > div.Slide-3 > div:nth-child(18) > div", "body > div.page > main > div > div > div.plates > div > div > div.Slide-3 > div:nth-child(19) > div", "body > div.page > main > div > div > div.plates > div > div > div.Slide-3 > div:nth-child(20) > div", "body > div.page > main > div > div > div.plates > div > div > div.Slide-3 > div:nth-child(21) > div"};
+            foreach(string selector in blocksToMakeBlank)
+            {
+                driver.FindElementWait(selector).Click();
+                var divsInBlock = driver.FindElementsWait(selector);
+                Assert.Equal("Blank", divsInBlock[1].Text);
+            }
+            driver.FindElementWait("#saving-status > i");
+
+            int pdIndex = 0;
+            bool shouldRun = true;
+            int secondDivNthChildIndex = 0;
+            while (shouldRun)
+            {
+                for (int i = 1; i < 4; i++)
+                {
+                    for (int j = 1; j < 4; j++)
+                    {
+                        var pd = PatientData[pdIndex++].Split("\t");
+
+                        for (int k = 1; k < 4; k++)
+                        {
+                            if (pd[k-1] == "")
+                            {
+                                shouldRun = false;
+                                break;
+                            }
+                            var divElem = driver.FindElementWait($"" +
+                                $"body > div.page > main > div > div > div.plates > div > div > div.Slide-{i} > div:nth-child({j + secondDivNthChildIndex}) > div:nth-child({k})");
+                            _output.WriteLine($"div.Slide-{i} > div:nth-child({j + secondDivNthChildIndex}) > div:nth-child({k}) text was: {divElem.Text}");
+                            _output.WriteLine($"pd[k-1] = {pd[k - 1].TrimEnd()}");
+                            _output.WriteLine($"");
+
+                            Assert.Equal(pd[k - 1].TrimEnd(), divElem.Text);
+                        }
+                        if (!shouldRun) break;
+                    }
+                    if (!shouldRun) break;
+                }
+                secondDivNthChildIndex += 3;
+            }
+        }
+
+        [Fact, TestPriority(8)]
+        public void TestCase8()
+        {
+            actions.ContextClick(driver.FindElementWait("body > div.page > main > div > div > div.plates > div.plate.numSlides3 > div > div.Slide-1 > div:nth-child(1)")).Perform();
+            driver.FindElementWait("#text-color-menu > div > div:nth-child(8)").Click();
+            foreach(var divElem in driver.FindElementsWait("body > div.page > main > div > div > div.plates > div > div > div.Slide-1 > div:nth-child(1) > div"))
+            {
+                string styleAttribute = divElem.GetAttribute("style").Split(":")[1];
+                Assert.Equal("rgb(6, 71, 137);", styleAttribute.Trim());
+            }
+        }
+
+        [Fact, TestPriority(9)]
+        public void TestCase9()
+        {
+            driver.FindElementWait("#export-icon > i").Click();
+            System.Threading.Thread.Sleep(200);
+            var isSavingIcon = driver.FindElementWait("#saving-status > i");
+            string isSavingIconClass = isSavingIcon.GetAttribute("class");
+            Assert.Equal("fa-solid fa-xmark", isSavingIconClass);
+        }
+
+        [Fact, TestPriority(10)]
+        public void TestCase10()
+        {
 
         }
 
@@ -209,29 +286,6 @@ namespace src.Tests.OrderedTests
 
     public static class ChromeDriverExtension
     {
-        public static IWebElement FindElementWait(this ChromeDriver driver, string selector, int timeoutInMilliseconds)
-        {
-            IWebElement? webElement = null;
-            do
-            {
-
-                try
-                {
-                    do
-                    {
-                        webElement = new WebDriverWait(driver, TimeSpan.FromMilliseconds(timeoutInMilliseconds)).Until(driver => driver.FindElement(By.CssSelector(selector)));
-                    }
-                    while (webElement == null);
-                }
-                catch (Exception ex)
-                {
-
-                }
-            }
-            while (webElement == null);
-
-            return webElement;
-        }
         public static IWebElement FindElementWait(this ChromeDriver driver, string selector)
         {
             IWebElement? webElement = null;
