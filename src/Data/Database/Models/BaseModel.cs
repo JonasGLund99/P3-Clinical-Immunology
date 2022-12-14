@@ -22,11 +22,11 @@ public abstract class BaseModel<T> where T : BaseModel<T>
 
         if (typeof(T) == typeof(Block))
         {
-            ProcessQueue.Instance.Enqueue(process, this.PartitionKey);
+            ProcessQueue.Instance.Enqueue(process);
         }
         else
         {
-            ProcessQueue.Instance.Enqueue(process, this.id);
+            ProcessQueue.Instance.Enqueue(process);
         }
     }
     public virtual async Task SaveToDatabaseAsync()
