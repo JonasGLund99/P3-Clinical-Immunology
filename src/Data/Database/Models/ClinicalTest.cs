@@ -109,6 +109,10 @@ public class ClinicalTest : BaseModel<ClinicalTest>
         }
         return blankBlocks;
     }
+    public async Task AddNormalBlock(Block block) // ONLY USED FOR TESTING
+    {
+        (await GetNormalBlocks()).Add(block);
+    }
     public async Task AddBlankBlock(Block block)
     {
         (await GetBlankBlocks()).Add(block);
@@ -144,7 +148,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
     {
         foreach (string id in ExperimentIds)
         {
-            Experiment? e = await ExperimentManager.GetExperimentById(id);
+            Experiment? e = await DatabaseService.Instance.GetItemById<Experiment>(id, id);
             if (e == null) continue;
             e.EditedAt = DateTime.Now;
             await e.SaveToDatabaseAsync();
@@ -156,7 +160,12 @@ public class ClinicalTest : BaseModel<ClinicalTest>
     public override async Task RemoveFromDatabase()
     {
         List<Block> normBlocks = await GetNormalBlocks();
+        List<Block> blankBlocks = await GetBlankBlocks();
         foreach (Block block in normBlocks)
+        {
+            await block.RemoveFromDatabase();
+        }
+        foreach (Block block in blankBlocks)
         {
             await block.RemoveFromDatabase();
         }
@@ -656,10 +665,10 @@ public class ClinicalTest : BaseModel<ClinicalTest>
         foreach (SlideDataFile slideDataFile in SlideDataFiles)
         {
             //Create string array with only spot information
-            string[] spotLines = slideDataFile.getSpotLines();
+            string[] spotLines = slideDataFile.GetSpotLines();
 
             //Create array where each entry is a title for spot information
-            string[] titles = slideDataFile.getTitles();
+            string[] titles = slideDataFile.GetTitles();
 
             List<string> spotInfo = new List<string>();
             nplicatesInBlock = spotLines.Length / numOfBlocks / NplicateSize;
@@ -720,8 +729,8 @@ public class ClinicalTest : BaseModel<ClinicalTest>
                 allBlocksInSlide[j].CalculateQC(pos, neg);
             }
 
-            //Calculate the RI for each Nplicate in each block and update max / min RI
-            foreach (Block block in allBlocksInSlide)
+            //Calculate the RI for each Nplicate in each normal block and update max / min RI
+            foreach (Block block in normBlocksInSlide)
             {
                 Nplicate? neg = block.Nplicates.Find(element => element.AnalyteType == "neg");
 

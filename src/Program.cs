@@ -30,6 +30,10 @@ app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 
 // Setup database
+if (args.Contains("testmode"))
+{
+    DatabaseService.EnableTestMode();
+}
 await DatabaseService.Instance.SetupDatabase();
 // await Mocker.Mock(DatabaseService.Instance.Database);
 
