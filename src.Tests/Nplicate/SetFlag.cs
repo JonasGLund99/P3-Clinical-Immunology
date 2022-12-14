@@ -7,7 +7,7 @@ public class SetFlagTest
 {
     [Theory]
     [ClassData(typeof(SetFlagTestData))]
-    public void CalculateRITheory(bool expected, params Nplicate[] nplicates)
+    public void SetFlag_Flags_Nplicate(bool expected, params Nplicate[] nplicates)
     {
         bool isFlagged = false;
         foreach (Nplicate np in nplicates)
