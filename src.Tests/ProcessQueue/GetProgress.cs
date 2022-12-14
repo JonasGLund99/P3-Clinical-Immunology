@@ -10,14 +10,14 @@ public class GetProgressTest
     {
         Func<Task> process = () => Task.Delay(100);
         string queueId = Guid.NewGuid().ToString();
-        ProcessQueue.Instance.Enqueue(process, queueId);
-        ProcessQueue.Instance.Enqueue(process, queueId);
-        ProcessQueue.Instance.Enqueue(process, queueId);
+        ProcessQueue.Instance.Enqueue(process);
+        ProcessQueue.Instance.Enqueue(process);
+        ProcessQueue.Instance.Enqueue(process);
 
-        while (ProcessQueue.Instance.IsRunning[queueId])
+        while (ProcessQueue.Instance.IsRunning)
         {
-            Assert.True(ProcessQueue.Instance.GetProgress(queueId) <= 1);
+            Assert.True(ProcessQueue.Instance.GetProgress() <= 1);
         }
-        Assert.True(ProcessQueue.Instance.GetProgress(queueId) == 1);
+        Assert.True(ProcessQueue.Instance.GetProgress() == 1);
     }
 }

@@ -125,7 +125,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
     {
         if (saveBlocks)
         {
-            ProcessQueue.Instance.Clear(this.id);
+            ProcessQueue.Instance.Clear();
             List<Block> normBlocks = await GetNormalBlocks();
             List<Block> bBlocks = await GetBlankBlocks();
             NormalBlockIds.Clear();

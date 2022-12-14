@@ -13,11 +13,11 @@ public class ClearTest
         string queueId = Guid.NewGuid().ToString();
 
         // Act
-        ProcessQueue.Instance.Enqueue(process, queueId);
-        ProcessQueue.Instance.Clear(queueId);
+        ProcessQueue.Instance.Enqueue(process);
+        ProcessQueue.Instance.Clear();
 
         // Assert
-        Assert.True(ProcessQueue.Instance.GetQueues()[queueId].Count == 0);
+        Assert.True(ProcessQueue.Instance.Queue.Count == 0);
     }
 
     [Fact]
@@ -27,9 +27,9 @@ public class ClearTest
         string queueId = Guid.NewGuid().ToString();
 
         // Act
-        ProcessQueue.Instance.Clear(queueId);
+        ProcessQueue.Instance.Clear();
 
         // Assert
-        Assert.True(ProcessQueue.Instance.GetQueues()[queueId].Count == 0);
+        Assert.True(ProcessQueue.Instance.Queue.Count == 0);
     }
 }

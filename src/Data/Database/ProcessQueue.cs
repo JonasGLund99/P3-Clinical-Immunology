@@ -4,9 +4,9 @@ namespace src.Data;
 public class ProcessQueue
 {
     private static readonly ProcessQueue instance = new ProcessQueue();
-    private Queue<Func<Task>> queue = new Queue<Func<Task>>();
-    private int queueCount = 0;
-    public bool isRunning = false;
+    public int QueueCount = 0;
+    public Queue<Func<Task>> Queue { get; } = new Queue<Func<Task>>();
+    public bool IsRunning { get; private set; } = false;
 
 
     private ProcessQueue() { }
@@ -21,39 +21,39 @@ public class ProcessQueue
 
     public void Enqueue(Func<Task> process)
     {
-        queue.Enqueue(process);
-        queueCount++;
+        Queue.Enqueue(process);
+        QueueCount++;
 
-        if (!isRunning)
+        if (!IsRunning)
         {
-            queueCount = 1;
+            QueueCount = 1;
             Execute();
         }
     }
     private async void Execute()
     {
-        isRunning = true;
+        IsRunning = true;
 
         Func<Task> currentProcess;
 
         do
         {
-            currentProcess = queue.Dequeue();
+            currentProcess = Queue.Dequeue();
             await currentProcess();
         }
-        while (queue.Count > 0);
+        while (Queue.Count > 0);
 
-        isRunning = false;
+        IsRunning = false;
     }
 
     public double GetProgress()
     {
-        if (!isRunning || queueCount == 0) return 1;
-        return 1 - (double)queue.Count / (double)queueCount;
+        if (!IsRunning || QueueCount == 0) return 1;
+        return 1 - (double)Queue.Count / (double)QueueCount;
     }
-    public void Clear(string queueId)
+    public void Clear()
     {
-        queue.Clear();
-        queueCount = 0;
+        Queue.Clear();
+        QueueCount = 0;
     }
 }

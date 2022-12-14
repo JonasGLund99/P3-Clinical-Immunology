@@ -39,7 +39,7 @@ public class SaveToDatabaseClinicalTestTest
         // Act
         c2.SaveToDatabase(true);
 
-        while (ProcessQueue.Instance.IsRunning[guidClinicalTest])
+        while (ProcessQueue.Instance.IsRunning)
         {
             
         }
