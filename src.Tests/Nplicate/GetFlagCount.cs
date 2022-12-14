@@ -36,7 +36,31 @@ public class GetFlagCountTest
             n1.Spots.Add(new Spot(19855, false));
             n1.Spots.Add(new Spot(24627, false));
 
+            Nplicate n2 = new Nplicate("c69");
+            n2.Spots.Add(new Spot(0, true));
+            n2.Spots.Add(new Spot(0, true));
+            n2.Spots.Add(new Spot(0, true));
+
+            Nplicate n3 = new Nplicate("c69");
+            n3.Spots.Add(new Spot(0, false));
+            n3.Spots.Add(new Spot(0, true));
+            n3.Spots.Add(new Spot(0, true));
+
+            Nplicate n4 = new Nplicate("c69");
+            n4.Spots.Add(new Spot(0, true));
+            n4.Spots.Add(new Spot(0, true));
+            n4.Spots.Add(new Spot(0, true));
+            n4.Spots.Add(new Spot(0, true));
+
+            Nplicate n5 = new Nplicate("c69");
+            n5.Spots.Add(new Spot(0, true));
+            n5.Spots.Add(new Spot(0, true));
+
             yield return new object[] { 1, n1 };
+            yield return new object[] { 3, n2 };
+            yield return new object[] { 2, n3 };
+            yield return new object[] { 4, n4 };
+            yield return new object[] { 2, n5 };
         }
 
         IEnumerator IEnumerable.GetEnumerator()
