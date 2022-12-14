@@ -165,7 +165,7 @@ else
 
     private void TimerHandler(Object? source, ElapsedEventArgs e)
     {
-        databaseStatus = ProcessQueue.Instance.GetProgress(ClinicalTestId);
+        databaseStatus = ProcessQueue.Instance.GetProgress();
         InvokeAsync(() => StateHasChanged());
     }
 
