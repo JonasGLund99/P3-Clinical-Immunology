@@ -23,7 +23,7 @@ public class EnqueueTest
         string queueId = Guid.NewGuid().ToString();
         ProcessQueue.Instance.Clear();
         ProcessQueue.Instance.Enqueue(process);
-        await Task.Delay(100);
+        await Task.Delay(200);
         Assert.False(ProcessQueue.Instance.IsRunning);
     }
 }
