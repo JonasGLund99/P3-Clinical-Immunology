@@ -16,15 +16,9 @@ public class GetFlagCountTest
 
     [Theory]
     [ClassData(typeof(GetFlagCountTestData))]
-    public void GetFlagCount_Finds_Correct_Flag_Count(int expected, params Nplicate[] nplicates)
+    public void GetFlagCount_Finds_Correct_Flag_Count(int expected, Nplicate nplicate)
     {
-        int flagCount = 0;
-        foreach (Nplicate np in nplicates)
-        {
-            flagCount = np.GetFlagCount();
-        }
-
-        Assert.Equal(expected, flagCount);
+        Assert.Equal(expected, nplicate.GetFlagCount());
     }
 
     public class GetFlagCountTestData : IEnumerable<object[]>
