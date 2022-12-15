@@ -54,8 +54,8 @@ else
                                 @foreach (Nplicate nplicate in block.Nplicates) 
                                 {
                                     <td title="@nplicateTitleHelper(nplicate)"
-                                        class="flagged-@nplicate.IsFlagged.ToString().ToLower() selected-@((nplicate == clickedNplicate).ToString().ToLower() )" 
-                                        style="background-color: @System.Drawing.ColorTranslator.ToHtml(nplicate.HeatmapColour);"
+                                        class="flagged-@nplicate.IsFlagged.ToString().ToLower() selected-@((nplicate == clickedNplicate).ToString().ToLower() )"
+                                        style="background-color: @(nplicate.GetFlagCount() == ClinicalTest.NplicateSize ? System.Drawing.ColorTranslator.ToHtml(System.Drawing.Color.Red) : System.Drawing.ColorTranslator.ToHtml(nplicate.HeatmapColour))"
                                         @onclick="() => nplicateClicked(nplicate, block)"></td>
                                 }
                             </tr>    

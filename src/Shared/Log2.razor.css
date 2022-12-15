@@ -40,6 +40,7 @@ tr:first-child td {
     color: rgb(244, 244, 244);
     position: sticky;
     top: 0;
+    z-index: 1;
     text-align: center;
 }
 
@@ -108,4 +109,8 @@ tr:first-child td:first-child {
 
 .flagged-nplicate {
     box-shadow: 0px 0px 0px 3px #ff0000 inset;
+}
+
+.all-flagged-nplicate {
+    background-color: #ff0000;
 }

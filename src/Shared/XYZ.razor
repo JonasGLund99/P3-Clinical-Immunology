@@ -105,7 +105,11 @@ else
         }
         @foreach (Nplicate nplicate in block.Nplicates)
         {
-            if (nplicate.XYZ == double.NaN && nplicate.IsFlagged)
+            if (nplicate.GetFlagCount() == ClinicalTest.NplicateSize)
+            {
+                    <td @onclick="@((e) => OpenSpots(e, nplicate, block))" class="data @(nplicate==SelectedNplicate ? "selected-td" : "") all-flagged-nplicate"></td>
+            }
+            else if (nplicate.XYZ == double.NaN && nplicate.IsFlagged)
             {
                 <td @onclick="@((e) => OpenSpots(e, nplicate, block))" class="data @(nplicate==SelectedNplicate ? "selected-td" : "") flagged-nplicate">-</td>
             }

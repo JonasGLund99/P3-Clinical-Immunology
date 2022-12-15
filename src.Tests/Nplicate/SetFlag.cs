@@ -12,7 +12,6 @@ public class SetFlagTest
         bool isFlagged = false;
         foreach (Nplicate np in nplicates)
         {
-
             np.SetFlag();
             isFlagged = np.IsFlagged;
         }
