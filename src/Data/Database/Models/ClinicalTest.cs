@@ -439,15 +439,19 @@ public class ClinicalTest : BaseModel<ClinicalTest>
 
             foreach (Nplicate nplicate in block.Nplicates)
             {
+                Color heatMapColour = nplicate.HeatmapColour;
                 if (withFlags == "withFlags")
                 {
-                    if (nplicate.IsFlagged)
+                    if (nplicate.GetFlagCount() == NplicateSize)
+                    {
+                        heatMapColour = ColorTranslator.FromHtml("#ff0000");
+                    }
+                    else if (nplicate.IsFlagged)
                     {
                         heatmap.Cells[row, col].Style.Border.BorderAround(ExcelBorderStyle.Thick, Color.Red);
                     }
                 }
-                heatmap.Cells[row, col].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                heatmap.Cells[row, col++].Style.Fill.BackgroundColor.SetColor(nplicate.HeatmapColour);
+                heatmap.Cells[row, col++].Style.Fill.SetBackground(heatMapColour, ExcelFillStyle.Solid);
             }
         }
         heatmap.Columns.AutoFit(3);
@@ -573,12 +577,15 @@ public class ClinicalTest : BaseModel<ClinicalTest>
             {
                 if (withFlags == "withFlags")
                 {
-                    if (nplicate.IsFlagged)
+                    if (nplicate.GetFlagCount() == NplicateSize)
+                    {
+                        XYZ.Cells[XYZRow, XYZCol].Style.Fill.SetBackground(ColorTranslator.FromHtml("#ff0000"), ExcelFillStyle.Solid);
+                        Log2.Cells[Log2Row, Log2Col].Style.Fill.SetBackground(ColorTranslator.FromHtml("#ff0000"), ExcelFillStyle.Solid);
+                    }
+                    else if (nplicate.IsFlagged)
                     {
                         XYZ.Cells[XYZRow, XYZCol].Style.Border.BorderAround(ExcelBorderStyle.Thick, Color.Red);
                         Log2.Cells[Log2Row, Log2Col].Style.Border.BorderAround(ExcelBorderStyle.Thick, Color.Red);
-
-
                     }
                 }
                 XYZ.Cells[XYZRow, XYZCol++].Value = nplicate.XYZ;

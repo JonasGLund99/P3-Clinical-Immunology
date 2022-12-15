@@ -172,3 +172,7 @@ tbody td:hover {
     padding-right: 5px;
     vertical-align: bottom;
 }
+
+tr td.all-flagged-true {
+    background-color: #ff0000;
+}
