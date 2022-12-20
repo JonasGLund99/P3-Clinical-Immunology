@@ -1,36 +1,30 @@
 # P3
 System for Clinical Immunology at Aalborg University Hospital.
 
-# Running the project:
-CD: into the directory 'src'
-
-Open the terminal with ctrl-æ.
-
-To run the project type ```dotnet watch``` and press enter
+<h1>Requirements for running the project</h1>
+<ul>
+    <h3> <a>.NET SDK 6.0</a></h3>
+</ul> 
 
 
+<h1> Running the project: </h1>
+<ol>
+  <li>Open the folder P3_final</li>
+  <li>Open the folder src</li>
+  <li>Open a terminal in the same folder (the project directory) from step 2 </li>
+  <li> Run the command <span style="background-color: #3c434d; border-radius: 4px; border: 2px solid #3c434d;">dotnet watch</span> in your terminal
+  </li>
+</ol>
 
-# Conventions
+<h1> Running the test-project: </h1>
+<ol>
+  <li>Open the folder containing project</li>
+  <li>Open the folder src.Tests</li>
+  <li>Open a terminal in the same folder (the project directory) from step 2 </li>
+    <li> Run the command <span style="background-color: #3c434d; border-radius: 4px; border: 2px solid #3c434d;">dotnet test</span> in your terminal
+  </li>
+  
+</ol>
 
-**Case for class members**
-- public members - PascalCase
-- private members - camelCase
-- backing field - beginning underscore (_camelCase)
 
-**Constructors**
-- NO 'this.' in constructors (except 'this.id' in classes inheriting from BaseModel)
-- Method parameters in camelCase (including constructors)
-- Order of members in class
-    - Private constructors
-    - Private members
-    - Public constructors
-    - Public members
-
-**Filenames**
-- PascalCase
-- *filename*.razor uses *filename*.razor.css
-
-**Access database**
-1. Include namespace ```using src.Data```
-2. ```DatabaseService.Instance.Database```
-
+The website should open on http://localhost:5110/ automatically when ready. If the site does not open automatically, you can manually visit the same page.
