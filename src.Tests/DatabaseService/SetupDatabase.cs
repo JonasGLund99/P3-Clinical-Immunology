@@ -12,7 +12,7 @@ public class SetupDatabaseTest
         // Arrange
         try
         {
-            await DatabaseService.Instance.Client.GetDatabase("ClinicalImmunology2").DeleteAsync();
+            await DatabaseService.Instance.Client.GetDatabase("ClinicalImmunology").DeleteAsync();
         }
         catch { }
 
@@ -22,9 +22,9 @@ public class SetupDatabaseTest
         // Act
 
         // Assert
-        await Assert.ThrowsAnyAsync<CosmosException>(() => DatabaseService.Instance.Client.CreateDatabaseAsync("ClinicalImmunology2", 1000));
+        await Assert.ThrowsAnyAsync<CosmosException>(() => DatabaseService.Instance.Client.CreateDatabaseAsync("ClinicalImmunology", 1000));
 
-        Database database = DatabaseService.Instance.Client.GetDatabase("ClinicalImmunology2");
+        Database database = DatabaseService.Instance.Client.GetDatabase("ClinicalImmunology");
         await Assert.ThrowsAnyAsync<CosmosException>(() => database.CreateContainerAsync("Experiment", "/PartitionKey"));
         await Assert.ThrowsAnyAsync<CosmosException>(() => database.CreateContainerAsync("ClinicalTest", "/PartitionKey"));
         await Assert.ThrowsAnyAsync<CosmosException>(() => database.CreateContainerAsync("Block", "/PartitionKey"));
