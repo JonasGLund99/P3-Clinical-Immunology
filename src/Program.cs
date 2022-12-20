@@ -35,6 +35,5 @@ if (args.Contains("testmode"))
     DatabaseService.EnableTestMode();
 }
 await DatabaseService.Instance.SetupDatabase();
-// await Mocker.Mock(DatabaseService.Instance.Database);
 
 app.Run();
