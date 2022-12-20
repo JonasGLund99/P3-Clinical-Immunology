@@ -15,6 +15,7 @@ public class DisassociateTest
         if (DatabaseService.Instance.Database == null) throw new Exception("Database did not complete setup for SaveToDatabase test in ClinicalTest");
 
         Container ctContainer = await DatabaseService.Instance.Database.CreateContainerIfNotExistsAsync("ClinicalTest", "/PartitionKey");
+        Container eContainer = await DatabaseService.Instance.Database.CreateContainerIfNotExistsAsync("Experiment", "/PartitionKey");
 
         string guidClinicalTest1 = Guid.NewGuid().ToString();
         ClinicalTest c1 = new ClinicalTest { id = guidClinicalTest1, PartitionKey = guidClinicalTest1 };
@@ -24,14 +25,17 @@ public class DisassociateTest
 
         c1.ExperimentIds.Add(guidExperiment1);
         e1.ClinicalTestIds.Add(guidClinicalTest1);
-
-        // Act
+        await ctContainer.UpsertItemAsync(c1, new PartitionKey(c1.id));
+        await eContainer.UpsertItemAsync(e1, new PartitionKey(e1.id));
         await ExperimentManager.Disassociate(e1, c1);
 
+        Assert.NotNull(() => eContainer.ReadItemAsync<Experiment>(e1.id, new PartitionKey(e1.id)));
+        await Assert.ThrowsAnyAsync<CosmosException>(() => ctContainer.ReadItemAsync<ClinicalTest>(c1.id, new PartitionKey(c1.id)));
         Assert.True(!e1.ClinicalTestIds.Exists(id => id == guidClinicalTest1));
         Assert.True(!c1.ExperimentIds.Exists(id => id == guidExperiment1));
 
         await ctContainer.DeleteContainerAsync();
+        await eContainer.DeleteContainerAsync();
     }
 
     [Fact]
