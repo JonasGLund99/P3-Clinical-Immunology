@@ -51,7 +51,6 @@ public abstract class BaseModel<T> where T : BaseModel<T>
             }
             catch (Exception e)
             {
-                // System.Console.WriteLine(e.Message);
                 System.Console.WriteLine("Failed to save " + this.GetType().Name + ". Retrying...");
                 retryCount++;
 
@@ -80,7 +79,6 @@ public abstract class BaseModel<T> where T : BaseModel<T>
             }
             catch (Exception e)
             {
-                // System.Console.WriteLine(e.Message);
                 System.Console.WriteLine("Failed to remove " + this.GetType().Name + ". Retrying...");
                 retryCount++;
             }   
