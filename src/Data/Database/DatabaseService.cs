@@ -40,7 +40,7 @@ public class DatabaseService
     }
     public async Task SetupDatabase()
     {
-        Database = await Client.CreateDatabaseIfNotExistsAsync("ClinicalImmunology2", 1000);
+        Database = await Client.CreateDatabaseIfNotExistsAsync("ClinicalImmunology", 1000);
         await Database.CreateContainerIfNotExistsAsync("Experiment", "/PartitionKey");
         await Database.CreateContainerIfNotExistsAsync("ClinicalTest", "/PartitionKey");
         await Database.CreateContainerIfNotExistsAsync("Block", "/PartitionKey");
