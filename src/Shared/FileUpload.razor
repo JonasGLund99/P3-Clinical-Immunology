@@ -235,7 +235,7 @@
             await setActiveButtonCallback.InvokeAsync(4);
         }
     }
-    
+
     public async Task<bool> checkCalculationValidity() 
     {
         List<Block> blankBlocks = await ClinicalTest.GetBlankBlocks();
@@ -244,16 +244,24 @@
         {
             int numNormBlocksInSlide = normBlocks.FindAll(nb => nb.SlideIndex == ClinicalTest.Slides.IndexOf(s)).Count;
             int numBlankBlocksInSlide = blankBlocks.FindAll(bb => bb.SlideIndex == ClinicalTest.Slides.IndexOf(s)).Count;
-            if (numBlankBlocksInSlide == 0)
+            List<Block> blankBlocksinSlide = blankBlocks.FindAll(bb => bb.SlideIndex == ClinicalTest.Slides.IndexOf(s));
+            bool hasCalculationBlock = false;
+            foreach (Block b in blankBlocksinSlide)
             {
-                //if no black block has slide index of slide
+                if (hasCalculationBlock == false)
+                    hasCalculationBlock = b.IsCalculatorBlock;
+            }
+
+            if (hasCalculationBlock == false)
+            {
                 loading = false;
                 displayError = true;
-                errorMessage = "One blank block is necessary in every slide for the calculations to be executed";
+                errorMessage = "Each slide must contain a block marked for calculation.";
                 errorMessageEnd = "";
                 errorTitle = "Calculation canceled";
                 return false;
             }
+            
             if (numNormBlocksInSlide + numBlankBlocksInSlide != 21)
             {
                 // If there are not 21 total number of blocks in a slide

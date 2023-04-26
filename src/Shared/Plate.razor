@@ -52,9 +52,16 @@
                             {
                                 @*Show blank block*@
                                 <div></div>
-                                <div style="color: @(Slides[i][j].TextColour)">Blank</div>
+                                <div style="color: @(Slides[i][j].TextColour)">@(Slides[i][j].IsCalculatorBlock ? "Calc" : "Blank")</div>
                                 <div></div>
-                            }
+                                int iAlternative = i;
+                                int jAlternative = j;
+
+                                <input type="radio" checked="@Slides[i][j].IsCalculatorBlock" name="slide@(slideIndex)" @onclick="() => updateCalculatorBlock(iAlternative, Slides[iAlternative][jAlternative])" @onclick:stopPropagation />
+
+                }
+                            
+
                         </div>
                     }
                     else
@@ -171,5 +178,17 @@
         ClinicalTest.CalculationNecessary = true;
         ClinicalTest.SaveToDatabase();
     }
+
+    private async void updateCalculatorBlock(int slideIndex, Block block)
+    {
+        foreach (Block b in Slides[slideIndex])
+        {
+            b.IsCalculatorBlock = false;
+        }
+        block.IsCalculatorBlock = true;
+        ClinicalTest.CalculationNecessary = true;
+        ClinicalTest.SaveToDatabase(true);
+    }
+
     private string[] headingLetters = { "A", "B", "C", "D", "E", "F", "G", "H" };
 }

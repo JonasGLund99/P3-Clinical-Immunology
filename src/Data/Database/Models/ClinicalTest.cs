@@ -748,8 +748,16 @@ public class ClinicalTest : BaseModel<ClinicalTest>
 
                 for (int j = 0; j < block.Nplicates.Count; j++)
                 {
-                    Block lastBlankBlock = bBlocksInSlide.Last();
-                    updateMaxMinRI(block.Nplicates[j].CalculateRI(lastBlankBlock.Nplicates[j], neg));
+                    //Block lastBlankBlock = bBlocksInSlide.Last();
+                    Block? calculatorBlock = bBlocksInSlide.Find(b => b.IsCalculatorBlock);
+                    if (calculatorBlock != null)
+                    {
+                        updateMaxMinRI(block.Nplicates[j].CalculateRI(calculatorBlock.Nplicates[j], neg));
+                    }
+                    else
+                    {
+                        throw new ArgumentNullException();
+                    }
                 }
             }
         }
