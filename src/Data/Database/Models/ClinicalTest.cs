@@ -259,6 +259,8 @@ public class ClinicalTest : BaseModel<ClinicalTest>
             fileInfo.Delete();  // ensures we create a new workbook
             fileInfo = new FileInfo(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "exports", $"{id}-prøve-opsætning.xlsx"));
         }
+        
+        ExcelPackage.LicenseContext = LicenseContext.NonCommercial; // EPPlus license must be specified; otherwise, it throws an exception
         ExcelPackage package = new ExcelPackage(fileInfo);
         ExcelWorkbook workBook = package.Workbook;
         ExcelWorksheet overview = workBook.Worksheets.Add("Prøve opsætning");
@@ -645,6 +647,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
             fileInfo = new FileInfo(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "exports", $"{id}-result.xlsx"));
         }
 
+        ExcelPackage.LicenseContext = LicenseContext.NonCommercial; // EPPlus license must be specified; otherwise, it throws an exception
         ExcelPackage package = new ExcelPackage(fileInfo);
         ExcelWorkbook workBook = package.Workbook;
 
