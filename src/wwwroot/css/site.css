@@ -124,6 +124,7 @@ a,
     border-radius: 10px;
     align-items: center;
     justify-content: space-evenly;
+    cursor: pointer;
 }
 .green-button:hover {
     background-color: var(--green-btn-hover-color);
