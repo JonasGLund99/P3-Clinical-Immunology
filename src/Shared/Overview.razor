@@ -237,7 +237,6 @@ Right click on a block to change it's colour" class="fa fa-info-circle"></i>
         mode = newMode;
     }
     private async void updateOverviewState() {
-        Console.WriteLine("Called updateOverviewState");
         overview = await ClinicalTest.GenerateOverview();
         overviewLoaded = true;
         StateHasChanged();
@@ -353,7 +352,6 @@ Right click on a block to change it's colour" class="fa fa-info-circle"></i>
     {
         ClinicalTest.ImportOverview(overviewFile).GetAwaiter().OnCompleted(() =>
         {
-            Console.WriteLine("Imported Excel file /Overview");
             ClinicalTest.IsEmpty = false;
             updateOverviewState();
         });

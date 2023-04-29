@@ -403,8 +403,6 @@ public class ClinicalTest : BaseModel<ClinicalTest>
             }
         }
 
-        Console.WriteLine(normalBlocks.Count);
-
     }
 
     public async Task<FileInfo> ExportOverview()
