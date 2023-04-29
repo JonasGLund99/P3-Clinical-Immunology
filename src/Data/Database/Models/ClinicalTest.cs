@@ -258,7 +258,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
         {
             MemoryStream ms = new MemoryStream();
             // copy data from file to memory stream
-            await file.OpenReadStream().CopyToAsync(ms);
+            await file.OpenReadStream(50000000).CopyToAsync(ms);
             // positions the cursor at the beginning of the memory stream
             ms.Position = 0;
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial; // EPPlus license must be specified; otherwise, it throws an exception
@@ -298,14 +298,38 @@ public class ClinicalTest : BaseModel<ClinicalTest>
             for (int j = 0; j < 4; j++) //j is the barcodes from left to right
             {
                 int tempJ = j;
-                if (overview.Cells[29 + 30 * tempI, 3 + 3 * tempJ].Value != null && overview.Cells[29 + 30 * tempI, 3 + 3 * tempJ].Value.ToString() != null)
+                bool barcodeIsPresent = overview.Cells[29 + 30 * tempI, 3 + 3 * tempJ].Value != null &&
+                    overview.Cells[29 + 30 * tempI, 3 + 3 * tempJ].Value.ToString() != null &&
+                    overview.Cells[29 + 30 * tempI, 3 + 3 * tempJ].Value.ToString().Trim() != "";
+                if (barcodeIsPresent)
                 {
-                    if(overview.Cells[29 + 30 * tempI, 3 + 3 * tempJ].Value.ToString().Trim() != "")
+                    Slide slide = new Slide();
+                    slide.Barcode = overview.Cells[29 + 30 * tempI, 3 + 3 * tempJ].Value.ToString().Trim();
+                    Slides.Add(slide);
+                }
+                else
+                {
+                    for (int k = i; k < 4; k++) //plates
                     {
-                        Slide slide = new Slide();
-                        slide.Barcode = overview.Cells[29 + 30 * tempI, 3 + 3 * tempJ].Value.ToString().Trim();
-                        Slides.Add(slide);
+                        int tempK = k;
+                        bool alreadyEmpty = false;
+                        for (int l = k == i ? j + 1 : 0; l < 4; l++) //Slides
+                        {
+                            int tempL = l;
+                            int plateRowOffSet = 30 * tempK;
+                            bool barcodeIsPresentOnRemainingSlides = overview.Cells[29 + plateRowOffSet, 3 + 3 * tempL].Value != null &&
+                                overview.Cells[29 + plateRowOffSet, 3 + 3 * tempL].Value.ToString() != null &&
+                                overview.Cells[29 + plateRowOffSet, 3 + 3 * tempL].Value.ToString().Trim() != "";
+                            if (!alreadyEmpty && barcodeIsPresentOnRemainingSlides)
+                            {
+                                alreadyEmpty = true;
+                                Slide slide = new Slide();
+                                slide.Barcode = "Empty";
+                                Slides.Add(slide);
+                            }
+                        }
                     }
+
                 }
             }                    
 
@@ -336,20 +360,20 @@ public class ClinicalTest : BaseModel<ClinicalTest>
                 {
                     int tempJ = j;
                     bool blockContainsNoInfo = true;
-                    List<string> blockPatientData = new List<string>();
+                    List<string> blockPatientData = new List<string>()
+                    {
+                        "", "", ""
+                    };
                     for (int k = 0; k < 3; k++) //Spans the rows of a single block
                     {
                         int tempK = k;
                         //i*3 Is the row offset of all blocks before the accessed block.
                         //Cells[8+i*3+k,j]
-
-                        //Throws System.ObjectDisposedException: 'Worksheet has been disposed Object name: 'ExcelWorksheet'.'
-                        //When l = 0, i = 6, j = 4, k = 0;
-                        if (overview.Cells[8 + tempI * 3 + tempK, tempJ].Value != null && overview.Cells[8 + tempI * 3 + tempK, tempJ].Value.ToString() != null)
+                        if (overview.Cells[8 + tempI * 3 + tempK + tempL * 30, tempJ].Value != null && overview.Cells[8 + tempI * 3 + tempK + tempL * 30, tempJ].Value.ToString() != null)
                         {
-                            blockContainsNoInfo = overview.Cells[8 + tempI * 3 + tempK, tempJ].Value.ToString().Trim() == "" ?
+                            blockContainsNoInfo = overview.Cells[8 + tempI * 3 + tempK + tempL * 30, tempJ].Value.ToString().Trim() == "" ?
                                                                                 true && blockContainsNoInfo : false;
-                            blockPatientData.Add(overview.Cells[8 + tempI * 3 + tempK, tempJ].Value.ToString().Trim());
+                            blockPatientData[k] = overview.Cells[8 + tempI * 3 + tempK + tempL * 30, tempJ].Value.ToString().Trim();
                         }
                     }
 
@@ -357,24 +381,24 @@ public class ClinicalTest : BaseModel<ClinicalTest>
                          overview.Cells[29 + 30 * tempL, 3 + 3 * (tempJ / 3 - 1)].Value.ToString() != null &&
                          overview.Cells[29 + 30 * tempL, 3 + 3 * (tempJ / 3 - 1)].Value.ToString().Trim() != "";
 
-                    if (blockContainsNoInfo && barcodeIsPresent)
+                    if (blockContainsNoInfo && (tempJ / 3 + tempL * 4) - 1 < Slides.Count && (barcodeIsPresent || Slides[(tempJ / 3 + tempL * 4) - 1].Barcode == "Empty"))
                     {
-                        Console.WriteLine($"slideIndex = {tempJ / 3 * (tempL + 1) - 1} blockIndex = {tempI * 3 + tempJ % 3}");
-                        Block bBlock = new Block(Guid.NewGuid().ToString(), new List<string>(), Block.BlockType.Blank, tempJ / 3 * (tempL + 1) - 1, tempI * 3 + tempJ % 3, this.id);
+                        Console.WriteLine($"slideIndex = {(tempJ / 3 - 1) + tempL * 4} blockIndex = {tempI * 3 + tempJ % 3}");
+                        Block bBlock = new Block(Guid.NewGuid().ToString(), new List<string>(), Block.BlockType.Blank, (tempJ / 3 - 1) + tempL * 4, tempI * 3 + tempJ % 3, this.id);
                         await AddBlankBlock(bBlock);
                     }
                     else if(!blockContainsNoInfo && barcodeIsPresent)
                     {
                         if (blockPatientData.Find(value => value.ToLower() == "blank") != null)
                         {
-                            Console.WriteLine($"slideIndex = {tempJ / 3 * (tempL + 1) - 1} blockIndex = {tempI * 3 + tempJ % 3}");
-                            Block bBlock = new Block(Guid.NewGuid().ToString(), new List<string>(), Block.BlockType.Blank, tempJ / 3 * (tempL + 1) - 1, tempI * 3 + tempJ % 3, this.id);
+                            Console.WriteLine($"slideIndex = {(tempJ / 3 - 1) + tempL * 4} blockIndex = {tempI * 3 + tempJ % 3}");
+                            Block bBlock = new Block(Guid.NewGuid().ToString(), new List<string>(), Block.BlockType.Blank, (tempJ / 3 - 1) + tempL * 4, tempI * 3 + tempJ % 3, this.id);
                             await AddBlankBlock(bBlock);
                         }
                         else
                         {
-                            Console.WriteLine($"slideIndex = {tempJ / 3 * (tempL + 1) - 1} blockIndex = {tempI * 3 + tempJ % 3}");
-                            Block normalBlock = new Block(Guid.NewGuid().ToString(), blockPatientData, Block.BlockType.Normal, tempJ / 3 * (tempL + 1) - 1, tempI * 3 + tempJ % 3, this.id);
+                            Console.WriteLine($"slideIndex = {(tempJ / 3 - 1) + tempL * 4} blockIndex = {tempI * 3 + tempJ % 3}");
+                            Block normalBlock = new Block(Guid.NewGuid().ToString(), blockPatientData, Block.BlockType.Normal, (tempJ / 3 - 1) + tempL * 4, tempI * 3 + tempJ % 3, this.id);
                             await AddNormalBlock(normalBlock);
                         }
                     }
