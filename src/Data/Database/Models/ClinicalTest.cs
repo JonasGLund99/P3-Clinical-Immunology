@@ -383,7 +383,6 @@ public class ClinicalTest : BaseModel<ClinicalTest>
 
                     if (blockContainsNoInfo && (tempJ / 3 + tempL * 4) - 1 < Slides.Count && (barcodeIsPresent || Slides[(tempJ / 3 + tempL * 4) - 1].Barcode == "Empty"))
                     {
-                        Console.WriteLine($"slideIndex = {(tempJ / 3 - 1) + tempL * 4} blockIndex = {tempI * 3 + tempJ % 3}");
                         Block bBlock = new Block(Guid.NewGuid().ToString(), new List<string>(), Block.BlockType.Blank, (tempJ / 3 - 1) + tempL * 4, tempI * 3 + tempJ % 3, this.id);
                         await AddBlankBlock(bBlock);
                     }
@@ -391,13 +390,11 @@ public class ClinicalTest : BaseModel<ClinicalTest>
                     {
                         if (blockPatientData.Find(value => value.ToLower() == "blank") != null)
                         {
-                            Console.WriteLine($"slideIndex = {(tempJ / 3 - 1) + tempL * 4} blockIndex = {tempI * 3 + tempJ % 3}");
                             Block bBlock = new Block(Guid.NewGuid().ToString(), new List<string>(), Block.BlockType.Blank, (tempJ / 3 - 1) + tempL * 4, tempI * 3 + tempJ % 3, this.id);
                             await AddBlankBlock(bBlock);
                         }
                         else
                         {
-                            Console.WriteLine($"slideIndex = {(tempJ / 3 - 1) + tempL * 4} blockIndex = {tempI * 3 + tempJ % 3}");
                             Block normalBlock = new Block(Guid.NewGuid().ToString(), blockPatientData, Block.BlockType.Normal, (tempJ / 3 - 1) + tempL * 4, tempI * 3 + tempJ % 3, this.id);
                             await AddNormalBlock(normalBlock);
                         }
