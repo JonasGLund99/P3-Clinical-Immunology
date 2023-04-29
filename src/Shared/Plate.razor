@@ -131,6 +131,14 @@
     private double xCoor { get; set; }
     private double yCoor { get; set; }
 
+    protected override void OnAfterRender(bool firstReload)
+    {
+        if (firstReload)
+        {
+            Console.WriteLine(ClinicalTest.Slides);
+        }
+    }
+
     private int findTitleIndex(int i)
     {
         string? title = ClinicalTest.TableTitles.Find((title) => title == ClinicalTest.ChosenTableTitles[i]);

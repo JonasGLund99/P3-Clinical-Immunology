@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\imports\NewFile.txt" />
   </ItemGroup>
 
   <ItemGroup>

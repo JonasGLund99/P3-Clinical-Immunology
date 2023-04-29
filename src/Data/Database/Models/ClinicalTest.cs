@@ -267,8 +267,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
 
             ExcelWorkbook workBook = package.Workbook;
             ExcelWorksheet overview = workBook.Worksheets.FirstOrDefault();
-            GenerateBlocksInSlide(overview);
-            ms.Close();
+            await GenerateBlocksInSlide(overview);
         }
         catch (Exception ex)
         {
@@ -276,7 +275,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
         }
     }
 
-    private async void GenerateBlocksInSlide(ExcelWorksheet overview)
+    private async Task GenerateBlocksInSlide(ExcelWorksheet overview)
     {
         TableTitles = new List<string>()
         {
@@ -312,12 +311,12 @@ public class ClinicalTest : BaseModel<ClinicalTest>
 
         }
 
-        foreach (Block blankBlock in blankBlocks)
+        foreach (Block blankBlock in await GetBlankBlocks())
         {
             await blankBlock.RemoveFromDatabase();
         }
 
-        foreach (Block normalBlock in normalBlocks) 
+        foreach (Block normalBlock in await GetNormalBlocks()) 
         {
             await normalBlock.RemoveFromDatabase();
         }
@@ -383,7 +382,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
             }
         }
 
-        Console.WriteLine(normalBlocks);
+        Console.WriteLine(normalBlocks.Count);
 
     }
 

@@ -213,7 +213,7 @@ Right click on a block to change it's colour" class="fa fa-info-circle"></i>
     private List<List<Block[]>> overview = new List<List<Block[]>>();
     private bool overviewLoaded = false;
     private bool isSavingOverview = false;
-    private IBrowserFile overviewFile;
+    private IBrowserFile? overviewFile;
 
     //Switch viewmode (Overview or Table-view)
     public string mode { get; set; } = "Overview";
@@ -237,6 +237,7 @@ Right click on a block to change it's colour" class="fa fa-info-circle"></i>
         mode = newMode;
     }
     private async void updateOverviewState() {
+        Console.WriteLine("Called updateOverviewState");
         overview = await ClinicalTest.GenerateOverview();
         overviewLoaded = true;
         StateHasChanged();
@@ -350,9 +351,13 @@ Right click on a block to change it's colour" class="fa fa-info-circle"></i>
 
     public async void ImportExcelFile()
     {
-        await ClinicalTest.ImportOverview(overviewFile);
-        ClinicalTest.IsEmpty = false;
-        updateOverviewState();
+        ClinicalTest.ImportOverview(overviewFile).GetAwaiter().OnCompleted(() =>
+        {
+            Console.WriteLine("Imported Excel file /Overview");
+            ClinicalTest.IsEmpty = false;
+            updateOverviewState();
+        });
+        
     }
 
     public async void Export()
