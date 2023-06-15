@@ -1,4 +1,5 @@
-﻿@using src.Data
+﻿
+@using src.Data
 
 @inject IJSRuntime JS
 
@@ -20,6 +21,31 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" @onclick=@ModalCancel>Cancel</button>
                     <button type="button" class="btn btn-primary" @onclick=@(() => { displayError = false; noSensitiveData = false; saveBlocks();}) disabled=@(!noSensitiveData)>OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (displaySensitiveDataModal)
+{
+    <div class="modal fade show" style="display:block" aria-modal="true" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">No sensitive data allowed</h4>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <input type=checkbox @onchange="ToggleSensitiveDataCheck"> I have not inserted any sensitive personal data
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="() => displaySensitiveDataModal = false">Cancel</button>
+                    <button type="button" class="btn btn-primary" @onclick=@(() => { displaySensitiveDataModal = false; ImportExcelFile();}) disabled=@(!noSensitiveData)>OK</button>
                 </div>
             </div>
         </div>
@@ -60,6 +86,24 @@ Right click on a block to change it's colour" class="fa fa-info-circle"></i>
                         </div>
                     }
                 </div>
+                @if (DatabaseStatus == 1)
+                {
+                    <div id="export-icon" data-title="@(DatabaseStatus != 1 ? "Can't import while saving" : "Import overview")">
+                        <label>
+                            <i style="font-size: 30px; margin-top: 2px;" class="fa-solid fa-file-import" />
+                            <InputFile style="display: none;" accept=".xlsx" OnChange="@SaveExcelFile" />
+                        </label>
+                    </div>
+                }
+                else
+                {
+                    <div id="export-icon" data-title="@(DatabaseStatus != 1 ? "Can't import while saving" : "Import overview")">
+                        <label>
+                            <i style="font-size: 30px; margin-top: 2px;" class="@(DatabaseStatus != 1 ? "no-export" : "") fa-solid fa-file-import"></i>
+                        </label>
+                    </div>
+                }
+
                 <div id="export-icon" data-title="@(DatabaseStatus != 1 ? "Can't export while saving" : "Export overview")">
                     <i class="@(DatabaseStatus != 1 ? "no-export" : "") fa-solid fa-file-export" @onclick="Export"></i>
                 </div>
@@ -97,15 +141,33 @@ Right click on a block to change it's colour" class="fa fa-info-circle"></i>
                     <p>
                         @(ClinicalTest.Title) has no clinical data yet.
                         <br>
-                        Add clinical data in the table-view to generate the overview.
+                        Add clinical data in the table-view or import an excel file to generate the overview.
                     </p>
 
                     <button class="green-button" @onclick='() => { tableViewIcon = "icons/TableView_icon.svg"; switchMode("Table-view"); }' @onmouseover='() => tableViewIconWhite = "icons/TableView_icon_white_hover.svg"' @onmouseout='() => tableViewIconWhite = "icons/TableView_icon_white.svg"'>
                         Open table-view
                         <img src="@tableViewIconWhite"/>
                     </button>
+                    <h3 style="margin: 0; padding: 10px;">
+                        Or
+                    </h3>
+                    @if (DatabaseStatus == 1)
+                    {
+                        <label class="green-button">
+                            Import Clinical Data from Excel
+                            <i style="font-size: 24px; margin-top: 2px;" class="fa-solid fa-file-import" />
+                            <InputFile style="display: none;" accept=".xlsx" OnChange="@SaveExcelFile" />
+                        </label>
+                    }
+                    else
+                    {
+                        <label class="green-button" style="cursor: not-allowed;">
+                            Import Clinical Data from Excel
+                            <i style="font-size: 24px; margin-top: 2px;" class="@(DatabaseStatus != 1 ? "no-export" : "") fa-solid fa-file-import"></i>
+                        </label>
+                    }
                 </div>
-            </div>
+            </div> 
         }
     }
     else 
@@ -139,6 +201,7 @@ Right click on a block to change it's colour" class="fa fa-info-circle"></i>
     public double DatabaseStatus { get; set; } = 1;
 
     private bool noSensitiveData = false;
+    private bool displaySensitiveDataModal = false;
     private bool displayError = false;
     private string tableViewIcon { get; set; } = "icons/TableView_icon.svg";
     private string tableViewIconWhite { get; set; } = "icons/TableView_icon_white.svg";
@@ -150,6 +213,7 @@ Right click on a block to change it's colour" class="fa fa-info-circle"></i>
     private List<List<Block[]>> overview = new List<List<Block[]>>();
     private bool overviewLoaded = false;
     private bool isSavingOverview = false;
+    private IBrowserFile? overviewFile;
 
     //Switch viewmode (Overview or Table-view)
     public string mode { get; set; } = "Overview";
@@ -228,7 +292,7 @@ Right click on a block to change it's colour" class="fa fa-info-circle"></i>
         // Remove first line from table data
         tableData = tableData.Skip(1).ToArray();
         List<Block> normBlocks = await ClinicalTest.GetNormalBlocks();
-        
+
         foreach (string[] block in tableData) 
         {
             int blockIndex = Array.IndexOf(tableData, block);
@@ -275,9 +339,27 @@ Right click on a block to change it's colour" class="fa fa-info-circle"></i>
         StateHasChanged();
     } 
 
+    public void SaveExcelFile(InputFileChangeEventArgs e)
+    {
+        if (DatabaseStatus == 1)
+        {
+            displaySensitiveDataModal = true;
+            overviewFile = e.File;
+        }
+    }
+
+    public async void ImportExcelFile()
+    {
+        ClinicalTest.ImportOverview(overviewFile).GetAwaiter().OnCompleted(() =>
+        {
+            ClinicalTest.IsEmpty = false;
+            updateOverviewState();
+        });
+        
+    }
+
     public async void Export()
     {
-        if (ClinicalTest == null) return;
         if (DatabaseStatus == 1)
         {
             FileInfo file = await ClinicalTest.ExportOverview();

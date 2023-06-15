@@ -13,11 +13,11 @@ public class DatabaseService
     {
         if (inTestMode)
         {
-            Client = new CosmosClient("https://asbjoernjc.documents.azure.com:443/", "Ny5RJxrhuBR5gH4C3BFIGOBdq8BPpkNnHdqWqBZuU5pMcmkVWUzYA8lJxOpat73WRQU5IfKOq4qxACDbf06Gng==");
+            Client = new CosmosClient("https://johannes-account.documents.azure.com:443/", "4a2gm67DTBBbiUqwZFl3yp3CXjYjAvsIxSLwP4sRUWb8oZSs38HpUF9v6PMjR4avRg4ClBkY9Bc6ACDbXHhKNQ==");
         }
         else
         {
-            Client = new CosmosClient("https://p3-database.documents.azure.com:443/", "nMTHGd46oUJ9xzWTS4kCmKhjbfqM5Qm7tbI1pt7knTvKpqBd48azK9cu1ZWoGKZZKiQgeItFWvxFACDbCLyEZw==");
+            Client = new CosmosClient("https://johannes-account.documents.azure.com:443/", "4a2gm67DTBBbiUqwZFl3yp3CXjYjAvsIxSLwP4sRUWb8oZSs38HpUF9v6PMjR4avRg4ClBkY9Bc6ACDbXHhKNQ==");
         }
     }
     public static DatabaseService Instance

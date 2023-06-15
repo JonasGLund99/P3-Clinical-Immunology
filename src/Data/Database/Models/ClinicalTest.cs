@@ -9,6 +9,7 @@ using src.Shared;
 using OfficeOpenXml.ConditionalFormatting;
 using OfficeOpenXml.Drawing.Style.Fill;
 using Microsoft.AspNetCore.DataProtection.KeyManagement;
+using Microsoft.AspNetCore.Components.Forms;
 
 namespace src.Data;
 
@@ -251,6 +252,159 @@ public class ClinicalTest : BaseModel<ClinicalTest>
         return overview;
     }
 
+    public async Task ImportOverview(IBrowserFile file)
+    {
+        try
+        {
+            MemoryStream ms = new MemoryStream();
+            // copy data from file to memory stream
+            await file.OpenReadStream(50000000).CopyToAsync(ms);
+            // positions the cursor at the beginning of the memory stream
+            ms.Position = 0;
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial; // EPPlus license must be specified; otherwise, it throws an exception
+            // create ExcelPackage from memory stream
+            ExcelPackage package = new ExcelPackage(ms);
+
+            ExcelWorkbook workBook = package.Workbook;
+            ExcelWorksheet overview = workBook.Worksheets.FirstOrDefault();
+            await GenerateBlocksInSlide(overview);
+        }
+        catch (Exception ex)
+        {
+            throw;
+        }
+    }
+
+    private async Task GenerateBlocksInSlide(ExcelWorksheet overview)
+    {
+        TableTitles = new List<string>()
+        {
+            "Overskrift 1",
+            "Overskrift 2",
+            "Overskrift 3"
+        };
+        ChosenTableTitles = new string[3] 
+        { 
+            "Overskrift 1",
+            "Overskrift 2",
+            "Overskrift 3" 
+        };
+
+        Slides.Clear();
+        //Gets all barcodes
+        for (int i = 0; i < 4; i++) //i equals the plate number
+        {
+            int tempI = i;
+            for (int j = 0; j < 4; j++) //j is the barcodes from left to right
+            {
+                int tempJ = j;
+                bool barcodeIsPresent = overview.Cells[29 + 30 * tempI, 3 + 3 * tempJ].Value != null &&
+                    overview.Cells[29 + 30 * tempI, 3 + 3 * tempJ].Value.ToString() != null &&
+                    overview.Cells[29 + 30 * tempI, 3 + 3 * tempJ].Value.ToString().Trim() != "";
+                if (barcodeIsPresent)
+                {
+                    Slide slide = new Slide();
+                    slide.Barcode = overview.Cells[29 + 30 * tempI, 3 + 3 * tempJ].Value.ToString().Trim();
+                    Slides.Add(slide);
+                }
+                else
+                {
+                    for (int k = i; k < 4; k++) //plates
+                    {
+                        int tempK = k;
+                        bool alreadyEmpty = false;
+                        for (int l = k == i ? j + 1 : 0; l < 4; l++) //Slides
+                        {
+                            int tempL = l;
+                            int plateRowOffSet = 30 * tempK;
+                            bool barcodeIsPresentOnRemainingSlides = overview.Cells[29 + plateRowOffSet, 3 + 3 * tempL].Value != null &&
+                                overview.Cells[29 + plateRowOffSet, 3 + 3 * tempL].Value.ToString() != null &&
+                                overview.Cells[29 + plateRowOffSet, 3 + 3 * tempL].Value.ToString().Trim() != "";
+                            if (!alreadyEmpty && barcodeIsPresentOnRemainingSlides)
+                            {
+                                alreadyEmpty = true;
+                                Slide slide = new Slide();
+                                slide.Barcode = "Empty";
+                                Slides.Add(slide);
+                            }
+                        }
+                    }
+
+                }
+            }                    
+
+        }
+
+        foreach (Block blankBlock in await GetBlankBlocks())
+        {
+            await blankBlock.RemoveFromDatabase();
+        }
+
+        foreach (Block normalBlock in await GetNormalBlocks()) 
+        {
+            await normalBlock.RemoveFromDatabase();
+        }
+
+        blankBlocks = null;
+        normalBlocks = null;
+        BlankBlockIds.Clear();
+        NormalBlockIds.Clear();
+        //Gets all individual block infomation
+        for (int l = 0; l < 4; l++) //Spans the plates
+        {
+            int tempL = l;
+            for (int i = 0; i < 7; i++) //Spans the rows of a plate
+            {
+                int tempI = i;
+                for (int j = 3; j < 15; j++) //Spans the columns of a plate  
+                {
+                    int tempJ = j;
+                    bool blockContainsNoInfo = true;
+                    List<string> blockPatientData = new List<string>()
+                    {
+                        "", "", ""
+                    };
+                    for (int k = 0; k < 3; k++) //Spans the rows of a single block
+                    {
+                        int tempK = k;
+                        //i*3 Is the row offset of all blocks before the accessed block.
+                        //Cells[8+i*3+k,j]
+                        if (overview.Cells[8 + tempI * 3 + tempK + tempL * 30, tempJ].Value != null && overview.Cells[8 + tempI * 3 + tempK + tempL * 30, tempJ].Value.ToString() != null)
+                        {
+                            blockContainsNoInfo = overview.Cells[8 + tempI * 3 + tempK + tempL * 30, tempJ].Value.ToString().Trim() == "" ?
+                                                                                true && blockContainsNoInfo : false;
+                            blockPatientData[k] = overview.Cells[8 + tempI * 3 + tempK + tempL * 30, tempJ].Value.ToString().Trim();
+                        }
+                    }
+
+                    bool barcodeIsPresent = overview.Cells[29 + 30 * tempL, 3 + 3 * (tempJ / 3 - 1)].Value != null &&
+                         overview.Cells[29 + 30 * tempL, 3 + 3 * (tempJ / 3 - 1)].Value.ToString() != null &&
+                         overview.Cells[29 + 30 * tempL, 3 + 3 * (tempJ / 3 - 1)].Value.ToString().Trim() != "";
+
+                    if (blockContainsNoInfo && (tempJ / 3 + tempL * 4) - 1 < Slides.Count && (barcodeIsPresent || Slides[(tempJ / 3 + tempL * 4) - 1].Barcode == "Empty"))
+                    {
+                        Block bBlock = new Block(Guid.NewGuid().ToString(), new List<string>(), Block.BlockType.Blank, (tempJ / 3 - 1) + tempL * 4, tempI * 3 + tempJ % 3, this.id);
+                        await AddBlankBlock(bBlock);
+                    }
+                    else if(!blockContainsNoInfo && barcodeIsPresent)
+                    {
+                        if (blockPatientData.Find(value => value.ToLower() == "blank") != null)
+                        {
+                            Block bBlock = new Block(Guid.NewGuid().ToString(), new List<string>(), Block.BlockType.Blank, (tempJ / 3 - 1) + tempL * 4, tempI * 3 + tempJ % 3, this.id);
+                            await AddBlankBlock(bBlock);
+                        }
+                        else
+                        {
+                            Block normalBlock = new Block(Guid.NewGuid().ToString(), blockPatientData, Block.BlockType.Normal, (tempJ / 3 - 1) + tempL * 4, tempI * 3 + tempJ % 3, this.id);
+                            await AddNormalBlock(normalBlock);
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
     public async Task<FileInfo> ExportOverview()
     {
         FileInfo fileInfo = new FileInfo(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "exports", $"{id}-prøve-opsætning.xlsx"));
@@ -259,6 +413,8 @@ public class ClinicalTest : BaseModel<ClinicalTest>
             fileInfo.Delete();  // ensures we create a new workbook
             fileInfo = new FileInfo(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "exports", $"{id}-prøve-opsætning.xlsx"));
         }
+        
+        ExcelPackage.LicenseContext = LicenseContext.NonCommercial; // EPPlus license must be specified; otherwise, it throws an exception
         ExcelPackage package = new ExcelPackage(fileInfo);
         ExcelWorkbook workBook = package.Workbook;
         ExcelWorksheet overview = workBook.Worksheets.Add("Prøve opsætning");
@@ -645,6 +801,7 @@ public class ClinicalTest : BaseModel<ClinicalTest>
             fileInfo = new FileInfo(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "exports", $"{id}-result.xlsx"));
         }
 
+        ExcelPackage.LicenseContext = LicenseContext.NonCommercial; // EPPlus license must be specified; otherwise, it throws an exception
         ExcelPackage package = new ExcelPackage(fileInfo);
         ExcelWorkbook workBook = package.Workbook;
 
@@ -748,8 +905,16 @@ public class ClinicalTest : BaseModel<ClinicalTest>
 
                 for (int j = 0; j < block.Nplicates.Count; j++)
                 {
-                    Block lastBlankBlock = bBlocksInSlide.Last();
-                    updateMaxMinRI(block.Nplicates[j].CalculateRI(lastBlankBlock.Nplicates[j], neg));
+                    //Block lastBlankBlock = bBlocksInSlide.Last();
+                    Block? calculatorBlock = bBlocksInSlide.Find(b => b.IsCalculatorBlock);
+                    if (calculatorBlock != null)
+                    {
+                        updateMaxMinRI(block.Nplicates[j].CalculateRI(calculatorBlock.Nplicates[j], neg));
+                    }
+                    else
+                    {
+                        throw new ArgumentNullException();
+                    }
                 }
             }
         }

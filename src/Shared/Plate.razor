@@ -6,6 +6,9 @@
     const int NumPatientDataPerBlock = 3;
     int numSlides = Slides.Count;
 }
+
+
+
 <div class="plate numSlides@(numSlides)">
     <div class="plate-container">
         <div class="Letters">
@@ -25,8 +28,9 @@
                     @if (i < numSlides)
                     {
                         <div class="block" @onclick="() => toggleBlockType(slideIndex, blockIndex)" @oncontextmenu="(e) => openTextColourMenu(Slides[slideIndex][blockIndex], e)" @oncontextmenu:preventDefault>
-                            
-                            @if (Slides[i][j].Type != Block.BlockType.Blank) {
+
+                            @if (Slides[i][j].Type != Block.BlockType.Blank)
+                            {
                                 @*Loop through patient data*@
                                 @for (int k = 0; k < NumPatientDataPerBlock; k++)
                                 {
@@ -47,14 +51,21 @@
                                         </div>
                                     }
                                 }
-                            } 
-                            else 
+                            }
+                            else
                             {
                                 @*Show blank block*@
                                 <div></div>
-                                <div style="color: @(Slides[i][j].TextColour)">Blank</div>
+                                <div style="color: @(Slides[i][j].TextColour)">@(Slides[i][j].IsCalculatorBlock ? "Calc" : "Blank")</div>
                                 <div></div>
+                                int iAlternative = i;
+                                int jAlternative = j;
+
+                                <input type="radio" checked="@Slides[i][j].IsCalculatorBlock" name="slide@(slideIndex)" @onclick="() => updateCalculatorBlock(iAlternative, Slides[iAlternative][jAlternative])" @onclick:stopPropagation />
+
                             }
+
+
                         </div>
                     }
                     else
@@ -68,12 +79,12 @@
         <div class="Numbers">
             @for (int i = 0; i < 12; i++)
             {
-                <div class="heading">@(i+1)</div>
+                <div class="heading">@(i + 1)</div>
             }
         </div>
         @for (int i = 0; i < MaxSlides; i++)
         {
-            int slideIndex = (PlateIndex*4) + i;
+            int slideIndex = (PlateIndex * 4) + i;
             <div class="Barcode-@(i+1)">
                 @if (i < numSlides)
                 {
@@ -92,6 +103,7 @@
         </div>
     </div>
 </div>
+
 
 @if (textColourMenuVisible) {
     <div class="remove-colorpick" @onclick="closeTextColour">
@@ -114,7 +126,6 @@
     public List<Block[]> Slides { get; set; } = new();
     [Parameter, EditorRequired]
     public EventCallback updateOverviewState { get; set; }
-
     private bool textColourMenuVisible { get; set; } = false;
     private Block? selectedBlock { get; set; } = null;
     private double xCoor { get; set; }
@@ -171,5 +182,17 @@
         ClinicalTest.CalculationNecessary = true;
         ClinicalTest.SaveToDatabase();
     }
+
+    private void updateCalculatorBlock(int slideIndex, Block block)
+    {
+        foreach (Block b in Slides[slideIndex])
+        {
+            b.IsCalculatorBlock = false;
+        }
+        block.IsCalculatorBlock = true;
+        ClinicalTest.CalculationNecessary = true;
+        ClinicalTest.SaveToDatabase(true);
+    }
+
     private string[] headingLetters = { "A", "B", "C", "D", "E", "F", "G", "H" };
 }

@@ -21,6 +21,7 @@ public class Block : BaseModel<Block>
     public List<string> PatientData { get; set; } = new List<string>();
     public string TextColour { get; set; } = "#212529";
     public double QC { get; set; } = 0;
+    public bool IsCalculatorBlock = false;
 
     public void CalculateQC(Nplicate pos, Nplicate neg)
     {

@@ -21,6 +21,7 @@ public class CalculateClinicalTestResultTest
             // Data from excel file
             FileInfo fileInfo = new FileInfo(Path.Combine(Directory.GetCurrentDirectory(), "../../../", "ClinicalTest", "CalculateClinicalTestResult", "expectedResults.xlsx"));
 
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial; // EPPlus license must be specified; otherwise, it throws an exception
             ExcelPackage package = new ExcelPackage(fileInfo);
             ExcelWorkbook workBook = package.Workbook;
 
@@ -98,7 +99,14 @@ public class CalculateClinicalTestResultTest
                 }
                 else
                 {
-                    await clinicalTest.AddBlankBlock(new Block("", new List<string>(), Block.BlockType.Blank, i, j, ""));
+                    var bBlock = new Block("", new List<string>(), Block.BlockType.Blank, i, j, "");
+                    
+                    // Some condition to set the blank block that is used for calculation
+                    if (j == 20) //In this context the last block in each slide is the blank block that is used for calculation.
+                    {
+                        bBlock.IsCalculatorBlock = true;
+                    }
+                    await clinicalTest.AddBlankBlock(bBlock);
                 }
             }
         }
